@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeTotalMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal" >
+    <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
+    <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
+    <result column="PAY_FLAG" property="payFlag" jdbcType="VARCHAR" />
+    <result column="TOTAL_FEE" property="totalFee" jdbcType="BIGINT" />
+    <result column="DISCOUNT_FEE" property="discountFee" jdbcType="BIGINT" />
+    <result column="OPER_DISCOUNT_FEE" property="operDiscountFee" jdbcType="BIGINT" />
+    <result column="OPER_DISCOUNT_DESC" property="operDiscountDesc" jdbcType="VARCHAR" />
+    <result column="ADJUST_FEE" property="adjustFee" jdbcType="BIGINT" />
+    <result column="PAID_FEE" property="paidFee" jdbcType="BIGINT" />
+    <result column="PAY_FEE" property="payFee" jdbcType="BIGINT" />
+    <result column="PAY_STYLE" property="payStyle" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_CHL_ID" property="updateChlId" jdbcType="VARCHAR" />
+    <result column="UPDATE_OPER_ID" property="updateOperId" jdbcType="VARCHAR" />
+    <result column="TOTAL_JF" property="totalJf" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ORDER_ID, TENANT_ID, PAY_FLAG, TOTAL_FEE, DISCOUNT_FEE, OPER_DISCOUNT_FEE, OPER_DISCOUNT_DESC, 
+    ADJUST_FEE, PAID_FEE, PAY_FEE, PAY_STYLE, UPDATE_TIME, UPDATE_CHL_ID, UPDATE_OPER_ID, 
+    TOTAL_JF
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from ord_od_fee_total
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria" >
+    delete from ord_od_fee_total
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal" >
+    insert into ord_od_fee_total (ORDER_ID, TENANT_ID, PAY_FLAG, 
+      TOTAL_FEE, DISCOUNT_FEE, OPER_DISCOUNT_FEE, 
+      OPER_DISCOUNT_DESC, ADJUST_FEE, PAID_FEE, 
+      PAY_FEE, PAY_STYLE, UPDATE_TIME, 
+      UPDATE_CHL_ID, UPDATE_OPER_ID, TOTAL_JF
+      )
+    values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{payFlag,jdbcType=VARCHAR}, 
+      #{totalFee,jdbcType=BIGINT}, #{discountFee,jdbcType=BIGINT}, #{operDiscountFee,jdbcType=BIGINT}, 
+      #{operDiscountDesc,jdbcType=VARCHAR}, #{adjustFee,jdbcType=BIGINT}, #{paidFee,jdbcType=BIGINT}, 
+      #{payFee,jdbcType=BIGINT}, #{payStyle,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateChlId,jdbcType=VARCHAR}, #{updateOperId,jdbcType=VARCHAR}, #{totalJf,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal" >
+    insert into ord_od_fee_total
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        ORDER_ID,
+      </if>
+      <if test="tenantId != null" >
+        TENANT_ID,
+      </if>
+      <if test="payFlag != null" >
+        PAY_FLAG,
+      </if>
+      <if test="totalFee != null" >
+        TOTAL_FEE,
+      </if>
+      <if test="discountFee != null" >
+        DISCOUNT_FEE,
+      </if>
+      <if test="operDiscountFee != null" >
+        OPER_DISCOUNT_FEE,
+      </if>
+      <if test="operDiscountDesc != null" >
+        OPER_DISCOUNT_DESC,
+      </if>
+      <if test="adjustFee != null" >
+        ADJUST_FEE,
+      </if>
+      <if test="paidFee != null" >
+        PAID_FEE,
+      </if>
+      <if test="payFee != null" >
+        PAY_FEE,
+      </if>
+      <if test="payStyle != null" >
+        PAY_STYLE,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="updateChlId != null" >
+        UPDATE_CHL_ID,
+      </if>
+      <if test="updateOperId != null" >
+        UPDATE_OPER_ID,
+      </if>
+      <if test="totalJf != null" >
+        TOTAL_JF,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="payFlag != null" >
+        #{payFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFee != null" >
+        #{totalFee,jdbcType=BIGINT},
+      </if>
+      <if test="discountFee != null" >
+        #{discountFee,jdbcType=BIGINT},
+      </if>
+      <if test="operDiscountFee != null" >
+        #{operDiscountFee,jdbcType=BIGINT},
+      </if>
+      <if test="operDiscountDesc != null" >
+        #{operDiscountDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustFee != null" >
+        #{adjustFee,jdbcType=BIGINT},
+      </if>
+      <if test="paidFee != null" >
+        #{paidFee,jdbcType=BIGINT},
+      </if>
+      <if test="payFee != null" >
+        #{payFee,jdbcType=BIGINT},
+      </if>
+      <if test="payStyle != null" >
+        #{payStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateChlId != null" >
+        #{updateChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateOperId != null" >
+        #{updateOperId,jdbcType=VARCHAR},
+      </if>
+      <if test="totalJf != null" >
+        #{totalJf,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria" resultType="java.lang.Integer" >
+    select count(*) from ord_od_fee_total
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ord_od_fee_total
+    <set >
+      <if test="record.orderId != null" >
+        ORDER_ID = #{record.orderId,jdbcType=BIGINT},
+      </if>
+      <if test="record.tenantId != null" >
+        TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payFlag != null" >
+        PAY_FLAG = #{record.payFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.totalFee != null" >
+        TOTAL_FEE = #{record.totalFee,jdbcType=BIGINT},
+      </if>
+      <if test="record.discountFee != null" >
+        DISCOUNT_FEE = #{record.discountFee,jdbcType=BIGINT},
+      </if>
+      <if test="record.operDiscountFee != null" >
+        OPER_DISCOUNT_FEE = #{record.operDiscountFee,jdbcType=BIGINT},
+      </if>
+      <if test="record.operDiscountDesc != null" >
+        OPER_DISCOUNT_DESC = #{record.operDiscountDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.adjustFee != null" >
+        ADJUST_FEE = #{record.adjustFee,jdbcType=BIGINT},
+      </if>
+      <if test="record.paidFee != null" >
+        PAID_FEE = #{record.paidFee,jdbcType=BIGINT},
+      </if>
+      <if test="record.payFee != null" >
+        PAY_FEE = #{record.payFee,jdbcType=BIGINT},
+      </if>
+      <if test="record.payStyle != null" >
+        PAY_STYLE = #{record.payStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateChlId != null" >
+        UPDATE_CHL_ID = #{record.updateChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateOperId != null" >
+        UPDATE_OPER_ID = #{record.updateOperId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.totalJf != null" >
+        TOTAL_JF = #{record.totalJf,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ord_od_fee_total
+    set ORDER_ID = #{record.orderId,jdbcType=BIGINT},
+      TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      PAY_FLAG = #{record.payFlag,jdbcType=VARCHAR},
+      TOTAL_FEE = #{record.totalFee,jdbcType=BIGINT},
+      DISCOUNT_FEE = #{record.discountFee,jdbcType=BIGINT},
+      OPER_DISCOUNT_FEE = #{record.operDiscountFee,jdbcType=BIGINT},
+      OPER_DISCOUNT_DESC = #{record.operDiscountDesc,jdbcType=VARCHAR},
+      ADJUST_FEE = #{record.adjustFee,jdbcType=BIGINT},
+      PAID_FEE = #{record.paidFee,jdbcType=BIGINT},
+      PAY_FEE = #{record.payFee,jdbcType=BIGINT},
+      PAY_STYLE = #{record.payStyle,jdbcType=VARCHAR},
+      UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      UPDATE_CHL_ID = #{record.updateChlId,jdbcType=VARCHAR},
+      UPDATE_OPER_ID = #{record.updateOperId,jdbcType=VARCHAR},
+      TOTAL_JF = #{record.totalJf,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

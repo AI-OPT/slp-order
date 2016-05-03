@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOdStateChgMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOdStateChg" >
+    <result column="STATE_CHG_ID" property="stateChgId" jdbcType="BIGINT" />
+    <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
+    <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
+    <result column="ORG_STATE" property="orgState" jdbcType="VARCHAR" />
+    <result column="NEW_STATE" property="newState" jdbcType="VARCHAR" />
+    <result column="CHG_DESC" property="chgDesc" jdbcType="VARCHAR" />
+    <result column="ORG_ID" property="orgId" jdbcType="VARCHAR" />
+    <result column="OPER_ID" property="operId" jdbcType="VARCHAR" />
+    <result column="OPER_NAME" property="operName" jdbcType="VARCHAR" />
+    <result column="STATE_CHG_TIME" property="stateChgTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    STATE_CHG_ID, ORDER_ID, TENANT_ID, ORG_STATE, NEW_STATE, CHG_DESC, ORG_ID, OPER_ID, 
+    OPER_NAME, STATE_CHG_TIME
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdStateChgCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from ord_od_state_chg
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdStateChgCriteria" >
+    delete from ord_od_state_chg
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdStateChg" >
+    insert into ord_od_state_chg (STATE_CHG_ID, ORDER_ID, TENANT_ID, 
+      ORG_STATE, NEW_STATE, CHG_DESC, 
+      ORG_ID, OPER_ID, OPER_NAME, 
+      STATE_CHG_TIME)
+    values (#{stateChgId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, 
+      #{orgState,jdbcType=VARCHAR}, #{newState,jdbcType=VARCHAR}, #{chgDesc,jdbcType=VARCHAR}, 
+      #{orgId,jdbcType=VARCHAR}, #{operId,jdbcType=VARCHAR}, #{operName,jdbcType=VARCHAR}, 
+      #{stateChgTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdStateChg" >
+    insert into ord_od_state_chg
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="stateChgId != null" >
+        STATE_CHG_ID,
+      </if>
+      <if test="orderId != null" >
+        ORDER_ID,
+      </if>
+      <if test="tenantId != null" >
+        TENANT_ID,
+      </if>
+      <if test="orgState != null" >
+        ORG_STATE,
+      </if>
+      <if test="newState != null" >
+        NEW_STATE,
+      </if>
+      <if test="chgDesc != null" >
+        CHG_DESC,
+      </if>
+      <if test="orgId != null" >
+        ORG_ID,
+      </if>
+      <if test="operId != null" >
+        OPER_ID,
+      </if>
+      <if test="operName != null" >
+        OPER_NAME,
+      </if>
+      <if test="stateChgTime != null" >
+        STATE_CHG_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="stateChgId != null" >
+        #{stateChgId,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgState != null" >
+        #{orgState,jdbcType=VARCHAR},
+      </if>
+      <if test="newState != null" >
+        #{newState,jdbcType=VARCHAR},
+      </if>
+      <if test="chgDesc != null" >
+        #{chgDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        #{operId,jdbcType=VARCHAR},
+      </if>
+      <if test="operName != null" >
+        #{operName,jdbcType=VARCHAR},
+      </if>
+      <if test="stateChgTime != null" >
+        #{stateChgTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdStateChgCriteria" resultType="java.lang.Integer" >
+    select count(*) from ord_od_state_chg
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ord_od_state_chg
+    <set >
+      <if test="record.stateChgId != null" >
+        STATE_CHG_ID = #{record.stateChgId,jdbcType=BIGINT},
+      </if>
+      <if test="record.orderId != null" >
+        ORDER_ID = #{record.orderId,jdbcType=BIGINT},
+      </if>
+      <if test="record.tenantId != null" >
+        TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgState != null" >
+        ORG_STATE = #{record.orgState,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newState != null" >
+        NEW_STATE = #{record.newState,jdbcType=VARCHAR},
+      </if>
+      <if test="record.chgDesc != null" >
+        CHG_DESC = #{record.chgDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgId != null" >
+        ORG_ID = #{record.orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operId != null" >
+        OPER_ID = #{record.operId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operName != null" >
+        OPER_NAME = #{record.operName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stateChgTime != null" >
+        STATE_CHG_TIME = #{record.stateChgTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ord_od_state_chg
+    set STATE_CHG_ID = #{record.stateChgId,jdbcType=BIGINT},
+      ORDER_ID = #{record.orderId,jdbcType=BIGINT},
+      TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      ORG_STATE = #{record.orgState,jdbcType=VARCHAR},
+      NEW_STATE = #{record.newState,jdbcType=VARCHAR},
+      CHG_DESC = #{record.chgDesc,jdbcType=VARCHAR},
+      ORG_ID = #{record.orgId,jdbcType=VARCHAR},
+      OPER_ID = #{record.operId,jdbcType=VARCHAR},
+      OPER_NAME = #{record.operName,jdbcType=VARCHAR},
+      STATE_CHG_TIME = #{record.stateChgTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>
