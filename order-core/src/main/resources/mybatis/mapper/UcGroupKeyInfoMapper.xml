@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.user.dao.mapper.interfaces.UcGroupKeyInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.user.dao.mapper.bo.UcGroupKeyInfo" >
+    <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+    <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
+    <result column="CERT_NUM" property="certNum" jdbcType="VARCHAR" />
+    <result column="CUST_NAME" property="custName" jdbcType="VARCHAR" />
+    <result column="PROVINCE_CODE" property="provinceCode" jdbcType="VARCHAR" />
+    <result column="CITY_CODE" property="cityCode" jdbcType="VARCHAR" />
+    <result column="COUNTY_CODE" property="countyCode" jdbcType="VARCHAR" />
+    <result column="CERT_ADDR" property="certAddr" jdbcType="VARCHAR" />
+    <result column="CERT_ISSUE_DATE" property="certIssueDate" jdbcType="TIMESTAMP" />
+    <result column="REGISTERED_CAPITASS" property="registeredCapitass" jdbcType="DECIMAL" />
+    <result column="CERT_VALID_DATE" property="certValidDate" jdbcType="TIMESTAMP" />
+    <result column="CERT_INVALID_DATE" property="certInvalidDate" jdbcType="TIMESTAMP" />
+    <result column="WEB_FLAG" property="webFlag" jdbcType="VARCHAR" />
+    <result column="GROUP_WEBSITE" property="groupWebsite" jdbcType="VARCHAR" />
+    <result column="GROUP_MEMBER_SCALE" property="groupMemberScale" jdbcType="VARCHAR" />
+    <result column="GROUP_TYPE" property="groupType" jdbcType="VARCHAR" />
+    <result column="GROUP_INDUSTRY" property="groupIndustry" jdbcType="VARCHAR" />
+    <result column="GROUP_BUSINESS_SCOPE" property="groupBusinessScope" jdbcType="VARCHAR" />
+    <result column="GROUP_PRODUCT" property="groupProduct" jdbcType="CHAR" />
+    <result column="LEGAL_PERSON" property="legalPerson" jdbcType="VARCHAR" />
+    <result column="LEGAL_CERT_NUM" property="legalCertNum" jdbcType="VARCHAR" />
+    <result column="ORG_CODE" property="orgCode" jdbcType="VARCHAR" />
+    <result column="TAXPAYER_CODE" property="taxpayerCode" jdbcType="VARCHAR" />
+    <result column="TAXPAYER_TYPE" property="taxpayerType" jdbcType="VARCHAR" />
+    <result column="TAXPAYER_TYPE_CODE" property="taxpayerTypeCode" jdbcType="VARCHAR" />
+    <result column="GROUP_INFO" property="groupInfo" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_CHL_ID" property="createChlId" jdbcType="VARCHAR" />
+    <result column="CREATE_OPER_ID" property="createOperId" jdbcType="BIGINT" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_CHL_ID" property="updateChlId" jdbcType="VARCHAR" />
+    <result column="UPDATE_OPER_ID" property="updateOperId" jdbcType="BIGINT" />
+    <result column="CONTRACT_ID" property="contractId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    TENANT_ID, USER_ID, USER_TYPE, CERT_NUM, CUST_NAME, PROVINCE_CODE, CITY_CODE, COUNTY_CODE, 
+    CERT_ADDR, CERT_ISSUE_DATE, REGISTERED_CAPITASS, CERT_VALID_DATE, CERT_INVALID_DATE, 
+    WEB_FLAG, GROUP_WEBSITE, GROUP_MEMBER_SCALE, GROUP_TYPE, GROUP_INDUSTRY, GROUP_BUSINESS_SCOPE, 
+    GROUP_PRODUCT, LEGAL_PERSON, LEGAL_CERT_NUM, ORG_CODE, TAXPAYER_CODE, TAXPAYER_TYPE, 
+    TAXPAYER_TYPE_CODE, GROUP_INFO, CREATE_TIME, CREATE_CHL_ID, CREATE_OPER_ID, UPDATE_TIME, 
+    UPDATE_CHL_ID, UPDATE_OPER_ID, CONTRACT_ID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.user.dao.mapper.bo.UcGroupKeyInfoCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from uc_group_key_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.ai.slp.user.dao.mapper.bo.UcGroupKeyInfoCriteria" >
+    delete from uc_group_key_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.user.dao.mapper.bo.UcGroupKeyInfo" >
+    insert into uc_group_key_info (TENANT_ID, USER_ID, USER_TYPE, 
+      CERT_NUM, CUST_NAME, PROVINCE_CODE, 
+      CITY_CODE, COUNTY_CODE, CERT_ADDR, 
+      CERT_ISSUE_DATE, REGISTERED_CAPITASS, CERT_VALID_DATE, 
+      CERT_INVALID_DATE, WEB_FLAG, GROUP_WEBSITE, 
+      GROUP_MEMBER_SCALE, GROUP_TYPE, GROUP_INDUSTRY, 
+      GROUP_BUSINESS_SCOPE, GROUP_PRODUCT, LEGAL_PERSON, 
+      LEGAL_CERT_NUM, ORG_CODE, TAXPAYER_CODE, 
+      TAXPAYER_TYPE, TAXPAYER_TYPE_CODE, GROUP_INFO, 
+      CREATE_TIME, CREATE_CHL_ID, CREATE_OPER_ID, 
+      UPDATE_TIME, UPDATE_CHL_ID, UPDATE_OPER_ID, 
+      CONTRACT_ID)
+    values (#{tenantId,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{userType,jdbcType=VARCHAR}, 
+      #{certNum,jdbcType=VARCHAR}, #{custName,jdbcType=VARCHAR}, #{provinceCode,jdbcType=VARCHAR}, 
+      #{cityCode,jdbcType=VARCHAR}, #{countyCode,jdbcType=VARCHAR}, #{certAddr,jdbcType=VARCHAR}, 
+      #{certIssueDate,jdbcType=TIMESTAMP}, #{registeredCapitass,jdbcType=DECIMAL}, #{certValidDate,jdbcType=TIMESTAMP}, 
+      #{certInvalidDate,jdbcType=TIMESTAMP}, #{webFlag,jdbcType=VARCHAR}, #{groupWebsite,jdbcType=VARCHAR}, 
+      #{groupMemberScale,jdbcType=VARCHAR}, #{groupType,jdbcType=VARCHAR}, #{groupIndustry,jdbcType=VARCHAR}, 
+      #{groupBusinessScope,jdbcType=VARCHAR}, #{groupProduct,jdbcType=CHAR}, #{legalPerson,jdbcType=VARCHAR}, 
+      #{legalCertNum,jdbcType=VARCHAR}, #{orgCode,jdbcType=VARCHAR}, #{taxpayerCode,jdbcType=VARCHAR}, 
+      #{taxpayerType,jdbcType=VARCHAR}, #{taxpayerTypeCode,jdbcType=VARCHAR}, #{groupInfo,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createChlId,jdbcType=VARCHAR}, #{createOperId,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateChlId,jdbcType=VARCHAR}, #{updateOperId,jdbcType=BIGINT}, 
+      #{contractId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.user.dao.mapper.bo.UcGroupKeyInfo" >
+    insert into uc_group_key_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tenantId != null" >
+        TENANT_ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="userType != null" >
+        USER_TYPE,
+      </if>
+      <if test="certNum != null" >
+        CERT_NUM,
+      </if>
+      <if test="custName != null" >
+        CUST_NAME,
+      </if>
+      <if test="provinceCode != null" >
+        PROVINCE_CODE,
+      </if>
+      <if test="cityCode != null" >
+        CITY_CODE,
+      </if>
+      <if test="countyCode != null" >
+        COUNTY_CODE,
+      </if>
+      <if test="certAddr != null" >
+        CERT_ADDR,
+      </if>
+      <if test="certIssueDate != null" >
+        CERT_ISSUE_DATE,
+      </if>
+      <if test="registeredCapitass != null" >
+        REGISTERED_CAPITASS,
+      </if>
+      <if test="certValidDate != null" >
+        CERT_VALID_DATE,
+      </if>
+      <if test="certInvalidDate != null" >
+        CERT_INVALID_DATE,
+      </if>
+      <if test="webFlag != null" >
+        WEB_FLAG,
+      </if>
+      <if test="groupWebsite != null" >
+        GROUP_WEBSITE,
+      </if>
+      <if test="groupMemberScale != null" >
+        GROUP_MEMBER_SCALE,
+      </if>
+      <if test="groupType != null" >
+        GROUP_TYPE,
+      </if>
+      <if test="groupIndustry != null" >
+        GROUP_INDUSTRY,
+      </if>
+      <if test="groupBusinessScope != null" >
+        GROUP_BUSINESS_SCOPE,
+      </if>
+      <if test="groupProduct != null" >
+        GROUP_PRODUCT,
+      </if>
+      <if test="legalPerson != null" >
+        LEGAL_PERSON,
+      </if>
+      <if test="legalCertNum != null" >
+        LEGAL_CERT_NUM,
+      </if>
+      <if test="orgCode != null" >
+        ORG_CODE,
+      </if>
+      <if test="taxpayerCode != null" >
+        TAXPAYER_CODE,
+      </if>
+      <if test="taxpayerType != null" >
+        TAXPAYER_TYPE,
+      </if>
+      <if test="taxpayerTypeCode != null" >
+        TAXPAYER_TYPE_CODE,
+      </if>
+      <if test="groupInfo != null" >
+        GROUP_INFO,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="createChlId != null" >
+        CREATE_CHL_ID,
+      </if>
+      <if test="createOperId != null" >
+        CREATE_OPER_ID,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="updateChlId != null" >
+        UPDATE_CHL_ID,
+      </if>
+      <if test="updateOperId != null" >
+        UPDATE_OPER_ID,
+      </if>
+      <if test="contractId != null" >
+        CONTRACT_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="certNum != null" >
+        #{certNum,jdbcType=VARCHAR},
+      </if>
+      <if test="custName != null" >
+        #{custName,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceCode != null" >
+        #{provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="countyCode != null" >
+        #{countyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="certAddr != null" >
+        #{certAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="certIssueDate != null" >
+        #{certIssueDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="registeredCapitass != null" >
+        #{registeredCapitass,jdbcType=DECIMAL},
+      </if>
+      <if test="certValidDate != null" >
+        #{certValidDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="certInvalidDate != null" >
+        #{certInvalidDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="webFlag != null" >
+        #{webFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="groupWebsite != null" >
+        #{groupWebsite,jdbcType=VARCHAR},
+      </if>
+      <if test="groupMemberScale != null" >
+        #{groupMemberScale,jdbcType=VARCHAR},
+      </if>
+      <if test="groupType != null" >
+        #{groupType,jdbcType=VARCHAR},
+      </if>
+      <if test="groupIndustry != null" >
+        #{groupIndustry,jdbcType=VARCHAR},
+      </if>
+      <if test="groupBusinessScope != null" >
+        #{groupBusinessScope,jdbcType=VARCHAR},
+      </if>
+      <if test="groupProduct != null" >
+        #{groupProduct,jdbcType=CHAR},
+      </if>
+      <if test="legalPerson != null" >
+        #{legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="legalCertNum != null" >
+        #{legalCertNum,jdbcType=VARCHAR},
+      </if>
+      <if test="orgCode != null" >
+        #{orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="taxpayerCode != null" >
+        #{taxpayerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="taxpayerType != null" >
+        #{taxpayerType,jdbcType=VARCHAR},
+      </if>
+      <if test="taxpayerTypeCode != null" >
+        #{taxpayerTypeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="groupInfo != null" >
+        #{groupInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createChlId != null" >
+        #{createChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="createOperId != null" >
+        #{createOperId,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateChlId != null" >
+        #{updateChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateOperId != null" >
+        #{updateOperId,jdbcType=BIGINT},
+      </if>
+      <if test="contractId != null" >
+        #{contractId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.user.dao.mapper.bo.UcGroupKeyInfoCriteria" resultType="java.lang.Integer" >
+    select count(*) from uc_group_key_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update uc_group_key_info
+    <set >
+      <if test="record.tenantId != null" >
+        TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null" >
+        USER_ID = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.userType != null" >
+        USER_TYPE = #{record.userType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.certNum != null" >
+        CERT_NUM = #{record.certNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.custName != null" >
+        CUST_NAME = #{record.custName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.provinceCode != null" >
+        PROVINCE_CODE = #{record.provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cityCode != null" >
+        CITY_CODE = #{record.cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.countyCode != null" >
+        COUNTY_CODE = #{record.countyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.certAddr != null" >
+        CERT_ADDR = #{record.certAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.certIssueDate != null" >
+        CERT_ISSUE_DATE = #{record.certIssueDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.registeredCapitass != null" >
+        REGISTERED_CAPITASS = #{record.registeredCapitass,jdbcType=DECIMAL},
+      </if>
+      <if test="record.certValidDate != null" >
+        CERT_VALID_DATE = #{record.certValidDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.certInvalidDate != null" >
+        CERT_INVALID_DATE = #{record.certInvalidDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.webFlag != null" >
+        WEB_FLAG = #{record.webFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupWebsite != null" >
+        GROUP_WEBSITE = #{record.groupWebsite,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupMemberScale != null" >
+        GROUP_MEMBER_SCALE = #{record.groupMemberScale,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupType != null" >
+        GROUP_TYPE = #{record.groupType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupIndustry != null" >
+        GROUP_INDUSTRY = #{record.groupIndustry,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupBusinessScope != null" >
+        GROUP_BUSINESS_SCOPE = #{record.groupBusinessScope,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupProduct != null" >
+        GROUP_PRODUCT = #{record.groupProduct,jdbcType=CHAR},
+      </if>
+      <if test="record.legalPerson != null" >
+        LEGAL_PERSON = #{record.legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="record.legalCertNum != null" >
+        LEGAL_CERT_NUM = #{record.legalCertNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgCode != null" >
+        ORG_CODE = #{record.orgCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taxpayerCode != null" >
+        TAXPAYER_CODE = #{record.taxpayerCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taxpayerType != null" >
+        TAXPAYER_TYPE = #{record.taxpayerType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taxpayerTypeCode != null" >
+        TAXPAYER_TYPE_CODE = #{record.taxpayerTypeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupInfo != null" >
+        GROUP_INFO = #{record.groupInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createChlId != null" >
+        CREATE_CHL_ID = #{record.createChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createOperId != null" >
+        CREATE_OPER_ID = #{record.createOperId,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null" >
+        UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateChlId != null" >
+        UPDATE_CHL_ID = #{record.updateChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateOperId != null" >
+        UPDATE_OPER_ID = #{record.updateOperId,jdbcType=BIGINT},
+      </if>
+      <if test="record.contractId != null" >
+        CONTRACT_ID = #{record.contractId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update uc_group_key_info
+    set TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      USER_ID = #{record.userId,jdbcType=BIGINT},
+      USER_TYPE = #{record.userType,jdbcType=VARCHAR},
+      CERT_NUM = #{record.certNum,jdbcType=VARCHAR},
+      CUST_NAME = #{record.custName,jdbcType=VARCHAR},
+      PROVINCE_CODE = #{record.provinceCode,jdbcType=VARCHAR},
+      CITY_CODE = #{record.cityCode,jdbcType=VARCHAR},
+      COUNTY_CODE = #{record.countyCode,jdbcType=VARCHAR},
+      CERT_ADDR = #{record.certAddr,jdbcType=VARCHAR},
+      CERT_ISSUE_DATE = #{record.certIssueDate,jdbcType=TIMESTAMP},
+      REGISTERED_CAPITASS = #{record.registeredCapitass,jdbcType=DECIMAL},
+      CERT_VALID_DATE = #{record.certValidDate,jdbcType=TIMESTAMP},
+      CERT_INVALID_DATE = #{record.certInvalidDate,jdbcType=TIMESTAMP},
+      WEB_FLAG = #{record.webFlag,jdbcType=VARCHAR},
+      GROUP_WEBSITE = #{record.groupWebsite,jdbcType=VARCHAR},
+      GROUP_MEMBER_SCALE = #{record.groupMemberScale,jdbcType=VARCHAR},
+      GROUP_TYPE = #{record.groupType,jdbcType=VARCHAR},
+      GROUP_INDUSTRY = #{record.groupIndustry,jdbcType=VARCHAR},
+      GROUP_BUSINESS_SCOPE = #{record.groupBusinessScope,jdbcType=VARCHAR},
+      GROUP_PRODUCT = #{record.groupProduct,jdbcType=CHAR},
+      LEGAL_PERSON = #{record.legalPerson,jdbcType=VARCHAR},
+      LEGAL_CERT_NUM = #{record.legalCertNum,jdbcType=VARCHAR},
+      ORG_CODE = #{record.orgCode,jdbcType=VARCHAR},
+      TAXPAYER_CODE = #{record.taxpayerCode,jdbcType=VARCHAR},
+      TAXPAYER_TYPE = #{record.taxpayerType,jdbcType=VARCHAR},
+      TAXPAYER_TYPE_CODE = #{record.taxpayerTypeCode,jdbcType=VARCHAR},
+      GROUP_INFO = #{record.groupInfo,jdbcType=VARCHAR},
+      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      CREATE_CHL_ID = #{record.createChlId,jdbcType=VARCHAR},
+      CREATE_OPER_ID = #{record.createOperId,jdbcType=BIGINT},
+      UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      UPDATE_CHL_ID = #{record.updateChlId,jdbcType=VARCHAR},
+      UPDATE_OPER_ID = #{record.updateOperId,jdbcType=BIGINT},
+      CONTRACT_ID = #{record.contractId,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

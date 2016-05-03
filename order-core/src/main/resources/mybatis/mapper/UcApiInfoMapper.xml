@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.user.dao.mapper.interfaces.UcApiInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.user.dao.mapper.bo.UcApiInfo" >
+    <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
+    <result column="API_SEQ_ID" property="apiSeqId" jdbcType="CHAR" />
+    <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+    <result column="API_NAME" property="apiName" jdbcType="VARCHAR" />
+    <result column="API_TYPE" property="apiType" jdbcType="VARCHAR" />
+    <result column="API_INFO" property="apiInfo" jdbcType="VARCHAR" />
+    <result column="WEB_ADDR" property="webAddr" jdbcType="VARCHAR" />
+    <result column="IP_ADDR" property="ipAddr" jdbcType="VARCHAR" />
+    <result column="OPER_SERVICE" property="operService" jdbcType="VARCHAR" />
+    <result column="SECRET_KEY" property="secretKey" jdbcType="VARCHAR" />
+    <result column="API_KEY" property="apiKey" jdbcType="VARCHAR" />
+    <result column="CONTACT_NAME" property="contactName" jdbcType="VARCHAR" />
+    <result column="CONTACT_CERT_TYPE" property="contactCertType" jdbcType="VARCHAR" />
+    <result column="CONTACT_CERT_NUM" property="contactCertNum" jdbcType="VARCHAR" />
+    <result column="CONTACT_WX_ID" property="contactWxId" jdbcType="VARCHAR" />
+    <result column="CONTACT_MP" property="contactMp" jdbcType="VARCHAR" />
+    <result column="CONTACT_EMAIL" property="contactEmail" jdbcType="VARCHAR" />
+    <result column="CONTACT_ADDRESS" property="contactAddress" jdbcType="VARCHAR" />
+    <result column="GROUP_ZIP" property="groupZip" jdbcType="VARCHAR" />
+    <result column="CONTACT_DEPT" property="contactDept" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_CHL_ID" property="createChlId" jdbcType="VARCHAR" />
+    <result column="CREATE_OPER_ID" property="createOperId" jdbcType="BIGINT" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_CHL_ID" property="updateChlId" jdbcType="VARCHAR" />
+    <result column="UPDATE_OPER_ID" property="updateOperId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    TENANT_ID, API_SEQ_ID, USER_ID, API_NAME, API_TYPE, API_INFO, WEB_ADDR, IP_ADDR, 
+    OPER_SERVICE, SECRET_KEY, API_KEY, CONTACT_NAME, CONTACT_CERT_TYPE, CONTACT_CERT_NUM, 
+    CONTACT_WX_ID, CONTACT_MP, CONTACT_EMAIL, CONTACT_ADDRESS, GROUP_ZIP, CONTACT_DEPT, 
+    REMARK, CREATE_TIME, CREATE_CHL_ID, CREATE_OPER_ID, UPDATE_TIME, UPDATE_CHL_ID, UPDATE_OPER_ID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.user.dao.mapper.bo.UcApiInfoCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from uc_api_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.ai.slp.user.dao.mapper.bo.UcApiInfoCriteria" >
+    delete from uc_api_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.user.dao.mapper.bo.UcApiInfo" >
+    insert into uc_api_info (TENANT_ID, API_SEQ_ID, USER_ID, 
+      API_NAME, API_TYPE, API_INFO, 
+      WEB_ADDR, IP_ADDR, OPER_SERVICE, 
+      SECRET_KEY, API_KEY, CONTACT_NAME, 
+      CONTACT_CERT_TYPE, CONTACT_CERT_NUM, CONTACT_WX_ID, 
+      CONTACT_MP, CONTACT_EMAIL, CONTACT_ADDRESS, 
+      GROUP_ZIP, CONTACT_DEPT, REMARK, 
+      CREATE_TIME, CREATE_CHL_ID, CREATE_OPER_ID, 
+      UPDATE_TIME, UPDATE_CHL_ID, UPDATE_OPER_ID
+      )
+    values (#{tenantId,jdbcType=VARCHAR}, #{apiSeqId,jdbcType=CHAR}, #{userId,jdbcType=BIGINT}, 
+      #{apiName,jdbcType=VARCHAR}, #{apiType,jdbcType=VARCHAR}, #{apiInfo,jdbcType=VARCHAR}, 
+      #{webAddr,jdbcType=VARCHAR}, #{ipAddr,jdbcType=VARCHAR}, #{operService,jdbcType=VARCHAR}, 
+      #{secretKey,jdbcType=VARCHAR}, #{apiKey,jdbcType=VARCHAR}, #{contactName,jdbcType=VARCHAR}, 
+      #{contactCertType,jdbcType=VARCHAR}, #{contactCertNum,jdbcType=VARCHAR}, #{contactWxId,jdbcType=VARCHAR}, 
+      #{contactMp,jdbcType=VARCHAR}, #{contactEmail,jdbcType=VARCHAR}, #{contactAddress,jdbcType=VARCHAR}, 
+      #{groupZip,jdbcType=VARCHAR}, #{contactDept,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createChlId,jdbcType=VARCHAR}, #{createOperId,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateChlId,jdbcType=VARCHAR}, #{updateOperId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.user.dao.mapper.bo.UcApiInfo" >
+    insert into uc_api_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tenantId != null" >
+        TENANT_ID,
+      </if>
+      <if test="apiSeqId != null" >
+        API_SEQ_ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="apiName != null" >
+        API_NAME,
+      </if>
+      <if test="apiType != null" >
+        API_TYPE,
+      </if>
+      <if test="apiInfo != null" >
+        API_INFO,
+      </if>
+      <if test="webAddr != null" >
+        WEB_ADDR,
+      </if>
+      <if test="ipAddr != null" >
+        IP_ADDR,
+      </if>
+      <if test="operService != null" >
+        OPER_SERVICE,
+      </if>
+      <if test="secretKey != null" >
+        SECRET_KEY,
+      </if>
+      <if test="apiKey != null" >
+        API_KEY,
+      </if>
+      <if test="contactName != null" >
+        CONTACT_NAME,
+      </if>
+      <if test="contactCertType != null" >
+        CONTACT_CERT_TYPE,
+      </if>
+      <if test="contactCertNum != null" >
+        CONTACT_CERT_NUM,
+      </if>
+      <if test="contactWxId != null" >
+        CONTACT_WX_ID,
+      </if>
+      <if test="contactMp != null" >
+        CONTACT_MP,
+      </if>
+      <if test="contactEmail != null" >
+        CONTACT_EMAIL,
+      </if>
+      <if test="contactAddress != null" >
+        CONTACT_ADDRESS,
+      </if>
+      <if test="groupZip != null" >
+        GROUP_ZIP,
+      </if>
+      <if test="contactDept != null" >
+        CONTACT_DEPT,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="createChlId != null" >
+        CREATE_CHL_ID,
+      </if>
+      <if test="createOperId != null" >
+        CREATE_OPER_ID,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="updateChlId != null" >
+        UPDATE_CHL_ID,
+      </if>
+      <if test="updateOperId != null" >
+        UPDATE_OPER_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="apiSeqId != null" >
+        #{apiSeqId,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="apiName != null" >
+        #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="apiType != null" >
+        #{apiType,jdbcType=VARCHAR},
+      </if>
+      <if test="apiInfo != null" >
+        #{apiInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="webAddr != null" >
+        #{webAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="ipAddr != null" >
+        #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="operService != null" >
+        #{operService,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null" >
+        #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="apiKey != null" >
+        #{apiKey,jdbcType=VARCHAR},
+      </if>
+      <if test="contactName != null" >
+        #{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactCertType != null" >
+        #{contactCertType,jdbcType=VARCHAR},
+      </if>
+      <if test="contactCertNum != null" >
+        #{contactCertNum,jdbcType=VARCHAR},
+      </if>
+      <if test="contactWxId != null" >
+        #{contactWxId,jdbcType=VARCHAR},
+      </if>
+      <if test="contactMp != null" >
+        #{contactMp,jdbcType=VARCHAR},
+      </if>
+      <if test="contactEmail != null" >
+        #{contactEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="contactAddress != null" >
+        #{contactAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="groupZip != null" >
+        #{groupZip,jdbcType=VARCHAR},
+      </if>
+      <if test="contactDept != null" >
+        #{contactDept,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createChlId != null" >
+        #{createChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="createOperId != null" >
+        #{createOperId,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateChlId != null" >
+        #{updateChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateOperId != null" >
+        #{updateOperId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.user.dao.mapper.bo.UcApiInfoCriteria" resultType="java.lang.Integer" >
+    select count(*) from uc_api_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update uc_api_info
+    <set >
+      <if test="record.tenantId != null" >
+        TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.apiSeqId != null" >
+        API_SEQ_ID = #{record.apiSeqId,jdbcType=CHAR},
+      </if>
+      <if test="record.userId != null" >
+        USER_ID = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.apiName != null" >
+        API_NAME = #{record.apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.apiType != null" >
+        API_TYPE = #{record.apiType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.apiInfo != null" >
+        API_INFO = #{record.apiInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.webAddr != null" >
+        WEB_ADDR = #{record.webAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ipAddr != null" >
+        IP_ADDR = #{record.ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.operService != null" >
+        OPER_SERVICE = #{record.operService,jdbcType=VARCHAR},
+      </if>
+      <if test="record.secretKey != null" >
+        SECRET_KEY = #{record.secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="record.apiKey != null" >
+        API_KEY = #{record.apiKey,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactName != null" >
+        CONTACT_NAME = #{record.contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactCertType != null" >
+        CONTACT_CERT_TYPE = #{record.contactCertType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactCertNum != null" >
+        CONTACT_CERT_NUM = #{record.contactCertNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactWxId != null" >
+        CONTACT_WX_ID = #{record.contactWxId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactMp != null" >
+        CONTACT_MP = #{record.contactMp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactEmail != null" >
+        CONTACT_EMAIL = #{record.contactEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactAddress != null" >
+        CONTACT_ADDRESS = #{record.contactAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupZip != null" >
+        GROUP_ZIP = #{record.groupZip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactDept != null" >
+        CONTACT_DEPT = #{record.contactDept,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        REMARK = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createChlId != null" >
+        CREATE_CHL_ID = #{record.createChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createOperId != null" >
+        CREATE_OPER_ID = #{record.createOperId,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null" >
+        UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateChlId != null" >
+        UPDATE_CHL_ID = #{record.updateChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateOperId != null" >
+        UPDATE_OPER_ID = #{record.updateOperId,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update uc_api_info
+    set TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      API_SEQ_ID = #{record.apiSeqId,jdbcType=CHAR},
+      USER_ID = #{record.userId,jdbcType=BIGINT},
+      API_NAME = #{record.apiName,jdbcType=VARCHAR},
+      API_TYPE = #{record.apiType,jdbcType=VARCHAR},
+      API_INFO = #{record.apiInfo,jdbcType=VARCHAR},
+      WEB_ADDR = #{record.webAddr,jdbcType=VARCHAR},
+      IP_ADDR = #{record.ipAddr,jdbcType=VARCHAR},
+      OPER_SERVICE = #{record.operService,jdbcType=VARCHAR},
+      SECRET_KEY = #{record.secretKey,jdbcType=VARCHAR},
+      API_KEY = #{record.apiKey,jdbcType=VARCHAR},
+      CONTACT_NAME = #{record.contactName,jdbcType=VARCHAR},
+      CONTACT_CERT_TYPE = #{record.contactCertType,jdbcType=VARCHAR},
+      CONTACT_CERT_NUM = #{record.contactCertNum,jdbcType=VARCHAR},
+      CONTACT_WX_ID = #{record.contactWxId,jdbcType=VARCHAR},
+      CONTACT_MP = #{record.contactMp,jdbcType=VARCHAR},
+      CONTACT_EMAIL = #{record.contactEmail,jdbcType=VARCHAR},
+      CONTACT_ADDRESS = #{record.contactAddress,jdbcType=VARCHAR},
+      GROUP_ZIP = #{record.groupZip,jdbcType=VARCHAR},
+      CONTACT_DEPT = #{record.contactDept,jdbcType=VARCHAR},
+      REMARK = #{record.remark,jdbcType=VARCHAR},
+      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      CREATE_CHL_ID = #{record.createChlId,jdbcType=VARCHAR},
+      CREATE_OPER_ID = #{record.createOperId,jdbcType=BIGINT},
+      UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      UPDATE_CHL_ID = #{record.updateChlId,jdbcType=VARCHAR},
+      UPDATE_OPER_ID = #{record.updateOperId,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>
