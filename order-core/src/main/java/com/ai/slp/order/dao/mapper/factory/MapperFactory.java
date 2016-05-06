@@ -6,6 +6,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdExtendMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeOffsetMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeTotalMapper;
@@ -64,6 +65,10 @@ public class MapperFactory {
 
     public static OrdOrderMapper getOrdOrderMapper() {
         return sqlSessionTemplate.getMapper(OrdOrderMapper.class);
+    }
+    
+    public static OrdOdProdExtend getOrdOdProdExtendMapper(){
+        return sqlSessionTemplate.getMapper(OrdOdProdExtend.class);
     }
 
 }
