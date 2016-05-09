@@ -18,8 +18,11 @@ import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.slp.order.api.orderlist.param.OrdOrderParams;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
 import com.ai.slp.order.util.DateUtils;
@@ -33,6 +36,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
 
+    @Autowired
+    private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
+
     @Override
     public QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest)
             throws BusinessException, SystemException {
@@ -40,15 +46,15 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
 
         criteria.andTenantIdEqualTo(orderListRequest.getTenantId());
-
-        if (orderListRequest.getParentOrderId() != 0) {
-            criteria.andParentOrderIdEqualTo(orderListRequest.getParentOrderId());
-        }
-        if (!StringUtils.isBlank(orderListRequest.getSubFlag())) {
-            criteria.andSubFlagEqualTo(orderListRequest.getSubFlag());
+        // 添加搜索条件
+        if (orderListRequest.getOrderId() != 0) {
+            criteria.andOrderIdEqualTo(orderListRequest.getOrderId());
         }
         if (!StringUtils.isBlank(orderListRequest.getOrderType())) {
             criteria.andOrderTypeEqualTo(orderListRequest.getOrderType());
+        }
+        if (!StringUtils.isBlank(orderListRequest.getState())) {
+            criteria.andStateEqualTo(orderListRequest.getState());
         }
         if ((orderListRequest.getOrderTimeBegin() != null)
                 && (orderListRequest.getOrderTimeEnd() != null)) {
@@ -58,15 +64,21 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                     DateUtils.getTimestamp(orderListRequest.getOrderTimeEnd(),
                             "yyyy-MM-dd HH:mm:ss"));
         }
-        if ((orderListRequest.getOrderChgBegin() != null)
-                && (orderListRequest.getOrderChgEnd() != null)) {
-            criteria.andStateChgTimeBetween(
-                    DateUtils.getTimestamp(orderListRequest.getOrderTimeBegin(),
-                            "yyyy-MM-dd HH:mm:ss"),
-                    DateUtils.getTimestamp(orderListRequest.getOrderTimeEnd(),
-                            "yyyy-MM-dd HH:mm:ss"));
-        }
+        // 判断支付方式
+        if (!StringUtils.isBlank(orderListRequest.getPayStyle())) {
+            OrdOdFeeTotalCriteria example2 = new OrdOdFeeTotalCriteria();
+            OrdOdFeeTotalCriteria.Criteria criteria2 = example2.createCriteria();
+            criteria2.andTenantIdEqualTo(orderListRequest.getTenantId());
+            criteria2.andPayStyleEqualTo(orderListRequest.getPayStyle());
 
+            List<OrdOdFeeTotal> orderFeeTotalList = new ArrayList<OrdOdFeeTotal>();
+            orderFeeTotalList = ordOdFeeTotalAtomSV.selectByExample(example2);
+            List<Long> orderIdList = new ArrayList<Long>();
+            for (OrdOdFeeTotal ordOdFeeTotal : orderFeeTotalList) {
+                orderIdList.add(ordOdFeeTotal.getOrderId());
+            }
+            criteria.andOrderIdIn(orderIdList);
+        }
         List<OrdOrder> list = new ArrayList<OrdOrder>();
         ResponseHeader responseHeader;
         Integer pageNo = orderListRequest.getPageNo();

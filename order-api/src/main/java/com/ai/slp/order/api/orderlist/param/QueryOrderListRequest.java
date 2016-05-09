@@ -13,24 +13,24 @@ public class QueryOrderListRequest extends BaseInfo {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 商品名称关键字
+     * 订单号
      */
-    // private String keyWords;
-
-    /**
-     * 父订单号
-     */
-    private Long parentOrderId;
-
-    /**
-     * 子订单号标识
-     */
-    private String subFlag;
+    private Long orderId;
 
     /**
      * 订单类型
      */
     private String orderType;
+
+    /**
+     * 订单状态
+     */
+    private String state;
+
+    /**
+     * 支付方式
+     */
+    private String payStyle;
 
     /**
      * 订单生成时间开始
@@ -43,16 +43,6 @@ public class QueryOrderListRequest extends BaseInfo {
     private String orderTimeEnd;
 
     /**
-     * 订单状态变化时间开始
-     */
-    private String orderChgBegin;
-
-    /**
-     * 订单状态变化时间结束
-     */
-    private String orderChgEnd;
-
-    /**
      * pageNo
      */
     private Integer pageNo;
@@ -61,22 +51,6 @@ public class QueryOrderListRequest extends BaseInfo {
      * pageSize
      */
     private Integer pageSize;
-
-    public Long getParentOrderId() {
-        return parentOrderId;
-    }
-
-    public void setParentOrderId(Long parentOrderId) {
-        this.parentOrderId = parentOrderId;
-    }
-
-    public String getSubFlag() {
-        return subFlag;
-    }
-
-    public void setSubFlag(String subFlag) {
-        this.subFlag = subFlag;
-    }
 
     public String getOrderType() {
         return orderType;
@@ -102,22 +76,6 @@ public class QueryOrderListRequest extends BaseInfo {
         this.orderTimeEnd = orderTimeEnd;
     }
 
-    public String getOrderChgBegin() {
-        return orderChgBegin;
-    }
-
-    public void setOrderChgBegin(String orderChgBegin) {
-        this.orderChgBegin = orderChgBegin;
-    }
-
-    public String getOrderChgEnd() {
-        return orderChgEnd;
-    }
-
-    public void setOrderChgEnd(String orderChgEnd) {
-        this.orderChgEnd = orderChgEnd;
-    }
-
     public Integer getPageNo() {
         return pageNo;
     }
@@ -132,6 +90,30 @@ public class QueryOrderListRequest extends BaseInfo {
 
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getPayStyle() {
+        return payStyle;
+    }
+
+    public void setPayStyle(String payStyle) {
+        this.payStyle = payStyle;
     }
 
 }
