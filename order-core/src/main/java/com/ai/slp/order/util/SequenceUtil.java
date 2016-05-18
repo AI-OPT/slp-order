@@ -12,7 +12,7 @@ public final class SequenceUtil {
     private static final String ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ = "ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ";
 
 
-    public static Long genCartId(){
+    public static Long genCartProdId(){
         return SeqUtil.getNewId(ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ);
     }
 }
