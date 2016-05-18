@@ -16,11 +16,11 @@ public class CartProdOptRes extends BaseResponse {
     /**
      * 购物车里商品数
      */
-    private Long prodNum;
+    private long prodNum;
     /**
      * 购物车里商品的总数量
      */
-    private Long prodTotal;
+    private long prodTotal;
     /**
      * 删除商品总数,删除操作返回信息
      */
@@ -58,19 +58,19 @@ public class CartProdOptRes extends BaseResponse {
         this.failProdIdList = failProdIdList;
     }
 
-    public Long getProdNum() {
+    public long getProdNum() {
         return prodNum;
     }
 
-    public void setProdNum(Long prodNum) {
+    public void setProdNum(long prodNum) {
         this.prodNum = prodNum;
     }
 
-    public Long getProdTotal() {
+    public long getProdTotal() {
         return prodTotal;
     }
 
-    public void setProdTotal(Long prodTotal) {
+    public void setProdTotal(long prodTotal) {
         this.prodTotal = prodTotal;
     }
 }

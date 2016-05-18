@@ -8,25 +8,25 @@ public class ShopCartCachePointsVo {
     /**
      * 购物车里商品数
      */
-    private Long prodNum;
+    private long prodNum;
     /**
      * 购物车里商品的总数量
      */
-    private Long prodTotal;
+    private long prodTotal;
 
-    public Long getProdNum() {
+    public long getProdNum() {
         return prodNum;
     }
 
-    public void setProdNum(Long prodNum) {
+    public void setProdNum(long prodNum) {
         this.prodNum = prodNum;
     }
 
-    public Long getProdTotal() {
+    public long getProdTotal() {
         return prodTotal;
     }
 
-    public void setProdTotal(Long prodTotal) {
+    public void setProdTotal(long prodTotal) {
         this.prodTotal = prodTotal;
     }
 }
