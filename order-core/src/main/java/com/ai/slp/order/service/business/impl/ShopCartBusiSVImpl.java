@@ -96,6 +96,44 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     }
 
     /**
+     * 更新购物车中商品数量
+     *
+     * @param cartProd
+     * @return
+     */
+    @Override
+    public CartProdOptRes updateCartProd(CartProd cartProd) {
+        String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
+        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(MallIPassConstants.SHOP_CART_MCS);
+        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
+        //若不存在,则直接进行添加操作
+        if (!iCacheClient.hexists(cartUserId,cartProd.getSkuId())){
+            return addCartProd(cartProd);
+        }
+        //若购买数量为空,或小于0,则设置默认为1
+        if (cartProd.getBuyNum() == null
+                || cartProd.getBuyNum()<=0)
+            cartProd.setBuyNum(1l);
+        String cartProdStr = iCacheClient.hget(cartUserId,cartProd.getSkuId());
+        //更新商品数量
+        OrdOdCartProd odCartProd = JSON.parseObject(cartProdStr, OrdOdCartProd.class);
+        //此商品变化的数量,若为负数,则表示减少
+        long addNum = cartProd.getBuyNum() - odCartProd.getBuySum();
+        //更新购买数量
+        odCartProd.setBuySum(cartProd.getBuyNum());
+        //添加/更新商品信息
+        iCacheClient.hset(cartUserId,odCartProd.getSkuId(),JSON.toJSONString(odCartProd));
+        //查询用户购物车概览
+        ShopCartCachePointsVo pointsVo = queryCartPoints(iCacheClient,tenantId,userId);
+        pointsVo.setProdTotal(pointsVo.getProdTotal()+addNum);//更新商品总数量
+        //更新概览
+        iCacheClient.hset(cartUserId,ShopCartConstants.CacheParams.CART_POINTS,JSON.toJSONString(pointsVo));
+        CartProdOptRes cartProdOptRes = new CartProdOptRes();
+        BeanUtils.copyProperties(cartProdOptRes,pointsVo);
+        return cartProdOptRes;
+    }
+
+    /**
      * 查询用户购物车的概览
      * @param iCacheClient
      * @param tenantId

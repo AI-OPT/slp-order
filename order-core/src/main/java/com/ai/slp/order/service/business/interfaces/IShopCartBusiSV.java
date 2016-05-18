@@ -23,4 +23,11 @@ public interface IShopCartBusiSV {
      * @return
      */
     public CartProdOptRes addCartProd(CartProd cartProd);
+
+    /**
+     * 更新购物车中商品数量
+     * @param cartProd
+     * @return
+     */
+    public CartProdOptRes updateCartProd(CartProd cartProd);
 }

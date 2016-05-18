@@ -62,7 +62,8 @@ public class IShopCartSVImpl implements IShopCartSV {
      */
     @Override
     public CartProdOptRes updateProdNum(CartProd cartProd) throws BusinessException, SystemException {
-        return null;
+        CommonCheckUtils.checkTenantId(cartProd.getTenantId(),"");
+        return shopCartBusiSV.updateCartProd(cartProd);
     }
 
     /**
@@ -77,6 +78,8 @@ public class IShopCartSVImpl implements IShopCartSV {
      */
     @Override
     public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd) throws BusinessException, SystemException {
+        CommonCheckUtils.checkTenantId(multiCartProd.getTenantId(),"");
+
         return null;
     }
 
