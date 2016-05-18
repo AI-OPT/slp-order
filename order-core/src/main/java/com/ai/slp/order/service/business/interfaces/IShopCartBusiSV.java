@@ -3,6 +3,8 @@ package com.ai.slp.order.service.business.interfaces;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 
+import java.util.List;
+
 /**
  * 购物车业务操作类型
  * Created by jackieliu on 16/5/17.
@@ -30,4 +32,13 @@ public interface IShopCartBusiSV {
      * @return
      */
     public CartProdOptRes updateCartProd(CartProd cartProd);
+
+    /**
+     * 删除购物车中商品
+     * @param tenantId
+     * @param userId
+     * @param skuIdList
+     * @return
+     */
+    public CartProdOptRes deleteCartProd(String tenantId,String userId,List<String> skuIdList);
 }

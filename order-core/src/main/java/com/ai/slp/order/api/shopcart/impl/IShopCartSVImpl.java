@@ -79,8 +79,7 @@ public class IShopCartSVImpl implements IShopCartSV {
     @Override
     public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd) throws BusinessException, SystemException {
         CommonCheckUtils.checkTenantId(multiCartProd.getTenantId(),"");
-
-        return null;
+        return shopCartBusiSV.deleteCartProd(multiCartProd.getTenantId(),multiCartProd.getUserId(),multiCartProd.getSkuIdList());
     }
 
     /**

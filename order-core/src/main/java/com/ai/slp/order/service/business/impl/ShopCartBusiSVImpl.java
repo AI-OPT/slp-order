@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -131,6 +132,50 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
+    }
+
+    /**
+     * 删除购物车中商品
+     *
+     * @param tenantId
+     * @param userId
+     * @param skuIdList
+     * @return
+     */
+    @Override
+    public CartProdOptRes deleteCartProd(String tenantId, String userId, List<String> skuIdList) {
+        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(MallIPassConstants.SHOP_CART_MCS);
+        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
+        //若不存在购物车信息缓存,则建立缓存
+        if (!iCacheClient.exists(cartUserId)){
+            //从数据库中查询,建立缓存
+            addShopCartCache(tenantId,userId);
+        }
+        List<String> failSkuList = new ArrayList<>();
+        int delTotal = skuIdList.size(),delSuccessNum = 0;
+        //循环删除商品
+        for (String skuId:skuIdList){
+            String cartProdStr = iCacheClient.hget(cartUserId,skuId);
+            //若不包含此商品,则直接跳过
+            if (StringUtils.isBlank(cartProdStr)){
+                failSkuList.add(skuId);
+                continue;
+            }
+            OrdOdCartProd prod = JSON.parseObject(cartProdStr,OrdOdCartProd.class);
+            ShopCartCachePointsVo pointsVo = queryCartPoints(iCacheClient,tenantId,userId);
+            pointsVo.setProdNum(pointsVo.getProdNum()-1);
+            pointsVo.setProdTotal(pointsVo.getProdTotal()-prod.getBuySum());
+            iCacheClient.hdel(cartUserId,skuId);
+            iCacheClient.hset(cartUserId,ShopCartConstants.CacheParams.CART_POINTS,JSON.toJSONString(pointsVo));
+            delSuccessNum++;
+        }
+        CartProdOptRes optRes = new CartProdOptRes();
+        ShopCartCachePointsVo cachePointsVo = queryCartPoints(iCacheClient,tenantId,userId);
+        BeanUtils.copyProperties(optRes,cachePointsVo);
+        optRes.setDelProdTotal(delTotal);
+        optRes.setDelSuccessNum(delSuccessNum);
+        optRes.setFailProdIdList(failSkuList);
+        return optRes;
     }
 
     /**
