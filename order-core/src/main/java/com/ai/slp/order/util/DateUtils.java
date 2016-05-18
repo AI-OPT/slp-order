@@ -65,7 +65,7 @@ public class DateUtils {
 		Timestamp result = null;
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 		try {
-			return new Timestamp(formatter.parse(startStr).getTime());
+			result = new Timestamp(formatter.parse(startStr).getTime());
 		} catch (ParseException e) {
 			logger.error("" ,e);
 		}
@@ -89,20 +89,6 @@ public class DateUtils {
 		int desMonth ;
 		int norimonth = Integer.parseInt(mm);
 
-		//原写法
-        /*if ((norimonth + interval) > 0){
-        	if ((norimonth + interval)%12 == 0){
-				 diffyear = (norimonth + interval)/12 - 1;
-				 desMonth = (norimonth + interval)%12 + 12;
-        	}else{
-				 diffyear = (norimonth + interval)/12;
-				 desMonth = (norimonth + interval)%12;
-        	}
-        }else{
-			 diffyear = (norimonth + interval)/12 - 1;
-			 desMonth = (norimonth + interval)%12 + 12;
-        }*/
-		//改造后代码
 		if ((norimonth + interval) > 0 && (norimonth + interval)%12 != 0){
 			diffyear = (norimonth + interval)/12;
 			desMonth = (norimonth + interval)%12;
