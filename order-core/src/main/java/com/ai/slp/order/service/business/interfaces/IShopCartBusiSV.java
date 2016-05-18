@@ -1,5 +1,6 @@
 package com.ai.slp.order.service.business.interfaces;
 
+import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 
 /**
@@ -15,4 +16,11 @@ public interface IShopCartBusiSV {
      * @return
      */
     public CartProdOptRes queryCartOptions(String tenantId, String userId);
+
+    /**
+     * 购物车添加商品
+     * @param cartProd
+     * @return
+     */
+    public CartProdOptRes addCartProd(CartProd cartProd);
 }

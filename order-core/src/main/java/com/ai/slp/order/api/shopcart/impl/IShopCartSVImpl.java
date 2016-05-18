@@ -31,7 +31,8 @@ public class IShopCartSVImpl implements IShopCartSV {
      */
     @Override
     public CartProdOptRes addProd(CartProd cartProd) throws BusinessException, SystemException {
-        return null;
+        CommonCheckUtils.checkTenantId(cartProd.getTenantId(),"");
+        return shopCartBusiSV.addCartProd(cartProd);
     }
 
     /**
