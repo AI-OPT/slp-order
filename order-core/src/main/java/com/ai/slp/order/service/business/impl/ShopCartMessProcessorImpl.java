@@ -26,7 +26,7 @@ public class ShopCartMessProcessorImpl implements IMessageProcessor {
         if (null == message)
             return;
         String content = new String(message.getMessage(), "UTF-8");
-        logger.info("--Topic:{0}\r\n----key:{1}\r\n----content:{2}"
+        logger.info("--Topic:{}\r\n----key:{}\r\n----content:{}"
                 , message.getTopic(),new String(message.getKey(), "UTF-8"),content);
         //转换对象
         OrdOdCartProd cartProd = JSON.parseObject(content,OrdOdCartProd.class);
