@@ -11,6 +11,8 @@ import com.alibaba.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by jackieliu on 16/5/16.
  */
@@ -46,7 +48,7 @@ public class IShopCartSVImpl implements IShopCartSV {
      * @ApiCode SHOP_CART_0101
      */
     @Override
-    public PageInfoResponse<CartProdInfo> queryCartOfUser(UserInfo userInfo) throws BusinessException, SystemException {
+    public List<CartProdInfo> queryCartOfUser(UserInfo userInfo) throws BusinessException, SystemException {
         return null;
     }
 

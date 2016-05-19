@@ -2,19 +2,12 @@ package com.ai.slp.order.dao.mapper.factory;
 
 import javax.annotation.PostConstruct;
 
+import com.ai.slp.order.dao.mapper.interfaces.*;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
-import com.ai.slp.order.dao.mapper.interfaces.OrdOdExtendMapper;
-import com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeOffsetMapper;
-import com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeTotalMapper;
-import com.ai.slp.order.dao.mapper.interfaces.OrdOdInvoiceMapper;
-import com.ai.slp.order.dao.mapper.interfaces.OrdOdLogisticsMapper;
-import com.ai.slp.order.dao.mapper.interfaces.OrdOdProdMapper;
-import com.ai.slp.order.dao.mapper.interfaces.OrdOdStateChgMapper;
-import com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper;
 
 @Component
 public class MapperFactory {
@@ -69,6 +62,10 @@ public class MapperFactory {
     
     public static OrdOdProdExtend getOrdOdProdExtendMapper(){
         return sqlSessionTemplate.getMapper(OrdOdProdExtend.class);
+    }
+
+    public static OrdOdCartProdMapper getOrdOdCartProdMapper(){
+        return sqlSessionTemplate.getMapper(OrdOdCartProdMapper.class);
     }
 
 }

@@ -8,5 +8,5 @@ public final class MallIPassConstants {
     /**
      * 购物车所用MCS的标识
      */
-    public static String SHOP_CART_MCS = "com.ai.opt.slp.mall";
+    public static String SHOP_CART_MCS = "com.ai.opt.slp.order.shopcart";
 }

@@ -2,6 +2,7 @@ package com.ai.slp.order.service.atom.impl;
 
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProdCriteria;
+import com.ai.slp.order.dao.mapper.factory.MapperFactory;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdCartProdMapper;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
 import com.ai.slp.order.util.DateUtils;
@@ -17,8 +18,6 @@ import java.util.List;
  */
 @Component
 public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
-    @Autowired
-    OrdOdCartProdMapper cartProdMapper;
 
     /**
      * 查询用户的购物车商品明细信息
@@ -32,7 +31,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
         OrdOdCartProdCriteria example = new OrdOdCartProdCriteria();
         example.createCriteria().andTenantIdEqualTo(tenantId)
                 .andUserIdEqualTo(userId);
-        return cartProdMapper.selectByExample(example);
+        return MapperFactory.getOrdOdCartProdMapper().selectByExample(example);
     }
 
     /**
@@ -45,7 +44,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
     public int installCartProd(OrdOdCartProd cartProd) {
         cartProd.setProdDetalId(SequenceUtil.genCartProdId());
         cartProd.setInsertTime(DateUtils.currTimeStamp());
-        return cartProdMapper.insert(cartProd);
+        return MapperFactory.getOrdOdCartProdMapper().insert(cartProd);
     }
 
     /**
@@ -59,7 +58,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
         if (cartProd==null || cartProd.getProdDetalId()==null)
             return 0;
 
-        return cartProdMapper.updateByPrimaryKeySelective(cartProd);
+        return MapperFactory.getOrdOdCartProdMapper().updateByPrimaryKeySelective(cartProd);
     }
 
     /**
@@ -71,7 +70,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
      */
     @Override
     public OrdOdCartProd queryByCartProdId(String tenantId, Long cartProdId) {
-        OrdOdCartProd ordOdCartProd = cartProdMapper.selectByPrimaryKey(cartProdId);
+        OrdOdCartProd ordOdCartProd = MapperFactory.getOrdOdCartProdMapper().selectByPrimaryKey(cartProdId);
         if (ordOdCartProd!=null && ordOdCartProd.getTenantId().equals(tenantId))
             return ordOdCartProd;
         return null;
@@ -91,6 +90,6 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
         example.createCriteria().andTenantIdEqualTo(tenantId)
                 .andUserIdEqualTo(userId)
                 .andSkuIdEqualTo(skuId);
-        return cartProdMapper.deleteByExample(example);
+        return MapperFactory.getOrdOdCartProdMapper().deleteByExample(example);
     }
 }
