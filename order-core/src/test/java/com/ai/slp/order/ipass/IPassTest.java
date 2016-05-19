@@ -25,7 +25,7 @@ import java.util.List;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "/context/core-context.xml" })
+@ContextConfiguration({"/context/core-context.xml"})
 public class IPassTest {
 
     @Test
@@ -37,7 +37,7 @@ public class IPassTest {
     }
 
     @Test
-    public void mdsTest(){
+    public void sendMdsTest(){
         IMessageSender msgSender = MDSClientFactory.getSenderClient(ShopCartConstants.MdsParams.SHOP_CART_TOPIC);
         for(int i=0;i<5;i++){
             int part=i%2;
@@ -45,7 +45,7 @@ public class IPassTest {
         }
     }
 
-//    @Test
+    @Test
     public void recvMsgTest(){
         IMsgProcessorHandler msgProcessorHandler=new IMsgProcessorHandler() {
 

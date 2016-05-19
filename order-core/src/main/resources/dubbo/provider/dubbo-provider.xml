@@ -30,7 +30,7 @@
 
 	<dubbo:monitor protocol="registry" />
 
-	<dubbo:annotation package="com.ai.slp.user.api" />
+	<dubbo:annotation package="com.ai.slp.order.api" />
 
 	<import resource="../../context/core-context.xml" />
 </beans>
