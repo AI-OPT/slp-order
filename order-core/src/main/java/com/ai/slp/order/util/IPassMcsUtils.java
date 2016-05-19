@@ -8,6 +8,6 @@ import com.ai.slp.order.constants.ShopCartConstants;
  */
 public final class IPassMcsUtils {
     public static String genShopCartUserId(String tenantId,String userId){
-        return ShopCartConstants.CacheParams.CART_POINTS+":"+tenantId+":"+userId;
+        return ShopCartConstants.McsParams.CART_POINTS+":"+tenantId+":"+userId;
     }
 }

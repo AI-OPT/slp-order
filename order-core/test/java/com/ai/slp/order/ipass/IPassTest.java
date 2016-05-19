@@ -3,6 +3,7 @@ package com.ai.slp.order.ipass;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.constants.MallIPassConstants;
+import com.ai.slp.order.constants.ShopCartConstants;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,8 +19,13 @@ public class IPassTest {
 
     @Test
     public void cacheTest(){
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(MallIPassConstants.SHOP_CART_MCS);
+        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cacheKeyTest = "cacheKeyTest";
-        iCacheClient.set(cacheKeyTest,"cacheValTest");
+//        iCacheClient.set(cacheKeyTest,"cacheValTest");
+        iCacheClient.del(cacheKeyTest);
+    }
+
+    public void mdsTest(){
+
     }
 }

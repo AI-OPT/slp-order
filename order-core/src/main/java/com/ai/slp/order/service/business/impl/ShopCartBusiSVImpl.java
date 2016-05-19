@@ -5,7 +5,6 @@ import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
-import com.ai.slp.order.constants.MallIPassConstants;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
@@ -42,7 +41,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      */
     @Override
     public CartProdOptRes queryCartOptions(String tenantId, String userId) {
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(MallIPassConstants.SHOP_CART_MCS);
+        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         ShopCartCachePointsVo pointsVo = queryCartPoints(iCacheClient,tenantId,userId);
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
@@ -62,7 +61,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 || cartProd.getBuyNum()<=0)
             cartProd.setBuyNum(1l);
         String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(MallIPassConstants.SHOP_CART_MCS);
+        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
 
         //查询用户购物车概览
@@ -89,7 +88,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         //更新购物车上商品总数量
         pointsVo.setProdTotal(pointsVo.getProdTotal()+cartProd.getBuyNum());
         //更新概览
-        iCacheClient.hset(cartUserId,ShopCartConstants.CacheParams.CART_POINTS,JSON.toJSONString(pointsVo));
+        iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
 
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
@@ -105,7 +104,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     @Override
     public CartProdOptRes updateCartProd(CartProd cartProd) {
         String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(MallIPassConstants.SHOP_CART_MCS);
+        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
         //若不存在,则直接进行添加操作
         if (!iCacheClient.hexists(cartUserId,cartProd.getSkuId())){
@@ -128,7 +127,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         ShopCartCachePointsVo pointsVo = queryCartPoints(iCacheClient,tenantId,userId);
         pointsVo.setProdTotal(pointsVo.getProdTotal()+addNum);//更新商品总数量
         //更新概览
-        iCacheClient.hset(cartUserId,ShopCartConstants.CacheParams.CART_POINTS,JSON.toJSONString(pointsVo));
+        iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
@@ -144,7 +143,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      */
     @Override
     public CartProdOptRes deleteCartProd(String tenantId, String userId, List<String> skuIdList) {
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(MallIPassConstants.SHOP_CART_MCS);
+        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
         //若不存在购物车信息缓存,则建立缓存
         if (!iCacheClient.exists(cartUserId)){
@@ -166,7 +165,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             pointsVo.setProdNum(pointsVo.getProdNum()-1);
             pointsVo.setProdTotal(pointsVo.getProdTotal()-prod.getBuySum());
             iCacheClient.hdel(cartUserId,skuId);
-            iCacheClient.hset(cartUserId,ShopCartConstants.CacheParams.CART_POINTS,JSON.toJSONString(pointsVo));
+            iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
             delSuccessNum++;
         }
         CartProdOptRes optRes = new CartProdOptRes();
@@ -195,7 +194,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         }
         //查询概览信息
         String cartPrefix = iCacheClient.hget(IPassMcsUtils.genShopCartUserId(tenantId,userId)
-                ,ShopCartConstants.CacheParams.CART_POINTS);
+                , ShopCartConstants.McsParams.CART_POINTS);
         ShopCartCachePointsVo pointsVo = JSON.parseObject(cartPrefix, ShopCartCachePointsVo.class);
         return pointsVo;
     }
@@ -207,7 +206,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * @param userId
      */
     private void addShopCartCache(String tenantId,String userId){
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(MallIPassConstants.SHOP_CART_MCS);
+        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
         //查询用户购物车商品列表
         List<OrdOdCartProd> cartProdList = cartProdAtomSV.queryCartProdsOfUser(tenantId,userId);
@@ -221,6 +220,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         ShopCartCachePointsVo cartProdPoints = new ShopCartCachePointsVo();
         cartProdPoints.setProdNum(cartProdList.size());
         cartProdPoints.setProdTotal(prodTotal);
-        iCacheClient.hset(cartUserId, ShopCartConstants.CacheParams.CART_POINTS,JSON.toJSONString(cartProdPoints));
+        iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(cartProdPoints));
     }
 }

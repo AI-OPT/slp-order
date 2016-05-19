@@ -6,7 +6,11 @@ package com.ai.slp.order.constants;
  */
 public final class ShopCartConstants {
 
-    public final class CacheParams{
+    public final class McsParams {
+        /**
+         * 购物车所用MCS的标识
+         */
+        public static final String SHOP_CART_MCS = "com.ai.opt.slp.order.shopcart";
         /**
          * 缓存中购物车用户前缀
          */
