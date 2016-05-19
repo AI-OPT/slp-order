@@ -31,21 +31,21 @@
 	</bean>
 
 
-	<!--<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
-        <property name="driverClassName" value="${jdbc.driverClassName}"/>
-        <property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>        
-        &lt;!&ndash; 控制自动提交行为 default：true &ndash;&gt;
-        <property name="autoCommit" value="${jdbc.autoCommit}"/>
-        &lt;!&ndash;最大连接超时时间 default：30秒&ndash;&gt;
-        <property name="connectionTimeout" value="${jdbc.connectionTimeout}"/>
-         &lt;!&ndash;最大空闲超时时间 default：10分钟   &ndash;&gt;
-        &lt;!&ndash;连接池中一个连接的最大生命周期 default：30分钟&ndash;&gt;
-        <property name="maxLifetime" value="${jdbc.maxLifetime}"/>
-        &lt;!&ndash; 连接池最大的连接数 &ndash;&gt;
-        <property name="maximumPoolSize" value="${jdbc.maximumPoolSize}"/>
-    </bean>-->
+	<!--<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">-->
+        <!--<property name="driverClassName" value="${jdbc.driverClassName}"/>-->
+        <!--<property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>-->
+        <!--<property name="username" value="${jdbc.username}"/>-->
+        <!--<property name="password" value="${jdbc.password}"/>        -->
+        <!--&lt;!&ndash; 控制自动提交行为 default：true &ndash;&gt;-->
+        <!--<property name="autoCommit" value="${jdbc.autoCommit}"/>-->
+        <!--&lt;!&ndash;最大连接超时时间 default：30秒&ndash;&gt;-->
+        <!--<property name="connectionTimeout" value="${jdbc.connectionTimeout}"/>-->
+         <!--&lt;!&ndash;最大空闲超时时间 default：10分钟   &ndash;&gt;-->
+        <!--&lt;!&ndash;连接池中一个连接的最大生命周期 default：30分钟&ndash;&gt;-->
+        <!--<property name="maxLifetime" value="${jdbc.maxLifetime}"/>-->
+         <!--&lt;!&ndash;连接池最大的连接数 &ndash;&gt;-->
+        <!--<property name="maximumPoolSize" value="${jdbc.maximumPoolSize}"/>-->
+    <!--</bean>-->
 	<bean id="seqDataSourceLoader"
 		class="com.ai.opt.sdk.components.sequence.datasource.SeqDataSourceLoader"
 		init-method="init">
