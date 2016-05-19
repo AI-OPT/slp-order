@@ -92,4 +92,23 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
                 .andSkuIdEqualTo(skuId);
         return MapperFactory.getOrdOdCartProdMapper().deleteByExample(example);
     }
+
+    /**
+     * 查询指定用户购物车中商品
+     *
+     * @param tenantId
+     * @param userId
+     * @param skuId
+     * @return
+     */
+    @Override
+    public OrdOdCartProd queryByProdOfCart(String tenantId, String userId, String skuId) {
+        OrdOdCartProdCriteria example = new OrdOdCartProdCriteria();
+        example.setOrderByClause("INSERT_TIME desc");
+        example.createCriteria().andTenantIdEqualTo(tenantId)
+                .andUserIdEqualTo(userId)
+                .andSkuIdEqualTo(skuId);
+        List<OrdOdCartProd> cartProdList = MapperFactory.getOrdOdCartProdMapper().selectByExample(example);
+        return (cartProdList==null || cartProdList.isEmpty())?null:cartProdList.get(0);
+    }
 }

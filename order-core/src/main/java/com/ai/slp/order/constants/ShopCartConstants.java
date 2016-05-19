@@ -21,4 +21,10 @@ public final class ShopCartConstants {
         public static final String CART_POINTS = "CART_POINTS";
     }
 
+    public final class MdsParams{
+        /**
+         * 购物车消息中心topic
+         */
+        public static final String SHOP_CART_TOPIC = "slpShopCartTopic";
+    }
 }

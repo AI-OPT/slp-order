@@ -49,4 +49,13 @@ public interface IOrdOdCartProdAtomSV {
      * @return
      */
     public int deleteByProdId(String tenantId,String userId,String skuId);
+
+    /**
+     * 查询指定用户购物车中商品
+     * @param tenantId
+     * @param userId
+     * @param skuId
+     * @return
+     */
+    public OrdOdCartProd queryByProdOfCart(String tenantId,String userId,String skuId);
 }

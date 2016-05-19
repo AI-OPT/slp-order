@@ -1,8 +1,13 @@
 package com.ai.slp.order.service.business.impl;
 
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
+import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
+import com.ai.paas.ipaas.mds.IMessageConsumer;
+import com.ai.paas.ipaas.mds.IMessageProcessor;
+import com.ai.paas.ipaas.mds.IMessageSender;
+import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 import com.ai.slp.order.constants.ShopCartConstants;
@@ -20,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +38,26 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     private static Logger logger = LoggerFactory.getLogger(ShopCartBusiSVImpl.class);
     @Autowired
     IOrdOdCartProdAtomSV cartProdAtomSV;
+
+    @PostConstruct
+    public void shopCartProdMdsProcess(){
+        IMsgProcessorHandler msgProcessorHandler=new IMsgProcessorHandler() {
+            @Override
+            public IMessageProcessor[] createInstances(int paramInt) {
+                List<IMessageProcessor> processors = new ArrayList<>();
+                IMessageProcessor processor = null;
+                for (int i = 0; i < paramInt; i++) {
+                    processor = new ShopCartMessProcessorImpl(cartProdAtomSV);
+                    processors.add(processor);
+                }
+                return processors.toArray(new IMessageProcessor[processors.size()]);
+            }
+        };
+        IMessageConsumer msgConsumer= MDSClientFactory.getConsumerClient(
+                ShopCartConstants.MdsParams.SHOP_CART_TOPIC, msgProcessorHandler);
+        msgConsumer.start();
+    }
+
     /**
      * 查询用户购物车概览
      *
@@ -61,6 +87,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 || cartProd.getBuyNum()<=0)
             cartProd.setBuyNum(1l);
         String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
+        //TODO ... 查询商品库存
         ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
 
@@ -83,12 +110,14 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             //若是新商品,则需要将概览中加1
             pointsVo.setProdNum(pointsVo.getProdNum()+1);
         }
+
         //添加/更新商品信息
         iCacheClient.hset(cartUserId,odCartProd.getSkuId(),JSON.toJSONString(odCartProd));
         //更新购物车上商品总数量
         pointsVo.setProdTotal(pointsVo.getProdTotal()+cartProd.getBuyNum());
         //更新概览
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
+        sendCartProdMds(odCartProd);
 
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
@@ -106,6 +135,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
         ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
+        //TODO... 检查库存
         //若不存在,则直接进行添加操作
         if (!iCacheClient.hexists(cartUserId,cartProd.getSkuId())){
             return addCartProd(cartProd);
@@ -128,6 +158,8 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         pointsVo.setProdTotal(pointsVo.getProdTotal()+addNum);//更新商品总数量
         //更新概览
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
+        sendCartProdMds(odCartProd);
+
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
@@ -167,6 +199,9 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             iCacheClient.hdel(cartUserId,skuId);
             iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
             delSuccessNum++;
+
+            prod.setBuySum(0l);//商品数为零,表示删除
+            sendCartProdMds(prod);
         }
         CartProdOptRes optRes = new CartProdOptRes();
         ShopCartCachePointsVo cachePointsVo = queryCartPoints(iCacheClient,tenantId,userId);
@@ -221,5 +256,14 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         cartProdPoints.setProdNum(cartProdList.size());
         cartProdPoints.setProdTotal(prodTotal);
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(cartProdPoints));
+    }
+
+    /**
+     * 发送商城商品明细,用于更新数据库
+     * @param prod
+     */
+    private void sendCartProdMds(OrdOdCartProd prod){
+        IMessageSender msgSender = MDSClientFactory.getSenderClient(ShopCartConstants.MdsParams.SHOP_CART_TOPIC);
+        msgSender.send(JSON.toJSONString(prod), 0);//第二个参数为分区键，如果不分区，传入0
     }
 }
