@@ -2,7 +2,7 @@ package com.ai.slp.order.api.ordertradecenter.param;
 
 import java.io.Serializable;
 
-public class OrdOrder implements Serializable {
+public class OrdBalacneIfInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

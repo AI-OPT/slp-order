@@ -17,7 +17,7 @@ public class OrdOrder {
 
     private Long batchNo;
 
-    private Long userId;
+    private String userId;
 
     private Long acctId;
 
@@ -127,11 +127,11 @@ public class OrdOrder {
         this.batchNo = batchNo;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
