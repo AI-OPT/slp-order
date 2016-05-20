@@ -1,6 +1,7 @@
 package com.ai.slp.order.service.business.interfaces;
 
 import com.ai.slp.order.api.shopcart.param.CartProd;
+import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 
 import java.util.List;
@@ -41,4 +42,12 @@ public interface IShopCartBusiSV {
      * @return
      */
     public CartProdOptRes deleteCartProd(String tenantId,String userId,List<String> skuIdList);
+
+    /**
+     * 查询用户购物车中商品的信息
+     * @param tenantId
+     * @param userId
+     * @return
+     */
+    public List<CartProdInfo> queryCartProdOfUser(String tenantId, String userId);
 }

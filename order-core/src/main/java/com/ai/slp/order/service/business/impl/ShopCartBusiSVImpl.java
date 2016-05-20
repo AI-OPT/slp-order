@@ -9,6 +9,7 @@ import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.IMessageSender;
 import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.api.shopcart.param.CartProd;
+import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jackieliu on 16/5/17.
@@ -210,6 +212,30 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         optRes.setDelSuccessNum(delSuccessNum);
         optRes.setFailProdIdList(failSkuList);
         return optRes;
+    }
+
+    /**
+     * 查询用户购物车中商品的信息
+     *
+     * @param tenantId
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<CartProdInfo> queryCartProdOfUser(String tenantId, String userId) {
+        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
+        //若不存在购物车信息缓存,则建立缓存
+        if (!iCacheClient.exists(cartUserId)){
+            //从数据库中查询,建立缓存
+            addShopCartCache(tenantId,userId);
+        }
+        //查询出缓存中购物车所有商品信息
+        Map<String,String> cartProdMap = iCacheClient.hgetAll(cartUserId);
+        //删除概览信息
+        cartProdMap.remove(ShopCartConstants.McsParams.CART_POINTS);
+        //查询SKU信息
+        return null;
     }
 
     /**

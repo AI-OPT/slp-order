@@ -49,7 +49,8 @@ public class IShopCartSVImpl implements IShopCartSV {
      */
     @Override
     public List<CartProdInfo> queryCartOfUser(UserInfo userInfo) throws BusinessException, SystemException {
-        return null;
+        CommonCheckUtils.checkTenantId(userInfo.getTenantId(),"");
+        return shopCartBusiSV.queryCartProdOfUser(userInfo.getTenantId(),userInfo.getUserId());
     }
 
     /**
