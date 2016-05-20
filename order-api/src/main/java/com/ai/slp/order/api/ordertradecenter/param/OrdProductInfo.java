@@ -2,7 +2,7 @@ package com.ai.slp.order.api.ordertradecenter.param;
 
 import java.io.Serializable;
 
-public class OrdProduct implements Serializable {
+public class OrdProductInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -17,14 +17,34 @@ public class OrdProduct implements Serializable {
     private String prodName;
 
     /**
+     * 单品Id
+     */
+    private String skuId;
+
+    /**
+     * 标准品Id
+     */
+    private String standardProdId;
+
+    /**
+     * 库存Id
+     */
+    private String storageId;
+
+    /**
+     * sku库存Id
+     */
+    private String skuStorageId;
+
+    /**
+     * 销售单价
+     */
+    private long salePrice;
+
+    /**
      * 购买数量
      */
     private long buySum;
-
-    /**
-     * 总费用
-     */
-    private long totalFee;
 
     /**
      * 优惠费用
@@ -39,7 +59,7 @@ public class OrdProduct implements Serializable {
     /**
      * 减免原因
      */
-    private long operDiscountDesc;
+    private String operDiscountDesc;
 
     /**
      * 应收费用
@@ -63,10 +83,6 @@ public class OrdProduct implements Serializable {
         return buySum;
     }
 
-    public long getTotalFee() {
-        return totalFee;
-    }
-
     public long getDiscountFee() {
         return discountFee;
     }
@@ -75,7 +91,7 @@ public class OrdProduct implements Serializable {
         return operDiscountFee;
     }
 
-    public long getOperDiscountDesc() {
+    public String getOperDiscountDesc() {
         return operDiscountDesc;
     }
 
@@ -99,10 +115,6 @@ public class OrdProduct implements Serializable {
         this.buySum = buySum;
     }
 
-    public void setTotalFee(long totalFee) {
-        this.totalFee = totalFee;
-    }
-
     public void setDiscountFee(long discountFee) {
         this.discountFee = discountFee;
     }
@@ -111,7 +123,7 @@ public class OrdProduct implements Serializable {
         this.operDiscountFee = operDiscountFee;
     }
 
-    public void setOperDiscountDesc(long operDiscountDesc) {
+    public void setOperDiscountDesc(String operDiscountDesc) {
         this.operDiscountDesc = operDiscountDesc;
     }
 
@@ -121,6 +133,46 @@ public class OrdProduct implements Serializable {
 
     public void setPaidFee(long paidFee) {
         this.paidFee = paidFee;
+    }
+
+    public String getSkuId() {
+        return skuId;
+    }
+
+    public void setSkuId(String skuId) {
+        this.skuId = skuId;
+    }
+
+    public String getStandardProdId() {
+        return standardProdId;
+    }
+
+    public void setStandardProdId(String standardProdId) {
+        this.standardProdId = standardProdId;
+    }
+
+    public String getStorageId() {
+        return storageId;
+    }
+
+    public String getSkuStorageId() {
+        return skuStorageId;
+    }
+
+    public void setStorageId(String storageId) {
+        this.storageId = storageId;
+    }
+
+    public void setSkuStorageId(String skuStorageId) {
+        this.skuStorageId = skuStorageId;
+    }
+
+    public long getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(long salePrice) {
+        this.salePrice = salePrice;
     }
 
 }

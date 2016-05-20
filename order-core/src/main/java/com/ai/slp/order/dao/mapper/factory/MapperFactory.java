@@ -7,7 +7,16 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
+import com.ai.slp.order.dao.mapper.interfaces.OrdBalacneIfMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdExtendMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeOffsetMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeTotalMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdInvoiceMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdLogisticsMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdProdExtendMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdProdMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdStateChgMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper;
 
 @Component
 public class MapperFactory {
@@ -59,9 +68,13 @@ public class MapperFactory {
     public static OrdOrderMapper getOrdOrderMapper() {
         return sqlSessionTemplate.getMapper(OrdOrderMapper.class);
     }
-    
-    public static OrdOdProdExtend getOrdOdProdExtendMapper(){
-        return sqlSessionTemplate.getMapper(OrdOdProdExtend.class);
+
+    public static OrdOdProdExtendMapper getOrdOdProdExtendMapper() {
+        return sqlSessionTemplate.getMapper(OrdOdProdExtendMapper.class);
+    }
+
+    public static OrdBalacneIfMapper getOrdBalacneIfMapper() {
+        return sqlSessionTemplate.getMapper(OrdBalacneIfMapper.class);
     }
 
     public static OrdOdCartProdMapper getOrdOdCartProdMapper(){

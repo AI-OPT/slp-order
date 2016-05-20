@@ -21,5 +21,9 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
     public int countByExample(OrdOrderCriteria example) {
         return MapperFactory.getOrdOrderMapper().countByExample(example);
     }
+    @Override
+    public int insertSelective(OrdOrder record) {
+        return MapperFactory.getOrdOrderMapper().insertSelective(record);
+    }
 
 }

@@ -1,13 +1,11 @@
 package com.ai.slp.order.dao.mapper.bo;
 
-import java.math.BigDecimal;
-
 public class OrdOdProdExtend {
     private Long prodDetalExtendId;
 
     private Long prodDetalId;
 
-    private BigDecimal orderId;
+    private Long orderId;
 
     private String tenantId;
 
@@ -29,14 +27,6 @@ public class OrdOdProdExtend {
         this.prodDetalId = prodDetalId;
     }
 
-    public BigDecimal getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(BigDecimal orderId) {
-        this.orderId = orderId;
-    }
-
     public String getTenantId() {
         return tenantId;
     }
@@ -52,4 +42,13 @@ public class OrdOdProdExtend {
     public void setInfoJson(String infoJson) {
         this.infoJson = infoJson == null ? null : infoJson.trim();
     }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
 }
