@@ -2,11 +2,19 @@ package com.ai.slp.order.util;
 
 import java.util.Random;
 
-import com.ai.opt.sdk.sequence.util.SeqUtil;
+
+import com.ai.opt.sdk.components.sequence.util.SeqUtil;
+
 
 public final class SequenceUtil {
 
     /**
+    * 购物车中商品明细序列
+    */
+   private static final String ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ = "ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ";
+
+    /**
+     * 
      * 属性定义标识序列
      */
     private static final String ORD_ORDER$ORDER_ID$SEQ = "ORD_ORDER$ORDER_ID$SEQ";
@@ -39,4 +47,8 @@ public final class SequenceUtil {
         return Long.valueOf(newId);
     }
 
+
+    public static Long genCartProdId(){
+        return SeqUtil.getNewId(ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ);
+    }
 }

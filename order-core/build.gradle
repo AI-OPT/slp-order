@@ -6,7 +6,7 @@ dependencies {
     compile 'org.springframework:spring-tx:4.1.7.RELEASE'
     compile 'org.springframework:spring-jdbc:4.1.7.RELEASE'
 
-    compile 'com.ai.opt.sdk:opt-sdk:1.0.2-SNAPSHOT'
+    compile 'com.ai.opt.sdk:opt-sdk:2.0-SNAPSHOT'
 
     testCompile(
             "org.springframework:spring-test:4.1.7.RELEASE",

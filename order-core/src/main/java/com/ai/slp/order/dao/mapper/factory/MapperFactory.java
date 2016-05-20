@@ -2,6 +2,7 @@ package com.ai.slp.order.dao.mapper.factory;
 
 import javax.annotation.PostConstruct;
 
+import com.ai.slp.order.dao.mapper.interfaces.*;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -74,6 +75,10 @@ public class MapperFactory {
 
     public static OrdBalacneIfMapper getOrdBalacneIfMapper() {
         return sqlSessionTemplate.getMapper(OrdBalacneIfMapper.class);
+    }
+
+    public static OrdOdCartProdMapper getOrdOdCartProdMapper(){
+        return sqlSessionTemplate.getMapper(OrdOdCartProdMapper.class);
     }
 
 }
