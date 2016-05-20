@@ -108,8 +108,8 @@ publishing {
                     asNode().children().last() + {
                         delegate.dependencies {
                             delegate.dependency {
-                                delegate.groupId("com.ai.slp")
-                                delegate.artifactId("slp-order")
+                                delegate.groupId("com.ai.opt")
+                                delegate.artifactId("opt-base")
                                 delegate.version(optBaseVersion)
                             }
                             delegate.dependency {

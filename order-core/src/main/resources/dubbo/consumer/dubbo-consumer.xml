@@ -26,4 +26,6 @@
 
 	<dubbo:reference id="iLoginSV"
 		interface="com.ai.slp.user.api.login.interfaces.ILoginSV" />
+	
+	<dubbo:reference id="iProductServerSv" interface="com.ai.slp.product.api.product.interfaces.IProductServerSV"/>
 </beans>

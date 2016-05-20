@@ -13,17 +13,26 @@ import java.sql.Timestamp;
  */
 public class CartProdInfo implements Serializable{
     /**
-     * 商品名称
-     */
-    private String prodName;
-    /**
      * SKU单品标识
      */
     private String skuId;
     /**
+     * 商品名称
+     */
+    private String productName;
+    /**
+     * 销售商品标识
+     */
+    private String productId;
+
+    /**
+     * 属性串
+     */
+    private String saleAttrs;
+    /**
      * 数量
      */
-    private int buyNum;
+    private long buyNum;
     /**
      * 商品状态
      */
@@ -31,7 +40,7 @@ public class CartProdInfo implements Serializable{
     /**
      * 库存可用量
      */
-    private Long usableNum;
+    private long usableNum;
     /**
      * 商品图片标识
      */
@@ -45,12 +54,32 @@ public class CartProdInfo implements Serializable{
      */
     private Long salePrice;
 
-    public String getProdName() {
-        return prodName;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProdName(String prodName) {
-        this.prodName = prodName;
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getSaleAttrs() {
+        return saleAttrs;
+    }
+
+    public void setSaleAttrs(String saleAttrs) {
+        this.saleAttrs = saleAttrs;
+    }
+
+    public void setUsableNum(long usableNum) {
+        this.usableNum = usableNum;
     }
 
     public String getSkuId() {
@@ -61,11 +90,11 @@ public class CartProdInfo implements Serializable{
         this.skuId = skuId;
     }
 
-    public int getBuyNum() {
+    public long getBuyNum() {
         return buyNum;
     }
 
-    public void setBuyNum(int buyNum) {
+    public void setBuyNum(long buyNum) {
         this.buyNum = buyNum;
     }
 
