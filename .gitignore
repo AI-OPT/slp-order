@@ -17,7 +17,7 @@ gradle-app.setting
 .project
 /*/.project
 .settings/
-/*/.settings
+/*/.settings/
 bin/
 /*/bin
 logs/
@@ -27,3 +27,4 @@ logs/
 *.class
 build/
 /*/build
+gradle.properties
