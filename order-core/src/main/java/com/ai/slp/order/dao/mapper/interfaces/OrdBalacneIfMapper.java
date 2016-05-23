@@ -10,13 +10,21 @@ public interface OrdBalacneIfMapper {
 
     int deleteByExample(OrdBalacneIfCriteria example);
 
+    int deleteByPrimaryKey(long balacneIfId);
+
     int insert(OrdBalacneIf record);
 
     int insertSelective(OrdBalacneIf record);
 
     List<OrdBalacneIf> selectByExample(OrdBalacneIfCriteria example);
 
+    OrdBalacneIf selectByPrimaryKey(long balacneIfId);
+
     int updateByExampleSelective(@Param("record") OrdBalacneIf record, @Param("example") OrdBalacneIfCriteria example);
 
     int updateByExample(@Param("record") OrdBalacneIf record, @Param("example") OrdBalacneIfCriteria example);
+
+    int updateByPrimaryKeySelective(OrdBalacneIf record);
+
+    int updateByPrimaryKey(OrdBalacneIf record);
 }

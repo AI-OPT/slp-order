@@ -3,7 +3,7 @@ package com.ai.slp.order.dao.mapper.bo;
 import java.sql.Timestamp;
 
 public class OrdOrder {
-    private Long orderId;
+    private long orderId;
 
     private String tenantId;
 
@@ -13,17 +13,17 @@ public class OrdOrder {
 
     private String subFlag;
 
-    private Long parentOrderId;
+    private long parentOrderId;
 
-    private Long batchNo;
+    private long batchNo;
 
     private String userId;
 
-    private Long acctId;
+    private long acctId;
 
-    private Long subsId;
+    private long subsId;
 
-    private Long supplierId;
+    private long supplierId;
 
     private String storageId;
 
@@ -49,7 +49,7 @@ public class OrdOrder {
 
     private Timestamp orderTime;
 
-    private Long sellerId;
+    private long sellerId;
 
     private String chlId;
 
@@ -63,7 +63,7 @@ public class OrdOrder {
 
     private Timestamp finishTime;
 
-    private Long origOrderId;
+    private long origOrderId;
 
     private String orderDesc;
 
@@ -71,11 +71,11 @@ public class OrdOrder {
 
     private String remark;
 
-    public Long getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -111,19 +111,19 @@ public class OrdOrder {
         this.subFlag = subFlag == null ? null : subFlag.trim();
     }
 
-    public Long getParentOrderId() {
+    public long getParentOrderId() {
         return parentOrderId;
     }
 
-    public void setParentOrderId(Long parentOrderId) {
+    public void setParentOrderId(long parentOrderId) {
         this.parentOrderId = parentOrderId;
     }
 
-    public Long getBatchNo() {
+    public long getBatchNo() {
         return batchNo;
     }
 
-    public void setBatchNo(Long batchNo) {
+    public void setBatchNo(long batchNo) {
         this.batchNo = batchNo;
     }
 
@@ -135,27 +135,27 @@ public class OrdOrder {
         this.userId = userId;
     }
 
-    public Long getAcctId() {
+    public long getAcctId() {
         return acctId;
     }
 
-    public void setAcctId(Long acctId) {
+    public void setAcctId(long acctId) {
         this.acctId = acctId;
     }
 
-    public Long getSubsId() {
+    public long getSubsId() {
         return subsId;
     }
 
-    public void setSubsId(Long subsId) {
+    public void setSubsId(long subsId) {
         this.subsId = subsId;
     }
 
-    public Long getSupplierId() {
+    public long getSupplierId() {
         return supplierId;
     }
 
-    public void setSupplierId(Long supplierId) {
+    public void setSupplierId(long supplierId) {
         this.supplierId = supplierId;
     }
 
@@ -255,11 +255,11 @@ public class OrdOrder {
         this.orderTime = orderTime;
     }
 
-    public Long getSellerId() {
+    public long getSellerId() {
         return sellerId;
     }
 
-    public void setSellerId(Long sellerId) {
+    public void setSellerId(long sellerId) {
         this.sellerId = sellerId;
     }
 
@@ -311,11 +311,11 @@ public class OrdOrder {
         this.finishTime = finishTime;
     }
 
-    public Long getOrigOrderId() {
+    public long getOrigOrderId() {
         return origOrderId;
     }
 
-    public void setOrigOrderId(Long origOrderId) {
+    public void setOrigOrderId(long origOrderId) {
         this.origOrderId = origOrderId;
     }
 

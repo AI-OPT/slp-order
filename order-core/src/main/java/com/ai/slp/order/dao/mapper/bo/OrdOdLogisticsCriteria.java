@@ -134,32 +134,32 @@ public class OrdOdLogisticsCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsIdEqualTo(Long value) {
+        public Criteria andLogisticsIdEqualTo(long value) {
             addCriterion("LOGISTICS_ID =", value, "logisticsId");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsIdNotEqualTo(Long value) {
+        public Criteria andLogisticsIdNotEqualTo(long value) {
             addCriterion("LOGISTICS_ID <>", value, "logisticsId");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsIdGreaterThan(Long value) {
+        public Criteria andLogisticsIdGreaterThan(long value) {
             addCriterion("LOGISTICS_ID >", value, "logisticsId");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andLogisticsIdGreaterThanOrEqualTo(long value) {
             addCriterion("LOGISTICS_ID >=", value, "logisticsId");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsIdLessThan(Long value) {
+        public Criteria andLogisticsIdLessThan(long value) {
             addCriterion("LOGISTICS_ID <", value, "logisticsId");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsIdLessThanOrEqualTo(Long value) {
+        public Criteria andLogisticsIdLessThanOrEqualTo(long value) {
             addCriterion("LOGISTICS_ID <=", value, "logisticsId");
             return (Criteria) this;
         }
@@ -174,12 +174,12 @@ public class OrdOdLogisticsCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsIdBetween(Long value1, Long value2) {
+        public Criteria andLogisticsIdBetween(long value1, long value2) {
             addCriterion("LOGISTICS_ID between", value1, value2, "logisticsId");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsIdNotBetween(Long value1, Long value2) {
+        public Criteria andLogisticsIdNotBetween(long value1, long value2) {
             addCriterion("LOGISTICS_ID not between", value1, value2, "logisticsId");
             return (Criteria) this;
         }
@@ -264,32 +264,32 @@ public class OrdOdLogisticsCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdEqualTo(Long value) {
+        public Criteria andOrderIdEqualTo(long value) {
             addCriterion("ORDER_ID =", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotEqualTo(Long value) {
+        public Criteria andOrderIdNotEqualTo(long value) {
             addCriterion("ORDER_ID <>", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThan(Long value) {
+        public Criteria andOrderIdGreaterThan(long value) {
             addCriterion("ORDER_ID >", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andOrderIdGreaterThanOrEqualTo(long value) {
             addCriterion("ORDER_ID >=", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThan(Long value) {
+        public Criteria andOrderIdLessThan(long value) {
             addCriterion("ORDER_ID <", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThanOrEqualTo(Long value) {
+        public Criteria andOrderIdLessThanOrEqualTo(long value) {
             addCriterion("ORDER_ID <=", value, "orderId");
             return (Criteria) this;
         }
@@ -304,12 +304,12 @@ public class OrdOdLogisticsCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdBetween(Long value1, Long value2) {
+        public Criteria andOrderIdBetween(long value1, long value2) {
             addCriterion("ORDER_ID between", value1, value2, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotBetween(Long value1, Long value2) {
+        public Criteria andOrderIdNotBetween(long value1, long value2) {
             addCriterion("ORDER_ID not between", value1, value2, "orderId");
             return (Criteria) this;
         }

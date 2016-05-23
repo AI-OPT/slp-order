@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdBalacneIfMapper" >
   <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdBalacneIf" >
-    <result column="BALACNE_IF_ID" property="balacneIfId" jdbcType="BIGINT" />
+    <id column="BALACNE_IF_ID" property="balacneIfId" jdbcType="BIGINT" />
     <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
     <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
     <result column="PAY_STYLE" property="payStyle" jdbcType="VARCHAR" />
@@ -79,7 +79,7 @@
     <if test="distinct" >
       distinct
     </if>
-    'false' as QUERYID,
+    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from ord_balacne_if
     <if test="_parameter != null" >
@@ -92,6 +92,16 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ord_balacne_if
+    where BALACNE_IF_ID = #{balacneIfId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from ord_balacne_if
+    where BALACNE_IF_ID = #{balacneIfId,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria" >
     delete from ord_balacne_if
     <if test="_parameter != null" >
@@ -111,21 +121,15 @@
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdBalacneIf" >
     insert into ord_balacne_if
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="balacneIfId != null" >
-        BALACNE_IF_ID,
-      </if>
+      BALACNE_IF_ID,
       <if test="tenantId != null" >
         TENANT_ID,
       </if>
-      <if test="orderId != null" >
-        ORDER_ID,
-      </if>
+      ORDER_ID,
       <if test="payStyle != null" >
         PAY_STYLE,
       </if>
-      <if test="payFee != null" >
-        PAY_FEE,
-      </if>
+      PAY_FEE,
       <if test="paySystemId != null" >
         PAY_SYSTEM_ID,
       </if>
@@ -140,21 +144,15 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="balacneIfId != null" >
-        #{balacneIfId,jdbcType=BIGINT},
-      </if>
+      #{balacneIfId,jdbcType=BIGINT},
       <if test="tenantId != null" >
         #{tenantId,jdbcType=VARCHAR},
       </if>
-      <if test="orderId != null" >
-        #{orderId,jdbcType=BIGINT},
-      </if>
+      #{orderId,jdbcType=BIGINT},
       <if test="payStyle != null" >
         #{payStyle,jdbcType=VARCHAR},
       </if>
-      <if test="payFee != null" >
-        #{payFee,jdbcType=BIGINT},
-      </if>
+      #{payFee,jdbcType=BIGINT},
       <if test="paySystemId != null" >
         #{paySystemId,jdbcType=VARCHAR},
       </if>
@@ -224,5 +222,47 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdBalacneIf" >
+    update ord_balacne_if
+    <set >
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="payStyle != null" >
+        PAY_STYLE = #{payStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="payFee != null" >
+        PAY_FEE = #{payFee,jdbcType=BIGINT},
+      </if>
+      <if test="paySystemId != null" >
+        PAY_SYSTEM_ID = #{paySystemId,jdbcType=VARCHAR},
+      </if>
+      <if test="externalId != null" >
+        EXTERNAL_ID = #{externalId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where BALACNE_IF_ID = #{balacneIfId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdBalacneIf" >
+    update ord_balacne_if
+    set TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      ORDER_ID = #{orderId,jdbcType=BIGINT},
+      PAY_STYLE = #{payStyle,jdbcType=VARCHAR},
+      PAY_FEE = #{payFee,jdbcType=BIGINT},
+      PAY_SYSTEM_ID = #{paySystemId,jdbcType=VARCHAR},
+      EXTERNAL_ID = #{externalId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where BALACNE_IF_ID = #{balacneIfId,jdbcType=BIGINT}
   </update>
 </mapper>

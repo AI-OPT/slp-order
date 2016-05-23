@@ -1,27 +1,27 @@
 package com.ai.slp.order.dao.mapper.bo;
 
 public class OrdOdFeeOffset {
-    private Long feeOffsetId;
+    private long feeOffsetId;
 
     private String tenantId;
 
-    private Long balacneIfId;
+    private long balacneIfId;
 
-    private Long orderId;
+    private long orderId;
 
-    private Long prodDetalId;
+    private long prodDetalId;
 
     private String prodId;
 
-    private Long offsetFee;
+    private long offsetFee;
 
     private String remark;
 
-    public Long getFeeOffsetId() {
+    public long getFeeOffsetId() {
         return feeOffsetId;
     }
 
-    public void setFeeOffsetId(Long feeOffsetId) {
+    public void setFeeOffsetId(long feeOffsetId) {
         this.feeOffsetId = feeOffsetId;
     }
 
@@ -33,27 +33,27 @@ public class OrdOdFeeOffset {
         this.tenantId = tenantId == null ? null : tenantId.trim();
     }
 
-    public Long getBalacneIfId() {
+    public long getBalacneIfId() {
         return balacneIfId;
     }
 
-    public void setBalacneIfId(Long balacneIfId) {
+    public void setBalacneIfId(long balacneIfId) {
         this.balacneIfId = balacneIfId;
     }
 
-    public Long getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
-    public Long getProdDetalId() {
+    public long getProdDetalId() {
         return prodDetalId;
     }
 
-    public void setProdDetalId(Long prodDetalId) {
+    public void setProdDetalId(long prodDetalId) {
         this.prodDetalId = prodDetalId;
     }
 
@@ -65,11 +65,11 @@ public class OrdOdFeeOffset {
         this.prodId = prodId == null ? null : prodId.trim();
     }
 
-    public Long getOffsetFee() {
+    public long getOffsetFee() {
         return offsetFee;
     }
 
-    public void setOffsetFee(Long offsetFee) {
+    public void setOffsetFee(long offsetFee) {
         this.offsetFee = offsetFee;
     }
 

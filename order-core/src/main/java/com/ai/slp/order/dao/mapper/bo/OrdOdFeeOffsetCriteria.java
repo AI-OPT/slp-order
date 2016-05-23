@@ -134,32 +134,32 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andFeeOffsetIdEqualTo(Long value) {
+        public Criteria andFeeOffsetIdEqualTo(long value) {
             addCriterion("FEE_OFFSET_ID =", value, "feeOffsetId");
             return (Criteria) this;
         }
 
-        public Criteria andFeeOffsetIdNotEqualTo(Long value) {
+        public Criteria andFeeOffsetIdNotEqualTo(long value) {
             addCriterion("FEE_OFFSET_ID <>", value, "feeOffsetId");
             return (Criteria) this;
         }
 
-        public Criteria andFeeOffsetIdGreaterThan(Long value) {
+        public Criteria andFeeOffsetIdGreaterThan(long value) {
             addCriterion("FEE_OFFSET_ID >", value, "feeOffsetId");
             return (Criteria) this;
         }
 
-        public Criteria andFeeOffsetIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andFeeOffsetIdGreaterThanOrEqualTo(long value) {
             addCriterion("FEE_OFFSET_ID >=", value, "feeOffsetId");
             return (Criteria) this;
         }
 
-        public Criteria andFeeOffsetIdLessThan(Long value) {
+        public Criteria andFeeOffsetIdLessThan(long value) {
             addCriterion("FEE_OFFSET_ID <", value, "feeOffsetId");
             return (Criteria) this;
         }
 
-        public Criteria andFeeOffsetIdLessThanOrEqualTo(Long value) {
+        public Criteria andFeeOffsetIdLessThanOrEqualTo(long value) {
             addCriterion("FEE_OFFSET_ID <=", value, "feeOffsetId");
             return (Criteria) this;
         }
@@ -174,12 +174,12 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andFeeOffsetIdBetween(Long value1, Long value2) {
+        public Criteria andFeeOffsetIdBetween(long value1, long value2) {
             addCriterion("FEE_OFFSET_ID between", value1, value2, "feeOffsetId");
             return (Criteria) this;
         }
 
-        public Criteria andFeeOffsetIdNotBetween(Long value1, Long value2) {
+        public Criteria andFeeOffsetIdNotBetween(long value1, long value2) {
             addCriterion("FEE_OFFSET_ID not between", value1, value2, "feeOffsetId");
             return (Criteria) this;
         }
@@ -264,32 +264,32 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdEqualTo(Long value) {
+        public Criteria andBalacneIfIdEqualTo(long value) {
             addCriterion("BALACNE_IF_ID =", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdNotEqualTo(Long value) {
+        public Criteria andBalacneIfIdNotEqualTo(long value) {
             addCriterion("BALACNE_IF_ID <>", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdGreaterThan(Long value) {
+        public Criteria andBalacneIfIdGreaterThan(long value) {
             addCriterion("BALACNE_IF_ID >", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andBalacneIfIdGreaterThanOrEqualTo(long value) {
             addCriterion("BALACNE_IF_ID >=", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdLessThan(Long value) {
+        public Criteria andBalacneIfIdLessThan(long value) {
             addCriterion("BALACNE_IF_ID <", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdLessThanOrEqualTo(Long value) {
+        public Criteria andBalacneIfIdLessThanOrEqualTo(long value) {
             addCriterion("BALACNE_IF_ID <=", value, "balacneIfId");
             return (Criteria) this;
         }
@@ -304,12 +304,12 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdBetween(Long value1, Long value2) {
+        public Criteria andBalacneIfIdBetween(long value1, long value2) {
             addCriterion("BALACNE_IF_ID between", value1, value2, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdNotBetween(Long value1, Long value2) {
+        public Criteria andBalacneIfIdNotBetween(long value1, long value2) {
             addCriterion("BALACNE_IF_ID not between", value1, value2, "balacneIfId");
             return (Criteria) this;
         }
@@ -324,32 +324,32 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdEqualTo(Long value) {
+        public Criteria andOrderIdEqualTo(long value) {
             addCriterion("ORDER_ID =", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotEqualTo(Long value) {
+        public Criteria andOrderIdNotEqualTo(long value) {
             addCriterion("ORDER_ID <>", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThan(Long value) {
+        public Criteria andOrderIdGreaterThan(long value) {
             addCriterion("ORDER_ID >", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andOrderIdGreaterThanOrEqualTo(long value) {
             addCriterion("ORDER_ID >=", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThan(Long value) {
+        public Criteria andOrderIdLessThan(long value) {
             addCriterion("ORDER_ID <", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThanOrEqualTo(Long value) {
+        public Criteria andOrderIdLessThanOrEqualTo(long value) {
             addCriterion("ORDER_ID <=", value, "orderId");
             return (Criteria) this;
         }
@@ -364,12 +364,12 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdBetween(Long value1, Long value2) {
+        public Criteria andOrderIdBetween(long value1, long value2) {
             addCriterion("ORDER_ID between", value1, value2, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotBetween(Long value1, Long value2) {
+        public Criteria andOrderIdNotBetween(long value1, long value2) {
             addCriterion("ORDER_ID not between", value1, value2, "orderId");
             return (Criteria) this;
         }
@@ -384,32 +384,32 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andProdDetalIdEqualTo(Long value) {
+        public Criteria andProdDetalIdEqualTo(long value) {
             addCriterion("PROD_DETAL_ID =", value, "prodDetalId");
             return (Criteria) this;
         }
 
-        public Criteria andProdDetalIdNotEqualTo(Long value) {
+        public Criteria andProdDetalIdNotEqualTo(long value) {
             addCriterion("PROD_DETAL_ID <>", value, "prodDetalId");
             return (Criteria) this;
         }
 
-        public Criteria andProdDetalIdGreaterThan(Long value) {
+        public Criteria andProdDetalIdGreaterThan(long value) {
             addCriterion("PROD_DETAL_ID >", value, "prodDetalId");
             return (Criteria) this;
         }
 
-        public Criteria andProdDetalIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andProdDetalIdGreaterThanOrEqualTo(long value) {
             addCriterion("PROD_DETAL_ID >=", value, "prodDetalId");
             return (Criteria) this;
         }
 
-        public Criteria andProdDetalIdLessThan(Long value) {
+        public Criteria andProdDetalIdLessThan(long value) {
             addCriterion("PROD_DETAL_ID <", value, "prodDetalId");
             return (Criteria) this;
         }
 
-        public Criteria andProdDetalIdLessThanOrEqualTo(Long value) {
+        public Criteria andProdDetalIdLessThanOrEqualTo(long value) {
             addCriterion("PROD_DETAL_ID <=", value, "prodDetalId");
             return (Criteria) this;
         }
@@ -424,12 +424,12 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andProdDetalIdBetween(Long value1, Long value2) {
+        public Criteria andProdDetalIdBetween(long value1, long value2) {
             addCriterion("PROD_DETAL_ID between", value1, value2, "prodDetalId");
             return (Criteria) this;
         }
 
-        public Criteria andProdDetalIdNotBetween(Long value1, Long value2) {
+        public Criteria andProdDetalIdNotBetween(long value1, long value2) {
             addCriterion("PROD_DETAL_ID not between", value1, value2, "prodDetalId");
             return (Criteria) this;
         }
@@ -514,32 +514,32 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOffsetFeeEqualTo(Long value) {
+        public Criteria andOffsetFeeEqualTo(long value) {
             addCriterion("OFFSET_FEE =", value, "offsetFee");
             return (Criteria) this;
         }
 
-        public Criteria andOffsetFeeNotEqualTo(Long value) {
+        public Criteria andOffsetFeeNotEqualTo(long value) {
             addCriterion("OFFSET_FEE <>", value, "offsetFee");
             return (Criteria) this;
         }
 
-        public Criteria andOffsetFeeGreaterThan(Long value) {
+        public Criteria andOffsetFeeGreaterThan(long value) {
             addCriterion("OFFSET_FEE >", value, "offsetFee");
             return (Criteria) this;
         }
 
-        public Criteria andOffsetFeeGreaterThanOrEqualTo(Long value) {
+        public Criteria andOffsetFeeGreaterThanOrEqualTo(long value) {
             addCriterion("OFFSET_FEE >=", value, "offsetFee");
             return (Criteria) this;
         }
 
-        public Criteria andOffsetFeeLessThan(Long value) {
+        public Criteria andOffsetFeeLessThan(long value) {
             addCriterion("OFFSET_FEE <", value, "offsetFee");
             return (Criteria) this;
         }
 
-        public Criteria andOffsetFeeLessThanOrEqualTo(Long value) {
+        public Criteria andOffsetFeeLessThanOrEqualTo(long value) {
             addCriterion("OFFSET_FEE <=", value, "offsetFee");
             return (Criteria) this;
         }
@@ -554,12 +554,12 @@ public class OrdOdFeeOffsetCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOffsetFeeBetween(Long value1, Long value2) {
+        public Criteria andOffsetFeeBetween(long value1, long value2) {
             addCriterion("OFFSET_FEE between", value1, value2, "offsetFee");
             return (Criteria) this;
         }
 
-        public Criteria andOffsetFeeNotBetween(Long value1, Long value2) {
+        public Criteria andOffsetFeeNotBetween(long value1, long value2) {
             addCriterion("OFFSET_FEE not between", value1, value2, "offsetFee");
             return (Criteria) this;
         }

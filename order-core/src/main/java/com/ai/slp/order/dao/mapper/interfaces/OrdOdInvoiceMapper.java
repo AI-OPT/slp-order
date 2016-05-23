@@ -10,13 +10,21 @@ public interface OrdOdInvoiceMapper {
 
     int deleteByExample(OrdOdInvoiceCriteria example);
 
+    int deleteByPrimaryKey(long orderId);
+
     int insert(OrdOdInvoice record);
 
     int insertSelective(OrdOdInvoice record);
 
     List<OrdOdInvoice> selectByExample(OrdOdInvoiceCriteria example);
 
+    OrdOdInvoice selectByPrimaryKey(long orderId);
+
     int updateByExampleSelective(@Param("record") OrdOdInvoice record, @Param("example") OrdOdInvoiceCriteria example);
 
     int updateByExample(@Param("record") OrdOdInvoice record, @Param("example") OrdOdInvoiceCriteria example);
+
+    int updateByPrimaryKeySelective(OrdOdInvoice record);
+
+    int updateByPrimaryKey(OrdOdInvoice record);
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOdProdMapper" >
   <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOdProd" >
-    <result column="PROD_DETAL_ID" property="prodDetalId" jdbcType="BIGINT" />
+    <id column="PROD_DETAL_ID" property="prodDetalId" jdbcType="BIGINT" />
     <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
     <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
     <result column="PROD_TYPE" property="prodType" jdbcType="VARCHAR" />
@@ -104,7 +104,7 @@
     <if test="distinct" >
       distinct
     </if>
-    'false' as QUERYID,
+    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from ord_od_prod
     <if test="_parameter != null" >
@@ -117,6 +117,16 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ord_od_prod
+    where PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from ord_od_prod
+    where PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria" >
     delete from ord_od_prod
     <if test="_parameter != null" >
@@ -150,24 +160,16 @@
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProd" >
     insert into ord_od_prod
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="prodDetalId != null" >
-        PROD_DETAL_ID,
-      </if>
+      PROD_DETAL_ID,
       <if test="tenantId != null" >
         TENANT_ID,
       </if>
-      <if test="orderId != null" >
-        ORDER_ID,
-      </if>
+      ORDER_ID,
       <if test="prodType != null" >
         PROD_TYPE,
       </if>
-      <if test="supplierId != null" >
-        SUPPLIER_ID,
-      </if>
-      <if test="sellerId != null" >
-        SELLER_ID,
-      </if>
+      SUPPLIER_ID,
+      SELLER_ID,
       <if test="prodId != null" >
         PROD_ID,
       </if>
@@ -201,33 +203,17 @@
       <if test="state != null" >
         STATE,
       </if>
-      <if test="buySum != null" >
-        BUY_SUM,
-      </if>
-      <if test="salePrice != null" >
-        SALE_PRICE,
-      </if>
-      <if test="costPrice != null" >
-        COST_PRICE,
-      </if>
-      <if test="totalFee != null" >
-        TOTAL_FEE,
-      </if>
-      <if test="discountFee != null" >
-        DISCOUNT_FEE,
-      </if>
-      <if test="operDiscountFee != null" >
-        OPER_DISCOUNT_FEE,
-      </if>
+      BUY_SUM,
+      SALE_PRICE,
+      COST_PRICE,
+      TOTAL_FEE,
+      DISCOUNT_FEE,
+      OPER_DISCOUNT_FEE,
       <if test="operDiscountDesc != null" >
         OPER_DISCOUNT_DESC,
       </if>
-      <if test="adjustFee != null" >
-        ADJUST_FEE,
-      </if>
-      <if test="jf != null" >
-        JF,
-      </if>
+      ADJUST_FEE,
+      JF,
       <if test="prodDesc != null" >
         PROD_DESC,
       </if>
@@ -245,24 +231,16 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="prodDetalId != null" >
-        #{prodDetalId,jdbcType=BIGINT},
-      </if>
+      #{prodDetalId,jdbcType=BIGINT},
       <if test="tenantId != null" >
         #{tenantId,jdbcType=VARCHAR},
       </if>
-      <if test="orderId != null" >
-        #{orderId,jdbcType=BIGINT},
-      </if>
+      #{orderId,jdbcType=BIGINT},
       <if test="prodType != null" >
         #{prodType,jdbcType=VARCHAR},
       </if>
-      <if test="supplierId != null" >
-        #{supplierId,jdbcType=BIGINT},
-      </if>
-      <if test="sellerId != null" >
-        #{sellerId,jdbcType=BIGINT},
-      </if>
+      #{supplierId,jdbcType=BIGINT},
+      #{sellerId,jdbcType=BIGINT},
       <if test="prodId != null" >
         #{prodId,jdbcType=VARCHAR},
       </if>
@@ -296,33 +274,17 @@
       <if test="state != null" >
         #{state,jdbcType=VARCHAR},
       </if>
-      <if test="buySum != null" >
-        #{buySum,jdbcType=BIGINT},
-      </if>
-      <if test="salePrice != null" >
-        #{salePrice,jdbcType=BIGINT},
-      </if>
-      <if test="costPrice != null" >
-        #{costPrice,jdbcType=BIGINT},
-      </if>
-      <if test="totalFee != null" >
-        #{totalFee,jdbcType=BIGINT},
-      </if>
-      <if test="discountFee != null" >
-        #{discountFee,jdbcType=BIGINT},
-      </if>
-      <if test="operDiscountFee != null" >
-        #{operDiscountFee,jdbcType=BIGINT},
-      </if>
+      #{buySum,jdbcType=BIGINT},
+      #{salePrice,jdbcType=BIGINT},
+      #{costPrice,jdbcType=BIGINT},
+      #{totalFee,jdbcType=BIGINT},
+      #{discountFee,jdbcType=BIGINT},
+      #{operDiscountFee,jdbcType=BIGINT},
       <if test="operDiscountDesc != null" >
         #{operDiscountDesc,jdbcType=VARCHAR},
       </if>
-      <if test="adjustFee != null" >
-        #{adjustFee,jdbcType=BIGINT},
-      </if>
-      <if test="jf != null" >
-        #{jf,jdbcType=BIGINT},
-      </if>
+      #{adjustFee,jdbcType=BIGINT},
+      #{jf,jdbcType=BIGINT},
       <if test="prodDesc != null" >
         #{prodDesc,jdbcType=VARCHAR},
       </if>
@@ -483,5 +445,135 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProd" >
+    update ord_od_prod
+    <set >
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="prodType != null" >
+        PROD_TYPE = #{prodType,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},
+      </if>
+      <if test="sellerId != null" >
+        SELLER_ID = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="prodId != null" >
+        PROD_ID = #{prodId,jdbcType=VARCHAR},
+      </if>
+      <if test="prodName != null" >
+        PROD_NAME = #{prodName,jdbcType=VARCHAR},
+      </if>
+      <if test="prodSn != null" >
+        PROD_SN = #{prodSn,jdbcType=VARCHAR},
+      </if>
+      <if test="skuId != null" >
+        SKU_ID = #{skuId,jdbcType=VARCHAR},
+      </if>
+      <if test="standardProdId != null" >
+        STANDARD_PROD_ID = #{standardProdId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyId != null" >
+        SUPPLY_ID = #{supplyId,jdbcType=VARCHAR},
+      </if>
+      <if test="storageId != null" >
+        STORAGE_ID = #{storageId,jdbcType=VARCHAR},
+      </if>
+      <if test="routeId != null" >
+        ROUTE_ID = #{routeId,jdbcType=VARCHAR},
+      </if>
+      <if test="validTime != null" >
+        VALID_TIME = #{validTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invalidTime != null" >
+        INVALID_TIME = #{invalidTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        STATE = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="buySum != null" >
+        BUY_SUM = #{buySum,jdbcType=BIGINT},
+      </if>
+      <if test="salePrice != null" >
+        SALE_PRICE = #{salePrice,jdbcType=BIGINT},
+      </if>
+      <if test="costPrice != null" >
+        COST_PRICE = #{costPrice,jdbcType=BIGINT},
+      </if>
+      <if test="totalFee != null" >
+        TOTAL_FEE = #{totalFee,jdbcType=BIGINT},
+      </if>
+      <if test="discountFee != null" >
+        DISCOUNT_FEE = #{discountFee,jdbcType=BIGINT},
+      </if>
+      <if test="operDiscountFee != null" >
+        OPER_DISCOUNT_FEE = #{operDiscountFee,jdbcType=BIGINT},
+      </if>
+      <if test="operDiscountDesc != null" >
+        OPER_DISCOUNT_DESC = #{operDiscountDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="adjustFee != null" >
+        ADJUST_FEE = #{adjustFee,jdbcType=BIGINT},
+      </if>
+      <if test="jf != null" >
+        JF = #{jf,jdbcType=BIGINT},
+      </if>
+      <if test="prodDesc != null" >
+        PROD_DESC = #{prodDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="extendInfo != null" >
+        EXTEND_INFO = #{extendInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateChlId != null" >
+        UPDATE_CHL_ID = #{updateChlId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateOperId != null" >
+        UPDATE_OPER_ID = #{updateOperId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProd" >
+    update ord_od_prod
+    set TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      ORDER_ID = #{orderId,jdbcType=BIGINT},
+      PROD_TYPE = #{prodType,jdbcType=VARCHAR},
+      SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},
+      SELLER_ID = #{sellerId,jdbcType=BIGINT},
+      PROD_ID = #{prodId,jdbcType=VARCHAR},
+      PROD_NAME = #{prodName,jdbcType=VARCHAR},
+      PROD_SN = #{prodSn,jdbcType=VARCHAR},
+      SKU_ID = #{skuId,jdbcType=VARCHAR},
+      STANDARD_PROD_ID = #{standardProdId,jdbcType=VARCHAR},
+      SUPPLY_ID = #{supplyId,jdbcType=VARCHAR},
+      STORAGE_ID = #{storageId,jdbcType=VARCHAR},
+      ROUTE_ID = #{routeId,jdbcType=VARCHAR},
+      VALID_TIME = #{validTime,jdbcType=TIMESTAMP},
+      INVALID_TIME = #{invalidTime,jdbcType=TIMESTAMP},
+      STATE = #{state,jdbcType=VARCHAR},
+      BUY_SUM = #{buySum,jdbcType=BIGINT},
+      SALE_PRICE = #{salePrice,jdbcType=BIGINT},
+      COST_PRICE = #{costPrice,jdbcType=BIGINT},
+      TOTAL_FEE = #{totalFee,jdbcType=BIGINT},
+      DISCOUNT_FEE = #{discountFee,jdbcType=BIGINT},
+      OPER_DISCOUNT_FEE = #{operDiscountFee,jdbcType=BIGINT},
+      OPER_DISCOUNT_DESC = #{operDiscountDesc,jdbcType=VARCHAR},
+      ADJUST_FEE = #{adjustFee,jdbcType=BIGINT},
+      JF = #{jf,jdbcType=BIGINT},
+      PROD_DESC = #{prodDesc,jdbcType=VARCHAR},
+      EXTEND_INFO = #{extendInfo,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      UPDATE_CHL_ID = #{updateChlId,jdbcType=VARCHAR},
+      UPDATE_OPER_ID = #{updateOperId,jdbcType=VARCHAR}
+    where PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT}
   </update>
 </mapper>

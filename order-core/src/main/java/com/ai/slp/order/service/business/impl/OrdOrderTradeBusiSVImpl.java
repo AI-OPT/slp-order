@@ -68,11 +68,14 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         this.createOrderLogistics(request, sysDate, orderId);
         /* 7. 记录一条订单创建轨迹记录 */
         this.writeOrderCreateStateChg(request, sysDate, orderId);
-        /* 8. 返回结果订单列表 */
+        /* 8. 更新订单状态 */
+        this.updateOrderState(request.getTenantId(), sysDate, orderId);
+        /* 9. 返回结果订单列表 */
         List<Long> orderList = new ArrayList<Long>();
         orderList.add(orderId);
         return orderList;
     }
+
 
     /**
      * 创建订单信息
@@ -243,6 +246,20 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
                 OrdersConstants.OrdOrder.State.NEW, OrdOdStateChg.ChgDesc.ORDER_CREATE, null, null,
                 null, sysDate);
 
+    }
+    /**
+     * 更新订单状态
+     * @param request
+     * @param sysDate
+     * @param orderId
+     * @author zhangxw
+     * @ApiDocMethod
+     */
+    private void updateOrderState(String tenantId,Timestamp sysDate, long orderId) {
+        OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+        ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_PAY);
+        ordOrder.setStateChgTime(sysDate);
+        ordOrderAtomSV.updateById(ordOrder);
     }
 
 }

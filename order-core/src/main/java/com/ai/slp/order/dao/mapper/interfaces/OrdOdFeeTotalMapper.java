@@ -10,13 +10,21 @@ public interface OrdOdFeeTotalMapper {
 
     int deleteByExample(OrdOdFeeTotalCriteria example);
 
+    int deleteByPrimaryKey(long orderId);
+
     int insert(OrdOdFeeTotal record);
 
     int insertSelective(OrdOdFeeTotal record);
 
     List<OrdOdFeeTotal> selectByExample(OrdOdFeeTotalCriteria example);
 
+    OrdOdFeeTotal selectByPrimaryKey(long orderId);
+
     int updateByExampleSelective(@Param("record") OrdOdFeeTotal record, @Param("example") OrdOdFeeTotalCriteria example);
 
     int updateByExample(@Param("record") OrdOdFeeTotal record, @Param("example") OrdOdFeeTotalCriteria example);
+
+    int updateByPrimaryKeySelective(OrdOdFeeTotal record);
+
+    int updateByPrimaryKey(OrdOdFeeTotal record);
 }

@@ -135,32 +135,32 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdEqualTo(Long value) {
+        public Criteria andOrderIdEqualTo(long value) {
             addCriterion("ORDER_ID =", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotEqualTo(Long value) {
+        public Criteria andOrderIdNotEqualTo(long value) {
             addCriterion("ORDER_ID <>", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThan(Long value) {
+        public Criteria andOrderIdGreaterThan(long value) {
             addCriterion("ORDER_ID >", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andOrderIdGreaterThanOrEqualTo(long value) {
             addCriterion("ORDER_ID >=", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThan(Long value) {
+        public Criteria andOrderIdLessThan(long value) {
             addCriterion("ORDER_ID <", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThanOrEqualTo(Long value) {
+        public Criteria andOrderIdLessThanOrEqualTo(long value) {
             addCriterion("ORDER_ID <=", value, "orderId");
             return (Criteria) this;
         }
@@ -175,12 +175,12 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdBetween(Long value1, Long value2) {
+        public Criteria andOrderIdBetween(long value1, long value2) {
             addCriterion("ORDER_ID between", value1, value2, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotBetween(Long value1, Long value2) {
+        public Criteria andOrderIdNotBetween(long value1, long value2) {
             addCriterion("ORDER_ID not between", value1, value2, "orderId");
             return (Criteria) this;
         }
@@ -475,32 +475,32 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andParentOrderIdEqualTo(Long value) {
+        public Criteria andParentOrderIdEqualTo(long value) {
             addCriterion("PARENT_ORDER_ID =", value, "parentOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andParentOrderIdNotEqualTo(Long value) {
+        public Criteria andParentOrderIdNotEqualTo(long value) {
             addCriterion("PARENT_ORDER_ID <>", value, "parentOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andParentOrderIdGreaterThan(Long value) {
+        public Criteria andParentOrderIdGreaterThan(long value) {
             addCriterion("PARENT_ORDER_ID >", value, "parentOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andParentOrderIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andParentOrderIdGreaterThanOrEqualTo(long value) {
             addCriterion("PARENT_ORDER_ID >=", value, "parentOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andParentOrderIdLessThan(Long value) {
+        public Criteria andParentOrderIdLessThan(long value) {
             addCriterion("PARENT_ORDER_ID <", value, "parentOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andParentOrderIdLessThanOrEqualTo(Long value) {
+        public Criteria andParentOrderIdLessThanOrEqualTo(long value) {
             addCriterion("PARENT_ORDER_ID <=", value, "parentOrderId");
             return (Criteria) this;
         }
@@ -515,12 +515,12 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andParentOrderIdBetween(Long value1, Long value2) {
+        public Criteria andParentOrderIdBetween(long value1, long value2) {
             addCriterion("PARENT_ORDER_ID between", value1, value2, "parentOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andParentOrderIdNotBetween(Long value1, Long value2) {
+        public Criteria andParentOrderIdNotBetween(long value1, long value2) {
             addCriterion("PARENT_ORDER_ID not between", value1, value2, "parentOrderId");
             return (Criteria) this;
         }
@@ -535,32 +535,32 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andBatchNoEqualTo(Long value) {
+        public Criteria andBatchNoEqualTo(long value) {
             addCriterion("BATCH_NO =", value, "batchNo");
             return (Criteria) this;
         }
 
-        public Criteria andBatchNoNotEqualTo(Long value) {
+        public Criteria andBatchNoNotEqualTo(long value) {
             addCriterion("BATCH_NO <>", value, "batchNo");
             return (Criteria) this;
         }
 
-        public Criteria andBatchNoGreaterThan(Long value) {
+        public Criteria andBatchNoGreaterThan(long value) {
             addCriterion("BATCH_NO >", value, "batchNo");
             return (Criteria) this;
         }
 
-        public Criteria andBatchNoGreaterThanOrEqualTo(Long value) {
+        public Criteria andBatchNoGreaterThanOrEqualTo(long value) {
             addCriterion("BATCH_NO >=", value, "batchNo");
             return (Criteria) this;
         }
 
-        public Criteria andBatchNoLessThan(Long value) {
+        public Criteria andBatchNoLessThan(long value) {
             addCriterion("BATCH_NO <", value, "batchNo");
             return (Criteria) this;
         }
 
-        public Criteria andBatchNoLessThanOrEqualTo(Long value) {
+        public Criteria andBatchNoLessThanOrEqualTo(long value) {
             addCriterion("BATCH_NO <=", value, "batchNo");
             return (Criteria) this;
         }
@@ -575,12 +575,12 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andBatchNoBetween(Long value1, Long value2) {
+        public Criteria andBatchNoBetween(long value1, long value2) {
             addCriterion("BATCH_NO between", value1, value2, "batchNo");
             return (Criteria) this;
         }
 
-        public Criteria andBatchNoNotBetween(Long value1, Long value2) {
+        public Criteria andBatchNoNotBetween(long value1, long value2) {
             addCriterion("BATCH_NO not between", value1, value2, "batchNo");
             return (Criteria) this;
         }
@@ -595,32 +595,32 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andUserIdEqualTo(Long value) {
+        public Criteria andUserIdEqualTo(long value) {
             addCriterion("USER_ID =", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdNotEqualTo(Long value) {
+        public Criteria andUserIdNotEqualTo(long value) {
             addCriterion("USER_ID <>", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdGreaterThan(Long value) {
+        public Criteria andUserIdGreaterThan(long value) {
             addCriterion("USER_ID >", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andUserIdGreaterThanOrEqualTo(long value) {
             addCriterion("USER_ID >=", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdLessThan(Long value) {
+        public Criteria andUserIdLessThan(long value) {
             addCriterion("USER_ID <", value, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdLessThanOrEqualTo(Long value) {
+        public Criteria andUserIdLessThanOrEqualTo(long value) {
             addCriterion("USER_ID <=", value, "userId");
             return (Criteria) this;
         }
@@ -635,12 +635,12 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andUserIdBetween(Long value1, Long value2) {
+        public Criteria andUserIdBetween(long value1, long value2) {
             addCriterion("USER_ID between", value1, value2, "userId");
             return (Criteria) this;
         }
 
-        public Criteria andUserIdNotBetween(Long value1, Long value2) {
+        public Criteria andUserIdNotBetween(long value1, long value2) {
             addCriterion("USER_ID not between", value1, value2, "userId");
             return (Criteria) this;
         }
@@ -655,32 +655,32 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andAcctIdEqualTo(Long value) {
+        public Criteria andAcctIdEqualTo(long value) {
             addCriterion("ACCT_ID =", value, "acctId");
             return (Criteria) this;
         }
 
-        public Criteria andAcctIdNotEqualTo(Long value) {
+        public Criteria andAcctIdNotEqualTo(long value) {
             addCriterion("ACCT_ID <>", value, "acctId");
             return (Criteria) this;
         }
 
-        public Criteria andAcctIdGreaterThan(Long value) {
+        public Criteria andAcctIdGreaterThan(long value) {
             addCriterion("ACCT_ID >", value, "acctId");
             return (Criteria) this;
         }
 
-        public Criteria andAcctIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andAcctIdGreaterThanOrEqualTo(long value) {
             addCriterion("ACCT_ID >=", value, "acctId");
             return (Criteria) this;
         }
 
-        public Criteria andAcctIdLessThan(Long value) {
+        public Criteria andAcctIdLessThan(long value) {
             addCriterion("ACCT_ID <", value, "acctId");
             return (Criteria) this;
         }
 
-        public Criteria andAcctIdLessThanOrEqualTo(Long value) {
+        public Criteria andAcctIdLessThanOrEqualTo(long value) {
             addCriterion("ACCT_ID <=", value, "acctId");
             return (Criteria) this;
         }
@@ -695,12 +695,12 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andAcctIdBetween(Long value1, Long value2) {
+        public Criteria andAcctIdBetween(long value1, long value2) {
             addCriterion("ACCT_ID between", value1, value2, "acctId");
             return (Criteria) this;
         }
 
-        public Criteria andAcctIdNotBetween(Long value1, Long value2) {
+        public Criteria andAcctIdNotBetween(long value1, long value2) {
             addCriterion("ACCT_ID not between", value1, value2, "acctId");
             return (Criteria) this;
         }
@@ -715,32 +715,32 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andSubsIdEqualTo(Long value) {
+        public Criteria andSubsIdEqualTo(long value) {
             addCriterion("SUBS_ID =", value, "subsId");
             return (Criteria) this;
         }
 
-        public Criteria andSubsIdNotEqualTo(Long value) {
+        public Criteria andSubsIdNotEqualTo(long value) {
             addCriterion("SUBS_ID <>", value, "subsId");
             return (Criteria) this;
         }
 
-        public Criteria andSubsIdGreaterThan(Long value) {
+        public Criteria andSubsIdGreaterThan(long value) {
             addCriterion("SUBS_ID >", value, "subsId");
             return (Criteria) this;
         }
 
-        public Criteria andSubsIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andSubsIdGreaterThanOrEqualTo(long value) {
             addCriterion("SUBS_ID >=", value, "subsId");
             return (Criteria) this;
         }
 
-        public Criteria andSubsIdLessThan(Long value) {
+        public Criteria andSubsIdLessThan(long value) {
             addCriterion("SUBS_ID <", value, "subsId");
             return (Criteria) this;
         }
 
-        public Criteria andSubsIdLessThanOrEqualTo(Long value) {
+        public Criteria andSubsIdLessThanOrEqualTo(long value) {
             addCriterion("SUBS_ID <=", value, "subsId");
             return (Criteria) this;
         }
@@ -755,12 +755,12 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andSubsIdBetween(Long value1, Long value2) {
+        public Criteria andSubsIdBetween(long value1, long value2) {
             addCriterion("SUBS_ID between", value1, value2, "subsId");
             return (Criteria) this;
         }
 
-        public Criteria andSubsIdNotBetween(Long value1, Long value2) {
+        public Criteria andSubsIdNotBetween(long value1, long value2) {
             addCriterion("SUBS_ID not between", value1, value2, "subsId");
             return (Criteria) this;
         }
@@ -775,32 +775,32 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andSupplierIdEqualTo(Long value) {
+        public Criteria andSupplierIdEqualTo(long value) {
             addCriterion("SUPPLIER_ID =", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierIdNotEqualTo(Long value) {
+        public Criteria andSupplierIdNotEqualTo(long value) {
             addCriterion("SUPPLIER_ID <>", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierIdGreaterThan(Long value) {
+        public Criteria andSupplierIdGreaterThan(long value) {
             addCriterion("SUPPLIER_ID >", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andSupplierIdGreaterThanOrEqualTo(long value) {
             addCriterion("SUPPLIER_ID >=", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierIdLessThan(Long value) {
+        public Criteria andSupplierIdLessThan(long value) {
             addCriterion("SUPPLIER_ID <", value, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierIdLessThanOrEqualTo(Long value) {
+        public Criteria andSupplierIdLessThanOrEqualTo(long value) {
             addCriterion("SUPPLIER_ID <=", value, "supplierId");
             return (Criteria) this;
         }
@@ -815,12 +815,12 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andSupplierIdBetween(Long value1, Long value2) {
+        public Criteria andSupplierIdBetween(long value1, long value2) {
             addCriterion("SUPPLIER_ID between", value1, value2, "supplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierIdNotBetween(Long value1, Long value2) {
+        public Criteria andSupplierIdNotBetween(long value1, long value2) {
             addCriterion("SUPPLIER_ID not between", value1, value2, "supplierId");
             return (Criteria) this;
         }
@@ -1635,32 +1635,32 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andSellerIdEqualTo(Long value) {
+        public Criteria andSellerIdEqualTo(long value) {
             addCriterion("SELLER_ID =", value, "sellerId");
             return (Criteria) this;
         }
 
-        public Criteria andSellerIdNotEqualTo(Long value) {
+        public Criteria andSellerIdNotEqualTo(long value) {
             addCriterion("SELLER_ID <>", value, "sellerId");
             return (Criteria) this;
         }
 
-        public Criteria andSellerIdGreaterThan(Long value) {
+        public Criteria andSellerIdGreaterThan(long value) {
             addCriterion("SELLER_ID >", value, "sellerId");
             return (Criteria) this;
         }
 
-        public Criteria andSellerIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andSellerIdGreaterThanOrEqualTo(long value) {
             addCriterion("SELLER_ID >=", value, "sellerId");
             return (Criteria) this;
         }
 
-        public Criteria andSellerIdLessThan(Long value) {
+        public Criteria andSellerIdLessThan(long value) {
             addCriterion("SELLER_ID <", value, "sellerId");
             return (Criteria) this;
         }
 
-        public Criteria andSellerIdLessThanOrEqualTo(Long value) {
+        public Criteria andSellerIdLessThanOrEqualTo(long value) {
             addCriterion("SELLER_ID <=", value, "sellerId");
             return (Criteria) this;
         }
@@ -1675,12 +1675,12 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andSellerIdBetween(Long value1, Long value2) {
+        public Criteria andSellerIdBetween(long value1, long value2) {
             addCriterion("SELLER_ID between", value1, value2, "sellerId");
             return (Criteria) this;
         }
 
-        public Criteria andSellerIdNotBetween(Long value1, Long value2) {
+        public Criteria andSellerIdNotBetween(long value1, long value2) {
             addCriterion("SELLER_ID not between", value1, value2, "sellerId");
             return (Criteria) this;
         }
@@ -2105,32 +2105,32 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrigOrderIdEqualTo(Long value) {
+        public Criteria andOrigOrderIdEqualTo(long value) {
             addCriterion("ORIG_ORDER_ID =", value, "origOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigOrderIdNotEqualTo(Long value) {
+        public Criteria andOrigOrderIdNotEqualTo(long value) {
             addCriterion("ORIG_ORDER_ID <>", value, "origOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigOrderIdGreaterThan(Long value) {
+        public Criteria andOrigOrderIdGreaterThan(long value) {
             addCriterion("ORIG_ORDER_ID >", value, "origOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigOrderIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andOrigOrderIdGreaterThanOrEqualTo(long value) {
             addCriterion("ORIG_ORDER_ID >=", value, "origOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigOrderIdLessThan(Long value) {
+        public Criteria andOrigOrderIdLessThan(long value) {
             addCriterion("ORIG_ORDER_ID <", value, "origOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigOrderIdLessThanOrEqualTo(Long value) {
+        public Criteria andOrigOrderIdLessThanOrEqualTo(long value) {
             addCriterion("ORIG_ORDER_ID <=", value, "origOrderId");
             return (Criteria) this;
         }
@@ -2145,12 +2145,12 @@ public class OrdOrderCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrigOrderIdBetween(Long value1, Long value2) {
+        public Criteria andOrigOrderIdBetween(long value1, long value2) {
             addCriterion("ORIG_ORDER_ID between", value1, value2, "origOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigOrderIdNotBetween(Long value1, Long value2) {
+        public Criteria andOrigOrderIdNotBetween(long value1, long value2) {
             addCriterion("ORIG_ORDER_ID not between", value1, value2, "origOrderId");
             return (Criteria) this;
         }

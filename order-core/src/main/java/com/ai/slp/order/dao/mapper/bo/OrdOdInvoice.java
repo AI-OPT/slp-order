@@ -1,7 +1,7 @@
 package com.ai.slp.order.dao.mapper.bo;
 
 public class OrdOdInvoice {
-    private Long orderId;
+    private long orderId;
 
     private String tenantId;
 
@@ -11,11 +11,11 @@ public class OrdOdInvoice {
 
     private String invoiceContent;
 
-    public Long getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 

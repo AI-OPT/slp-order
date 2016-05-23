@@ -3,15 +3,15 @@ package com.ai.slp.order.dao.mapper.bo;
 import java.sql.Timestamp;
 
 public class OrdBalacneIf {
-    private Long balacneIfId;
+    private long balacneIfId;
 
     private String tenantId;
 
-    private Long orderId;
+    private long orderId;
 
     private String payStyle;
 
-    private Long payFee;
+    private long payFee;
 
     private String paySystemId;
 
@@ -21,11 +21,11 @@ public class OrdBalacneIf {
 
     private String remark;
 
-    public Long getBalacneIfId() {
+    public long getBalacneIfId() {
         return balacneIfId;
     }
 
-    public void setBalacneIfId(Long balacneIfId) {
+    public void setBalacneIfId(long balacneIfId) {
         this.balacneIfId = balacneIfId;
     }
 
@@ -37,11 +37,11 @@ public class OrdBalacneIf {
         this.tenantId = tenantId == null ? null : tenantId.trim();
     }
 
-    public Long getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -53,11 +53,11 @@ public class OrdBalacneIf {
         this.payStyle = payStyle == null ? null : payStyle.trim();
     }
 
-    public Long getPayFee() {
+    public long getPayFee() {
         return payFee;
     }
 
-    public void setPayFee(Long payFee) {
+    public void setPayFee(long payFee) {
         this.payFee = payFee;
     }
 

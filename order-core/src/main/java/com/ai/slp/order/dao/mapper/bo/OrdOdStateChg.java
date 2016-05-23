@@ -3,9 +3,9 @@ package com.ai.slp.order.dao.mapper.bo;
 import java.sql.Timestamp;
 
 public class OrdOdStateChg {
-    private Long stateChgId;
+    private long stateChgId;
 
-    private Long orderId;
+    private long orderId;
 
     private String tenantId;
 
@@ -23,19 +23,19 @@ public class OrdOdStateChg {
 
     private Timestamp stateChgTime;
 
-    public Long getStateChgId() {
+    public long getStateChgId() {
         return stateChgId;
     }
 
-    public void setStateChgId(Long stateChgId) {
+    public void setStateChgId(long stateChgId) {
         this.stateChgId = stateChgId;
     }
 
-    public Long getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
