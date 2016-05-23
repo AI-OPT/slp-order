@@ -2,16 +2,14 @@ package com.ai.slp.order.util;
 
 import java.util.Random;
 
-
 import com.ai.opt.sdk.components.sequence.util.SeqUtil;
-
 
 public final class SequenceUtil {
 
     /**
-    * 购物车中商品明细序列
-    */
-   private static final String ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ = "ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ";
+     * 购物车中商品明细序列
+     */
+    private static final String ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ = "ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ";
 
     /**
      * 
@@ -24,6 +22,8 @@ public final class SequenceUtil {
     private static final String ORD_OD_STATE_CHG$STATE_CHG_ID$SEQ = "ORD_OD_STATE_CHG$STATE_CHG_ID$SEQ";
 
     private static final String ORD_OD_PROD_EXTEND$PROD_DETAL_EXTEND_ID$SEQ = "ORD_OD_PROD_EXTEND$PROD_DETAL_EXTEND_ID$SEQ";
+
+    private static final String ORD_OD_FEE_OFFSET$FEE_OFFSET_ID$SEQ = "ORD_OD_FEE_OFFSET$FEE_OFFSET_ID$SEQ";
 
     public static Long createOrderId() {
         String seq = SeqUtil.getNewId(ORD_ORDER$ORDER_ID$SEQ, 15);
@@ -47,8 +47,11 @@ public final class SequenceUtil {
         return Long.valueOf(newId);
     }
 
-
-    public static Long genCartProdId(){
+    public static Long genCartProdId() {
         return SeqUtil.getNewId(ORD_OD_CART_PROD$PROD_DETAL_ID$SEQ);
+    }
+
+    public static Long createFeeOffsetId() {
+        return SeqUtil.getNewId(ORD_OD_FEE_OFFSET$FEE_OFFSET_ID$SEQ);
     }
 }

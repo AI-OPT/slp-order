@@ -318,4 +318,239 @@ public final class OrdersConstants {
 
     }
 
+    public static final class OrdOdStateChg {
+
+        /**
+         * 处理信息 Date: 2016年5月20日 <br>
+         * Copyright (c) 2016 asiainfo.com <br>
+         * 
+         * @author zhangxw
+         */
+        public static class ChgDesc {
+            /**
+             * 订单提交
+             */
+            public static final String ORDER_CREATE = "您提交的订单已经受理,请耐心等候处理";
+
+            /**
+             * 订单进入支付环节
+             */
+            public static final String ORDER_TO_PAY = "您提交的订单进入待支付处理";
+
+            /**
+             * 订单支付完成
+             */
+            public static final String ORDER_PAID = "您提交的订单已经支付完成";
+
+            /**
+             * 订单进入待审核环节
+             */
+            public static final String ORDER_TO_AUDIT = "您提交的订单进入待审核处理";
+
+            /**
+             * 订单已审核
+             */
+            public static final String ORDER_AUDITED = "您提交的订单已审核通过";
+
+            /**
+             * 订单审核不通过
+             */
+            public static final String ORDER_AUDIT_NOT_PASS = "您提交的订单审核未通过";
+
+            /**
+             * 订单进入待配货
+             */
+            public static final String ORDER_TO_WAIT_DISTRIBUTION = "您提交的订单进入待配货，请耐心等待";
+
+            /**
+             * 订单已经配货
+             */
+            public static final String ORDER_TO_FINISH_DISTRIBUTION = "您提交的订单配货完成，请耐心等待";
+
+            /**
+             * 订单资料已经同步计费
+             */
+            public static final String ORDER_TO_BILLING = "您提交的订单资料已经同步计费";
+
+            /**
+             * 订单资料已经实例化
+             */
+            public static final String ORDER_TO_SUBS = "您提交的订单资料已经处理完成";
+
+            /**
+             * 订单业务已经开通
+             */
+            public static final String ORDER_SERVICE_START = "您提交的订单已经开通所有服务";
+
+            /**
+             * 订单进入待出库状态
+             */
+            public static final String ORDER_TO_WAIT_DELIVERY = "您提交的订单等待出库，请耐心等待";
+
+            /**
+             * 订单用户自提出库完成
+             */
+            public static final String ORDER_TO_FINISH_SELF_DELIVERY = "您提交的订单已经完成自提出库，可以去营业厅自提";
+
+            /**
+             * 订单物流出库完成
+             */
+            public static final String ORDER_TO_FINISH_LOGISTICS_DELIVERY = "您提交的订单已经完成出库，物流派发中，请耐心等待收货";
+
+            /**
+             * 订单待用户网厅收货确认
+             */
+            public static final String ORDER_TO_WAIT_CUST_NETHALL_CONFIRM = "您提交的订单需要您在网厅进行收货确认";
+
+            /**
+             * 订单待用户网厅激活
+             */
+            public static final String ORDER_TO_WAIT_WAIT_ACTIVATE = "等待激活";
+
+            /**
+             * 订单 用户网厅激活操作
+             */
+            public static final String ORDER_TO_AUTO_START_SV = "您已经完成激活";
+
+            /**
+             * 订单 用户确认收货
+             */
+            public static final String ORDER_TO_FINISH_CUST_NETHALL_CONFIRM = "您已经在网厅完成收货";
+
+            /**
+             * 订单待用户营业厅自提确认
+             */
+            public static final String ORDER_TO_WAIT_CUST_OFFICEHALL_CONFIRM = "您提交的订单需要您在营业厅进行自提确认";
+
+            /**
+             * 订单 客户营业厅自提确认完成
+             */
+            public static final String ORDER_TO_FINISH_CUST_OFFICEHALL_CONFIRM = "您已经在营业厅完成自提收货";
+
+            /**
+             * 订单 物流送达确认
+             */
+            public static final String ORDER_TO_FINISH_EXPRESS_CONFIRM = "您的订单已经由物流公司送达";
+
+            /**
+             * 订单-完成
+             */
+            public static final String ORDER_TO_COMPLETED = "订单处理完成";
+
+            /**
+             * 订单－取消
+             */
+            public static final String ORDER_TO_CANCEL = "您的订单已取消";
+
+            /**
+             * 订单-撤销
+             */
+            public static final String ORDER_TO_REVOKE = "您的撤销订单申请已经受理，请耐心等候处理";
+
+            /**
+             * 订单-撤销审核
+             */
+            public static final String ORDER_TO_REVOKE_AUDIT = "您的撤销申请进入待审核处理";
+
+            /**
+             * 订单-审核通过
+             */
+            public static final String ORDER_REVOKE_AUDIT = "您的撤销单申请已审核通过";
+
+            /**
+             * 订单-审核未通过
+             */
+            public static final String ORDER_REVOKE_AUDIT_NOT_PASS = "您的撤销单申请审核未通过";
+
+            /**
+             * 订单-待退费
+             */
+            public static final String ORDER_REVOKE_WAIT_PAY = "您的订单进入待退费处理";
+
+            /**
+             * 订单已审核待退费
+             */
+            public static final String ORDER_AUDITED_WAIT_REPAY = "您提交的订单已审核通过,进入待退费处理";
+
+            /**
+             * 订单 - 退费
+             */
+            public static final String ORDER_REVOKE_FINISH_PAY = "您的订单退费完成";
+
+            /**
+             * 订单-撤销完成
+             */
+            public static final String ORDER_REVOKE_FINISH = "您的订单撤销完成";
+
+            /**
+             * 订单 - 待写卡
+             */
+            public static final String WAIT_WRITE_CARD = "您的订单待写卡处理";
+
+            /**
+             * 订单 - 已写卡
+             */
+            public static final String FINISH_WRITE_CARD = "您的订单写卡完成";
+
+            /**
+             * 订单不需要收费，后台自动执行订单
+             */
+            public static final String NO_PAY_AUTO_EXCUTING = "您的订单不需要收费，正在自动执行订单，请稍候";
+
+            /**
+             * 订单完成收费，后台自动执行订单
+             */
+            public static final String PAID_AUTO_EXCUTING = "您的订单完成收费，正在自动执行订单，请稍候";
+
+            /**
+             * 预开户订单提交完成,待客户资料返档
+             */
+            public static final String ORDER_TO_WAIT_ARCHIVE = "您的订单完成，正在等待客户资料返档";
+
+            /**
+             * 订单－预开户号码批量回收
+             */
+            public static final String PRE_ORDER_BATCH_CANCEL = "您的订单已经通过预开户号码批量回收取消";
+
+            /**
+             * 订单－用户逾期未激活强制销户
+             */
+            public static final String INACTIVE_BATCH_CANCEL = "用户逾期未激活强制销户";
+
+            /**
+             * 订单－用户欠费停机销户
+             */
+            public static final String OWE_FEE_BATCH_CANCEL = "用户欠费停机销户";
+
+            /**
+             * 订单-制卡文件生成
+             */
+            public static final String WAIT_CREATE_CARD_FILE = "您的订单已审核通过，进入制卡文件生成环节";
+
+            /**
+             * 订单-卡商制卡
+             */
+            public static final String WAIT_BUSINESS_CARD_FILE = "您的订单制卡文件已生成，进入卡商制卡环节";
+
+        }
+
+    }
+
+    public static final class OrdOdFeeTotal {
+
+        public static class payFlag {
+            /**
+             * 收入
+             */
+            public static final String IN = "in";
+
+            /**
+             * 支出
+             */
+            public static final String OUT = "out";
+
+        }
+
+    }
+
 }

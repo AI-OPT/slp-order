@@ -14,16 +14,21 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
+import com.ai.slp.order.api.ordertradecenter.param.OrdExtendInfo;
+import com.ai.slp.order.api.ordertradecenter.param.OrdFeeInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdOrderInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
+import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.SequenceUtil;
 
 @Service
@@ -40,6 +45,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 
     @Autowired
     private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
+
+    @Autowired
+    private IOrderFrameCoreSV orderFrameCoreSV;
 
     @Override
     public List<Long> apply(OrderTradeCenterRequest request) throws BusinessException,
@@ -58,11 +66,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         this.createOrderFeeInvoice(request, sysDate, orderId);
         /* 6. 处理配送信息，存在则写入 */
         this.createOrderLogistics(request, sysDate, orderId);
-        /* 7. 创建商品明细扩展表信息 */
-        this.createOrdOdProdExtend(request, sysDate, orderId);
-        /* 8. 记录一条订单创建轨迹记录 */
+        /* 7. 记录一条订单创建轨迹记录 */
         this.writeOrderCreateStateChg(request, sysDate, orderId);
-        /* 9. 返回结果订单列表 */
+        /* 8. 返回结果订单列表 */
         List<Long> orderList = new ArrayList<Long>();
         orderList.add(orderId);
         return orderList;
@@ -115,6 +121,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     private void createOrderProd(OrderTradeCenterRequest request, Timestamp sysDate, long orderId) {
         LOG.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
         OrdOrderInfo ordOrderInfo = request.getOrdOrderInfo();
+        /* 1. 创建商品明细 */
         List<OrdProductInfo> ordProductInfoList = ordOrderInfo.getOrdProductInfoList();
         for (OrdProductInfo ordProductInfo : ordProductInfoList) {
             long prodDetailId = SequenceUtil.createProdDetailId();
@@ -141,6 +148,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setProdDesc("");
             ordOdProd.setExtendInfo("");
             ordOdProdAtomSV.insertSelective(ordOdProd);
+            /* 2. 创建商品明细扩展表 */
+            this.createOrdOdProdExtend(prodDetailId, request, sysDate, orderId);
         }
     }
 
@@ -154,6 +163,25 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private void createFeeInfo(OrderTradeCenterRequest request, Timestamp sysDate, long orderId) {
+        OrdOrderInfo ordOrderInfo = request.getOrdOrderInfo();
+        OrdFeeInfo ordFeeInfo = ordOrderInfo.getOrdFeeInfo();
+        OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
+        ordOdFeeTotal.setOrderId(orderId);
+        ordOdFeeTotal.setTenantId(request.getTenantId());
+        ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);
+        ordOdFeeTotal.setTotalFee(ordFeeInfo.getTotalFee());
+        ordOdFeeTotal.setDiscountFee(ordFeeInfo.getDiscountFee());
+        ordOdFeeTotal.setOperDiscountFee(ordFeeInfo.getOperDiscountFee());
+        ordOdFeeTotal.setOperDiscountDesc(ordFeeInfo.getOperDiscountDesc());
+        ordOdFeeTotal.setAdjustFee(ordFeeInfo.getAdjustFee());
+        ordOdFeeTotal.setPaidFee(ordFeeInfo.getPaidFee());
+        ordOdFeeTotal.setPayFee(ordFeeInfo.getTotalFee());
+        ordOdFeeTotal.setPayStyle(ordFeeInfo.getPayStyle());
+        ordOdFeeTotal.setUpdateTime(sysDate);
+        ordOdFeeTotal.setUpdateChlId("");
+        ordOdFeeTotal.setUpdateOperId("");
+        ordOdFeeTotal.setTotalJf(0l);
+
     }
 
     /**
@@ -189,10 +217,15 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @param sysDate
      * @param orderId
      * @author zhangxw
+     * @param prodDetailId
      * @ApiDocMethod
      */
-    private void createOrdOdProdExtend(OrderTradeCenterRequest request, Timestamp sysDate,
-            long orderId) {
+    private void createOrdOdProdExtend(long prodDetailId, OrderTradeCenterRequest request,
+            Timestamp sysDate, long orderId) {
+        OrdOrderInfo ordOrderInfo = request.getOrdOrderInfo();
+        OrdExtendInfo ordExtendInfo = ordOrderInfo.getOrdExtendInfo();
+        orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
+                ordExtendInfo.getInfoJson());
     }
 
     /**
@@ -206,6 +239,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private void writeOrderCreateStateChg(OrderTradeCenterRequest request, Timestamp sysDate,
             long orderId) {
+        orderFrameCoreSV.ordOdStateChg(orderId, request.getTenantId(), null,
+                OrdersConstants.OrdOrder.State.NEW, OrdOdStateChg.ChgDesc.ORDER_CREATE, null, null,
+                null, sysDate);
+
     }
 
 }
