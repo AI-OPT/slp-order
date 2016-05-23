@@ -324,11 +324,11 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      */
     private void checkSkuInfoTotal(String tenantId,String skuId,long buyNum){
         ProductSkuInfo skuInfo = querySkuInfo(tenantId,skuId);
-        if (skuInfo==null || skuInfo.getTotalNum()<=0){
+        if (skuInfo==null || skuInfo.getUsableNum()<=0){
             throw new BusinessException("","商品已售罄或下架");
         }
-        if ( buyNum>skuInfo.getTotalNum()){
-            logger.warn("单品库存{},检查库存{}",skuInfo.getTotalNum(),buyNum);
+        if ( buyNum>skuInfo.getUsableNum()){
+            logger.warn("单品库存{},检查库存{}",skuInfo.getUsableNum(),buyNum);
             throw new BusinessException("","商品库存不足["+buyNum+"]");
         }
     }
