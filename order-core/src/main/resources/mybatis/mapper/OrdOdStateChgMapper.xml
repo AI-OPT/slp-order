@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOdStateChgMapper" >
   <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOdStateChg" >
-    <result column="STATE_CHG_ID" property="stateChgId" jdbcType="BIGINT" />
+    <id column="STATE_CHG_ID" property="stateChgId" jdbcType="BIGINT" />
     <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
     <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
     <result column="ORG_STATE" property="orgState" jdbcType="VARCHAR" />
@@ -80,7 +80,7 @@
     <if test="distinct" >
       distinct
     </if>
-    'false' as QUERYID,
+    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from ord_od_state_chg
     <if test="_parameter != null" >
@@ -93,6 +93,16 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ord_od_state_chg
+    where STATE_CHG_ID = #{stateChgId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from ord_od_state_chg
+    where STATE_CHG_ID = #{stateChgId,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdStateChgCriteria" >
     delete from ord_od_state_chg
     <if test="_parameter != null" >
@@ -112,12 +122,8 @@
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdStateChg" >
     insert into ord_od_state_chg
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="stateChgId != null" >
-        STATE_CHG_ID,
-      </if>
-      <if test="orderId != null" >
-        ORDER_ID,
-      </if>
+      STATE_CHG_ID,
+      ORDER_ID,
       <if test="tenantId != null" >
         TENANT_ID,
       </if>
@@ -144,12 +150,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="stateChgId != null" >
-        #{stateChgId,jdbcType=BIGINT},
-      </if>
-      <if test="orderId != null" >
-        #{orderId,jdbcType=BIGINT},
-      </if>
+      #{stateChgId,jdbcType=BIGINT},
+      #{orderId,jdbcType=BIGINT},
       <if test="tenantId != null" >
         #{tenantId,jdbcType=VARCHAR},
       </if>
@@ -235,5 +237,51 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdStateChg" >
+    update ord_od_state_chg
+    <set >
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgState != null" >
+        ORG_STATE = #{orgState,jdbcType=VARCHAR},
+      </if>
+      <if test="newState != null" >
+        NEW_STATE = #{newState,jdbcType=VARCHAR},
+      </if>
+      <if test="chgDesc != null" >
+        CHG_DESC = #{chgDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        ORG_ID = #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        OPER_ID = #{operId,jdbcType=VARCHAR},
+      </if>
+      <if test="operName != null" >
+        OPER_NAME = #{operName,jdbcType=VARCHAR},
+      </if>
+      <if test="stateChgTime != null" >
+        STATE_CHG_TIME = #{stateChgTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where STATE_CHG_ID = #{stateChgId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdStateChg" >
+    update ord_od_state_chg
+    set ORDER_ID = #{orderId,jdbcType=BIGINT},
+      TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      ORG_STATE = #{orgState,jdbcType=VARCHAR},
+      NEW_STATE = #{newState,jdbcType=VARCHAR},
+      CHG_DESC = #{chgDesc,jdbcType=VARCHAR},
+      ORG_ID = #{orgId,jdbcType=VARCHAR},
+      OPER_ID = #{operId,jdbcType=VARCHAR},
+      OPER_NAME = #{operName,jdbcType=VARCHAR},
+      STATE_CHG_TIME = #{stateChgTime,jdbcType=TIMESTAMP}
+    where STATE_CHG_ID = #{stateChgId,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper" >
   <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
-    <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
+    <id column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
     <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
     <result column="BUSI_CODE" property="busiCode" jdbcType="VARCHAR" />
     <result column="ORDER_TYPE" property="orderType" jdbcType="VARCHAR" />
@@ -107,7 +107,7 @@
     <if test="distinct" >
       distinct
     </if>
-    'false' as QUERYID,
+    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from ord_order
     <if test="_parameter != null" >
@@ -120,6 +120,16 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select
+    <include refid="Base_Column_List" />
+    from ord_order
+    where ORDER_ID = #{orderId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from ord_order
+    where ORDER_ID = #{orderId,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" >
     delete from ord_order
     <if test="_parameter != null" >
@@ -155,9 +165,7 @@
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
     insert into ord_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="orderId != null" >
-        ORDER_ID,
-      </if>
+      ORDER_ID,
       <if test="tenantId != null" >
         TENANT_ID,
       </if>
@@ -170,24 +178,12 @@
       <if test="subFlag != null" >
         SUB_FLAG,
       </if>
-      <if test="parentOrderId != null" >
-        PARENT_ORDER_ID,
-      </if>
-      <if test="batchNo != null" >
-        BATCH_NO,
-      </if>
-      <if test="userId != null" >
-        USER_ID,
-      </if>
-      <if test="acctId != null" >
-        ACCT_ID,
-      </if>
-      <if test="subsId != null" >
-        SUBS_ID,
-      </if>
-      <if test="supplierId != null" >
-        SUPPLIER_ID,
-      </if>
+      PARENT_ORDER_ID,
+      BATCH_NO,
+      USER_ID,
+      ACCT_ID,
+      SUBS_ID,
+      SUPPLIER_ID,
       <if test="storageId != null" >
         STORAGE_ID,
       </if>
@@ -224,9 +220,7 @@
       <if test="orderTime != null" >
         ORDER_TIME,
       </if>
-      <if test="sellerId != null" >
-        SELLER_ID,
-      </if>
+      SELLER_ID,
       <if test="chlId != null" >
         CHL_ID,
       </if>
@@ -245,9 +239,7 @@
       <if test="finishTime != null" >
         FINISH_TIME,
       </if>
-      <if test="origOrderId != null" >
-        ORIG_ORDER_ID,
-      </if>
+      ORIG_ORDER_ID,
       <if test="orderDesc != null" >
         ORDER_DESC,
       </if>
@@ -259,9 +251,7 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="orderId != null" >
-        #{orderId,jdbcType=BIGINT},
-      </if>
+      #{orderId,jdbcType=BIGINT},
       <if test="tenantId != null" >
         #{tenantId,jdbcType=VARCHAR},
       </if>
@@ -274,24 +264,12 @@
       <if test="subFlag != null" >
         #{subFlag,jdbcType=VARCHAR},
       </if>
-      <if test="parentOrderId != null" >
-        #{parentOrderId,jdbcType=BIGINT},
-      </if>
-      <if test="batchNo != null" >
-        #{batchNo,jdbcType=BIGINT},
-      </if>
-      <if test="userId != null" >
-        #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="acctId != null" >
-        #{acctId,jdbcType=BIGINT},
-      </if>
-      <if test="subsId != null" >
-        #{subsId,jdbcType=BIGINT},
-      </if>
-      <if test="supplierId != null" >
-        #{supplierId,jdbcType=BIGINT},
-      </if>
+      #{parentOrderId,jdbcType=BIGINT},
+      #{batchNo,jdbcType=BIGINT},
+      #{userId,jdbcType=BIGINT},
+      #{acctId,jdbcType=BIGINT},
+      #{subsId,jdbcType=BIGINT},
+      #{supplierId,jdbcType=BIGINT},
       <if test="storageId != null" >
         #{storageId,jdbcType=VARCHAR},
       </if>
@@ -328,9 +306,7 @@
       <if test="orderTime != null" >
         #{orderTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="sellerId != null" >
-        #{sellerId,jdbcType=BIGINT},
-      </if>
+      #{sellerId,jdbcType=BIGINT},
       <if test="chlId != null" >
         #{chlId,jdbcType=VARCHAR},
       </if>
@@ -349,9 +325,7 @@
       <if test="finishTime != null" >
         #{finishTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="origOrderId != null" >
-        #{origOrderId,jdbcType=BIGINT},
-      </if>
+      #{origOrderId,jdbcType=BIGINT},
       <if test="orderDesc != null" >
         #{orderDesc,jdbcType=VARCHAR},
       </if>
@@ -518,5 +492,147 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
+    update ord_order
+    <set >
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="busiCode != null" >
+        BUSI_CODE = #{busiCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderType != null" >
+        ORDER_TYPE = #{orderType,jdbcType=VARCHAR},
+      </if>
+      <if test="subFlag != null" >
+        SUB_FLAG = #{subFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="parentOrderId != null" >
+        PARENT_ORDER_ID = #{parentOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO = #{batchNo,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="acctId != null" >
+        ACCT_ID = #{acctId,jdbcType=BIGINT},
+      </if>
+      <if test="subsId != null" >
+        SUBS_ID = #{subsId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierId != null" >
+        SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},
+      </if>
+      <if test="storageId != null" >
+        STORAGE_ID = #{storageId,jdbcType=VARCHAR},
+      </if>
+      <if test="routeId != null" >
+        ROUTE_ID = #{routeId,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceCode != null" >
+        PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        STATE = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="stateChgTime != null" >
+        STATE_CHG_TIME = #{stateChgTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="displayFlag != null" >
+        DISPLAY_FLAG = #{displayFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="displayFlagChgTime != null" >
+        DISPLAY_FLAG_CHG_TIME = #{displayFlagChgTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deliveryFlag != null" >
+        DELIVERY_FLAG = #{deliveryFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="lockFlag != null" >
+        LOCK_FLAG = #{lockFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="lockTime != null" >
+        LOCK_TIME = #{lockTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderTime != null" >
+        ORDER_TIME = #{orderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sellerId != null" >
+        SELLER_ID = #{sellerId,jdbcType=BIGINT},
+      </if>
+      <if test="chlId != null" >
+        CHL_ID = #{chlId,jdbcType=VARCHAR},
+      </if>
+      <if test="operId != null" >
+        OPER_ID = #{operId,jdbcType=VARCHAR},
+      </if>
+      <if test="workflowId != null" >
+        WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
+      </if>
+      <if test="reasonType != null" >
+        REASON_TYPE = #{reasonType,jdbcType=VARCHAR},
+      </if>
+      <if test="reasonDesc != null" >
+        REASON_DESC = #{reasonDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="finishTime != null" >
+        FINISH_TIME = #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="origOrderId != null" >
+        ORIG_ORDER_ID = #{origOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="orderDesc != null" >
+        ORDER_DESC = #{orderDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="keywords != null" >
+        KEYWORDS = #{keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ORDER_ID = #{orderId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
+    update ord_order
+    set TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      BUSI_CODE = #{busiCode,jdbcType=VARCHAR},
+      ORDER_TYPE = #{orderType,jdbcType=VARCHAR},
+      SUB_FLAG = #{subFlag,jdbcType=VARCHAR},
+      PARENT_ORDER_ID = #{parentOrderId,jdbcType=BIGINT},
+      BATCH_NO = #{batchNo,jdbcType=BIGINT},
+      USER_ID = #{userId,jdbcType=BIGINT},
+      ACCT_ID = #{acctId,jdbcType=BIGINT},
+      SUBS_ID = #{subsId,jdbcType=BIGINT},
+      SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},
+      STORAGE_ID = #{storageId,jdbcType=VARCHAR},
+      ROUTE_ID = #{routeId,jdbcType=VARCHAR},
+      PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR},
+      CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+      STATE = #{state,jdbcType=VARCHAR},
+      STATE_CHG_TIME = #{stateChgTime,jdbcType=TIMESTAMP},
+      DISPLAY_FLAG = #{displayFlag,jdbcType=VARCHAR},
+      DISPLAY_FLAG_CHG_TIME = #{displayFlagChgTime,jdbcType=TIMESTAMP},
+      DELIVERY_FLAG = #{deliveryFlag,jdbcType=VARCHAR},
+      LOCK_FLAG = #{lockFlag,jdbcType=VARCHAR},
+      LOCK_TIME = #{lockTime,jdbcType=TIMESTAMP},
+      ORDER_TIME = #{orderTime,jdbcType=TIMESTAMP},
+      SELLER_ID = #{sellerId,jdbcType=BIGINT},
+      CHL_ID = #{chlId,jdbcType=VARCHAR},
+      OPER_ID = #{operId,jdbcType=VARCHAR},
+      WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
+      REASON_TYPE = #{reasonType,jdbcType=VARCHAR},
+      REASON_DESC = #{reasonDesc,jdbcType=VARCHAR},
+      FINISH_TIME = #{finishTime,jdbcType=TIMESTAMP},
+      ORIG_ORDER_ID = #{origOrderId,jdbcType=BIGINT},
+      ORDER_DESC = #{orderDesc,jdbcType=VARCHAR},
+      KEYWORDS = #{keywords,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>

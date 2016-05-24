@@ -10,6 +10,10 @@ public interface IOrdOrderAtomSV {
     int countByExample(OrdOrderCriteria example);
 
     List<OrdOrder> selectByExample(OrdOrderCriteria example);
+    
+    public OrdOrder selectByOrderId(String tenantId,long orderId);
 
     int insertSelective(OrdOrder record);
+
+    int updateById(OrdOrder ordOrder);
 }

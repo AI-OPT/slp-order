@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOdLogisticsMapper" >
   <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOdLogistics" >
-    <result column="LOGISTICS_ID" property="logisticsId" jdbcType="BIGINT" />
+    <id column="LOGISTICS_ID" property="logisticsId" jdbcType="BIGINT" />
     <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
     <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
     <result column="LOGISTICS_TYPE" property="logisticsType" jdbcType="VARCHAR" />
@@ -89,7 +89,7 @@
     <if test="distinct" >
       distinct
     </if>
-    'false' as QUERYID,
+    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from ord_od_logistics
     <if test="_parameter != null" >
@@ -102,6 +102,16 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ord_od_logistics
+    where LOGISTICS_ID = #{logisticsId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from ord_od_logistics
+    where LOGISTICS_ID = #{logisticsId,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria" >
     delete from ord_od_logistics
     <if test="_parameter != null" >
@@ -127,15 +137,11 @@
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdLogistics" >
     insert into ord_od_logistics
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="logisticsId != null" >
-        LOGISTICS_ID,
-      </if>
+      LOGISTICS_ID,
       <if test="tenantId != null" >
         TENANT_ID,
       </if>
-      <if test="orderId != null" >
-        ORDER_ID,
-      </if>
+      ORDER_ID,
       <if test="logisticsType != null" >
         LOGISTICS_TYPE,
       </if>
@@ -183,15 +189,11 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="logisticsId != null" >
-        #{logisticsId,jdbcType=BIGINT},
-      </if>
+      #{logisticsId,jdbcType=BIGINT},
       <if test="tenantId != null" >
         #{tenantId,jdbcType=VARCHAR},
       </if>
-      <if test="orderId != null" >
-        #{orderId,jdbcType=BIGINT},
-      </if>
+      #{orderId,jdbcType=BIGINT},
       <if test="logisticsType != null" >
         #{logisticsType,jdbcType=VARCHAR},
       </if>
@@ -330,5 +332,83 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdLogistics" >
+    update ord_od_logistics
+    <set >
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="logisticsType != null" >
+        LOGISTICS_TYPE = #{logisticsType,jdbcType=VARCHAR},
+      </if>
+      <if test="contactCompany != null" >
+        CONTACT_COMPANY = #{contactCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="contactName != null" >
+        CONTACT_NAME = #{contactName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactTel != null" >
+        CONTACT_TEL = #{contactTel,jdbcType=VARCHAR},
+      </if>
+      <if test="contactEmail != null" >
+        CONTACT_EMAIL = #{contactEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceCode != null" >
+        PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null" >
+        CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="countyCode != null" >
+        COUNTY_CODE = #{countyCode,jdbcType=VARCHAR},
+      </if>
+      <if test="postcode != null" >
+        POSTCODE = #{postcode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCode != null" >
+        AREA_CODE = #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="expressId != null" >
+        EXPRESS_ID = #{expressId,jdbcType=VARCHAR},
+      </if>
+      <if test="expressSelfId != null" >
+        EXPRESS_SELF_ID = #{expressSelfId,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsTimeId != null" >
+        LOGISTICS_TIME_ID = #{logisticsTimeId,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOGISTICS_ID = #{logisticsId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdLogistics" >
+    update ord_od_logistics
+    set TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      ORDER_ID = #{orderId,jdbcType=BIGINT},
+      LOGISTICS_TYPE = #{logisticsType,jdbcType=VARCHAR},
+      CONTACT_COMPANY = #{contactCompany,jdbcType=VARCHAR},
+      CONTACT_NAME = #{contactName,jdbcType=VARCHAR},
+      CONTACT_TEL = #{contactTel,jdbcType=VARCHAR},
+      CONTACT_EMAIL = #{contactEmail,jdbcType=VARCHAR},
+      PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR},
+      CITY_CODE = #{cityCode,jdbcType=VARCHAR},
+      COUNTY_CODE = #{countyCode,jdbcType=VARCHAR},
+      POSTCODE = #{postcode,jdbcType=VARCHAR},
+      AREA_CODE = #{areaCode,jdbcType=VARCHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      EXPRESS_ID = #{expressId,jdbcType=VARCHAR},
+      EXPRESS_SELF_ID = #{expressSelfId,jdbcType=VARCHAR},
+      LOGISTICS_TIME_ID = #{logisticsTimeId,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where LOGISTICS_ID = #{logisticsId,jdbcType=BIGINT}
   </update>
 </mapper>

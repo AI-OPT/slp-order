@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeOffsetMapper" >
   <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOdFeeOffset" >
-    <result column="FEE_OFFSET_ID" property="feeOffsetId" jdbcType="BIGINT" />
+    <id column="FEE_OFFSET_ID" property="feeOffsetId" jdbcType="BIGINT" />
     <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
     <result column="BALACNE_IF_ID" property="balacneIfId" jdbcType="BIGINT" />
     <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
@@ -78,7 +78,7 @@
     <if test="distinct" >
       distinct
     </if>
-    'false' as QUERYID,
+    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from ord_od_fee_offset
     <if test="_parameter != null" >
@@ -91,6 +91,16 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ord_od_fee_offset
+    where FEE_OFFSET_ID = #{feeOffsetId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from ord_od_fee_offset
+    where FEE_OFFSET_ID = #{feeOffsetId,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeOffsetCriteria" >
     delete from ord_od_fee_offset
     <if test="_parameter != null" >
@@ -108,53 +118,33 @@
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeOffset" >
     insert into ord_od_fee_offset
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="feeOffsetId != null" >
-        FEE_OFFSET_ID,
-      </if>
+      FEE_OFFSET_ID,
       <if test="tenantId != null" >
         TENANT_ID,
       </if>
-      <if test="balacneIfId != null" >
-        BALACNE_IF_ID,
-      </if>
-      <if test="orderId != null" >
-        ORDER_ID,
-      </if>
-      <if test="prodDetalId != null" >
-        PROD_DETAL_ID,
-      </if>
+      BALACNE_IF_ID,
+      ORDER_ID,
+      PROD_DETAL_ID,
       <if test="prodId != null" >
         PROD_ID,
       </if>
-      <if test="offsetFee != null" >
-        OFFSET_FEE,
-      </if>
+      OFFSET_FEE,
       <if test="remark != null" >
         REMARK,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="feeOffsetId != null" >
-        #{feeOffsetId,jdbcType=BIGINT},
-      </if>
+      #{feeOffsetId,jdbcType=BIGINT},
       <if test="tenantId != null" >
         #{tenantId,jdbcType=VARCHAR},
       </if>
-      <if test="balacneIfId != null" >
-        #{balacneIfId,jdbcType=BIGINT},
-      </if>
-      <if test="orderId != null" >
-        #{orderId,jdbcType=BIGINT},
-      </if>
-      <if test="prodDetalId != null" >
-        #{prodDetalId,jdbcType=BIGINT},
-      </if>
+      #{balacneIfId,jdbcType=BIGINT},
+      #{orderId,jdbcType=BIGINT},
+      #{prodDetalId,jdbcType=BIGINT},
       <if test="prodId != null" >
         #{prodId,jdbcType=VARCHAR},
       </if>
-      <if test="offsetFee != null" >
-        #{offsetFee,jdbcType=BIGINT},
-      </if>
+      #{offsetFee,jdbcType=BIGINT},
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
@@ -211,5 +201,43 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeOffset" >
+    update ord_od_fee_offset
+    <set >
+      <if test="tenantId != null" >
+        TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="balacneIfId != null" >
+        BALACNE_IF_ID = #{balacneIfId,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="prodDetalId != null" >
+        PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT},
+      </if>
+      <if test="prodId != null" >
+        PROD_ID = #{prodId,jdbcType=VARCHAR},
+      </if>
+      <if test="offsetFee != null" >
+        OFFSET_FEE = #{offsetFee,jdbcType=BIGINT},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where FEE_OFFSET_ID = #{feeOffsetId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeOffset" >
+    update ord_od_fee_offset
+    set TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      BALACNE_IF_ID = #{balacneIfId,jdbcType=BIGINT},
+      ORDER_ID = #{orderId,jdbcType=BIGINT},
+      PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT},
+      PROD_ID = #{prodId,jdbcType=VARCHAR},
+      OFFSET_FEE = #{offsetFee,jdbcType=BIGINT},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where FEE_OFFSET_ID = #{feeOffsetId,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -1,11 +1,11 @@
 package com.ai.slp.order.dao.mapper.bo;
 
 public class OrdOdLogistics {
-    private Long logisticsId;
+    private long logisticsId;
 
     private String tenantId;
 
-    private Long orderId;
+    private long orderId;
 
     private String logisticsType;
 
@@ -37,11 +37,11 @@ public class OrdOdLogistics {
 
     private String remark;
 
-    public Long getLogisticsId() {
+    public long getLogisticsId() {
         return logisticsId;
     }
 
-    public void setLogisticsId(Long logisticsId) {
+    public void setLogisticsId(long logisticsId) {
         this.logisticsId = logisticsId;
     }
 
@@ -53,11 +53,11 @@ public class OrdOdLogistics {
         this.tenantId = tenantId == null ? null : tenantId.trim();
     }
 
-    public Long getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 

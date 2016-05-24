@@ -135,32 +135,32 @@ public class OrdBalacneIfCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdEqualTo(Long value) {
+        public Criteria andBalacneIfIdEqualTo(long value) {
             addCriterion("BALACNE_IF_ID =", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdNotEqualTo(Long value) {
+        public Criteria andBalacneIfIdNotEqualTo(long value) {
             addCriterion("BALACNE_IF_ID <>", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdGreaterThan(Long value) {
+        public Criteria andBalacneIfIdGreaterThan(long value) {
             addCriterion("BALACNE_IF_ID >", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andBalacneIfIdGreaterThanOrEqualTo(long value) {
             addCriterion("BALACNE_IF_ID >=", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdLessThan(Long value) {
+        public Criteria andBalacneIfIdLessThan(long value) {
             addCriterion("BALACNE_IF_ID <", value, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdLessThanOrEqualTo(Long value) {
+        public Criteria andBalacneIfIdLessThanOrEqualTo(long value) {
             addCriterion("BALACNE_IF_ID <=", value, "balacneIfId");
             return (Criteria) this;
         }
@@ -175,12 +175,12 @@ public class OrdBalacneIfCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdBetween(Long value1, Long value2) {
+        public Criteria andBalacneIfIdBetween(long value1, long value2) {
             addCriterion("BALACNE_IF_ID between", value1, value2, "balacneIfId");
             return (Criteria) this;
         }
 
-        public Criteria andBalacneIfIdNotBetween(Long value1, Long value2) {
+        public Criteria andBalacneIfIdNotBetween(long value1, long value2) {
             addCriterion("BALACNE_IF_ID not between", value1, value2, "balacneIfId");
             return (Criteria) this;
         }
@@ -265,32 +265,32 @@ public class OrdBalacneIfCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdEqualTo(Long value) {
+        public Criteria andOrderIdEqualTo(long value) {
             addCriterion("ORDER_ID =", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotEqualTo(Long value) {
+        public Criteria andOrderIdNotEqualTo(long value) {
             addCriterion("ORDER_ID <>", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThan(Long value) {
+        public Criteria andOrderIdGreaterThan(long value) {
             addCriterion("ORDER_ID >", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andOrderIdGreaterThanOrEqualTo(long value) {
             addCriterion("ORDER_ID >=", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThan(Long value) {
+        public Criteria andOrderIdLessThan(long value) {
             addCriterion("ORDER_ID <", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThanOrEqualTo(Long value) {
+        public Criteria andOrderIdLessThanOrEqualTo(long value) {
             addCriterion("ORDER_ID <=", value, "orderId");
             return (Criteria) this;
         }
@@ -305,12 +305,12 @@ public class OrdBalacneIfCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdBetween(Long value1, Long value2) {
+        public Criteria andOrderIdBetween(long value1, long value2) {
             addCriterion("ORDER_ID between", value1, value2, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotBetween(Long value1, Long value2) {
+        public Criteria andOrderIdNotBetween(long value1, long value2) {
             addCriterion("ORDER_ID not between", value1, value2, "orderId");
             return (Criteria) this;
         }
@@ -395,32 +395,32 @@ public class OrdBalacneIfCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeEqualTo(Long value) {
+        public Criteria andPayFeeEqualTo(long value) {
             addCriterion("PAY_FEE =", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeNotEqualTo(Long value) {
+        public Criteria andPayFeeNotEqualTo(long value) {
             addCriterion("PAY_FEE <>", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeGreaterThan(Long value) {
+        public Criteria andPayFeeGreaterThan(long value) {
             addCriterion("PAY_FEE >", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeGreaterThanOrEqualTo(Long value) {
+        public Criteria andPayFeeGreaterThanOrEqualTo(long value) {
             addCriterion("PAY_FEE >=", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeLessThan(Long value) {
+        public Criteria andPayFeeLessThan(long value) {
             addCriterion("PAY_FEE <", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeLessThanOrEqualTo(Long value) {
+        public Criteria andPayFeeLessThanOrEqualTo(long value) {
             addCriterion("PAY_FEE <=", value, "payFee");
             return (Criteria) this;
         }
@@ -435,12 +435,12 @@ public class OrdBalacneIfCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeBetween(Long value1, Long value2) {
+        public Criteria andPayFeeBetween(long value1, long value2) {
             addCriterion("PAY_FEE between", value1, value2, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeNotBetween(Long value1, Long value2) {
+        public Criteria andPayFeeNotBetween(long value1, long value2) {
             addCriterion("PAY_FEE not between", value1, value2, "payFee");
             return (Criteria) this;
         }

@@ -3,25 +3,25 @@ package com.ai.slp.order.dao.mapper.bo;
 import java.sql.Timestamp;
 
 public class OrdOdFeeTotal {
-    private Long orderId;
+    private long orderId;
 
     private String tenantId;
 
     private String payFlag;
 
-    private Long totalFee;
+    private long totalFee;
 
-    private Long discountFee;
+    private long discountFee;
 
-    private Long operDiscountFee;
+    private long operDiscountFee;
 
     private String operDiscountDesc;
 
-    private Long adjustFee;
+    private long adjustFee;
 
-    private Long paidFee;
+    private long paidFee;
 
-    private Long payFee;
+    private long payFee;
 
     private String payStyle;
 
@@ -31,13 +31,13 @@ public class OrdOdFeeTotal {
 
     private String updateOperId;
 
-    private Long totalJf;
+    private long totalJf;
 
-    public Long getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -57,27 +57,27 @@ public class OrdOdFeeTotal {
         this.payFlag = payFlag == null ? null : payFlag.trim();
     }
 
-    public Long getTotalFee() {
+    public long getTotalFee() {
         return totalFee;
     }
 
-    public void setTotalFee(Long totalFee) {
+    public void setTotalFee(long totalFee) {
         this.totalFee = totalFee;
     }
 
-    public Long getDiscountFee() {
+    public long getDiscountFee() {
         return discountFee;
     }
 
-    public void setDiscountFee(Long discountFee) {
+    public void setDiscountFee(long discountFee) {
         this.discountFee = discountFee;
     }
 
-    public Long getOperDiscountFee() {
+    public long getOperDiscountFee() {
         return operDiscountFee;
     }
 
-    public void setOperDiscountFee(Long operDiscountFee) {
+    public void setOperDiscountFee(long operDiscountFee) {
         this.operDiscountFee = operDiscountFee;
     }
 
@@ -89,27 +89,27 @@ public class OrdOdFeeTotal {
         this.operDiscountDesc = operDiscountDesc == null ? null : operDiscountDesc.trim();
     }
 
-    public Long getAdjustFee() {
+    public long getAdjustFee() {
         return adjustFee;
     }
 
-    public void setAdjustFee(Long adjustFee) {
+    public void setAdjustFee(long adjustFee) {
         this.adjustFee = adjustFee;
     }
 
-    public Long getPaidFee() {
+    public long getPaidFee() {
         return paidFee;
     }
 
-    public void setPaidFee(Long paidFee) {
+    public void setPaidFee(long paidFee) {
         this.paidFee = paidFee;
     }
 
-    public Long getPayFee() {
+    public long getPayFee() {
         return payFee;
     }
 
-    public void setPayFee(Long payFee) {
+    public void setPayFee(long payFee) {
         this.payFee = payFee;
     }
 
@@ -145,11 +145,11 @@ public class OrdOdFeeTotal {
         this.updateOperId = updateOperId == null ? null : updateOperId.trim();
     }
 
-    public Long getTotalJf() {
+    public long getTotalJf() {
         return totalJf;
     }
 
-    public void setTotalJf(Long totalJf) {
+    public void setTotalJf(long totalJf) {
         this.totalJf = totalJf;
     }
 }

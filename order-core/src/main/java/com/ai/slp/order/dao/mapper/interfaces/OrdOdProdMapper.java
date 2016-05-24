@@ -10,13 +10,21 @@ public interface OrdOdProdMapper {
 
     int deleteByExample(OrdOdProdCriteria example);
 
+    int deleteByPrimaryKey(long prodDetalId);
+
     int insert(OrdOdProd record);
 
     int insertSelective(OrdOdProd record);
 
     List<OrdOdProd> selectByExample(OrdOdProdCriteria example);
 
+    OrdOdProd selectByPrimaryKey(long prodDetalId);
+
     int updateByExampleSelective(@Param("record") OrdOdProd record, @Param("example") OrdOdProdCriteria example);
 
     int updateByExample(@Param("record") OrdOdProd record, @Param("example") OrdOdProdCriteria example);
+
+    int updateByPrimaryKeySelective(OrdOdProd record);
+
+    int updateByPrimaryKey(OrdOdProd record);
 }

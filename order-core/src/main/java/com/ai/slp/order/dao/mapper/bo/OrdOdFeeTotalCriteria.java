@@ -135,32 +135,32 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdEqualTo(Long value) {
+        public Criteria andOrderIdEqualTo(long value) {
             addCriterion("ORDER_ID =", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotEqualTo(Long value) {
+        public Criteria andOrderIdNotEqualTo(long value) {
             addCriterion("ORDER_ID <>", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThan(Long value) {
+        public Criteria andOrderIdGreaterThan(long value) {
             addCriterion("ORDER_ID >", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andOrderIdGreaterThanOrEqualTo(long value) {
             addCriterion("ORDER_ID >=", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThan(Long value) {
+        public Criteria andOrderIdLessThan(long value) {
             addCriterion("ORDER_ID <", value, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdLessThanOrEqualTo(Long value) {
+        public Criteria andOrderIdLessThanOrEqualTo(long value) {
             addCriterion("ORDER_ID <=", value, "orderId");
             return (Criteria) this;
         }
@@ -175,12 +175,12 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdBetween(Long value1, Long value2) {
+        public Criteria andOrderIdBetween(long value1, long value2) {
             addCriterion("ORDER_ID between", value1, value2, "orderId");
             return (Criteria) this;
         }
 
-        public Criteria andOrderIdNotBetween(Long value1, Long value2) {
+        public Criteria andOrderIdNotBetween(long value1, long value2) {
             addCriterion("ORDER_ID not between", value1, value2, "orderId");
             return (Criteria) this;
         }
@@ -335,32 +335,32 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andTotalFeeEqualTo(Long value) {
+        public Criteria andTotalFeeEqualTo(long value) {
             addCriterion("TOTAL_FEE =", value, "totalFee");
             return (Criteria) this;
         }
 
-        public Criteria andTotalFeeNotEqualTo(Long value) {
+        public Criteria andTotalFeeNotEqualTo(long value) {
             addCriterion("TOTAL_FEE <>", value, "totalFee");
             return (Criteria) this;
         }
 
-        public Criteria andTotalFeeGreaterThan(Long value) {
+        public Criteria andTotalFeeGreaterThan(long value) {
             addCriterion("TOTAL_FEE >", value, "totalFee");
             return (Criteria) this;
         }
 
-        public Criteria andTotalFeeGreaterThanOrEqualTo(Long value) {
+        public Criteria andTotalFeeGreaterThanOrEqualTo(long value) {
             addCriterion("TOTAL_FEE >=", value, "totalFee");
             return (Criteria) this;
         }
 
-        public Criteria andTotalFeeLessThan(Long value) {
+        public Criteria andTotalFeeLessThan(long value) {
             addCriterion("TOTAL_FEE <", value, "totalFee");
             return (Criteria) this;
         }
 
-        public Criteria andTotalFeeLessThanOrEqualTo(Long value) {
+        public Criteria andTotalFeeLessThanOrEqualTo(long value) {
             addCriterion("TOTAL_FEE <=", value, "totalFee");
             return (Criteria) this;
         }
@@ -375,12 +375,12 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andTotalFeeBetween(Long value1, Long value2) {
+        public Criteria andTotalFeeBetween(long value1, long value2) {
             addCriterion("TOTAL_FEE between", value1, value2, "totalFee");
             return (Criteria) this;
         }
 
-        public Criteria andTotalFeeNotBetween(Long value1, Long value2) {
+        public Criteria andTotalFeeNotBetween(long value1, long value2) {
             addCriterion("TOTAL_FEE not between", value1, value2, "totalFee");
             return (Criteria) this;
         }
@@ -395,32 +395,32 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andDiscountFeeEqualTo(Long value) {
+        public Criteria andDiscountFeeEqualTo(long value) {
             addCriterion("DISCOUNT_FEE =", value, "discountFee");
             return (Criteria) this;
         }
 
-        public Criteria andDiscountFeeNotEqualTo(Long value) {
+        public Criteria andDiscountFeeNotEqualTo(long value) {
             addCriterion("DISCOUNT_FEE <>", value, "discountFee");
             return (Criteria) this;
         }
 
-        public Criteria andDiscountFeeGreaterThan(Long value) {
+        public Criteria andDiscountFeeGreaterThan(long value) {
             addCriterion("DISCOUNT_FEE >", value, "discountFee");
             return (Criteria) this;
         }
 
-        public Criteria andDiscountFeeGreaterThanOrEqualTo(Long value) {
+        public Criteria andDiscountFeeGreaterThanOrEqualTo(long value) {
             addCriterion("DISCOUNT_FEE >=", value, "discountFee");
             return (Criteria) this;
         }
 
-        public Criteria andDiscountFeeLessThan(Long value) {
+        public Criteria andDiscountFeeLessThan(long value) {
             addCriterion("DISCOUNT_FEE <", value, "discountFee");
             return (Criteria) this;
         }
 
-        public Criteria andDiscountFeeLessThanOrEqualTo(Long value) {
+        public Criteria andDiscountFeeLessThanOrEqualTo(long value) {
             addCriterion("DISCOUNT_FEE <=", value, "discountFee");
             return (Criteria) this;
         }
@@ -435,12 +435,12 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andDiscountFeeBetween(Long value1, Long value2) {
+        public Criteria andDiscountFeeBetween(long value1, long value2) {
             addCriterion("DISCOUNT_FEE between", value1, value2, "discountFee");
             return (Criteria) this;
         }
 
-        public Criteria andDiscountFeeNotBetween(Long value1, Long value2) {
+        public Criteria andDiscountFeeNotBetween(long value1, long value2) {
             addCriterion("DISCOUNT_FEE not between", value1, value2, "discountFee");
             return (Criteria) this;
         }
@@ -455,32 +455,32 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOperDiscountFeeEqualTo(Long value) {
+        public Criteria andOperDiscountFeeEqualTo(long value) {
             addCriterion("OPER_DISCOUNT_FEE =", value, "operDiscountFee");
             return (Criteria) this;
         }
 
-        public Criteria andOperDiscountFeeNotEqualTo(Long value) {
+        public Criteria andOperDiscountFeeNotEqualTo(long value) {
             addCriterion("OPER_DISCOUNT_FEE <>", value, "operDiscountFee");
             return (Criteria) this;
         }
 
-        public Criteria andOperDiscountFeeGreaterThan(Long value) {
+        public Criteria andOperDiscountFeeGreaterThan(long value) {
             addCriterion("OPER_DISCOUNT_FEE >", value, "operDiscountFee");
             return (Criteria) this;
         }
 
-        public Criteria andOperDiscountFeeGreaterThanOrEqualTo(Long value) {
+        public Criteria andOperDiscountFeeGreaterThanOrEqualTo(long value) {
             addCriterion("OPER_DISCOUNT_FEE >=", value, "operDiscountFee");
             return (Criteria) this;
         }
 
-        public Criteria andOperDiscountFeeLessThan(Long value) {
+        public Criteria andOperDiscountFeeLessThan(long value) {
             addCriterion("OPER_DISCOUNT_FEE <", value, "operDiscountFee");
             return (Criteria) this;
         }
 
-        public Criteria andOperDiscountFeeLessThanOrEqualTo(Long value) {
+        public Criteria andOperDiscountFeeLessThanOrEqualTo(long value) {
             addCriterion("OPER_DISCOUNT_FEE <=", value, "operDiscountFee");
             return (Criteria) this;
         }
@@ -495,12 +495,12 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andOperDiscountFeeBetween(Long value1, Long value2) {
+        public Criteria andOperDiscountFeeBetween(long value1, long value2) {
             addCriterion("OPER_DISCOUNT_FEE between", value1, value2, "operDiscountFee");
             return (Criteria) this;
         }
 
-        public Criteria andOperDiscountFeeNotBetween(Long value1, Long value2) {
+        public Criteria andOperDiscountFeeNotBetween(long value1, long value2) {
             addCriterion("OPER_DISCOUNT_FEE not between", value1, value2, "operDiscountFee");
             return (Criteria) this;
         }
@@ -585,32 +585,32 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andAdjustFeeEqualTo(Long value) {
+        public Criteria andAdjustFeeEqualTo(long value) {
             addCriterion("ADJUST_FEE =", value, "adjustFee");
             return (Criteria) this;
         }
 
-        public Criteria andAdjustFeeNotEqualTo(Long value) {
+        public Criteria andAdjustFeeNotEqualTo(long value) {
             addCriterion("ADJUST_FEE <>", value, "adjustFee");
             return (Criteria) this;
         }
 
-        public Criteria andAdjustFeeGreaterThan(Long value) {
+        public Criteria andAdjustFeeGreaterThan(long value) {
             addCriterion("ADJUST_FEE >", value, "adjustFee");
             return (Criteria) this;
         }
 
-        public Criteria andAdjustFeeGreaterThanOrEqualTo(Long value) {
+        public Criteria andAdjustFeeGreaterThanOrEqualTo(long value) {
             addCriterion("ADJUST_FEE >=", value, "adjustFee");
             return (Criteria) this;
         }
 
-        public Criteria andAdjustFeeLessThan(Long value) {
+        public Criteria andAdjustFeeLessThan(long value) {
             addCriterion("ADJUST_FEE <", value, "adjustFee");
             return (Criteria) this;
         }
 
-        public Criteria andAdjustFeeLessThanOrEqualTo(Long value) {
+        public Criteria andAdjustFeeLessThanOrEqualTo(long value) {
             addCriterion("ADJUST_FEE <=", value, "adjustFee");
             return (Criteria) this;
         }
@@ -625,12 +625,12 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andAdjustFeeBetween(Long value1, Long value2) {
+        public Criteria andAdjustFeeBetween(long value1, long value2) {
             addCriterion("ADJUST_FEE between", value1, value2, "adjustFee");
             return (Criteria) this;
         }
 
-        public Criteria andAdjustFeeNotBetween(Long value1, Long value2) {
+        public Criteria andAdjustFeeNotBetween(long value1, long value2) {
             addCriterion("ADJUST_FEE not between", value1, value2, "adjustFee");
             return (Criteria) this;
         }
@@ -645,32 +645,32 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andPaidFeeEqualTo(Long value) {
+        public Criteria andPaidFeeEqualTo(long value) {
             addCriterion("PAID_FEE =", value, "paidFee");
             return (Criteria) this;
         }
 
-        public Criteria andPaidFeeNotEqualTo(Long value) {
+        public Criteria andPaidFeeNotEqualTo(long value) {
             addCriterion("PAID_FEE <>", value, "paidFee");
             return (Criteria) this;
         }
 
-        public Criteria andPaidFeeGreaterThan(Long value) {
+        public Criteria andPaidFeeGreaterThan(long value) {
             addCriterion("PAID_FEE >", value, "paidFee");
             return (Criteria) this;
         }
 
-        public Criteria andPaidFeeGreaterThanOrEqualTo(Long value) {
+        public Criteria andPaidFeeGreaterThanOrEqualTo(long value) {
             addCriterion("PAID_FEE >=", value, "paidFee");
             return (Criteria) this;
         }
 
-        public Criteria andPaidFeeLessThan(Long value) {
+        public Criteria andPaidFeeLessThan(long value) {
             addCriterion("PAID_FEE <", value, "paidFee");
             return (Criteria) this;
         }
 
-        public Criteria andPaidFeeLessThanOrEqualTo(Long value) {
+        public Criteria andPaidFeeLessThanOrEqualTo(long value) {
             addCriterion("PAID_FEE <=", value, "paidFee");
             return (Criteria) this;
         }
@@ -685,12 +685,12 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andPaidFeeBetween(Long value1, Long value2) {
+        public Criteria andPaidFeeBetween(long value1, long value2) {
             addCriterion("PAID_FEE between", value1, value2, "paidFee");
             return (Criteria) this;
         }
 
-        public Criteria andPaidFeeNotBetween(Long value1, Long value2) {
+        public Criteria andPaidFeeNotBetween(long value1, long value2) {
             addCriterion("PAID_FEE not between", value1, value2, "paidFee");
             return (Criteria) this;
         }
@@ -705,32 +705,32 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeEqualTo(Long value) {
+        public Criteria andPayFeeEqualTo(long value) {
             addCriterion("PAY_FEE =", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeNotEqualTo(Long value) {
+        public Criteria andPayFeeNotEqualTo(long value) {
             addCriterion("PAY_FEE <>", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeGreaterThan(Long value) {
+        public Criteria andPayFeeGreaterThan(long value) {
             addCriterion("PAY_FEE >", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeGreaterThanOrEqualTo(Long value) {
+        public Criteria andPayFeeGreaterThanOrEqualTo(long value) {
             addCriterion("PAY_FEE >=", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeLessThan(Long value) {
+        public Criteria andPayFeeLessThan(long value) {
             addCriterion("PAY_FEE <", value, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeLessThanOrEqualTo(Long value) {
+        public Criteria andPayFeeLessThanOrEqualTo(long value) {
             addCriterion("PAY_FEE <=", value, "payFee");
             return (Criteria) this;
         }
@@ -745,12 +745,12 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeBetween(Long value1, Long value2) {
+        public Criteria andPayFeeBetween(long value1, long value2) {
             addCriterion("PAY_FEE between", value1, value2, "payFee");
             return (Criteria) this;
         }
 
-        public Criteria andPayFeeNotBetween(Long value1, Long value2) {
+        public Criteria andPayFeeNotBetween(long value1, long value2) {
             addCriterion("PAY_FEE not between", value1, value2, "payFee");
             return (Criteria) this;
         }
@@ -1035,32 +1035,32 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andTotalJfEqualTo(Long value) {
+        public Criteria andTotalJfEqualTo(long value) {
             addCriterion("TOTAL_JF =", value, "totalJf");
             return (Criteria) this;
         }
 
-        public Criteria andTotalJfNotEqualTo(Long value) {
+        public Criteria andTotalJfNotEqualTo(long value) {
             addCriterion("TOTAL_JF <>", value, "totalJf");
             return (Criteria) this;
         }
 
-        public Criteria andTotalJfGreaterThan(Long value) {
+        public Criteria andTotalJfGreaterThan(long value) {
             addCriterion("TOTAL_JF >", value, "totalJf");
             return (Criteria) this;
         }
 
-        public Criteria andTotalJfGreaterThanOrEqualTo(Long value) {
+        public Criteria andTotalJfGreaterThanOrEqualTo(long value) {
             addCriterion("TOTAL_JF >=", value, "totalJf");
             return (Criteria) this;
         }
 
-        public Criteria andTotalJfLessThan(Long value) {
+        public Criteria andTotalJfLessThan(long value) {
             addCriterion("TOTAL_JF <", value, "totalJf");
             return (Criteria) this;
         }
 
-        public Criteria andTotalJfLessThanOrEqualTo(Long value) {
+        public Criteria andTotalJfLessThanOrEqualTo(long value) {
             addCriterion("TOTAL_JF <=", value, "totalJf");
             return (Criteria) this;
         }
@@ -1075,12 +1075,12 @@ public class OrdOdFeeTotalCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andTotalJfBetween(Long value1, Long value2) {
+        public Criteria andTotalJfBetween(long value1, long value2) {
             addCriterion("TOTAL_JF between", value1, value2, "totalJf");
             return (Criteria) this;
         }
 
-        public Criteria andTotalJfNotBetween(Long value1, Long value2) {
+        public Criteria andTotalJfNotBetween(long value1, long value2) {
             addCriterion("TOTAL_JF not between", value1, value2, "totalJf");
             return (Criteria) this;
         }

@@ -10,13 +10,21 @@ public interface OrdOdFeeOffsetMapper {
 
     int deleteByExample(OrdOdFeeOffsetCriteria example);
 
+    int deleteByPrimaryKey(long feeOffsetId);
+
     int insert(OrdOdFeeOffset record);
 
     int insertSelective(OrdOdFeeOffset record);
 
     List<OrdOdFeeOffset> selectByExample(OrdOdFeeOffsetCriteria example);
 
+    OrdOdFeeOffset selectByPrimaryKey(long feeOffsetId);
+
     int updateByExampleSelective(@Param("record") OrdOdFeeOffset record, @Param("example") OrdOdFeeOffsetCriteria example);
 
     int updateByExample(@Param("record") OrdOdFeeOffset record, @Param("example") OrdOdFeeOffsetCriteria example);
+
+    int updateByPrimaryKeySelective(OrdOdFeeOffset record);
+
+    int updateByPrimaryKey(OrdOdFeeOffset record);
 }

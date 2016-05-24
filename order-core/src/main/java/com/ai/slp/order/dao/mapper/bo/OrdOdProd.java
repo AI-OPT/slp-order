@@ -3,17 +3,17 @@ package com.ai.slp.order.dao.mapper.bo;
 import java.sql.Timestamp;
 
 public class OrdOdProd {
-    private Long prodDetalId;
+    private long prodDetalId;
 
     private String tenantId;
 
-    private Long orderId;
+    private long orderId;
 
     private String prodType;
 
-    private Long supplierId;
+    private long supplierId;
 
-    private Long sellerId;
+    private long sellerId;
 
     private String prodId;
 
@@ -37,23 +37,23 @@ public class OrdOdProd {
 
     private String state;
 
-    private Long buySum;
+    private long buySum;
 
-    private Long salePrice;
+    private long salePrice;
 
-    private Long costPrice;
+    private long costPrice;
 
-    private Long totalFee;
+    private long totalFee;
 
-    private Long discountFee;
+    private long discountFee;
 
-    private Long operDiscountFee;
+    private long operDiscountFee;
 
     private String operDiscountDesc;
 
-    private Long adjustFee;
+    private long adjustFee;
 
-    private Long jf;
+    private long jf;
 
     private String prodDesc;
 
@@ -65,11 +65,11 @@ public class OrdOdProd {
 
     private String updateOperId;
 
-    public Long getProdDetalId() {
+    public long getProdDetalId() {
         return prodDetalId;
     }
 
-    public void setProdDetalId(Long prodDetalId) {
+    public void setProdDetalId(long prodDetalId) {
         this.prodDetalId = prodDetalId;
     }
 
@@ -81,11 +81,11 @@ public class OrdOdProd {
         this.tenantId = tenantId == null ? null : tenantId.trim();
     }
 
-    public Long getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
@@ -97,19 +97,19 @@ public class OrdOdProd {
         this.prodType = prodType == null ? null : prodType.trim();
     }
 
-    public Long getSupplierId() {
+    public long getSupplierId() {
         return supplierId;
     }
 
-    public void setSupplierId(Long supplierId) {
+    public void setSupplierId(long supplierId) {
         this.supplierId = supplierId;
     }
 
-    public Long getSellerId() {
+    public long getSellerId() {
         return sellerId;
     }
 
-    public void setSellerId(Long sellerId) {
+    public void setSellerId(long sellerId) {
         this.sellerId = sellerId;
     }
 
@@ -201,51 +201,51 @@ public class OrdOdProd {
         this.state = state == null ? null : state.trim();
     }
 
-    public Long getBuySum() {
+    public long getBuySum() {
         return buySum;
     }
 
-    public void setBuySum(Long buySum) {
+    public void setBuySum(long buySum) {
         this.buySum = buySum;
     }
 
-    public Long getSalePrice() {
+    public long getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(Long salePrice) {
+    public void setSalePrice(long salePrice) {
         this.salePrice = salePrice;
     }
 
-    public Long getCostPrice() {
+    public long getCostPrice() {
         return costPrice;
     }
 
-    public void setCostPrice(Long costPrice) {
+    public void setCostPrice(long costPrice) {
         this.costPrice = costPrice;
     }
 
-    public Long getTotalFee() {
+    public long getTotalFee() {
         return totalFee;
     }
 
-    public void setTotalFee(Long totalFee) {
+    public void setTotalFee(long totalFee) {
         this.totalFee = totalFee;
     }
 
-    public Long getDiscountFee() {
+    public long getDiscountFee() {
         return discountFee;
     }
 
-    public void setDiscountFee(Long discountFee) {
+    public void setDiscountFee(long discountFee) {
         this.discountFee = discountFee;
     }
 
-    public Long getOperDiscountFee() {
+    public long getOperDiscountFee() {
         return operDiscountFee;
     }
 
-    public void setOperDiscountFee(Long operDiscountFee) {
+    public void setOperDiscountFee(long operDiscountFee) {
         this.operDiscountFee = operDiscountFee;
     }
 
@@ -257,19 +257,19 @@ public class OrdOdProd {
         this.operDiscountDesc = operDiscountDesc == null ? null : operDiscountDesc.trim();
     }
 
-    public Long getAdjustFee() {
+    public long getAdjustFee() {
         return adjustFee;
     }
 
-    public void setAdjustFee(Long adjustFee) {
+    public void setAdjustFee(long adjustFee) {
         this.adjustFee = adjustFee;
     }
 
-    public Long getJf() {
+    public long getJf() {
         return jf;
     }
 
-    public void setJf(Long jf) {
+    public void setJf(long jf) {
         this.jf = jf;
     }
 

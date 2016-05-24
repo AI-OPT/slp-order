@@ -10,13 +10,21 @@ public interface OrdOdStateChgMapper {
 
     int deleteByExample(OrdOdStateChgCriteria example);
 
+    int deleteByPrimaryKey(long stateChgId);
+
     int insert(OrdOdStateChg record);
 
     int insertSelective(OrdOdStateChg record);
 
     List<OrdOdStateChg> selectByExample(OrdOdStateChgCriteria example);
 
+    OrdOdStateChg selectByPrimaryKey(long stateChgId);
+
     int updateByExampleSelective(@Param("record") OrdOdStateChg record, @Param("example") OrdOdStateChgCriteria example);
 
     int updateByExample(@Param("record") OrdOdStateChg record, @Param("example") OrdOdStateChgCriteria example);
+
+    int updateByPrimaryKeySelective(OrdOdStateChg record);
+
+    int updateByPrimaryKey(OrdOdStateChg record);
 }
