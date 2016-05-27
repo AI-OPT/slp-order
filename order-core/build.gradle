@@ -7,8 +7,8 @@ dependencies {
     compile 'org.springframework:spring-jdbc:4.1.7.RELEASE'
 
     compile 'com.ai.opt.sdk:opt-sdk:2.0-SNAPSHOT'
-
     compile 'com.ai.slp.product:product:1.0-SNAPSHOT'
+    compile 'com.ai.slp.product:storageserver:1.0-SNAPSHOT'
 
     testCompile(
             "org.springframework:spring-test:4.1.7.RELEASE",
