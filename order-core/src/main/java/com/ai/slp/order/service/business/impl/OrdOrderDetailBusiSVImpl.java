@@ -115,7 +115,7 @@ public class OrdOrderDetailBusiSVImpl implements IordOrderDetailBusiSV {
      */
     public OrdOrderDetailParamsResponse getDetailsInfo(OrdOrderDetailParams ordOrderParam){
         OrdOdProdExtendCriteria example = new OrdOdProdExtendCriteria();
-        example.or().andOrderIdEqualTo(new BigDecimal(ordOrderParam.getOrderId()));
+        example.or().andOrderIdEqualTo(ordOrderParam.getOrderId());
         List<OrdOdProdExtend> list = orderDetailAtomSV.getOrdOdProdExtend(example);
         List<OrdOrderDetailParams> result = new ArrayList<OrdOrderDetailParams>();
         /**

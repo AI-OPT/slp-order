@@ -7,4 +7,8 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria;
 
 public interface IOrdOdFeeTotalAtomSV {
     List<OrdOdFeeTotal> selectByExample(OrdOdFeeTotalCriteria example);
+
+    public OrdOdFeeTotal selectByOrderId(String tenantId, long orderId);
+
+    int insertSelective(OrdOdFeeTotal record);
 }

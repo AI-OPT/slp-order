@@ -76,7 +76,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         return orderList;
     }
 
-
     /**
      * 创建订单信息
      * 
@@ -247,19 +246,25 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
                 null, sysDate);
 
     }
+
     /**
      * 更新订单状态
+     * 
      * @param request
      * @param sysDate
      * @param orderId
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void updateOrderState(String tenantId,Timestamp sysDate, long orderId) {
+    private void updateOrderState(String tenantId, Timestamp sysDate, long orderId) {
         OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
         ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_PAY);
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.updateById(ordOrder);
+        // 写入订单状态变化轨迹表
+        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, ordOrder.getState(),
+                OrdersConstants.OrdOrder.State.WAIT_PAY, OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null,
+                null, null, sysDate);
     }
 
 }

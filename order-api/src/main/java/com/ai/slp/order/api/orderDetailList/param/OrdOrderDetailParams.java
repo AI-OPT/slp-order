@@ -11,7 +11,7 @@ public class OrdOrderDetailParams extends BaseResponse{
     /**
      * 订单Id
      */
-    public String orderId;
+    public long orderId;
     
     /**
      * 101  提交 
@@ -108,11 +108,11 @@ public class OrdOrderDetailParams extends BaseResponse{
     
     
     
-    public String getOrderId() {
+    public long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
+    public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
