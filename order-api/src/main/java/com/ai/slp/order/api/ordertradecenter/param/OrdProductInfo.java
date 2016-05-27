@@ -2,6 +2,8 @@ package com.ai.slp.order.api.ordertradecenter.param;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class OrdProductInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -9,26 +11,31 @@ public class OrdProductInfo implements Serializable {
     /**
      * 单品Id
      */
+    @NotBlank(message = "单品Id不能为空")
     private String skuId;
 
     /**
      * 购买数量
      */
+    @NotBlank(message = "购买数量不能为空")
     private int buySum;
 
     /**
      * 运营商
      */
+    @NotBlank(message = "运营商不能为空")
     private String basicOrgId;
 
     /**
      * 省份
      */
+    @NotBlank(message = "省份不能为空")
     private String provinceCode;
 
     /**
      * 充值面额
      */
+    @NotBlank(message = "充值面额不能为空")
     private String chargeFee;
 
     /**
