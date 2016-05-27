@@ -12,16 +12,6 @@ public class OrdBaseInfo implements Serializable {
     private String userId;
 
     /**
-     * 账户Id
-     */
-    private long acctId;
-
-    /**
-     * 订购Id
-     */
-    private long subsId;
-
-    /**
      * 业务类型
      */
     private String orderType;
@@ -30,16 +20,6 @@ public class OrdBaseInfo implements Serializable {
      * 是否需要快递
      */
     private String deliveryFlag;
-
-    /**
-     * 供应商Id
-     */
-    private String supplierId;
-
-    /**
-     * 销售商Id
-     */
-    private long sellerId;
 
     /**
      * 渠道Id
@@ -80,28 +60,12 @@ public class OrdBaseInfo implements Serializable {
         return userId;
     }
 
-    public long getAcctId() {
-        return acctId;
-    }
-
-    public long getSubsId() {
-        return subsId;
-    }
-
     public String getOrderType() {
         return orderType;
     }
 
     public String getDeliveryFlag() {
         return deliveryFlag;
-    }
-
-    public String getSupplierId() {
-        return supplierId;
-    }
-
-    public long getSellerId() {
-        return sellerId;
     }
 
     public String getChlId() {
@@ -128,16 +92,12 @@ public class OrdBaseInfo implements Serializable {
         return keywords;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public void setAcctId(long acctId) {
-        this.acctId = acctId;
-    }
-
-    public void setSubsId(long subsId) {
-        this.subsId = subsId;
     }
 
     public void setOrderType(String orderType) {
@@ -146,14 +106,6 @@ public class OrdBaseInfo implements Serializable {
 
     public void setDeliveryFlag(String deliveryFlag) {
         this.deliveryFlag = deliveryFlag;
-    }
-
-    public void setSupplierId(String supplierId) {
-        this.supplierId = supplierId;
-    }
-
-    public void setSellerId(long sellerId) {
-        this.sellerId = sellerId;
     }
 
     public void setChlId(String chlId) {
@@ -180,11 +132,8 @@ public class OrdBaseInfo implements Serializable {
         this.keywords = keywords;
     }
 
-    public String getRemark() {
-        return remark;
-    }
-
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
 }

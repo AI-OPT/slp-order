@@ -85,10 +85,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             this.resoleOrders(orderId, request.getTenantId());
             /* 3.订单支付完成后，对订单进行处理 */
             this.execOrders(orderId, request.getTenantId());
+            /* 4.调用路由 */
+            this.callRoute(request);
+            /* 5.归档 */
+            this.archiveOrderData(request);
         }
-        /* 4.调用路由 */
-        this.callRoute(request);
-        /* 4.归档 */
+
     }
 
     /**
@@ -264,10 +266,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             String infoJson = ordOdProdExtend.getInfoJson();
             InfoJsonVo infoJsonVo = JSON.parseObject(infoJson, InfoJsonVo.class);
             List<ProdExtendInfoVo> prodExtendInfoVoList = infoJsonVo.getProdExtendInfoVoList();
-            for(ProdExtendInfoVo prodExtendInfoVo:prodExtendInfoVoList){
-                
+            for (ProdExtendInfoVo prodExtendInfoVo : prodExtendInfoVoList) {
+
             }
-            
+
         }
     }
 
@@ -307,5 +309,15 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @ApiDocMethod
      */
     private void callRoute(OrderPayRequest request) {
+    }
+
+    /**
+     * 归档
+     * 
+     * @param request
+     * @author zhangxw
+     * @ApiDocMethod
+     */
+    private void archiveOrderData(OrderPayRequest request) {
     }
 }

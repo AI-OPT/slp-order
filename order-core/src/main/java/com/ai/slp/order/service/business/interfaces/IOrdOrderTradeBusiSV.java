@@ -1,13 +1,12 @@
 package com.ai.slp.order.service.business.interfaces;
 
-import java.util.List;
-
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
+import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 
 public interface IOrdOrderTradeBusiSV {
 
-    public List<Long> apply(OrderTradeCenterRequest request) throws BusinessException,
+    public OrderTradeCenterResponse apply(OrderTradeCenterRequest request) throws BusinessException,
             SystemException;
 }

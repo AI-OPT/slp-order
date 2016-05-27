@@ -14,14 +14,34 @@ public class OrderTradeCenterResponse extends BaseResponse {
 
     private static final long serialVersionUID = 1L;
 
-    private List<Long> orderList;
+    private long orderId;
 
-    public List<Long> getOrderList() {
-        return orderList;
+    private OrdFeeInfo ordFeeInfo;
+
+    private List<OrdProductResInfo> ordProductResList;
+
+    public List<OrdProductResInfo> getOrdProductResList() {
+        return ordProductResList;
     }
 
-    public void setOrderList(List<Long> orderList) {
-        this.orderList = orderList;
+    public void setOrdProductResList(List<OrdProductResInfo> ordProductResList) {
+        this.ordProductResList = ordProductResList;
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public OrdFeeInfo getOrdFeeInfo() {
+        return ordFeeInfo;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
+
+    public void setOrdFeeInfo(OrdFeeInfo ordFeeInfo) {
+        this.ordFeeInfo = ordFeeInfo;
     }
 
 }

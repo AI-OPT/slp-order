@@ -25,10 +25,8 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
-        OrderTradeCenterResponse response = new OrderTradeCenterResponse();
 
-        List<Long> orderList = ordOrderTradeBusiSV.apply(request);
-        response.setOrderList(orderList);
+         OrderTradeCenterResponse response = ordOrderTradeBusiSV.apply(request);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
         response.setResponseHeader(responseHeader);

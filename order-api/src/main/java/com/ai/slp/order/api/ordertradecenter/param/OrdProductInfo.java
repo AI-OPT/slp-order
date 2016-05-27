@@ -7,44 +7,29 @@ public class OrdProductInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 销售品Id
-     */
-    private String prodId;
-
-    /**
-     * 销售品名称
-     */
-    private String prodName;
-
-    /**
      * 单品Id
      */
     private String skuId;
 
     /**
-     * 标准品Id
-     */
-    private String standardProdId;
-
-    /**
-     * 库存Id
-     */
-    private String storageId;
-
-    /**
-     * sku库存Id
-     */
-    private String skuStorageId;
-
-    /**
-     * 销售单价
-     */
-    private long salePrice;
-
-    /**
      * 购买数量
      */
-    private long buySum;
+    private int buySum;
+
+    /**
+     * 运营商
+     */
+    private String basicOrgId;
+
+    /**
+     * 省份
+     */
+    private String provinceCode;
+
+    /**
+     * 充值面额
+     */
+    private String chargeFee;
 
     /**
      * 优惠费用
@@ -61,28 +46,6 @@ public class OrdProductInfo implements Serializable {
      */
     private String operDiscountDesc;
 
-    /**
-     * 应收费用
-     */
-    private long adjustFee;
-
-    /**
-     * 已收费用
-     */
-    private long paidFee;
-
-    public String getProdId() {
-        return prodId;
-    }
-
-    public String getProdName() {
-        return prodName;
-    }
-
-    public long getBuySum() {
-        return buySum;
-    }
-
     public long getDiscountFee() {
         return discountFee;
     }
@@ -93,26 +56,6 @@ public class OrdProductInfo implements Serializable {
 
     public String getOperDiscountDesc() {
         return operDiscountDesc;
-    }
-
-    public long getAdjustFee() {
-        return adjustFee;
-    }
-
-    public long getPaidFee() {
-        return paidFee;
-    }
-
-    public void setProdId(String prodId) {
-        this.prodId = prodId;
-    }
-
-    public void setProdName(String prodName) {
-        this.prodName = prodName;
-    }
-
-    public void setBuySum(long buySum) {
-        this.buySum = buySum;
     }
 
     public void setDiscountFee(long discountFee) {
@@ -127,14 +70,6 @@ public class OrdProductInfo implements Serializable {
         this.operDiscountDesc = operDiscountDesc;
     }
 
-    public void setAdjustFee(long adjustFee) {
-        this.adjustFee = adjustFee;
-    }
-
-    public void setPaidFee(long paidFee) {
-        this.paidFee = paidFee;
-    }
-
     public String getSkuId() {
         return skuId;
     }
@@ -143,36 +78,36 @@ public class OrdProductInfo implements Serializable {
         this.skuId = skuId;
     }
 
-    public String getStandardProdId() {
-        return standardProdId;
+    public int getBuySum() {
+        return buySum;
     }
 
-    public void setStandardProdId(String standardProdId) {
-        this.standardProdId = standardProdId;
+    public void setBuySum(int buySum) {
+        this.buySum = buySum;
     }
 
-    public String getStorageId() {
-        return storageId;
+    public String getBasicOrgId() {
+        return basicOrgId;
     }
 
-    public String getSkuStorageId() {
-        return skuStorageId;
+    public String getProvinceCode() {
+        return provinceCode;
     }
 
-    public void setStorageId(String storageId) {
-        this.storageId = storageId;
+    public String getChargeFee() {
+        return chargeFee;
     }
 
-    public void setSkuStorageId(String skuStorageId) {
-        this.skuStorageId = skuStorageId;
+    public void setBasicOrgId(String basicOrgId) {
+        this.basicOrgId = basicOrgId;
     }
 
-    public long getSalePrice() {
-        return salePrice;
+    public void setProvinceCode(String provinceCode) {
+        this.provinceCode = provinceCode;
     }
 
-    public void setSalePrice(long salePrice) {
-        this.salePrice = salePrice;
+    public void setChargeFee(String chargeFee) {
+        this.chargeFee = chargeFee;
     }
 
 }
