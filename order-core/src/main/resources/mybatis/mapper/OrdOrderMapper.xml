@@ -121,7 +121,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from ord_order
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
