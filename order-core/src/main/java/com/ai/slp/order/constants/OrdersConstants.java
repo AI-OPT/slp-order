@@ -48,6 +48,16 @@ public final class OrdersConstants {
              */
             public static final String BUG_MATERIAL_PROD = "110000";
 
+            /**
+             * 话费充值
+             */
+            public static final String PHONE_BILL_RECHARGE = "200000";
+
+            /**
+             * 流量充值
+             */
+            public static final String FLOWRATE_RECHARGE = "210000";
+
         }
 
         public static class State {
@@ -548,6 +558,18 @@ public final class OrdersConstants {
              * 支出
              */
             public static final String OUT = "out";
+
+        }
+
+    }
+
+    public static final class OrdBalacneIf {
+
+        public static class paySystemId {
+            /**
+             * 1 支付中心
+             */
+            public static final String PAY_CENTER = "1";
 
         }
 

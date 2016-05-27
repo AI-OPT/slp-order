@@ -1,9 +1,11 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,10 +83,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         /* 1.处理费用信息 */
         this.orderCharge(request);
         for (Long orderId : request.getOrderIds()) {
+            OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
             /* 2.拆分子订单 */
-            this.resoleOrders(orderId, request.getTenantId());
+            this.resoleOrders(ordOrder, request.getTenantId());
             /* 3.订单支付完成后，对订单进行处理 */
-            this.execOrders(orderId, request.getTenantId());
+            this.execOrders(ordOrder, request.getTenantId());
             /* 4.调用路由 */
             this.callRoute(request);
             /* 5.归档 */
@@ -191,7 +194,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ordBalacneIf.setOrderId(orderId);
         ordBalacneIf.setPayStyle(request.getPayType());
         ordBalacneIf.setPayFee(feeTotal.getPayFee());
-        ordBalacneIf.setPaySystemId("1");
+        ordBalacneIf.setPaySystemId(OrdersConstants.OrdBalacneIf.paySystemId.PAY_CENTER);
         ordBalacneIf.setExternalId(request.getExternalId());
         ordBalacneIf.setCreateTime(sysdate);
         ordBalacneIf.setRemark("支付成功");
@@ -249,27 +252,100 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * 
      * @param request
      * @author zhangxw
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
      * @ApiDocMethod
      */
-    private void resoleOrders(long orderId, String tenantId) {
-        logger.debug("开始对订单[" + orderId + "]进行拆分..");
+    private void resoleOrders(OrdOrder ordOrder, String tenantId) {
+        logger.debug("开始对订单[" + ordOrder.getOrderId() + "]进行拆分..");
         /* 1.查询商品明细拓展表 */
         OrdOdProdExtendCriteria example = new OrdOdProdExtendCriteria();
         OrdOdProdExtendCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
-        if (orderId != 0) {
-            criteria.andOrderIdEqualTo(orderId);
+        if (ordOrder.getOrderId() != 0) {
+            criteria.andOrderIdEqualTo(ordOrder.getOrderId());
         }
         List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
-        /* 1.遍历取出值信息 */
+        /* 2.遍历取出值信息 */
         for (OrdOdProdExtend ordOdProdExtend : ordOdProdExtendList) {
             String infoJson = ordOdProdExtend.getInfoJson();
             InfoJsonVo infoJsonVo = JSON.parseObject(infoJson, InfoJsonVo.class);
             List<ProdExtendInfoVo> prodExtendInfoVoList = infoJsonVo.getProdExtendInfoVoList();
             for (ProdExtendInfoVo prodExtendInfoVo : prodExtendInfoVoList) {
-
+                /* 3.生成子订单 */
+                this.createSubOrder(tenantId, ordOrder, ordOdProdExtend.getProdDetalId(),
+                        prodExtendInfoVo.getProdExtendInfoValue());
             }
 
+        }
+    }
+
+    /**
+     * 生成子订单
+     * 
+     * @param orderId
+     * @param prodExtendInfoValue
+     * @author zhangxw
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @ApiDocMethod
+     */
+    private void createSubOrder(String tenantId, OrdOrder parentOrdOrder, long prodDetalId,
+            String prodExtendInfoValue) {
+        /* 1.创建子订单表 */
+        String orderType = "";
+        long subOrderId = SequenceUtil.createOrderId();
+        if (OrdersConstants.OrdOrder.OrderType.BUG_FLOWRATE_CARD.equals(parentOrdOrder
+                .getOrderType())
+                || OrdersConstants.OrdOrder.OrderType.BUG_FLOWRATE_RECHARGE.equals(parentOrdOrder
+                        .getOrderType())) {
+            orderType = OrdersConstants.OrdOrder.OrderType.FLOWRATE_RECHARGE;
+        } else if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_BILL_CARD.equals(parentOrdOrder
+                .getOrderType())
+                || OrdersConstants.OrdOrder.OrderType.BUG_PHONE_BILL_RECHARGE.equals(parentOrdOrder
+                        .getOrderType())) {
+            orderType = OrdersConstants.OrdOrder.OrderType.PHONE_BILL_RECHARGE;
+        }
+        OrdOrder childOrdOrder = new OrdOrder();
+        try {
+            BeanUtils.copyProperties(childOrdOrder, parentOrdOrder);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        childOrdOrder.setOrderId(subOrderId);
+        childOrdOrder.setOrderType(orderType);
+        childOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.YES);
+        childOrdOrder.setParentOrderId(parentOrdOrder.getOrderId());
+        ordOrderAtomSV.updateById(childOrdOrder);
+        /* 2.创建子订单-商品明细信息 */
+        long prodDetailId = SequenceUtil.createProdDetailId();
+        OrdOdProdCriteria example = new OrdOdProdCriteria();
+        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+        criteria.andTenantIdEqualTo(tenantId);
+        // 添加搜索条件
+        if (parentOrdOrder.getOrderId() != 0) {
+            criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
+        }
+        if (prodDetalId != 0) {
+            criteria.andOrderIdEqualTo(prodDetalId);
+        }
+        List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
+        if(!CollectionUtil.isEmpty(ordOdProdList)){
+            OrdOdProd parentOrdOdProd = ordOdProdList.get(0);
+            OrdOdProd ordOdProd = new OrdOdProd();
+            try {
+                BeanUtils.copyProperties(parentOrdOdProd,ordOdProd);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            ordOdProd.setProdDetalId(prodDetailId);
+            ordOdProd.setOrderId(subOrderId);
+            ordOdProd.setExtendInfo(prodExtendInfoValue);
+            ordOdProdAtomSV.insertSelective(ordOdProd);
         }
     }
 
@@ -280,10 +356,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void execOrders(Long orderId, String tenantId) {
-        logger.debug("支付完成，对订单[" + orderId + "]状态进行处理..");
+    private void execOrders(OrdOrder ordOrder, String tenantId) {
+        logger.debug("支付完成，对订单[" + ordOrder.getOrderId() + "]状态进行处理..");
         /* 1.获取订单信息 */
-        OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
         String oldState = ordOrder.getState();
         Timestamp sysdate = DateUtil.getSysDate();
         /* 2.判断订单状态是否是待支付 */
@@ -294,7 +369,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             ordOrder.setStateChgTime(sysdate);
             ordOrderAtomSV.insertSelective(ordOrder);
             /* 2.2 记入订单轨迹表 */
-            orderFrameCoreSV.ordOdStateChg(orderId, tenantId, oldState, newState,
+            orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, oldState, newState,
                     OrdOdStateChg.ChgDesc.ORDER_PAID, null, null, null, sysdate);
 
         }

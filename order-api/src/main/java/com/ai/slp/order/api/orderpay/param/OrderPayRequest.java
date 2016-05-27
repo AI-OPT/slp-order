@@ -2,6 +2,8 @@ package com.ai.slp.order.api.orderpay.param;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.ai.opt.base.vo.BaseInfo;
@@ -19,7 +21,7 @@ public class OrderPayRequest extends BaseInfo {
     /**
      * 订单ID集
      */
-    @NotBlank(message = "订单ID不能为空")
+    @NotNull(message = "订单ID不能为空")
     private List<Long> orderIds;
 
     /**
