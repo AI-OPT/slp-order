@@ -22,7 +22,7 @@ import com.ai.slp.order.constants.ResultCodeConstants;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
 
-@Service
+@Service(validation = "true")
 @Component
 public class OrderListSVImpl implements IOrderListSV {
 
