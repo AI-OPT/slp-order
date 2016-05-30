@@ -49,6 +49,11 @@ public class OrdProductVo extends BaseInfo{
     private Long discountFee;
     
     /**
+     * 减免费用
+     */
+    private Long operDiscountFee;
+    
+    /**
      * 应收费用
      */
     private Long adjustFee;
@@ -82,6 +87,11 @@ public class OrdProductVo extends BaseInfo{
      * 商品图片
      */
     private ProductImage productImage;
+    
+    /**
+     * 图片地址
+     */
+    private String imageUrl;
     
     /**
      * 拓展信息值
@@ -206,5 +216,21 @@ public class OrdProductVo extends BaseInfo{
 
 	public void setProdName(String prodName) {
 		this.prodName = prodName;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public Long getOperDiscountFee() {
+		return operDiscountFee;
+	}
+
+	public void setOperDiscountFee(Long operDiscountFee) {
+		this.operDiscountFee = operDiscountFee;
 	}
 }
