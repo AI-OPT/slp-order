@@ -79,12 +79,12 @@ public final class OrdersConstants {
             /**
              * 12 待充值
              */
-            public static final String WAIT_AUDIT = "12";
+            public static final String WAIT_CHARGE = "12";
 
             /**
              * 121 已充值
              */
-            public static final String FINISH_AUDITED = "121";
+            public static final String FINISH_CHARGE = "121";
 
             /**
              * 122 审核不通过
@@ -351,6 +351,16 @@ public final class OrdersConstants {
              * 订单支付完成
              */
             public static final String ORDER_PAID = "您提交的订单已经支付完成";
+            
+            /**
+             * 订单待充值
+             */
+            public static final String ORDER_TO_CHARGE = "您提交的订单进入待充值状态";
+            
+            /**
+             * 订单充值完成
+             */
+            public static final String ORDER_CHARGED = "您提交的订单已经充值完成";
 
             /**
              * 订单进入待审核环节

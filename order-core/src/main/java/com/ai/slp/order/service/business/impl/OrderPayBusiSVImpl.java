@@ -332,11 +332,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             criteria.andOrderIdEqualTo(prodDetalId);
         }
         List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
-        if(!CollectionUtil.isEmpty(ordOdProdList)){
+        if (!CollectionUtil.isEmpty(ordOdProdList)) {
             OrdOdProd parentOrdOdProd = ordOdProdList.get(0);
             OrdOdProd ordOdProd = new OrdOdProd();
             try {
-                BeanUtils.copyProperties(parentOrdOdProd,ordOdProd);
+                BeanUtils.copyProperties(parentOrdOdProd, ordOdProd);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
@@ -371,6 +371,20 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             /* 2.2 记入订单轨迹表 */
             orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, oldState, newState,
                     OrdOdStateChg.ChgDesc.ORDER_PAID, null, null, null, sysdate);
+
+        }
+        /* 3.如果是卡充,需要将订单状态改为待充值 */
+        if (OrdersConstants.OrdOrder.OrderType.BUG_FLOWRATE_CARD.equals(ordOrder.getOrderType())
+                || OrdersConstants.OrdOrder.OrderType.BUG_PHONE_BILL_CARD.equals(ordOrder
+                        .getOrderType())) {
+            String newState = OrdersConstants.OrdOrder.State.WAIT_CHARGE;
+            ordOrder.setState(newState);
+            ordOrder.setStateChgTime(sysdate);
+            ordOrderAtomSV.insertSelective(ordOrder);
+            /* 2.2 记入订单轨迹表 */
+            orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId,
+                    OrdersConstants.OrdOrder.State.FINISH_PAID, newState,
+                    OrdOdStateChg.ChgDesc.ORDER_TO_CHARGE, null, null, null, sysdate);
 
         }
 
