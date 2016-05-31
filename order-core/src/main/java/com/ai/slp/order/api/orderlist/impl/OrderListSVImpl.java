@@ -85,6 +85,7 @@ public class OrderListSVImpl implements IOrderListSV {
 				ordProductVo1.setProdExtendInfoVoList(prodExtendInfoVoList1);
 			}
 			ordOrderParams1.setProductList(productList1);
+			result.add(ordOrderParams1);
 		}
 		pageInfo.setResult(result);
 		queryResponse.setPageInfo(pageInfo);
