@@ -2,11 +2,14 @@ package com.ai.slp.order.service.atom.impl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.factory.MapperFactory;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 
+@Component
 public class OrdOdProdAtomSVImpl implements IOrdOdProdAtomSV {
 
     @Override
