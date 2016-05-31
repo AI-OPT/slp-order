@@ -46,13 +46,17 @@ public class OrderListSVImpl implements IOrderListSV {
 		pageInfo.setPageNo(1);
 		pageInfo.setPageSize(5);
 		List<OrdOrderParams> result = new LinkedList<OrdOrderParams>();
+		String[] payStyleArray = new String[]{"11","111","111"}; 
+		String[] payStyleNameArray = new String[]{"待支付","已支付","已支付"}; 
 		for (int k = 0; k < 3; k++) {
 			OrdOrderParams ordOrderParams1 = new OrdOrderParams();
 			ordOrderParams1.setOrderId(10001L+k);
 			ordOrderParams1.setBusiCode("1");// 1：正常单
 			ordOrderParams1.setOrderType("100010");// 话费直充
-			ordOrderParams1.setState("11");// 11 待支付
-			ordOrderParams1.setStateName("待支付");
+			ordOrderParams1.setState(payStyleArray[k]);// 11 待支付
+			ordOrderParams1.setStateName(payStyleNameArray[k]);
+			ordOrderParams1.setPayStyle("21");
+			ordOrderParams1.setPayStyleName("支付宝");
 			ordOrderParams1.setOrderTime(DateUtil.getSysDate());
 			ordOrderParams1.setTotalFee(3000L);
 			ordOrderParams1.setDiscountFee(0L);
