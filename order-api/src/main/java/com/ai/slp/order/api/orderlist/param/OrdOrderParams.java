@@ -34,6 +34,11 @@ public class OrdOrderParams extends BaseInfo {
      * 订单状态(后厂)
      */
     private String state;
+    
+    /**
+     * 订单状态展示(后厂)
+     */
+    private String stateName;
 
     /**
      * 下单时间
@@ -130,5 +135,13 @@ public class OrdOrderParams extends BaseInfo {
 
 	public void setProductList(List<OrdProductVo> productList) {
 		this.productList = productList;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
 	}
 }

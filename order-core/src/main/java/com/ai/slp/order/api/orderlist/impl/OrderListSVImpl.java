@@ -52,6 +52,7 @@ public class OrderListSVImpl implements IOrderListSV {
 			ordOrderParams1.setBusiCode("1");// 1：正常单
 			ordOrderParams1.setOrderType("100010");// 话费直充
 			ordOrderParams1.setState("11");// 11 待支付
+			ordOrderParams1.setStateName("待支付");
 			ordOrderParams1.setOrderTime(DateUtil.getSysDate());
 			ordOrderParams1.setTotalFee(3000L);
 			ordOrderParams1.setDiscountFee(0L);
