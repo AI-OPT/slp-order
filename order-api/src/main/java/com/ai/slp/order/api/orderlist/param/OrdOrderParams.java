@@ -41,6 +41,11 @@ public class OrdOrderParams extends BaseInfo {
     private String stateName;
 
     /**
+     * 支付方式
+     */
+    private String payStyle;
+    
+    /**
      * 下单时间
      */
     private Timestamp orderTime;
@@ -143,5 +148,13 @@ public class OrdOrderParams extends BaseInfo {
 
 	public void setStateName(String stateName) {
 		this.stateName = stateName;
+	}
+
+	public String getPayStyle() {
+		return payStyle;
+	}
+
+	public void setPayStyle(String payStyle) {
+		this.payStyle = payStyle;
 	}
 }
