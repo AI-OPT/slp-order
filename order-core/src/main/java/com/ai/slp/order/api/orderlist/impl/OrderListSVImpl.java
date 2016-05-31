@@ -77,7 +77,7 @@ public class OrderListSVImpl implements IOrderListSV {
 				productImage1.setExtension(".jpg");
 				productImage1.setIdpsId("57454f50d601800009c0b0cf");
 				ordProductVo1.setProductImage(productImage1);
-				ordProductVo1.setImageUrl("http://10.1.245.8:18007/iPaas-IDPS/image/57454f50d601800009c0b0cf_100*100.jpg?userId=8EA4FD928D72469DA05D99004B260DF4&serviceId=IDPS001");
+				ordProductVo1.setImageUrl("http://10.1.245.8:18007/iPaas-IDPS/image/57454f50d601800009c0b0cf_100×100.jpg?userId=8EA4FD928D72469DA05D99004B260DF4&serviceId=IDPS001");
 				List<ProdExtendInfoVo> prodExtendInfoVoList1 = new LinkedList<ProdExtendInfoVo>();
 				for (int i = 0; i < 10; i++) {
 					ProdExtendInfoVo prodExtendInfoVo = new ProdExtendInfoVo();
