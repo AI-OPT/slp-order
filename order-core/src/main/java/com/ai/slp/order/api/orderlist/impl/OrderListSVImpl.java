@@ -83,6 +83,7 @@ public class OrderListSVImpl implements IOrderListSV {
 					prodExtendInfoVoList1.add(prodExtendInfoVo);
 				}
 				ordProductVo1.setProdExtendInfoVoList(prodExtendInfoVoList1);
+				productList1.add(ordProductVo1);
 			}
 			ordOrderParams1.setProductList(productList1);
 			result.add(ordOrderParams1);
