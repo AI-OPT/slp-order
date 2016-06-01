@@ -1,9 +1,6 @@
 package com.ai.slp.order.api.ordertradecenter.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
@@ -14,8 +11,9 @@ import com.ai.slp.order.api.ordertradecenter.interfaces.IOrderTradeCenterSV;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
+import com.alibaba.dubbo.config.annotation.Service;
 
-@Service
+@Service(validation = "true")
 @Transactional
 public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
 
@@ -25,10 +23,8 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
-        OrderTradeCenterResponse response = new OrderTradeCenterResponse();
 
-        List<Long> orderList = ordOrderTradeBusiSV.apply(request);
-        response.setOrderList(orderList);
+        OrderTradeCenterResponse response = ordOrderTradeBusiSV.apply(request);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
         response.setResponseHeader(responseHeader);

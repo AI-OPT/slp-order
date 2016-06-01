@@ -10,7 +10,7 @@ public interface OrdOdProdExtendMapper {
 
     int deleteByExample(OrdOdProdExtendCriteria example);
 
-    int deleteByPrimaryKey(Long prodDetalExtendId);
+    int deleteByPrimaryKey(long prodDetalExtendId);
 
     int insert(OrdOdProdExtend record);
 
@@ -18,7 +18,7 @@ public interface OrdOdProdExtendMapper {
 
     List<OrdOdProdExtend> selectByExample(OrdOdProdExtendCriteria example);
 
-    OrdOdProdExtend selectByPrimaryKey(Long prodDetalExtendId);
+    OrdOdProdExtend selectByPrimaryKey(long prodDetalExtendId);
 
     int updateByExampleSelective(@Param("record") OrdOdProdExtend record, @Param("example") OrdOdProdExtendCriteria example);
 

@@ -1,30 +1,38 @@
 package com.ai.slp.order.dao.mapper.bo;
 
 public class OrdOdProdExtend {
-    private Long prodDetalExtendId;
+    private long prodDetalExtendId;
 
-    private Long prodDetalId;
+    private long prodDetalId;
 
-    private Long orderId;
+    private long orderId;
 
     private String tenantId;
 
     private String infoJson;
 
-    public Long getProdDetalExtendId() {
+    public long getProdDetalExtendId() {
         return prodDetalExtendId;
     }
 
-    public void setProdDetalExtendId(Long prodDetalExtendId) {
+    public void setProdDetalExtendId(long prodDetalExtendId) {
         this.prodDetalExtendId = prodDetalExtendId;
     }
 
-    public Long getProdDetalId() {
+    public long getProdDetalId() {
         return prodDetalId;
     }
 
-    public void setProdDetalId(Long prodDetalId) {
+    public void setProdDetalId(long prodDetalId) {
         this.prodDetalId = prodDetalId;
+    }
+
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
     public String getTenantId() {
@@ -42,13 +50,4 @@ public class OrdOdProdExtend {
     public void setInfoJson(String infoJson) {
         this.infoJson = infoJson == null ? null : infoJson.trim();
     }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
 }

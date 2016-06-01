@@ -24,4 +24,6 @@ public interface IOrderTradeCenterSV {
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException;
 
+    @interface apply {}
+
 }

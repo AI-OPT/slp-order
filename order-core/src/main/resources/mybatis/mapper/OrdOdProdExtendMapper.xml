@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ai.slp.order.dao.mapper.interfaces." >
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOdProdExtendMapper" >
   <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend" >
-    <id column="PROD_DETAL_EXTEND_ID" property="prodDetalExtendId" jdbcType="DECIMAL" />
-    <result column="PROD_DETAL_ID" property="prodDetalId" jdbcType="DECIMAL" />
-    <result column="ORDER_ID" property="orderId" jdbcType="DECIMAL" />
+    <id column="PROD_DETAL_EXTEND_ID" property="prodDetalExtendId" jdbcType="BIGINT" />
+    <result column="PROD_DETAL_ID" property="prodDetalId" jdbcType="BIGINT" />
+    <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
     <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
     <result column="INFO_JSON" property="infoJson" jdbcType="VARCHAR" />
   </resultMap>
@@ -74,7 +74,7 @@
     <if test="distinct" >
       distinct
     </if>
-    'false' as QUERYID,
+    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from ord_od_prod_extend
     <if test="_parameter != null" >
@@ -87,15 +87,15 @@
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
     select 
     <include refid="Base_Column_List" />
     from ord_od_prod_extend
-    where PROD_DETAL_EXTEND_ID = #{prodDetalExtendId,jdbcType=DECIMAL}
+    where PROD_DETAL_EXTEND_ID = #{prodDetalExtendId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="long" >
     delete from ord_od_prod_extend
-    where PROD_DETAL_EXTEND_ID = #{prodDetalExtendId,jdbcType=DECIMAL}
+    where PROD_DETAL_EXTEND_ID = #{prodDetalExtendId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProdExtendCriteria" >
     delete from ord_od_prod_extend
@@ -106,21 +106,15 @@
   <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend" >
     insert into ord_od_prod_extend (PROD_DETAL_EXTEND_ID, PROD_DETAL_ID, ORDER_ID, 
       TENANT_ID, INFO_JSON)
-    values (#{prodDetalExtendId,jdbcType=DECIMAL}, #{prodDetalId,jdbcType=DECIMAL}, #{orderId,jdbcType=DECIMAL}, 
+    values (#{prodDetalExtendId,jdbcType=BIGINT}, #{prodDetalId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, 
       #{tenantId,jdbcType=VARCHAR}, #{infoJson,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend" >
     insert into ord_od_prod_extend
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="prodDetalExtendId != null" >
-        PROD_DETAL_EXTEND_ID,
-      </if>
-      <if test="prodDetalId != null" >
-        PROD_DETAL_ID,
-      </if>
-      <if test="orderId != null" >
-        ORDER_ID,
-      </if>
+      PROD_DETAL_EXTEND_ID,
+      PROD_DETAL_ID,
+      ORDER_ID,
       <if test="tenantId != null" >
         TENANT_ID,
       </if>
@@ -129,15 +123,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="prodDetalExtendId != null" >
-        #{prodDetalExtendId,jdbcType=DECIMAL},
-      </if>
-      <if test="prodDetalId != null" >
-        #{prodDetalId,jdbcType=DECIMAL},
-      </if>
-      <if test="orderId != null" >
-        #{orderId,jdbcType=DECIMAL},
-      </if>
+      #{prodDetalExtendId,jdbcType=BIGINT},
+      #{prodDetalId,jdbcType=BIGINT},
+      #{orderId,jdbcType=BIGINT},
       <if test="tenantId != null" >
         #{tenantId,jdbcType=VARCHAR},
       </if>
@@ -156,13 +144,13 @@
     update ord_od_prod_extend
     <set >
       <if test="record.prodDetalExtendId != null" >
-        PROD_DETAL_EXTEND_ID = #{record.prodDetalExtendId,jdbcType=DECIMAL},
+        PROD_DETAL_EXTEND_ID = #{record.prodDetalExtendId,jdbcType=BIGINT},
       </if>
       <if test="record.prodDetalId != null" >
-        PROD_DETAL_ID = #{record.prodDetalId,jdbcType=DECIMAL},
+        PROD_DETAL_ID = #{record.prodDetalId,jdbcType=BIGINT},
       </if>
       <if test="record.orderId != null" >
-        ORDER_ID = #{record.orderId,jdbcType=DECIMAL},
+        ORDER_ID = #{record.orderId,jdbcType=BIGINT},
       </if>
       <if test="record.tenantId != null" >
         TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
@@ -177,9 +165,9 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update ord_od_prod_extend
-    set PROD_DETAL_EXTEND_ID = #{record.prodDetalExtendId,jdbcType=DECIMAL},
-      PROD_DETAL_ID = #{record.prodDetalId,jdbcType=DECIMAL},
-      ORDER_ID = #{record.orderId,jdbcType=DECIMAL},
+    set PROD_DETAL_EXTEND_ID = #{record.prodDetalExtendId,jdbcType=BIGINT},
+      PROD_DETAL_ID = #{record.prodDetalId,jdbcType=BIGINT},
+      ORDER_ID = #{record.orderId,jdbcType=BIGINT},
       TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
       INFO_JSON = #{record.infoJson,jdbcType=VARCHAR}
     <if test="_parameter != null" >
@@ -190,10 +178,10 @@
     update ord_od_prod_extend
     <set >
       <if test="prodDetalId != null" >
-        PROD_DETAL_ID = #{prodDetalId,jdbcType=DECIMAL},
+        PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT},
       </if>
       <if test="orderId != null" >
-        ORDER_ID = #{orderId,jdbcType=DECIMAL},
+        ORDER_ID = #{orderId,jdbcType=BIGINT},
       </if>
       <if test="tenantId != null" >
         TENANT_ID = #{tenantId,jdbcType=VARCHAR},
@@ -202,14 +190,14 @@
         INFO_JSON = #{infoJson,jdbcType=VARCHAR},
       </if>
     </set>
-    where PROD_DETAL_EXTEND_ID = #{prodDetalExtendId,jdbcType=DECIMAL}
+    where PROD_DETAL_EXTEND_ID = #{prodDetalExtendId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend" >
     update ord_od_prod_extend
-    set PROD_DETAL_ID = #{prodDetalId,jdbcType=DECIMAL},
-      ORDER_ID = #{orderId,jdbcType=DECIMAL},
+    set PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT},
+      ORDER_ID = #{orderId,jdbcType=BIGINT},
       TENANT_ID = #{tenantId,jdbcType=VARCHAR},
       INFO_JSON = #{infoJson,jdbcType=VARCHAR}
-    where PROD_DETAL_EXTEND_ID = #{prodDetalExtendId,jdbcType=DECIMAL}
+    where PROD_DETAL_EXTEND_ID = #{prodDetalExtendId,jdbcType=BIGINT}
   </update>
 </mapper>
