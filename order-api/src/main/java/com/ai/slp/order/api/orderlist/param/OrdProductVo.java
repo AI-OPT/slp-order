@@ -1,7 +1,5 @@
 package com.ai.slp.order.api.orderlist.param;
 
-import java.util.List;
-
 import com.ai.opt.base.vo.BaseInfo;
 
 /**
@@ -96,7 +94,7 @@ public class OrdProductVo extends BaseInfo{
     /**
      * 拓展信息值
      */
-    private List<ProdExtendInfoVo> prodExtendInfoVoList;
+    private String prodExtendInfo;
 
 	public Long getOrderId() {
 		return orderId;
@@ -178,14 +176,6 @@ public class OrdProductVo extends BaseInfo{
 		this.chargeFee = chargeFee;
 	}
 
-	public List<ProdExtendInfoVo> getProdExtendInfoVoList() {
-		return prodExtendInfoVoList;
-	}
-
-	public void setProdExtendInfoVoList(List<ProdExtendInfoVo> prodExtendInfoVoList) {
-		this.prodExtendInfoVoList = prodExtendInfoVoList;
-	}
-
 	public ProductImage getProductImage() {
 		return productImage;
 	}
@@ -232,5 +222,13 @@ public class OrdProductVo extends BaseInfo{
 
 	public void setOperDiscountFee(Long operDiscountFee) {
 		this.operDiscountFee = operDiscountFee;
+	}
+
+	public String getProdExtendInfo() {
+		return prodExtendInfo;
+	}
+
+	public void setProdExtendInfo(String prodExtendInfo) {
+		this.prodExtendInfo = prodExtendInfo;
 	}
 }
