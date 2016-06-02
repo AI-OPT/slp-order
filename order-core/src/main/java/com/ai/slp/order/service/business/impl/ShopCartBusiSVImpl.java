@@ -23,7 +23,6 @@ import com.ai.slp.order.vo.ShopCartCachePointsVo;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -252,6 +251,8 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             ProductSkuInfo skuInfo = querySkuInfo(tenantId,skuId);
             CartProdInfo prodInfo = new CartProdInfo();
             BeanUtils.copyProperties(prodInfo,skuInfo);
+            prodInfo.setProductId(skuInfo.getProdId());
+            prodInfo.setProductName(skuInfo.getProdName());
             prodInfo.setInsertTime(cartProd.getInsertTime());
             prodInfo.setBuyNum(cartProd.getBuySum().longValue());
             cartProdInfoList.add(prodInfo);
