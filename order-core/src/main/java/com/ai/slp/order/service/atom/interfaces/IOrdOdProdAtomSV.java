@@ -9,4 +9,6 @@ public interface IOrdOdProdAtomSV {
     int insertSelective(OrdOdProd record);
 
     List<OrdOdProd> selectByExample(OrdOdProdCriteria example);
+
+    int updateById(OrdOdProd ordOdProd);
 }

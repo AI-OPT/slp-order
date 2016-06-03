@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
+import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
@@ -39,6 +40,14 @@ import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
+import com.ai.slp.product.api.product.interfaces.IProductServerSV;
+import com.ai.slp.product.api.product.param.ProductInfoQuery;
+import com.ai.slp.product.api.product.param.ProductRoute;
+import com.ai.slp.route.api.core.interfaces.IRouteCoreService;
+import com.ai.slp.route.api.core.params.SaleProductInfo;
+import com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV;
+import com.ai.slp.route.api.supplyproduct.param.SupplyProduct;
+import com.ai.slp.route.api.supplyproduct.param.SupplyProductQueryVo;
 import com.alibaba.fastjson.JSON;
 
 /**
@@ -81,15 +90,19 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Override
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
         /* 1.处理费用信息 */
-        this.orderCharge(request);
+        Timestamp sysdate = DateUtil.getSysDate();
+        this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
             OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
-            /* 2.拆分子订单 */
-            this.resoleOrders(ordOrder, request.getTenantId());
+            /* 2.判断订单业务类型 */
+            boolean flag = this.judgeOrderType(ordOrder, request.getTenantId(), sysdate);
+            if (flag) {
+                return;
+            }
             /* 3.订单支付完成后，对订单进行处理 */
-            this.execOrders(ordOrder, request.getTenantId());
-            /* 4.调用路由 */
-            this.callRoute(request);
+            this.execOrders(ordOrder, request.getTenantId(), sysdate);
+            /* 4.拆分子订单 */
+            this.resoleOrders(ordOrder, request.getTenantId());
             /* 5.归档 */
             this.archiveOrderData(request);
         }
@@ -104,7 +117,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @throws Exception
      * @ApiDocMethod
      */
-    private void orderCharge(OrderPayRequest request) throws BusinessException, SystemException {
+    private void orderCharge(OrderPayRequest request, Timestamp sysdate) throws BusinessException,
+            SystemException {
         logger.debug("开始进行订单收费处理..");
         List<Long> orderIds = request.getOrderIds();
         if (CollectionUtil.isEmpty(orderIds)) {
@@ -124,7 +138,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             throw new BusinessException("", "前后台计算的待支付金额不一致[已支付金额:" + totalFee + ",实际待支付金额:"
                     + actTotalFee + "]");
         }
-        Timestamp sysdate = DateUtil.getSysDate();
         /* 3.针对所有未支付订单进行冲抵处理 */
         for (OrdOdFeeTotal feeTotal : noPayList) {
             this.chargeAgainst(feeTotal, request, sysdate);
@@ -248,6 +261,35 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     }
 
     /**
+     * 判断订单类型,卡券类更新状态直接返回
+     * 
+     * @param ordOrder
+     * @return
+     * @author zhangxw
+     * @ApiDocMethod
+     */
+    private boolean judgeOrderType(OrdOrder ordOrder, String tenantId, Timestamp sysdate) {
+        /* 1.如果是卡充,需要将订单状态改为待充值 */
+        boolean flag = false;
+        if (OrdersConstants.OrdOrder.OrderType.BUG_FLOWRATE_CARD.equals(ordOrder.getOrderType())
+                || OrdersConstants.OrdOrder.OrderType.BUG_PHONE_BILL_CARD.equals(ordOrder
+                        .getOrderType())) {
+            flag = true;
+            String newState = OrdersConstants.OrdOrder.State.WAIT_CHARGE;
+            String oldState = ordOrder.getState();
+            ordOrder.setState(newState);
+            ordOrder.setStateChgTime(sysdate);
+            ordOrderAtomSV.insertSelective(ordOrder);
+            /* 2. 记入订单轨迹表 */
+            orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, oldState, newState,
+                    OrdOdStateChg.ChgDesc.ORDER_TO_CHARGE, null, null, null, sysdate);
+
+        }
+
+        return flag;
+    }
+
+    /**
      * 拆分子订单
      * 
      * @param request
@@ -307,13 +349,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             orderType = OrdersConstants.OrdOrder.OrderType.PHONE_BILL_RECHARGE;
         }
         OrdOrder childOrdOrder = new OrdOrder();
-        try {
-            BeanUtils.copyProperties(childOrdOrder, parentOrdOrder);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        BeanUtils.copyProperties(childOrdOrder, parentOrdOrder);
+
         childOrdOrder.setOrderId(subOrderId);
         childOrdOrder.setOrderType(orderType);
         childOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.YES);
@@ -324,7 +361,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         OrdOdProdCriteria example = new OrdOdProdCriteria();
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
-        // 添加搜索条件
+
         if (parentOrdOrder.getOrderId() != 0) {
             criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
         }
@@ -332,21 +369,20 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             criteria.andOrderIdEqualTo(prodDetalId);
         }
         List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
-        if (!CollectionUtil.isEmpty(ordOdProdList)) {
-            OrdOdProd parentOrdOdProd = ordOdProdList.get(0);
-            OrdOdProd ordOdProd = new OrdOdProd();
-            try {
-                BeanUtils.copyProperties(parentOrdOdProd, ordOdProd);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            ordOdProd.setProdDetalId(prodDetailId);
-            ordOdProd.setOrderId(subOrderId);
-            ordOdProd.setExtendInfo(prodExtendInfoValue);
-            ordOdProdAtomSV.insertSelective(ordOdProd);
+        if (CollectionUtil.isEmpty(ordOdProdList)) {
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
         }
+        OrdOdProd parentOrdOdProd = ordOdProdList.get(0);
+        OrdOdProd ordOdProd = new OrdOdProd();
+        BeanUtils.copyProperties(parentOrdOdProd, ordOdProd);
+        ordOdProd.setProdDetalId(prodDetailId);
+        ordOdProd.setOrderId(subOrderId);
+        ordOdProd.setExtendInfo(prodExtendInfoValue);
+        ordOdProdAtomSV.insertSelective(ordOdProd);
+        /* 3.调用路由,并更新订单明细表 */
+        this.callRoute(tenantId, prodDetailId, ordOdProd.getProdId(), ordOdProd.getSalePrice(),
+                ordOdProd.getStandardProdId());
+
     }
 
     /**
@@ -356,11 +392,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void execOrders(OrdOrder ordOrder, String tenantId) {
+    private void execOrders(OrdOrder ordOrder, String tenantId, Timestamp sysdate) {
         logger.debug("支付完成，对订单[" + ordOrder.getOrderId() + "]状态进行处理..");
         /* 1.获取订单信息 */
         String oldState = ordOrder.getState();
-        Timestamp sysdate = DateUtil.getSysDate();
         /* 2.判断订单状态是否是待支付 */
         if (OrdersConstants.OrdOrder.State.WAIT_PAY.equals(oldState)) {
             /* 2.1 如果订单之前状态为待支付,则说明执行本操作时候前，订单在进行支付操作,执行本操作后订单为已支付 */
@@ -373,31 +408,74 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
                     OrdOdStateChg.ChgDesc.ORDER_PAID, null, null, null, sysdate);
 
         }
-        /* 3.如果是卡充,需要将订单状态改为待充值 */
-        if (OrdersConstants.OrdOrder.OrderType.BUG_FLOWRATE_CARD.equals(ordOrder.getOrderType())
-                || OrdersConstants.OrdOrder.OrderType.BUG_PHONE_BILL_CARD.equals(ordOrder
-                        .getOrderType())) {
-            String newState = OrdersConstants.OrdOrder.State.WAIT_CHARGE;
-            ordOrder.setState(newState);
-            ordOrder.setStateChgTime(sysdate);
-            ordOrderAtomSV.insertSelective(ordOrder);
-            /* 2.2 记入订单轨迹表 */
-            orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId,
-                    OrdersConstants.OrdOrder.State.FINISH_PAID, newState,
-                    OrdOdStateChg.ChgDesc.ORDER_TO_CHARGE, null, null, null, sysdate);
-
-        }
-
     }
 
     /**
      * 调用路由
      * 
-     * @param request
+     * @param prodId
+     * @param salePrice
+     * @author zhangxw
+     * @param prodDetailId
+     * @param string
+     * @ApiDocMethod
+     */
+    private void callRoute(String tenantId, long prodDetailId, String prodId, long salePrice,
+            String standardProductId) {
+        /* 1.获取路由组ID */
+        String routeGroupId = this.getRouteGroupId(tenantId, prodId);
+        /* 2.路由计算获取路由ID */
+        IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService("iRouteCoreService");
+        SaleProductInfo saleProductInfo = new SaleProductInfo();
+        saleProductInfo.setTenantId(tenantId);
+        saleProductInfo.setRouteGroupId(routeGroupId);
+        saleProductInfo.setTotalConsumption(salePrice);
+        String routeId = iRouteCoreService.findRoute(saleProductInfo);
+        /* 3.根据路由ID查询相关信息 */
+        SupplyProductQueryVo supplyProductQueryVo = new SupplyProductQueryVo();
+        supplyProductQueryVo.setTenantId(tenantId);
+        supplyProductQueryVo.setRouteId(routeId);
+        supplyProductQueryVo.setSaleCount(1);
+        supplyProductQueryVo.setStandardProductId(standardProductId);
+        ISupplyProductServiceSV iSupplyProductServiceSV = DubboConsumerFactory
+                .getService("iSupplyProductServiceSV");
+        SupplyProduct supplyProduct = iSupplyProductServiceSV
+                .updateSupplyProductSaleCount(supplyProductQueryVo);
+        /* 4.更新订单商品明细表字段 */
+        OrdOdProdCriteria example = new OrdOdProdCriteria();
+        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+        criteria.andTenantIdEqualTo(tenantId);
+        if (prodDetailId != 0) {
+            criteria.andOrderIdEqualTo(prodDetailId);
+        }
+        List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
+        if (CollectionUtil.isEmpty(ordOdProdList)) {
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
+        }
+        OrdOdProd ordOdProd = ordOdProdList.get(0);
+        ordOdProd.setRouteId(routeId);
+        ordOdProd.setSupplyId(supplyProduct.getSupplyId());
+        ordOdProd.setSupplyId(supplyProduct.getSellerId());
+        ordOdProd.setCostPrice(supplyProduct.getCostPrice());
+        ordOdProdAtomSV.updateById(ordOdProd);
+    }
+
+    /**
+     * 根据商品ID查询路由组ID
+     * 
+     * @param tenantId
+     * @param productId
+     * @return
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void callRoute(OrderPayRequest request) {
+    private String getRouteGroupId(String tenantId, String productId) {
+        ProductInfoQuery productInfoQuery = new ProductInfoQuery();
+        productInfoQuery.setTenantId(tenantId);
+        productInfoQuery.setProductId(productId);
+        IProductServerSV iProductServerSV = DubboConsumerFactory.getService("iProductServerSV");
+        ProductRoute productRoute = iProductServerSV.queryRouteGroupOfProd(productInfoQuery);
+        return productRoute.getRouteGroupId();
     }
 
     /**

@@ -32,4 +32,13 @@
 
 	<dubbo:reference id="iStorageNumSV"
 		interface="com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV" />
+
+	<dubbo:reference id="iRouteCoreService"
+		interface="com.ai.slp.route.api.core.interfaces.IRouteCoreService" />
+
+	<dubbo:reference id="iSupplyProductServiceSV"
+		interface="com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV" />
+
+	<dubbo:reference id="iProductServerSV"
+		interface="com.ai.slp.product.api.product.interfaces.IProductServerSV" />
 </beans>
