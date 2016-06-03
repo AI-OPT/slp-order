@@ -235,7 +235,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         // 支付方式
         feeTotal.setPayStyle(request.getPayType());
         /* 5.保存缴费冲抵后的费用总表信息 */
-        ordOdFeeTotalAtomSV.insertSelective(feeTotal);
+        ordOdFeeTotalAtomSV.updateByOrderId(feeTotal);
 
     }
 
@@ -355,7 +355,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         childOrdOrder.setOrderType(orderType);
         childOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.YES);
         childOrdOrder.setParentOrderId(parentOrdOrder.getOrderId());
-        ordOrderAtomSV.updateById(childOrdOrder);
+        ordOrderAtomSV.insertSelective(childOrdOrder);
         /* 2.创建子订单-商品明细信息 */
         long prodDetailId = SequenceUtil.createProdDetailId();
         OrdOdProdCriteria example = new OrdOdProdCriteria();
@@ -366,15 +366,16 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
         }
         if (prodDetalId != 0) {
-            criteria.andOrderIdEqualTo(prodDetalId);
+            criteria.andProdDetalIdEqualTo(prodDetalId);
         }
         List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
         if (CollectionUtil.isEmpty(ordOdProdList)) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
         }
         OrdOdProd parentOrdOdProd = ordOdProdList.get(0);
+        parentOrdOdProd.getTenantId();
         OrdOdProd ordOdProd = new OrdOdProd();
-        BeanUtils.copyProperties(parentOrdOdProd, ordOdProd);
+        BeanUtils.copyProperties(ordOdProd,parentOrdOdProd);
         ordOdProd.setProdDetalId(prodDetailId);
         ordOdProd.setOrderId(subOrderId);
         ordOdProd.setExtendInfo(prodExtendInfoValue);
@@ -402,7 +403,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             String newState = OrdersConstants.OrdOrder.State.FINISH_PAID;
             ordOrder.setState(newState);
             ordOrder.setStateChgTime(sysdate);
-            ordOrderAtomSV.insertSelective(ordOrder);
+            ordOrderAtomSV.updateById(ordOrder);
             /* 2.2 记入订单轨迹表 */
             orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, oldState, newState,
                     OrdOdStateChg.ChgDesc.ORDER_PAID, null, null, null, sysdate);

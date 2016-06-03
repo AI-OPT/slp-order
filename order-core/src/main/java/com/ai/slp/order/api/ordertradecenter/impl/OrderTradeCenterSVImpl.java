@@ -1,7 +1,7 @@
 package com.ai.slp.order.api.ordertradecenter.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
@@ -14,7 +14,7 @@ import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(validation = "true")
-@Transactional
+@Component
 public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
 
     @Autowired

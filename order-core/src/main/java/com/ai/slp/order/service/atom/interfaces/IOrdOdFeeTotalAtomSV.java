@@ -11,4 +11,6 @@ public interface IOrdOdFeeTotalAtomSV {
     public OrdOdFeeTotal selectByOrderId(String tenantId, long orderId);
 
     int insertSelective(OrdOdFeeTotal record);
+
+    int updateByOrderId(OrdOdFeeTotal ordOdFeeTotal);
 }

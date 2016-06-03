@@ -168,6 +168,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             vo.setChargeFee(ordProductInfo.getChargeFee());
             ordOdProd.setProdDesc("");
             ordOdProd.setExtendInfo(JSON.toJSONString(vo));
+            ordOdProd.setUpdateTime(sysDate);
             ordOdProdAtomSV.insertSelective(ordOdProd);
             /* 2. 封装订单提交商品返回参数 */
             OrdProductResInfo ordProductResInfo = new OrdProductResInfo();

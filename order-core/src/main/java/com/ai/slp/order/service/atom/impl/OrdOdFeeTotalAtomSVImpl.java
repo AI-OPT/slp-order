@@ -31,4 +31,9 @@ public class OrdOdFeeTotalAtomSVImpl implements IOrdOdFeeTotalAtomSV {
         return MapperFactory.getOrdOdFeeTotalMapper().insertSelective(record);
     }
 
+    @Override
+    public int updateByOrderId(OrdOdFeeTotal ordOdFeeTotal) {
+        return MapperFactory.getOrdOdFeeTotalMapper().updateByPrimaryKey(ordOdFeeTotal);
+    }
+
 }

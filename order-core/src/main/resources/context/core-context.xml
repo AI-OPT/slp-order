@@ -59,7 +59,8 @@
     </bean>
     
     <!-- 扫描Mapper,需要添加mybatis前缀绑定 -->
-	<mybatis:scan base-package="com.ai.baas.amc.dao.mapper.attach" />    
+	<mybatis:scan base-package="com.ai.slp.order.dao.mapper.interfaces"
+        factory-ref="sqlSessionFactory"/>
     
     <!-- 配置SqlSessionTemplate -->
     <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
