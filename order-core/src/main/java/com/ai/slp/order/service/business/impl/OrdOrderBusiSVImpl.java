@@ -15,7 +15,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.PageInfo;
 import com.ai.opt.base.vo.ResponseHeader;
-import com.ai.slp.order.api.orderlist.param.OrdOrderParams;
+import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -92,13 +92,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             LOG.error("查询失败");
             responseHeader = new ResponseHeader(false, "fail", "查询失败");
         }
-        List<OrdOrderParams> responseList = new ArrayList<OrdOrderParams>();
+        List<OrdOrderVo> responseList = new ArrayList<OrdOrderVo>();
         for (OrdOrder order : list) {
-            OrdOrderParams orderParams = new OrdOrderParams();
+            OrdOrderVo orderParams = new OrdOrderVo();
             BeanUtils.copyProperties(order, orderParams);
             responseList.add(orderParams);
         }
-        PageInfo<OrdOrderParams> pageInfo = new PageInfo<OrdOrderParams>();
+        PageInfo<OrdOrderVo> pageInfo = new PageInfo<OrdOrderVo>();
         QueryOrderListResponse response = new QueryOrderListResponse();
         pageInfo.setCount(count);
         pageInfo.setPageNo(pageNo);

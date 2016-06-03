@@ -11,7 +11,7 @@ import com.ai.opt.base.vo.BaseInfo;
  * 
  * @author zhangqiang7
  */
-public class OrdOrderParams extends BaseInfo {
+public class OrdOrderVo extends BaseInfo {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,7 +34,27 @@ public class OrdOrderParams extends BaseInfo {
      * 订单状态(后厂)
      */
     private String state;
+    
+    /**
+     * 订单状态展示(后厂)
+     */
+    private String stateName;
 
+    /**
+     * 支付方式
+     */
+    private String payStyle;
+    
+    /**
+     * 支付方式显示值
+     */
+    private String payStyleName;
+    
+    /**
+     * 支付时间
+     */
+    private Timestamp payTime;
+    
     /**
      * 下单时间
      */
@@ -130,5 +150,37 @@ public class OrdOrderParams extends BaseInfo {
 
 	public void setProductList(List<OrdProductVo> productList) {
 		this.productList = productList;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public String getPayStyle() {
+		return payStyle;
+	}
+
+	public void setPayStyle(String payStyle) {
+		this.payStyle = payStyle;
+	}
+
+	public String getPayStyleName() {
+		return payStyleName;
+	}
+
+	public void setPayStyleName(String payStyleName) {
+		this.payStyleName = payStyleName;
+	}
+
+	public Timestamp getPayTime() {
+		return payTime;
+	}
+
+	public void setPayTime(Timestamp payTime) {
+		this.payTime = payTime;
 	}
 }

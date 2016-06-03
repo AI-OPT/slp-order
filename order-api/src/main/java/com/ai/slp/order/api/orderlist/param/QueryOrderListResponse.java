@@ -13,13 +13,13 @@ public class QueryOrderListResponse extends BaseResponse {
 
     private static final long serialVersionUID = 1L;
 
-    private PageInfo<OrdOrderParams> pageInfo;
+    private PageInfo<OrdOrderVo> pageInfo;
 
-    public PageInfo<OrdOrderParams> getPageInfo() {
+    public PageInfo<OrdOrderVo> getPageInfo() {
         return pageInfo;
     }
 
-    public void setPageInfo(PageInfo<OrdOrderParams> pageInfo) {
+    public void setPageInfo(PageInfo<OrdOrderVo> pageInfo) {
         this.pageInfo = pageInfo;
     }
 
