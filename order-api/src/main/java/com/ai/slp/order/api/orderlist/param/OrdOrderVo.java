@@ -36,7 +36,7 @@ public class OrdOrderVo extends BaseInfo {
     private String state;
     
     /**
-     * 订单状态展示(后厂)
+     * 订单状态展示
      */
     private String stateName;
 
@@ -74,6 +74,21 @@ public class OrdOrderVo extends BaseInfo {
      * 总应收费用
      */
     private Long adjustFee;
+    
+    /**
+     * 总实收费用
+     */
+    private Long paidFee;
+    
+    /**
+     * 总待收费用
+     */
+    private Long payFee;
+    
+    /**
+     * 支付信息
+     */
+    private List<OrderPayVo> payDataList;
     
     /**
      * 商品集合
@@ -182,5 +197,29 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setPayTime(Timestamp payTime) {
 		this.payTime = payTime;
+	}
+
+	public Long getPaidFee() {
+		return paidFee;
+	}
+
+	public void setPaidFee(Long paidFee) {
+		this.paidFee = paidFee;
+	}
+
+	public Long getPayFee() {
+		return payFee;
+	}
+
+	public void setPayFee(Long payFee) {
+		this.payFee = payFee;
+	}
+
+	public List<OrderPayVo> getPayDataList() {
+		return payDataList;
+	}
+
+	public void setPayDataList(List<OrderPayVo> payDataList) {
+		this.payDataList = payDataList;
 	}
 }

@@ -13,6 +13,7 @@ import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
+import com.ai.slp.order.api.orderlist.param.OrderPayVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
@@ -120,6 +121,8 @@ public class OrderListSVImpl implements IOrderListSV {
 		ordOrderParams1.setTotalFee(3000L);
 		ordOrderParams1.setDiscountFee(0L);
 		ordOrderParams1.setAdjustFee(3000L);
+		//实收
+		ordOrderParams1.setPaidFee(0L);
 		List<OrdProductVo> productList1 = new LinkedList<OrdProductVo>();
 		String[] nameArray = new String[] { "中国联通手机充值100元", "中国移动手机充值100元", "中国电信手机充值100元" };
 		String[] orgNameArray = new String[] { "中国联通", "中国移动", "中国电信" };
@@ -143,12 +146,25 @@ public class OrderListSVImpl implements IOrderListSV {
 			ordProductVo1.setImageUrl("http://10.1.245.8:18007/iPaas-IDPS/image/57454f50d601800009c0b0cf_75x75.jpg?userId=8EA4FD928D72469DA05D99004B260DF4&serviceId=IDPS001");
 			String prodExtendInfoVoList1 = "18322334000";
 			for (int i = 1; i < 10; i++) {
-				prodExtendInfoVoList1  = prodExtendInfoVoList1+",1832233400";
+				prodExtendInfoVoList1  = prodExtendInfoVoList1+",183223340"+i;
 			}
 			ordProductVo1.setProdExtendInfo(prodExtendInfoVoList1);
 			productList1.add(ordProductVo1);
 		}
 		ordOrderParams1.setProductList(productList1);
+		
+		List<OrderPayVo> payDataList=new LinkedList<OrderPayVo>();
+		OrderPayVo orderPayVo1 = new OrderPayVo();
+		orderPayVo1.setPaidFee(0L);
+		orderPayVo1.setPayStyle("21");
+		orderPayVo1.setPayStyleName("支付宝");
+		payDataList.add(orderPayVo1);
+		OrderPayVo orderPayVo2 = new OrderPayVo();
+		orderPayVo1.setPaidFee(0L);
+		orderPayVo1.setPayStyle("1");
+		orderPayVo1.setPayStyleName("余额");
+		payDataList.add(orderPayVo2);
+		ordOrderParams1.setPayDataList(payDataList);
 		
 		ResponseHeader responseHeader = new ResponseHeader(true, ResultCodeConstants.SUCCESS_CODE, "查询成功");;
 		orderResponse.setResponseHeader(responseHeader);
