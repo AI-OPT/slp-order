@@ -121,6 +121,7 @@ public class OrderListSVImpl implements IOrderListSV {
 		ordOrderParams1.setTotalFee(3000L);
 		ordOrderParams1.setDiscountFee(0L);
 		ordOrderParams1.setAdjustFee(3000L);
+		ordOrderParams1.setPhoneCount(30);
 		//实收
 		ordOrderParams1.setPaidFee(0L);
 		List<OrdProductVo> productList1 = new LinkedList<OrdProductVo>();
