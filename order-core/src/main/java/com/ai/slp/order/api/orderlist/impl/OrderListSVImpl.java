@@ -165,8 +165,8 @@ public class OrderListSVImpl implements IOrderListSV {
 		orderPayVo1.setPayStyleName("余额");
 		payDataList.add(orderPayVo2);
 		ordOrderParams1.setPayDataList(payDataList);
-		
-		ResponseHeader responseHeader = new ResponseHeader(true, ResultCodeConstants.SUCCESS_CODE, "查询成功");;
+		orderResponse.setOrdOrderVo(ordOrderParams1);
+		ResponseHeader responseHeader = new ResponseHeader(true, ResultCodeConstants.SUCCESS_CODE, "查询成功");
 		orderResponse.setResponseHeader(responseHeader);
 		return orderResponse;
 	}
