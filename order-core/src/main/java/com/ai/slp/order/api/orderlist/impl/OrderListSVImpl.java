@@ -160,9 +160,9 @@ public class OrderListSVImpl implements IOrderListSV {
 		orderPayVo1.setPayStyleName("支付宝");
 		payDataList.add(orderPayVo1);
 		OrderPayVo orderPayVo2 = new OrderPayVo();
-		orderPayVo1.setPaidFee(0L);
-		orderPayVo1.setPayStyle("1");
-		orderPayVo1.setPayStyleName("余额");
+		orderPayVo2.setPaidFee(0L);
+		orderPayVo2.setPayStyle("1");
+		orderPayVo2.setPayStyleName("余额");
 		payDataList.add(orderPayVo2);
 		ordOrderParams1.setPayDataList(payDataList);
 		orderResponse.setOrdOrderVo(ordOrderParams1);
