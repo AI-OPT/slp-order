@@ -3,6 +3,7 @@ package com.ai.slp.order.api.orderlist.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ai.opt.base.exception.BusinessException;
@@ -20,20 +21,19 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.constants.ResultCodeConstants;
+import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(validation = "true")
 @Component
 public class OrderListSVImpl implements IOrderListSV {
 
-	//@Autowired
-	//private IOrdOrderBusiSV ordOrderBusiSV;
+    @Autowired
+    private IOrdOrderBusiSV ordOrderBusiSV;
 
 	@Override
 	public QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest) throws BusinessException, SystemException {
-		// TODO 等待实现
-		// return ordOrderBusiSV.queryOrderList(orderListRequest);
-		return getOrderListResponse();
+	    return ordOrderBusiSV.queryOrderList(orderListRequest);
 	}
 
 	/**
