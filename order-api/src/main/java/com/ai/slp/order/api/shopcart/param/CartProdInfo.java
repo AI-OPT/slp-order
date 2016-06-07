@@ -46,6 +46,14 @@ public class CartProdInfo implements Serializable{
      */
     private String vfsId;
     /**
+     * 图片类型
+     */
+    private String picType;
+    /**
+     * 图片地址,为前端预留字段
+     */
+    private String picUrl;
+    /**
      * 添加时间
      */
     private Timestamp insertTime;
@@ -136,5 +144,21 @@ public class CartProdInfo implements Serializable{
 
     public void setSalePrice(Long salePrice) {
         this.salePrice = salePrice;
+    }
+
+    public String getPicType() {
+        return picType;
+    }
+
+    public void setPicType(String picType) {
+        this.picType = picType;
+    }
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
     }
 }

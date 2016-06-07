@@ -81,8 +81,8 @@ public class OrderListSVImpl implements IOrderListSV {
 				ordProductVo1.setProvinceName("北京");
 				ordProductVo1.setChargeFee("100元");
 				ProductImage productImage1 = new ProductImage();
-				productImage1.setExtension(".jpg");
-				productImage1.setIdpsId("57454f50d601800009c0b0cf");
+				productImage1.setPicType(".jpg");
+				productImage1.setVfsId("57454f50d601800009c0b0cf");
 				ordProductVo1.setProductImage(productImage1);
 				ordProductVo1.setImageUrl("http://10.1.245.8:18007/iPaas-IDPS/image/57454f50d601800009c0b0cf_75x75.jpg?userId=8EA4FD928D72469DA05D99004B260DF4&serviceId=IDPS001");
 				String prodExtendInfoVoList1 = "18322334000";
@@ -141,8 +141,8 @@ public class OrderListSVImpl implements IOrderListSV {
 			ordProductVo1.setProvinceName("北京");
 			ordProductVo1.setChargeFee("100元");
 			ProductImage productImage1 = new ProductImage();
-			productImage1.setExtension(".jpg");
-			productImage1.setIdpsId("57454f50d601800009c0b0cf");
+			productImage1.setPicType(".jpg");
+			productImage1.setVfsId("57454f50d601800009c0b0cf");
 			ordProductVo1.setProductImage(productImage1);
 			ordProductVo1.setImageUrl("http://10.1.245.8:18007/iPaas-IDPS/image/57454f50d601800009c0b0cf_75x75.jpg?userId=8EA4FD928D72469DA05D99004B260DF4&serviceId=IDPS001");
 			String prodExtendInfoVoList1 = "18322334000";
