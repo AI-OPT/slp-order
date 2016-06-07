@@ -9,40 +9,27 @@ public class ProductImage implements Serializable{
 	/**
      * 上传后的图片ID
      */
-    private String idpsId;
+    private String vfsId;
 
     /**
      * 图片扩展名
      */
-    private String extension;
+    private String picType;
 
-    /**
-     * 图片尺寸
-     */
-    private String size;
+	public String getVfsId() {
+		return vfsId;
+	}
 
-    public String getIdpsId() {
-        return idpsId;
-    }
+	public void setVfsId(String vfsId) {
+		this.vfsId = vfsId;
+	}
 
-    public void setIdpsId(String idpsId) {
-        this.idpsId = idpsId;
-    }
+	public String getPicType() {
+		return picType;
+	}
 
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
+	public void setPicType(String picType) {
+		this.picType = picType;
+	}
 
 }
