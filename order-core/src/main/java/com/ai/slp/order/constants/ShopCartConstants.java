@@ -27,4 +27,18 @@ public final class ShopCartConstants {
          */
         public static final String SHOP_CART_TOPIC = "slpShopCartTopic";
     }
+
+    public final class CcsParams{
+        public final class ShopCart{
+            /**
+             * 单个商品数量限制
+             */
+            public static final String SKU_NUM_LIMIT = "/shop_cart_sku_num_limit";
+
+            /**
+             * 商品类型数量限制
+             */
+            public static final String PROD_NUM_LIMIT = "/shop_cart_prod_num_limit";
+        }
+    }
 }

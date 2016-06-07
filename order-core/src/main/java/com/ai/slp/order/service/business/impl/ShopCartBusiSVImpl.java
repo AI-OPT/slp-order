@@ -1,10 +1,12 @@
 package com.ai.slp.order.service.business.impl;
 
 import com.ai.opt.base.exception.BusinessException;
+import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
+import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.paas.ipaas.mds.IMessageConsumer;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
@@ -46,8 +48,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     private static Logger logger = LoggerFactory.getLogger(ShopCartBusiSVImpl.class);
     @Autowired
     IOrdOdCartProdAtomSV cartProdAtomSV;
-//    @Reference(version="1.0.0")
-//    IProductServerSV productServerSV;
 
     @PostConstruct
     public void shopCartProdMdsProcess(){
@@ -120,6 +120,18 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             //若是新商品,则需要将概览中加1
             pointsVo.setProdNum(pointsVo.getProdNum()+1);
         }
+        //购物车商品类型数量限制
+        int prodNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.PROD_NUM_LIMIT);
+        //购物车单个商品数量限制
+        int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
+        //到达商品种类上限
+        if (prodNumLimit>0 && prodNumLimit<pointsVo.getProdNum()){
+            throw new BusinessException("","购物车商品数量已经达到上限,无法添加");
+        }
+        //达到购物车单个商品数量上线
+        else if (skuNumLimit>0 && odCartProd.getBuySum()>skuNumLimit){
+            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
+        }
 
         //添加/更新商品信息
         iCacheClient.hset(cartUserId,odCartProd.getSkuId(),JSON.toJSONString(odCartProd));
@@ -153,6 +165,12 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         //若不存在,则直接进行添加操作
         if (!iCacheClient.hexists(cartUserId,cartProd.getSkuId())){
             return addCartProd(cartProd);
+        }
+        //购物车单个商品数量限制
+        int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
+        //达到购物车单个商品数量上线
+        if (skuNumLimit>0 && cartProd.getBuyNum()>skuNumLimit){
+            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
         }
         String cartProdStr = iCacheClient.hget(cartUserId,cartProd.getSkuId());
         //更新商品数量
@@ -350,5 +368,27 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         skuInfoQuery.setSkuId(skuId);
         IProductServerSV productServerSV = DubboConsumerFactory.getService("iProductServerSv");
         return productServerSV.queryProductSkuById(skuInfoQuery);
+    }
+
+    /**
+     * 获取购物车中数量限制
+     *
+     * @param limitParams
+     * @return -1表示没有限制
+     */
+    public int getShopCartLimitNum(String limitParams){
+        if (StringUtils.isBlank(limitParams))
+            return -1;
+        String ccsParams = limitParams;
+        if (!limitParams.startsWith("/"))
+            ccsParams = "/"+ccsParams;
+        String limitNum = null;
+        try {
+            limitNum = CCSClientFactory.getDefaultConfigClient().get(ccsParams);
+        } catch (ConfigException e) {
+            logger.error("获取配置信息失败",e);
+            e.printStackTrace();
+        }
+        return Integer.parseInt(limitNum);
     }
 }
