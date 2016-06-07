@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
@@ -140,6 +142,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             StorageNumRes storageNumRes = this.querySkuInfo(request.getTenantId(),
                     ordProductInfo.getSkuId(), ordProductInfo.getBuySum());
             Map<String, Integer> storageNum = storageNumRes.getStorageNum();
+            Set<String> keySet = storageNum.keySet();
+            if(keySet==null){
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
+            }
             long prodDetailId = SequenceUtil.createProdDetailId();
             OrdOdProd ordOdProd = new OrdOdProd();
             ordOdProd.setProdDetalId(prodDetailId);
@@ -150,7 +156,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setProdName(storageNumRes.getSkuName());
             ordOdProd.setSkuId(ordProductInfo.getSkuId());
             ordOdProd.setStandardProdId(storageNumRes.getStandedProdId());
-            ordOdProd.setStorageId(storageNum.keySet().iterator().next());
+            ordOdProd.setStorageId(keySet.iterator().next());
             ordOdProd.setValidTime(sysDate);
             ordOdProd.setInvalidTime(DateUtil.getFutureTime());
             ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
