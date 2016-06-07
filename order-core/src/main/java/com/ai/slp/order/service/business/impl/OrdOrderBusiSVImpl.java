@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.PageInfo;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
@@ -20,6 +21,8 @@ import com.ai.slp.order.api.orderlist.param.OrderPayVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
+import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
+import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -40,6 +43,9 @@ import com.ai.slp.order.util.DateUtils;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
+import com.ai.slp.product.api.product.interfaces.IProductServerSV;
+import com.ai.slp.product.api.product.param.ProductSkuInfo;
+import com.ai.slp.product.api.product.param.SkuInfoQuery;
 import com.alibaba.fastjson.JSON;
 
 @Service
@@ -68,6 +74,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             throws BusinessException, SystemException {
         LOG.debug("开始订单列表查询..");
         /* 1.订单信息查询 */
+        QueryOrderListResponse response = new QueryOrderListResponse();
         PageInfo<OrdOrderVo> pageInfo = new PageInfo<OrdOrderVo>();
         OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
@@ -90,6 +97,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         example.setLimitStart((orderListRequest.getPageNo() - 1) * orderListRequest.getPageSize());
         example.setLimitEnd(orderListRequest.getPageSize());
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
+        List<OrdOrderVo> ordOrderList = new ArrayList<OrdOrderVo>();
         for (OrdOrder order : list) {
             /* 2.订单费用信息查询 */
             List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(order.getTenantId(),
@@ -121,10 +129,14 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 List<OrdProductVo> productList = this.getOrdProductList(order.getTenantId(),
                         order.getOrderId());
                 ordOrderVo.setProductList(productList);
+                ordOrderList.add(ordOrderVo);
             }
 
         }
-        QueryOrderListResponse response = new QueryOrderListResponse();
+        pageInfo.setPageNo(orderListRequest.getPageNo());
+        pageInfo.setPageSize(orderListRequest.getPageSize());
+        pageInfo.setResult(ordOrderList);
+        response.setPageInfo(pageInfo);
         return response;
 
     }
@@ -213,7 +225,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setProvinceCode(prodAttrInfoVo.getProvinceCode());
                 ordProductVo.setProvinceName("");
                 ordProductVo.setChargeFee(prodAttrInfoVo.getChargeFee());
-                ProductImage productImage=this.getProductImage(ordOdProd.getSkuId());
+                ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 ordProductVo.setProductImage(productImage);
                 ordProductVo.setProdExtendInfo(this.getProdExtendInfo(tenantId, orderId,
                         ordOdProd.getProdDetalId()));
@@ -231,8 +243,16 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private ProductImage getProductImage(String skuId) {
-        return null;
+    private ProductImage getProductImage(String tenantId, String skuId) {
+        ProductImage productImage = new ProductImage();
+        SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
+        skuInfoQuery.setTenantId(tenantId);
+        skuInfoQuery.setSkuId(skuId);
+        IProductServerSV iProductServerSV = DubboConsumerFactory.getService("iProductServerSV");
+        ProductSkuInfo productSkuInfo = iProductServerSV.queryProductSkuById(skuInfoQuery);
+        productImage.setVfsId(productSkuInfo.getVfsId());
+        productImage.setPicType(productSkuInfo.getPicType());
+        return productImage;
     }
 
     /**
@@ -300,4 +320,59 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         return phoneNum;
 
     }
+
+    @Override
+    public QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException,
+            SystemException {
+        LOG.debug("开始订单详情询..");
+        /* 1.订单信息查询 */
+        QueryOrderResponse response = new QueryOrderResponse();
+        OrdOrderCriteria example = new OrdOrderCriteria();
+        OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        criteria.andTenantIdEqualTo(orderRequest.getTenantId());
+        if (orderRequest.getOrderId() != 0) {
+            criteria.andOrderIdEqualTo(orderRequest.getOrderId());
+        }
+        List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
+        OrdOrderVo ordOrderVo = null;
+        if (!CollectionUtil.isEmpty(list)) {
+            OrdOrder order = list.get(0);
+            /* 2.订单费用信息查询 */
+            List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(order.getTenantId(),
+                    order.getOrderId(), "");
+            if (!CollectionUtil.isEmpty(orderFeeTotalList)) {
+                OrdOdFeeTotal ordOdFeeTotal = orderFeeTotalList.get(0);
+                ordOrderVo = new OrdOrderVo();
+                ordOrderVo.setOrderId(order.getOrderId());
+                ordOrderVo.setOrderType(order.getOrderType());
+                ordOrderVo.setBusiCode(order.getBusiCode());
+                ordOrderVo.setState(order.getState());
+                ordOrderVo.setStateName("");
+                ordOrderVo.setOrderTime(order.getOrderTime());
+                ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
+                ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
+                ordOrderVo.setPaidFee(ordOdFeeTotal.getPaidFee());
+                ordOrderVo.setPayFee(ordOdFeeTotal.getPayFee());
+                ordOrderVo.setPayStyle(ordOdFeeTotal.getPayStyle());
+                ordOrderVo.setPayStyleName("");
+                ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
+                ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());
+                int phoneCount = this.getProdExtendInfo(orderRequest.getTenantId(),
+                        order.getOrderId());
+                ordOrderVo.setPhoneCount(phoneCount);
+                /* 3.订单费用明细查询 */
+                List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(order.getOrderId());
+                ordOrderVo.setPayDataList(orderFeeProdList);
+                /* 4.订单费用明细查询 */
+                List<OrdProductVo> productList = this.getOrdProductList(order.getTenantId(),
+                        order.getOrderId());
+                ordOrderVo.setProductList(productList);
+            }
+
+        }
+        response.setOrdOrderVo(ordOrderVo);
+        return response;
+
+    }
+
 }
