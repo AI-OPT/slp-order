@@ -15,9 +15,9 @@ public class OrdBaseInfo implements Serializable {
     private String userId;
 
     /**
-     * 业务类型
+     * 订单类型
      */
-    @NotBlank(message = "业务类型不能为空")
+    @NotBlank(message = "订单类型不能为空")
     private String orderType;
 
     /**
