@@ -79,7 +79,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(orderListRequest.getTenantId());
-        if (orderListRequest.getOrderId() != 0) {
+        if (orderListRequest.getOrderId() != null && orderListRequest.getOrderId().intValue() != 0) {
             criteria.andOrderIdEqualTo(orderListRequest.getOrderId());
         }
         if (!StringUtils.isBlank(orderListRequest.getOrderType())) {
