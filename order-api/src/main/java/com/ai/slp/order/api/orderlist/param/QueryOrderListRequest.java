@@ -13,6 +13,11 @@ public class QueryOrderListRequest extends BaseInfo {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 用户ID
+     */
+    private Long userId;
+    
+    /**
      * 订单号
      */
     private Long orderId;
@@ -115,5 +120,13 @@ public class QueryOrderListRequest extends BaseInfo {
     public void setPayStyle(String payStyle) {
         this.payStyle = payStyle;
     }
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
 }
