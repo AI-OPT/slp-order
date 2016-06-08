@@ -10,7 +10,6 @@ import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.paas.ipaas.mds.IMessageConsumer;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
-import com.ai.paas.ipaas.mds.IMessageSender;
 import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdInfo;
@@ -33,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -48,8 +46,8 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     private static Logger logger = LoggerFactory.getLogger(ShopCartBusiSVImpl.class);
     @Autowired
     IOrdOdCartProdAtomSV cartProdAtomSV;
-
-    @PostConstruct
+    //TODO...
+//    @PostConstruct
     public void shopCartProdMdsProcess(){
         IMsgProcessorHandler msgProcessorHandler=new IMsgProcessorHandler() {
             @Override
@@ -330,9 +328,10 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * @param prod
      */
     private void sendCartProdMds(OrdOdCartProd prod){
-        IMessageSender msgSender = MDSClientFactory.getSenderClient(ShopCartConstants.MdsParams.SHOP_CART_TOPIC);
-
-        msgSender.send(JSON.toJSONString(prod), 0);//第二个参数为分区键，如果不分区，传入0
+        //TODO...
+//        IMessageSender msgSender = MDSClientFactory.getSenderClient(ShopCartConstants.MdsParams.SHOP_CART_TOPIC);
+//
+//        msgSender.send(JSON.toJSONString(prod), 0);//第二个参数为分区键，如果不分区，传入0
     }
 
     /**
