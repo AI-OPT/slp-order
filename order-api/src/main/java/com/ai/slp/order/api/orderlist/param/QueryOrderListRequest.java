@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.orderlist.param;
 
+import javax.validation.constraints.NotNull;
+
 import com.ai.opt.base.vo.BaseInfo;
 
 /**
@@ -15,6 +17,7 @@ public class QueryOrderListRequest extends BaseInfo {
     /**
      * 用户ID
      */
+    @NotNull(message = "用户ID不能为空")
     private String userId;
     
     /**

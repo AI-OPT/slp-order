@@ -27,6 +27,7 @@ public interface IOrderListSV {
      * @ApiCode ORDERQUERY_001
 	 */
 	QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest) throws BusinessException, SystemException;
+	@interface queryOrderList{}
 
 	/**
 	 * 订单详情查询
@@ -39,4 +40,5 @@ public interface IOrderListSV {
      * @ApiCode ORDERQUERY_002
 	 */
 	QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException, SystemException;
+	@interface queryOrder{}
 }
