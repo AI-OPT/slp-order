@@ -181,7 +181,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordProductResInfo.setSkuId(ordOdProd.getSkuId());
             ordProductResInfo.setSkuName(ordOdProd.getProdName());
             ordProductResInfo.setSalePrice(ordOdProd.getSalePrice());
-            ordProductResInfo.setBugSum((int) ordOdProd.getBuySum());
+            ordProductResInfo.setBuySum((int) ordOdProd.getBuySum());
             ordProductResInfo.setSkuTotalFee(ordOdProd.getTotalFee());
             ordProductResList.add(ordProductResInfo);
             /* 3. 创建商品明细扩展表 */
