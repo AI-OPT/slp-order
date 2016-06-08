@@ -23,19 +23,16 @@ public class OrdProductInfo implements Serializable {
     /**
      * 运营商
      */
-    @NotBlank(message = "运营商不能为空")
     private String basicOrgId;
 
     /**
      * 省份
      */
-    @NotBlank(message = "省份不能为空")
     private String provinceCode;
 
     /**
      * 充值面额
      */
-    @NotBlank(message = "充值面额不能为空")
     private String chargeFee;
 
     /**
