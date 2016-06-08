@@ -7,7 +7,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
+import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
+import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
+import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/context/core-context.xml"})
@@ -19,12 +22,19 @@ public class OrderListSVImplTest {
     @Test
     public void orderListTest() {
         QueryOrderListRequest request = new QueryOrderListRequest();
-        request.setTenantId("test111");
-        request.setOrderId(111L);
-        request.setPageNo(111);
-        request.setPageSize(111);
+        request.setTenantId("SLP");
+        request.setOrderId(2456229l);
+        request.setPageNo(1);
+        request.setPageSize(3);
         request.setPayStyle("11");
         System.out.println(orderListSV.queryOrderList(request).getResponseHeader());
         System.out.println(orderListSV.queryOrderList(request).getPageInfo().getResult().size());
+        
+//        QueryOrderRequest request = new QueryOrderRequest();
+//        request.setOrderId(2456229);
+//        request.setTenantId("SLP");
+//        QueryOrderResponse queryOrder = orderListSV.queryOrder(request);
+//        OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
+//        System.out.println(ordOrderVo.getBusiCode());
     }
 }

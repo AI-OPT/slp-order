@@ -351,6 +351,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setOrderTime(order.getOrderTime());
                 ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
                 ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
+                ordOrderVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
                 ordOrderVo.setPaidFee(ordOdFeeTotal.getPaidFee());
                 ordOrderVo.setPayFee(ordOdFeeTotal.getPayFee());
                 ordOrderVo.setPayStyle(ordOdFeeTotal.getPayStyle());

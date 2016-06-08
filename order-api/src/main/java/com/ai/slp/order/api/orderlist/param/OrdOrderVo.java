@@ -34,7 +34,7 @@ public class OrdOrderVo extends BaseInfo {
      * 订单状态(后厂)
      */
     private String state;
-    
+
     /**
      * 订单状态展示
      */
@@ -44,62 +44,67 @@ public class OrdOrderVo extends BaseInfo {
      * 支付方式
      */
     private String payStyle;
-    
+
     /**
      * 支付方式显示值
      */
     private String payStyleName;
-    
+
     /**
      * 支付时间
      */
     private Timestamp payTime;
-    
+
     /**
      * 下单时间
      */
     private Timestamp orderTime;
-    
+
     /**
      * 手机个数
      */
     private Integer phoneCount;
-    
+
     /**
      * 总费用
      */
     private Long totalFee;
-    
+
     /**
      * 总优惠金额
      */
     private Long discountFee;
-    
+
+    /**
+     * 减免金额
+     */
+    private long operDiscountFee;
+
     /**
      * 总应收费用
      */
     private Long adjustFee;
-    
+
     /**
      * 总实收费用
      */
     private Long paidFee;
-    
+
     /**
      * 总待收费用
      */
     private Long payFee;
-    
+
     /**
      * 支付信息
      */
     private List<OrderPayVo> payDataList;
-    
+
     /**
      * 商品集合
      */
     private List<OrdProductVo> productList;
-    
+
     public Long getOrderId() {
         return orderId;
     }
@@ -124,115 +129,124 @@ public class OrdOrderVo extends BaseInfo {
         this.orderType = orderType;
     }
 
-	public String getState() {
-		return state;
-	}
+    public String getState() {
+        return state;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public Timestamp getOrderTime() {
-		return orderTime;
-	}
+    public Timestamp getOrderTime() {
+        return orderTime;
+    }
 
-	public void setOrderTime(Timestamp orderTime) {
-		this.orderTime = orderTime;
-	}
+    public void setOrderTime(Timestamp orderTime) {
+        this.orderTime = orderTime;
+    }
 
-	public Long getTotalFee() {
-		return totalFee;
-	}
+    public Long getTotalFee() {
+        return totalFee;
+    }
 
-	public void setTotalFee(Long totalFee) {
-		this.totalFee = totalFee;
-	}
+    public void setTotalFee(Long totalFee) {
+        this.totalFee = totalFee;
+    }
 
-	public Long getDiscountFee() {
-		return discountFee;
-	}
+    public Long getDiscountFee() {
+        return discountFee;
+    }
 
-	public void setDiscountFee(Long discountFee) {
-		this.discountFee = discountFee;
-	}
+    public void setDiscountFee(Long discountFee) {
+        this.discountFee = discountFee;
+    }
 
-	public Long getAdjustFee() {
-		return adjustFee;
-	}
+    public Long getAdjustFee() {
+        return adjustFee;
+    }
 
-	public void setAdjustFee(Long adjustFee) {
-		this.adjustFee = adjustFee;
-	}
+    public void setAdjustFee(Long adjustFee) {
+        this.adjustFee = adjustFee;
+    }
 
-	public List<OrdProductVo> getProductList() {
-		return productList;
-	}
+    public List<OrdProductVo> getProductList() {
+        return productList;
+    }
 
-	public void setProductList(List<OrdProductVo> productList) {
-		this.productList = productList;
-	}
+    public void setProductList(List<OrdProductVo> productList) {
+        this.productList = productList;
+    }
 
-	public String getStateName() {
-		return stateName;
-	}
+    public String getStateName() {
+        return stateName;
+    }
 
-	public void setStateName(String stateName) {
-		this.stateName = stateName;
-	}
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
 
-	public String getPayStyle() {
-		return payStyle;
-	}
+    public String getPayStyle() {
+        return payStyle;
+    }
 
-	public void setPayStyle(String payStyle) {
-		this.payStyle = payStyle;
-	}
+    public void setPayStyle(String payStyle) {
+        this.payStyle = payStyle;
+    }
 
-	public String getPayStyleName() {
-		return payStyleName;
-	}
+    public String getPayStyleName() {
+        return payStyleName;
+    }
 
-	public void setPayStyleName(String payStyleName) {
-		this.payStyleName = payStyleName;
-	}
+    public void setPayStyleName(String payStyleName) {
+        this.payStyleName = payStyleName;
+    }
 
-	public Timestamp getPayTime() {
-		return payTime;
-	}
+    public Timestamp getPayTime() {
+        return payTime;
+    }
 
-	public void setPayTime(Timestamp payTime) {
-		this.payTime = payTime;
-	}
+    public void setPayTime(Timestamp payTime) {
+        this.payTime = payTime;
+    }
 
-	public Long getPaidFee() {
-		return paidFee;
-	}
+    public Long getPaidFee() {
+        return paidFee;
+    }
 
-	public void setPaidFee(Long paidFee) {
-		this.paidFee = paidFee;
-	}
+    public void setPaidFee(Long paidFee) {
+        this.paidFee = paidFee;
+    }
 
-	public Long getPayFee() {
-		return payFee;
-	}
+    public Long getPayFee() {
+        return payFee;
+    }
 
-	public void setPayFee(Long payFee) {
-		this.payFee = payFee;
-	}
+    public void setPayFee(Long payFee) {
+        this.payFee = payFee;
+    }
 
-	public List<OrderPayVo> getPayDataList() {
-		return payDataList;
-	}
+    public List<OrderPayVo> getPayDataList() {
+        return payDataList;
+    }
 
-	public void setPayDataList(List<OrderPayVo> payDataList) {
-		this.payDataList = payDataList;
-	}
+    public void setPayDataList(List<OrderPayVo> payDataList) {
+        this.payDataList = payDataList;
+    }
 
-	public Integer getPhoneCount() {
-		return phoneCount;
-	}
+    public Integer getPhoneCount() {
+        return phoneCount;
+    }
 
-	public void setPhoneCount(Integer phoneCount) {
-		this.phoneCount = phoneCount;
-	}
+    public void setPhoneCount(Integer phoneCount) {
+        this.phoneCount = phoneCount;
+    }
+
+    public long getOperDiscountFee() {
+        return operDiscountFee;
+    }
+
+    public void setOperDiscountFee(long operDiscountFee) {
+        this.operDiscountFee = operDiscountFee;
+    }
+
 }
