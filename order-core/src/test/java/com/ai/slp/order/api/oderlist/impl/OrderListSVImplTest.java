@@ -24,9 +24,9 @@ public class OrderListSVImplTest {
         QueryOrderListRequest request = new QueryOrderListRequest();
         request.setTenantId("SLP");
         request.setOrderId(2456229l);
+        request.setUserId("234");
         request.setPageNo(1);
         request.setPageSize(3);
-        request.setPayStyle("11");
         System.out.println(orderListSV.queryOrderList(request).getResponseHeader());
         System.out.println(orderListSV.queryOrderList(request).getPageInfo().getResult().size());
         

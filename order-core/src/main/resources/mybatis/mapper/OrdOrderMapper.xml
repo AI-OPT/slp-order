@@ -9,7 +9,7 @@
     <result column="SUB_FLAG" property="subFlag" jdbcType="VARCHAR" />
     <result column="PARENT_ORDER_ID" property="parentOrderId" jdbcType="BIGINT" />
     <result column="BATCH_NO" property="batchNo" jdbcType="BIGINT" />
-    <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
     <result column="ACCT_ID" property="acctId" jdbcType="BIGINT" />
     <result column="SUBS_ID" property="subsId" jdbcType="BIGINT" />
     <result column="SUPPLIER_ID" property="supplierId" jdbcType="BIGINT" />
@@ -121,7 +121,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
-    select
+    select 
     <include refid="Base_Column_List" />
     from ord_order
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
@@ -151,7 +151,7 @@
       REMARK)
     values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{busiCode,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{subFlag,jdbcType=VARCHAR}, #{parentOrderId,jdbcType=BIGINT}, 
-      #{batchNo,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{acctId,jdbcType=BIGINT}, 
+      #{batchNo,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{acctId,jdbcType=BIGINT}, 
       #{subsId,jdbcType=BIGINT}, #{supplierId,jdbcType=BIGINT}, #{storageId,jdbcType=VARCHAR}, 
       #{routeId,jdbcType=VARCHAR}, #{provinceCode,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, 
       #{state,jdbcType=VARCHAR}, #{stateChgTime,jdbcType=TIMESTAMP}, #{displayFlag,jdbcType=VARCHAR}, 
@@ -180,7 +180,9 @@
       </if>
       PARENT_ORDER_ID,
       BATCH_NO,
-      USER_ID,
+      <if test="userId != null" >
+        USER_ID,
+      </if>
       ACCT_ID,
       SUBS_ID,
       SUPPLIER_ID,
@@ -266,7 +268,9 @@
       </if>
       #{parentOrderId,jdbcType=BIGINT},
       #{batchNo,jdbcType=BIGINT},
-      #{userId,jdbcType=BIGINT},
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
       #{acctId,jdbcType=BIGINT},
       #{subsId,jdbcType=BIGINT},
       #{supplierId,jdbcType=BIGINT},
@@ -368,7 +372,7 @@
         BATCH_NO = #{record.batchNo,jdbcType=BIGINT},
       </if>
       <if test="record.userId != null" >
-        USER_ID = #{record.userId,jdbcType=BIGINT},
+        USER_ID = #{record.userId,jdbcType=VARCHAR},
       </if>
       <if test="record.acctId != null" >
         ACCT_ID = #{record.acctId,jdbcType=BIGINT},
@@ -462,7 +466,7 @@
       SUB_FLAG = #{record.subFlag,jdbcType=VARCHAR},
       PARENT_ORDER_ID = #{record.parentOrderId,jdbcType=BIGINT},
       BATCH_NO = #{record.batchNo,jdbcType=BIGINT},
-      USER_ID = #{record.userId,jdbcType=BIGINT},
+      USER_ID = #{record.userId,jdbcType=VARCHAR},
       ACCT_ID = #{record.acctId,jdbcType=BIGINT},
       SUBS_ID = #{record.subsId,jdbcType=BIGINT},
       SUPPLIER_ID = #{record.supplierId,jdbcType=BIGINT},
@@ -515,7 +519,7 @@
         BATCH_NO = #{batchNo,jdbcType=BIGINT},
       </if>
       <if test="userId != null" >
-        USER_ID = #{userId,jdbcType=BIGINT},
+        USER_ID = #{userId,jdbcType=VARCHAR},
       </if>
       <if test="acctId != null" >
         ACCT_ID = #{acctId,jdbcType=BIGINT},
@@ -606,7 +610,7 @@
       SUB_FLAG = #{subFlag,jdbcType=VARCHAR},
       PARENT_ORDER_ID = #{parentOrderId,jdbcType=BIGINT},
       BATCH_NO = #{batchNo,jdbcType=BIGINT},
-      USER_ID = #{userId,jdbcType=BIGINT},
+      USER_ID = #{userId,jdbcType=VARCHAR},
       ACCT_ID = #{acctId,jdbcType=BIGINT},
       SUBS_ID = #{subsId,jdbcType=BIGINT},
       SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},

@@ -132,7 +132,7 @@ public class OrdOrder {
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.userId = userId == null ? null : userId.trim();
     }
 
     public long getAcctId() {
