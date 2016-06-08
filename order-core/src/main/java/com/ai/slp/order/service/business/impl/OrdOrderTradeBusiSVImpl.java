@@ -142,6 +142,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             StorageNumRes storageNumRes = this.querySkuInfo(request.getTenantId(),
                     ordProductInfo.getSkuId(), ordProductInfo.getBuySum());
             Map<String, Integer> storageNum = storageNumRes.getStorageNum();
+            if(storageNum==null){
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
+            }
             Set<String> keySet = storageNum.keySet();
             if (keySet == null) {
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
