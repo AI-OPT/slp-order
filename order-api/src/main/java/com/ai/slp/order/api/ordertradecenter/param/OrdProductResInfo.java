@@ -24,7 +24,7 @@ public class OrdProductResInfo implements Serializable {
     /**
      * 数量
      */
-    private int buySum;
+    private long buySum;
 
     /**
      * 总计
@@ -43,11 +43,11 @@ public class OrdProductResInfo implements Serializable {
         return salePrice;
     }
 
-    public int getBuySum() {
+    public long getBuySum() {
         return buySum;
     }
 
-    public void setBuySum(int buySum) {
+    public void setBuySum(long buySum) {
         this.buySum = buySum;
     }
 
