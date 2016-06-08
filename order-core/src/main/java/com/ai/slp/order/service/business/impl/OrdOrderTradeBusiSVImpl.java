@@ -143,7 +143,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
                     ordProductInfo.getSkuId(), ordProductInfo.getBuySum());
             Map<String, Integer> storageNum = storageNumRes.getStorageNum();
             Set<String> keySet = storageNum.keySet();
-            if(keySet==null){
+            if (keySet == null) {
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
             }
             long prodDetailId = SequenceUtil.createProdDetailId();
@@ -278,8 +278,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     private void createOrdOdProdExtend(long prodDetailId, OrderTradeCenterRequest request,
             Timestamp sysDate, long orderId) {
         OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
-        orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
-                ordExtendInfo.getInfoJson());
+        if (ordExtendInfo != null) {
+            orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
+                    ordExtendInfo.getInfoJson());
+        }
     }
 
     /**
