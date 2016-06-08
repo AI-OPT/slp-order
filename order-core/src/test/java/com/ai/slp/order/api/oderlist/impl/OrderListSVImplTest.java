@@ -23,7 +23,6 @@ public class OrderListSVImplTest {
     public void orderListTest() {
         QueryOrderListRequest request = new QueryOrderListRequest();
         request.setTenantId("SLP");
-        request.setOrderId(2456229l);
         request.setUserId("234");
         request.setPageNo(1);
         request.setPageSize(3);
