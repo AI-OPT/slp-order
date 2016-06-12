@@ -271,9 +271,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     private boolean judgeOrderType(OrdOrder ordOrder, String tenantId, Timestamp sysdate) {
         /* 1.如果是卡充,需要将订单状态改为待充值 */
         boolean flag = false;
-        if (OrdersConstants.OrdOrder.OrderType.BUG_FLOWRATE_CARD.equals(ordOrder.getOrderType())
-                || OrdersConstants.OrdOrder.OrderType.BUG_PHONE_BILL_CARD.equals(ordOrder
-                        .getOrderType())) {
+        if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_FLOWRATE_CARD.equals(ordOrder
+                .getOrderType())) {
             flag = true;
             String newState = OrdersConstants.OrdOrder.State.WAIT_CHARGE;
             String oldState = ordOrder.getState();
@@ -335,24 +334,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     private void createSubOrder(String tenantId, OrdOrder parentOrdOrder, long prodDetalId,
             String prodExtendInfoValue) {
         /* 1.创建子订单表 */
-        String orderType = "";
         long subOrderId = SequenceUtil.createOrderId();
-        if (OrdersConstants.OrdOrder.OrderType.BUG_FLOWRATE_CARD.equals(parentOrdOrder
-                .getOrderType())
-                || OrdersConstants.OrdOrder.OrderType.BUG_FLOWRATE_RECHARGE.equals(parentOrdOrder
-                        .getOrderType())) {
-            orderType = OrdersConstants.OrdOrder.OrderType.FLOWRATE_RECHARGE;
-        } else if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_BILL_CARD.equals(parentOrdOrder
-                .getOrderType())
-                || OrdersConstants.OrdOrder.OrderType.BUG_PHONE_BILL_RECHARGE.equals(parentOrdOrder
-                        .getOrderType())) {
-            orderType = OrdersConstants.OrdOrder.OrderType.PHONE_BILL_RECHARGE;
-        }
+
         OrdOrder childOrdOrder = new OrdOrder();
         BeanUtils.copyProperties(childOrdOrder, parentOrdOrder);
 
         childOrdOrder.setOrderId(subOrderId);
-        childOrdOrder.setOrderType(orderType);
         childOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.YES);
         childOrdOrder.setParentOrderId(parentOrdOrder.getOrderId());
         ordOrderAtomSV.insertSelective(childOrdOrder);
@@ -375,7 +362,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         OrdOdProd parentOrdOdProd = ordOdProdList.get(0);
         parentOrdOdProd.getTenantId();
         OrdOdProd ordOdProd = new OrdOdProd();
-        BeanUtils.copyProperties(ordOdProd,parentOrdOdProd);
+        BeanUtils.copyProperties(ordOdProd, parentOrdOdProd);
         ordOdProd.setProdDetalId(prodDetailId);
         ordOdProd.setOrderId(subOrderId);
         ordOdProd.setExtendInfo(prodExtendInfoValue);

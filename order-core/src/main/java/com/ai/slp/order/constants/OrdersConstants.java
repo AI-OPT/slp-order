@@ -24,24 +24,14 @@ public final class OrdersConstants {
         public static class OrderType {
 
             /**
-             * 购买话费卡包
+             * 话费流量卡包
              */
-            public static final String BUG_PHONE_BILL_CARD = "100000";
+            public static final String BUG_PHONE_FLOWRATE_CARD = "100000";
 
             /**
-             * 购买流量卡包
+             * 话费流量直充
              */
-            public static final String BUG_FLOWRATE_CARD = "100001";
-
-            /**
-             * 购买话费直充
-             */
-            public static final String BUG_PHONE_BILL_RECHARGE = "100010";
-
-            /**
-             * 购买流量直充
-             */
-            public static final String BUG_FLOWRATE_RECHARGE = "100011";
+            public static final String BUG_PHONE_FLOWRATE_RECHARGE = "100010";
 
             /**
              * 购买实物类商品
@@ -351,12 +341,12 @@ public final class OrdersConstants {
              * 订单支付完成
              */
             public static final String ORDER_PAID = "您提交的订单已经支付完成";
-            
+
             /**
              * 订单待充值
              */
             public static final String ORDER_TO_CHARGE = "您提交的订单进入待充值状态";
-            
+
             /**
              * 订单充值完成
              */
