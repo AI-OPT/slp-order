@@ -13,7 +13,7 @@ public class OrdOdProd {
 
     private long supplierId;
 
-    private long sellerId;
+    private String sellerId;
 
     private String prodId;
 
@@ -105,12 +105,12 @@ public class OrdOdProd {
         this.supplierId = supplierId;
     }
 
-    public long getSellerId() {
+    public String getSellerId() {
         return sellerId;
     }
 
-    public void setSellerId(long sellerId) {
-        this.sellerId = sellerId;
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId == null ? null : sellerId.trim();
     }
 
     public String getProdId() {

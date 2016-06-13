@@ -7,7 +7,7 @@
     <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
     <result column="PROD_TYPE" property="prodType" jdbcType="VARCHAR" />
     <result column="SUPPLIER_ID" property="supplierId" jdbcType="BIGINT" />
-    <result column="SELLER_ID" property="sellerId" jdbcType="BIGINT" />
+    <result column="SELLER_ID" property="sellerId" jdbcType="VARCHAR" />
     <result column="PROD_ID" property="prodId" jdbcType="VARCHAR" />
     <result column="PROD_NAME" property="prodName" jdbcType="VARCHAR" />
     <result column="PROD_SN" property="prodSn" jdbcType="VARCHAR" />
@@ -146,7 +146,7 @@
       EXTEND_INFO, UPDATE_TIME, UPDATE_CHL_ID, 
       UPDATE_OPER_ID)
     values (#{prodDetalId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{orderId,jdbcType=BIGINT}, 
-      #{prodType,jdbcType=VARCHAR}, #{supplierId,jdbcType=BIGINT}, #{sellerId,jdbcType=BIGINT}, 
+      #{prodType,jdbcType=VARCHAR}, #{supplierId,jdbcType=BIGINT}, #{sellerId,jdbcType=VARCHAR}, 
       #{prodId,jdbcType=VARCHAR}, #{prodName,jdbcType=VARCHAR}, #{prodSn,jdbcType=VARCHAR}, 
       #{skuId,jdbcType=VARCHAR}, #{standardProdId,jdbcType=VARCHAR}, #{supplyId,jdbcType=VARCHAR}, 
       #{storageId,jdbcType=VARCHAR}, #{routeId,jdbcType=VARCHAR}, #{validTime,jdbcType=TIMESTAMP}, 
@@ -169,7 +169,9 @@
         PROD_TYPE,
       </if>
       SUPPLIER_ID,
-      SELLER_ID,
+      <if test="sellerId != null" >
+        SELLER_ID,
+      </if>
       <if test="prodId != null" >
         PROD_ID,
       </if>
@@ -240,7 +242,9 @@
         #{prodType,jdbcType=VARCHAR},
       </if>
       #{supplierId,jdbcType=BIGINT},
-      #{sellerId,jdbcType=BIGINT},
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=VARCHAR},
+      </if>
       <if test="prodId != null" >
         #{prodId,jdbcType=VARCHAR},
       </if>
@@ -327,7 +331,7 @@
         SUPPLIER_ID = #{record.supplierId,jdbcType=BIGINT},
       </if>
       <if test="record.sellerId != null" >
-        SELLER_ID = #{record.sellerId,jdbcType=BIGINT},
+        SELLER_ID = #{record.sellerId,jdbcType=VARCHAR},
       </if>
       <if test="record.prodId != null" >
         PROD_ID = #{record.prodId,jdbcType=VARCHAR},
@@ -416,7 +420,7 @@
       ORDER_ID = #{record.orderId,jdbcType=BIGINT},
       PROD_TYPE = #{record.prodType,jdbcType=VARCHAR},
       SUPPLIER_ID = #{record.supplierId,jdbcType=BIGINT},
-      SELLER_ID = #{record.sellerId,jdbcType=BIGINT},
+      SELLER_ID = #{record.sellerId,jdbcType=VARCHAR},
       PROD_ID = #{record.prodId,jdbcType=VARCHAR},
       PROD_NAME = #{record.prodName,jdbcType=VARCHAR},
       PROD_SN = #{record.prodSn,jdbcType=VARCHAR},
@@ -462,7 +466,7 @@
         SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},
       </if>
       <if test="sellerId != null" >
-        SELLER_ID = #{sellerId,jdbcType=BIGINT},
+        SELLER_ID = #{sellerId,jdbcType=VARCHAR},
       </if>
       <if test="prodId != null" >
         PROD_ID = #{prodId,jdbcType=VARCHAR},
@@ -548,7 +552,7 @@
       ORDER_ID = #{orderId,jdbcType=BIGINT},
       PROD_TYPE = #{prodType,jdbcType=VARCHAR},
       SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},
-      SELLER_ID = #{sellerId,jdbcType=BIGINT},
+      SELLER_ID = #{sellerId,jdbcType=VARCHAR},
       PROD_ID = #{prodId,jdbcType=VARCHAR},
       PROD_NAME = #{prodName,jdbcType=VARCHAR},
       PROD_SN = #{prodSn,jdbcType=VARCHAR},

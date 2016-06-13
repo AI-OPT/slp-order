@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
@@ -43,6 +44,8 @@ import com.ai.slp.order.vo.ProdExtendInfoVo;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductInfoQuery;
 import com.ai.slp.product.api.product.param.ProductRoute;
+import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
+import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
 import com.ai.slp.route.api.core.interfaces.IRouteCoreService;
 import com.ai.slp.route.api.core.params.SaleProductInfo;
 import com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV;
@@ -94,13 +97,13 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
             OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
-            /* 2.判断订单业务类型 */
+            /* 2.订单支付完成后，对订单进行处理 */
+            this.execOrders(ordOrder, request.getTenantId(), sysdate);
+            /* 3.判断订单业务类型 */
             boolean flag = this.judgeOrderType(ordOrder, request.getTenantId(), sysdate);
             if (flag) {
-                return;
+                continue;
             }
-            /* 3.订单支付完成后，对订单进行处理 */
-            this.execOrders(ordOrder, request.getTenantId(), sysdate);
             /* 4.拆分子订单 */
             this.resoleOrders(ordOrder, request.getTenantId());
             /* 5.归档 */
@@ -331,11 +334,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @throws IllegalAccessException
      * @ApiDocMethod
      */
-    private void createSubOrder(String tenantId, OrdOrder parentOrdOrder, long prodDetalId,
+    private void createSubOrder(String tenantId, OrdOrder parentOrdOrder, long parentProdDetalId,
             String prodExtendInfoValue) {
         /* 1.创建子订单表 */
         long subOrderId = SequenceUtil.createOrderId();
-
         OrdOrder childOrdOrder = new OrdOrder();
         BeanUtils.copyProperties(childOrdOrder, parentOrdOrder);
 
@@ -352,8 +354,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         if (parentOrdOrder.getOrderId() != 0) {
             criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
         }
-        if (prodDetalId != 0) {
-            criteria.andProdDetalIdEqualTo(prodDetalId);
+        if (parentProdDetalId != 0) {
+            criteria.andProdDetalIdEqualTo(parentProdDetalId);
         }
         List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
         if (CollectionUtil.isEmpty(ordOdProdList)) {
@@ -368,7 +370,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ordOdProd.setExtendInfo(prodExtendInfoValue);
         ordOdProdAtomSV.insertSelective(ordOdProd);
         /* 3.调用路由,并更新订单明细表 */
-        this.callRoute(tenantId, prodDetailId, ordOdProd.getProdId(), ordOdProd.getSalePrice(),
+        this.callRoute(tenantId, parentProdDetalId, ordOdProd.getProdId(), ordOdProd.getSalePrice(),
                 ordOdProd.getStandardProdId());
 
     }
@@ -396,6 +398,32 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
                     OrdOdStateChg.ChgDesc.ORDER_PAID, null, null, null, sysdate);
 
         }
+        /* 3.增加商品销量 */
+        List<OrdOdProd> ordOdProds = this.getOrdOdProds(tenantId, ordOrder.getOrderId());
+        for (OrdOdProd ordOdProd : ordOdProds) {
+            this.addSaleNumOfProduct(tenantId, ordOdProd.getSkuId(), (int) ordOdProd.getBuySum());
+        }
+
+    }
+
+    /**
+     * 增加商品销量
+     * 
+     * @param tenantId
+     * @param skuId
+     * @return
+     */
+    private void addSaleNumOfProduct(String tenantId, String skuId, int skuNum) {
+        StorageNumUserReq storageNumUserReq = new StorageNumUserReq();
+        storageNumUserReq.setTenantId(tenantId);
+        storageNumUserReq.setSkuId(skuId);
+        storageNumUserReq.setSkuNum(skuNum);
+        IStorageNumSV iStorageNumSV = DubboConsumerFactory.getService("iStorageNumSV");
+        BaseResponse response = iStorageNumSV.addSaleNumOfProduct(storageNumUserReq);
+        if (!ExceptCodeConstants.Special.SUCCESS.equals(response.getResponseHeader()
+                .getResultCode())) {
+            throw new BusinessException("", "调用增加商品销量报错[skuId:" + skuId + "skuNum:" + skuNum + "]");
+        }
     }
 
     /**
@@ -408,7 +436,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @param string
      * @ApiDocMethod
      */
-    private void callRoute(String tenantId, long prodDetailId, String prodId, long salePrice,
+    private void callRoute(String tenantId, long parentProdDetalId, String prodId, long salePrice,
             String standardProductId) {
         /* 1.获取路由组ID */
         String routeGroupId = this.getRouteGroupId(tenantId, prodId);
@@ -433,8 +461,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         OrdOdProdCriteria example = new OrdOdProdCriteria();
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
-        if (prodDetailId != 0) {
-            criteria.andOrderIdEqualTo(prodDetailId);
+        if (parentProdDetalId != 0) {
+            criteria.andProdDetalIdEqualTo(parentProdDetalId);
         }
         List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
         if (CollectionUtil.isEmpty(ordOdProdList)) {
@@ -443,9 +471,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         OrdOdProd ordOdProd = ordOdProdList.get(0);
         ordOdProd.setRouteId(routeId);
         ordOdProd.setSupplyId(supplyProduct.getSupplyId());
-        ordOdProd.setSupplyId(supplyProduct.getSellerId());
+        ordOdProd.setSellerId(supplyProduct.getSellerId());
         ordOdProd.setCostPrice(supplyProduct.getCostPrice());
         ordOdProdAtomSV.updateById(ordOdProd);
+        /* 5.充值路由 */
     }
 
     /**
