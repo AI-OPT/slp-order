@@ -41,6 +41,7 @@ import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
+import com.ai.slp.order.vo.RouteServReqVo;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductInfoQuery;
 import com.ai.slp.product.api.product.param.ProductRoute;
@@ -48,6 +49,9 @@ import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
 import com.ai.slp.route.api.core.interfaces.IRouteCoreService;
 import com.ai.slp.route.api.core.params.SaleProductInfo;
+import com.ai.slp.route.api.server.interfaces.IRouteServer;
+import com.ai.slp.route.api.server.params.IRouteServerRequest;
+import com.ai.slp.route.api.server.params.RouteServerResponse;
 import com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProduct;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProductQueryVo;
@@ -370,8 +374,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ordOdProd.setExtendInfo(prodExtendInfoValue);
         ordOdProdAtomSV.insertSelective(ordOdProd);
         /* 3.调用路由,并更新订单明细表 */
-        this.callRoute(tenantId, parentProdDetalId, ordOdProd.getProdId(), ordOdProd.getSalePrice(),
-                ordOdProd.getStandardProdId());
+        this.callRoute(tenantId, prodDetailId, ordOdProd);
 
     }
 
@@ -436,23 +439,22 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @param string
      * @ApiDocMethod
      */
-    private void callRoute(String tenantId, long parentProdDetalId, String prodId, long salePrice,
-            String standardProductId) {
+    private void callRoute(String tenantId, long prodDetailId, OrdOdProd ordOdProd) {
         /* 1.获取路由组ID */
-        String routeGroupId = this.getRouteGroupId(tenantId, prodId);
+        String routeGroupId = this.getRouteGroupId(tenantId, ordOdProd.getProdId());
         /* 2.路由计算获取路由ID */
         IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService("iRouteCoreService");
         SaleProductInfo saleProductInfo = new SaleProductInfo();
         saleProductInfo.setTenantId(tenantId);
         saleProductInfo.setRouteGroupId(routeGroupId);
-        saleProductInfo.setTotalConsumption(salePrice);
+        saleProductInfo.setTotalConsumption(ordOdProd.getSalePrice());
         String routeId = iRouteCoreService.findRoute(saleProductInfo);
         /* 3.根据路由ID查询相关信息 */
         SupplyProductQueryVo supplyProductQueryVo = new SupplyProductQueryVo();
         supplyProductQueryVo.setTenantId(tenantId);
         supplyProductQueryVo.setRouteId(routeId);
         supplyProductQueryVo.setSaleCount(1);
-        supplyProductQueryVo.setStandardProductId(standardProductId);
+        supplyProductQueryVo.setStandardProductId(ordOdProd.getStandardProdId());
         ISupplyProductServiceSV iSupplyProductServiceSV = DubboConsumerFactory
                 .getService("iSupplyProductServiceSV");
         SupplyProduct supplyProduct = iSupplyProductServiceSV
@@ -461,20 +463,37 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         OrdOdProdCriteria example = new OrdOdProdCriteria();
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
-        if (parentProdDetalId != 0) {
-            criteria.andProdDetalIdEqualTo(parentProdDetalId);
+        if (prodDetailId != 0) {
+            criteria.andProdDetalIdEqualTo(prodDetailId);
         }
         List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
         if (CollectionUtil.isEmpty(ordOdProdList)) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
         }
-        OrdOdProd ordOdProd = ordOdProdList.get(0);
-        ordOdProd.setRouteId(routeId);
-        ordOdProd.setSupplyId(supplyProduct.getSupplyId());
-        ordOdProd.setSellerId(supplyProduct.getSellerId());
-        ordOdProd.setCostPrice(supplyProduct.getCostPrice());
-        ordOdProdAtomSV.updateById(ordOdProd);
+        OrdOdProd ordOdProdBean = ordOdProdList.get(0);
+        ordOdProdBean.setRouteId(routeId);
+        ordOdProdBean.setSupplyId(supplyProduct.getSupplyId());
+        ordOdProdBean.setSellerId(supplyProduct.getSellerId());
+        ordOdProdBean.setCostPrice(supplyProduct.getCostPrice());
+        ordOdProdAtomSV.updateById(ordOdProdBean);
         /* 5.充值路由 */
+        IRouteServer iRouteServer = DubboConsumerFactory.getService("iRouteServer");
+        IRouteServerRequest request = new IRouteServerRequest();
+        request.setTenantId(tenantId);
+        request.setRouteId(routeId);
+        RouteServReqVo routeServReqVo = new RouteServReqVo();
+        routeServReqVo.setOrderId(String.valueOf(ordOdProd.getOrderId()));
+        routeServReqVo.setBizType(ordOdProdBean.getProdType());
+        routeServReqVo.setAccountVal(ordOdProdBean.getExtendInfo());
+        routeServReqVo.setBuyNum(1);
+        routeServReqVo.setNotifyUrl("");
+        routeServReqVo.setProId(ordOdProdBean.getSupplyId());
+        routeServReqVo.setUnitPrice(ordOdProdBean.getCostPrice());
+        request.setRequestData(JSON.toJSONString(routeServReqVo));
+        RouteServerResponse response = iRouteServer.callServerByRouteId(request);
+        String responseData = response.getResponseData();
+        System.out.println(JSON.toJSONString(responseData));
+
     }
 
     /**

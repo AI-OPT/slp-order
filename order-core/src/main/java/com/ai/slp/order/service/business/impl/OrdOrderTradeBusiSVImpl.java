@@ -154,7 +154,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setProdDetalId(prodDetailId);
             ordOdProd.setTenantId(request.getTenantId());
             ordOdProd.setOrderId(orderId);
-            ordOdProd.setProdType(OrdersConstants.OrdOdProd.ProdType.PROD);
+            ordOdProd.setProdType(storageNumRes.getProductCatId());
             ordOdProd.setProdId(storageNumRes.getProdId());
             ordOdProd.setProdName(storageNumRes.getSkuName());
             ordOdProd.setSkuId(ordProductInfo.getSkuId());

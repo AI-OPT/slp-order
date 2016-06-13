@@ -41,4 +41,7 @@
 
 	<dubbo:reference id="iProductServerSV"
 		interface="com.ai.slp.product.api.product.interfaces.IProductServerSV" />
+
+	<dubbo:reference id="iRouteServer"
+		interface="com.ai.slp.route.api.server.interfaces.IRouteServer" />
 </beans>
