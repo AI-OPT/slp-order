@@ -23,10 +23,10 @@ public class OrderTradeCenterSVImplTest {
     public void orderTradeTest() {
         OrderPayRequest request = new OrderPayRequest();
         ArrayList<Long> arrayList = new ArrayList<Long>();
-        arrayList.add(2522477l);
+        arrayList.add(7252050l);
         request.setOrderIds(arrayList);
         request.setExternalId("123456");
-        request.setPayFee(39920l);
+        request.setPayFee(49950l);
         request.setPayType("21");
         request.setTenantId("SLP");
 
