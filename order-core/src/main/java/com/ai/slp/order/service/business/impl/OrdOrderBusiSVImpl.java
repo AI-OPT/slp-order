@@ -136,6 +136,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         pageInfo.setPageNo(orderListRequest.getPageNo());
         pageInfo.setPageSize(orderListRequest.getPageSize());
         pageInfo.setResult(ordOrderList);
+        pageInfo.setCount(ordOrderList.size());
         response.setPageInfo(pageInfo);
         return response;
 
