@@ -85,6 +85,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         if (!StringUtils.isBlank(orderListRequest.getOrderType())) {
             criteria.andOrderTypeEqualTo(orderListRequest.getOrderType());
         }
+        if (!StringUtils.isBlank(orderListRequest.getUserId())) {
+            criteria.andOrderTypeEqualTo(orderListRequest.getUserId());
+        }
         if (!StringUtils.isBlank(orderListRequest.getState())) {
             criteria.andStateEqualTo(orderListRequest.getState());
         }
