@@ -2,10 +2,7 @@ package com.ai.slp.order.api.shopcart.interfaces;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.base.vo.PageInfoResponse;
 import com.ai.slp.order.api.shopcart.param.*;
-
-import java.util.List;
 
 /**
  * 购物车服务
@@ -41,7 +38,7 @@ public interface IShopCartSV {
      * @author liutng5
      * @ApiCode SHOP_CART_0101
      */
-    public List<CartProdInfo> queryCartOfUser(UserInfo userInfo)throws BusinessException,SystemException;
+    public CartProdList queryCartOfUser(UserInfo userInfo)throws BusinessException,SystemException;
     @interface QueryCartOfUser{}
 
     /**

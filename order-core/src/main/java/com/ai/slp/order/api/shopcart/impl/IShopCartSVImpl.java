@@ -2,7 +2,8 @@ package com.ai.slp.order.api.shopcart.impl;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.base.vo.PageInfoResponse;
+import com.ai.opt.base.vo.ResponseHeader;
+import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.shopcart.interfaces.IShopCartSV;
 import com.ai.slp.order.api.shopcart.param.*;
 import com.ai.slp.order.service.business.interfaces.IShopCartBusiSV;
@@ -48,9 +49,16 @@ public class IShopCartSVImpl implements IShopCartSV {
      * @ApiCode SHOP_CART_0101
      */
     @Override
-    public List<CartProdInfo> queryCartOfUser(UserInfo userInfo) throws BusinessException, SystemException {
+    public CartProdList queryCartOfUser(UserInfo userInfo) throws BusinessException, SystemException {
         CommonCheckUtils.checkTenantId(userInfo.getTenantId(),"");
-        return shopCartBusiSV.queryCartProdOfUser(userInfo.getTenantId(),userInfo.getUserId());
+        List<CartProdInfo> prodInfos = shopCartBusiSV.queryCartProdOfUser(userInfo.getTenantId(),userInfo.getUserId());
+        CartProdList prodList = new CartProdList();
+        prodList.setProdInfoList(prodInfos);
+        ResponseHeader header = new ResponseHeader();
+        header.setIsSuccess(true);
+        header.setResultCode(ExceptCodeConstants.Special.SUCCESS);
+        prodList.setResponseHeader(header);
+        return prodList;
     }
 
     /**
