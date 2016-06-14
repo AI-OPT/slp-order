@@ -27,7 +27,7 @@ public class OrderPayRequest extends BaseInfo {
     /**
      * 收费金额
      */
-    @NotBlank(message = "收费金额不能为空")
+    @NotNull(message = "收费金额不能为空")
     private Long payFee;
 
     /**

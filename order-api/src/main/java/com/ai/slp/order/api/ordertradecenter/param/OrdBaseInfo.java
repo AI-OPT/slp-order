@@ -21,11 +21,6 @@ public class OrdBaseInfo implements Serializable {
     private String orderType;
 
     /**
-     * 是否需要快递
-     */
-    private String deliveryFlag;
-
-    /**
      * 渠道Id
      */
     private String chlId;
@@ -68,10 +63,6 @@ public class OrdBaseInfo implements Serializable {
         return orderType;
     }
 
-    public String getDeliveryFlag() {
-        return deliveryFlag;
-    }
-
     public String getChlId() {
         return chlId;
     }
@@ -106,10 +97,6 @@ public class OrdBaseInfo implements Serializable {
 
     public void setOrderType(String orderType) {
         this.orderType = orderType;
-    }
-
-    public void setDeliveryFlag(String deliveryFlag) {
-        this.deliveryFlag = deliveryFlag;
     }
 
     public void setChlId(String chlId) {
