@@ -493,12 +493,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         routeServReqVo.setUnitPrice(ordOdProdBean.getCostPrice());
         request.setRequestData(JSON.toJSONString(routeServReqVo));
         RouteServerResponse response = iRouteServer.callServerByRouteId(request);
-        String responseData = response.getResponseData();
-        if(StringUtil.isBlank(responseData)){
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
-        }
-        RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
-        System.out.println(JSON.toJSONString(responseData));
+//        String responseData = response.getResponseData();
+//        if(StringUtil.isBlank(responseData)){
+//            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
+//        }
+//        RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
+//        System.out.println(JSON.toJSONString(responseData));
 
     }
 
