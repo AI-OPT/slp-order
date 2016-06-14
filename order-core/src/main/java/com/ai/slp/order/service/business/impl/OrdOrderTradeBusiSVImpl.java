@@ -18,6 +18,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdExtendInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdFeeInfo;
@@ -102,6 +103,12 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     private void createOrder(OrderTradeCenterRequest request, Timestamp sysDate, long orderId) {
         LOG.debug("开始处理订单主表[" + orderId + "]资料信息..");
         OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
+        if(StringUtil.isBlank(ordBaseInfo.getOrderType())){
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单类型为空");
+        }
+        if(StringUtil.isBlank(ordBaseInfo.getUserId())){
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户Id为空");
+        }
         OrdOrder ordOrder = new OrdOrder();
         ordOrder.setOrderId(orderId);
         ordOrder.setTenantId(request.getTenantId());
