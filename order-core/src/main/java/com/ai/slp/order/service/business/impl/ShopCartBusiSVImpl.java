@@ -15,6 +15,7 @@ import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
+import com.ai.slp.order.constants.ErrorCodeConstants;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
@@ -266,18 +267,32 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             String skuId = skuIdIterator.next();
             String cartProdStr = cartProdMap.get(skuId);
             OrdOdCartProd cartProd = JSON.parseObject(cartProdStr,OrdOdCartProd.class);
-            ProductSkuInfo skuInfo = querySkuInfo(tenantId,skuId);
-            CartProdInfo prodInfo = new CartProdInfo();
-            BeanUtils.copyProperties(prodInfo,skuInfo);
-            prodInfo.setProductId(skuInfo.getProdId());
-            prodInfo.setProductName(skuInfo.getProdName());
-            prodInfo.setInsertTime(cartProd.getInsertTime());
-            prodInfo.setBuyNum(cartProd.getBuySum().longValue());
-            //若库存量小于购物车添加数量,则使用库存量
-            if (skuInfo.getUsableNum()<prodInfo.getBuyNum()){
-                prodInfo.setBuyNum(skuInfo.getUsableNum());
+            try {
+                ProductSkuInfo skuInfo = querySkuInfo(tenantId, skuId);
+                CartProdInfo prodInfo = new CartProdInfo();
+                BeanUtils.copyProperties(prodInfo,skuInfo);
+                prodInfo.setProductId(skuInfo.getProdId());
+                prodInfo.setProductName(skuInfo.getProdName());
+                prodInfo.setInsertTime(cartProd.getInsertTime());
+                prodInfo.setBuyNum(cartProd.getBuySum().longValue());
+                //若库存量小于购物车添加数量,则使用库存量
+                if (skuInfo.getUsableNum()<prodInfo.getBuyNum()){
+                    prodInfo.setBuyNum(skuInfo.getUsableNum());
+                }
+                cartProdInfoList.add(prodInfo);
+            }catch (BusinessException e){
+                //若SKU不存在或无效
+                //若销售商品不存在
+                if (ErrorCodeConstants.Product.SKU_NO_EXIST.equals(e.getErrorCode())
+                        || ErrorCodeConstants.Product.SKU_NO_EXIST.equals(e.getErrorCode())){
+                    List<String> skuIdList = new ArrayList<>();
+                    skuIdList.add(skuId);
+                    deleteCartProd(tenantId,userId,skuIdList);
+                }else {
+                    throw e;
+                }
             }
-            cartProdInfoList.add(prodInfo);
+
         }
         //查询SKU信息
         return cartProdInfoList;
