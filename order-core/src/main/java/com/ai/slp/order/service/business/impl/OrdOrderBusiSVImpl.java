@@ -276,7 +276,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         OrdOdProdExtendCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
         criteria.andOrderIdEqualTo(orderId);
-        criteria.andProdDetalExtendIdEqualTo(prodDetailId);
+        criteria.andProdDetalIdEqualTo(prodDetailId);
         List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
         /* 2.遍历取出值信息 */
         StringBuffer sb = new StringBuffer();
