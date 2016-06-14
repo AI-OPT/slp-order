@@ -99,6 +99,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                     orderListRequest.getOrderTimeBegin(), "yyyy-MM-dd HH:mm:ss"), DateUtils
                     .getTimestamp(orderListRequest.getOrderTimeEnd(), "yyyy-MM-dd HH:mm:ss"));
         }
+        example.setOrderByClause("ORDER_TIME desc ");
         example.setLimitStart((orderListRequest.getPageNo() - 1) * orderListRequest.getPageSize());
         example.setLimitEnd(orderListRequest.getPageSize());
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
