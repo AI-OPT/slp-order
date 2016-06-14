@@ -273,6 +273,10 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             prodInfo.setProductName(skuInfo.getProdName());
             prodInfo.setInsertTime(cartProd.getInsertTime());
             prodInfo.setBuyNum(cartProd.getBuySum().longValue());
+            //若库存量小于购物车添加数量,则使用库存量
+            if (skuInfo.getUsableNum()<prodInfo.getBuyNum()){
+                prodInfo.setBuyNum(skuInfo.getUsableNum());
+            }
             cartProdInfoList.add(prodInfo);
         }
         //查询SKU信息
