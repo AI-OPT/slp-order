@@ -65,6 +65,8 @@ public class OrdOdProd {
 
     private String updateOperId;
 
+    private String skuStorageId;
+
     public long getProdDetalId() {
         return prodDetalId;
     }
@@ -311,5 +313,13 @@ public class OrdOdProd {
 
     public void setUpdateOperId(String updateOperId) {
         this.updateOperId = updateOperId == null ? null : updateOperId.trim();
+    }
+
+    public String getSkuStorageId() {
+        return skuStorageId;
+    }
+
+    public void setSkuStorageId(String skuStorageId) {
+        this.skuStorageId = skuStorageId == null ? null : skuStorageId.trim();
     }
 }

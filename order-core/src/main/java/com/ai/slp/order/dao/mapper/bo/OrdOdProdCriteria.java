@@ -2154,6 +2154,76 @@ public class OrdOdProdCriteria {
             addCriterion("UPDATE_OPER_ID not between", value1, value2, "updateOperId");
             return (Criteria) this;
         }
+
+        public Criteria andSkuStorageIdIsNull() {
+            addCriterion("SKU_STORAGE_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdIsNotNull() {
+            addCriterion("SKU_STORAGE_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdEqualTo(String value) {
+            addCriterion("SKU_STORAGE_ID =", value, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdNotEqualTo(String value) {
+            addCriterion("SKU_STORAGE_ID <>", value, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdGreaterThan(String value) {
+            addCriterion("SKU_STORAGE_ID >", value, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdGreaterThanOrEqualTo(String value) {
+            addCriterion("SKU_STORAGE_ID >=", value, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdLessThan(String value) {
+            addCriterion("SKU_STORAGE_ID <", value, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdLessThanOrEqualTo(String value) {
+            addCriterion("SKU_STORAGE_ID <=", value, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdLike(String value) {
+            addCriterion("SKU_STORAGE_ID like", value, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdNotLike(String value) {
+            addCriterion("SKU_STORAGE_ID not like", value, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdIn(List<String> values) {
+            addCriterion("SKU_STORAGE_ID in", values, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdNotIn(List<String> values) {
+            addCriterion("SKU_STORAGE_ID not in", values, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdBetween(String value1, String value2) {
+            addCriterion("SKU_STORAGE_ID between", value1, value2, "skuStorageId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuStorageIdNotBetween(String value1, String value2) {
+            addCriterion("SKU_STORAGE_ID not between", value1, value2, "skuStorageId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

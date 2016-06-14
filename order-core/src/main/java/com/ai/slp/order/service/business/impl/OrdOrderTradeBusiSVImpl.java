@@ -145,10 +145,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             if(storageNum==null){
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
             }
-            Set<String> keySet = storageNum.keySet();
-            if (keySet == null) {
-                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
-            }
             long prodDetailId = SequenceUtil.createProdDetailId();
             OrdOdProd ordOdProd = new OrdOdProd();
             ordOdProd.setProdDetalId(prodDetailId);
@@ -159,7 +155,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setProdName(storageNumRes.getSkuName());
             ordOdProd.setSkuId(ordProductInfo.getSkuId());
             ordOdProd.setStandardProdId(storageNumRes.getStandedProdId());
-            ordOdProd.setStorageId(keySet.iterator().next());
+            ordOdProd.setSkuStorageId(JSON.toJSONString(storageNum));
             ordOdProd.setValidTime(sysDate);
             ordOdProd.setInvalidTime(DateUtil.getFutureTime());
             ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
