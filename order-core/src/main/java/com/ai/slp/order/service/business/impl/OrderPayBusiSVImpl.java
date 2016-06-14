@@ -19,6 +19,7 @@ import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
@@ -42,6 +43,7 @@ import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
 import com.ai.slp.order.vo.RouteServReqVo;
+import com.ai.slp.order.vo.RouteServResVo;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductInfoQuery;
 import com.ai.slp.product.api.product.param.ProductRoute;
@@ -492,6 +494,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         request.setRequestData(JSON.toJSONString(routeServReqVo));
         RouteServerResponse response = iRouteServer.callServerByRouteId(request);
         String responseData = response.getResponseData();
+        if(StringUtil.isBlank(responseData)){
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
+        }
+        RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
         System.out.println(JSON.toJSONString(responseData));
 
     }

@@ -315,12 +315,14 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private void updateOrderState(String tenantId, Timestamp sysDate, long orderId) {
         OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
-        ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_PAY);
+        String orgState=ordOrder.getState();
+        String newState=OrdersConstants.OrdOrder.State.WAIT_PAY;
+        ordOrder.setState(newState);
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.updateById(ordOrder);
         // 写入订单状态变化轨迹表
-        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, ordOrder.getState(),
-                OrdersConstants.OrdOrder.State.WAIT_PAY, OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null,
+        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, orgState,
+                newState, OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null,
                 null, null, sysDate);
     }
 
