@@ -2,6 +2,7 @@ package com.ai.slp.order.api.shopcart;
 
 import com.ai.slp.order.api.shopcart.interfaces.IShopCartSV;
 import com.ai.slp.order.api.shopcart.param.CartProd;
+import com.ai.slp.order.api.shopcart.param.UserInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,17 @@ public class IShopCartSVTest {
     public void addProdTest(){
         CartProd cartProd = new CartProd();
         cartProd.setTenantId("SLP");
-        cartProd.setUserId("123");
+        cartProd.setUserId("000000000000000480");
         cartProd.setSkuId("1");
-        cartProd.setBuyNum(100l);
+        cartProd.setBuyNum(90l);
         shopCartSV.addProd(cartProd);
+    }
+
+    @Test
+    public void showCartList(){
+        UserInfo userInfo = new UserInfo();
+        userInfo.setTenantId("SLP");
+        userInfo.setUserId("000000000000000994");
+        shopCartSV.queryCartOfUser(userInfo);
     }
 }
