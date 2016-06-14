@@ -23,6 +23,7 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -91,6 +92,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         if (!StringUtils.isBlank(orderListRequest.getState())) {
             criteria.andStateEqualTo(orderListRequest.getState());
         }
+        criteria.andSubFlagEqualTo(OrdersConstants.OrdOrder.SubFlag.NO);
         if ((orderListRequest.getOrderTimeBegin() != null)
                 && (orderListRequest.getOrderTimeEnd() != null)) {
             criteria.andOrderTimeBetween(DateUtils.getTimestamp(
