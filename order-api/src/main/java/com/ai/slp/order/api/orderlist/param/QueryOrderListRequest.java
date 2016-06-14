@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.orderlist.param;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import com.ai.opt.base.vo.BaseInfo;
@@ -19,7 +21,7 @@ public class QueryOrderListRequest extends BaseInfo {
      */
     @NotNull(message = "用户ID不能为空")
     private String userId;
-    
+
     /**
      * 订单号
      */
@@ -33,7 +35,7 @@ public class QueryOrderListRequest extends BaseInfo {
     /**
      * 订单状态
      */
-    private String state;
+    private List<String> stateList;
 
     /**
      * 支付方式
@@ -108,14 +110,6 @@ public class QueryOrderListRequest extends BaseInfo {
         this.orderId = orderId;
     }
 
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
     public String getPayStyle() {
         return payStyle;
     }
@@ -124,12 +118,20 @@ public class QueryOrderListRequest extends BaseInfo {
         this.payStyle = payStyle;
     }
 
-	public String getUserId() {
-		return userId;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public List<String> getStateList() {
+        return stateList;
+    }
+
+    public void setStateList(List<String> stateList) {
+        this.stateList = stateList;
+    }
 
 }
