@@ -287,7 +287,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             String oldState = ordOrder.getState();
             ordOrder.setState(newState);
             ordOrder.setStateChgTime(sysdate);
-            ordOrderAtomSV.insertSelective(ordOrder);
+            ordOrderAtomSV.updateById(ordOrder);
             /* 2. 记入订单轨迹表 */
             orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, oldState, newState,
                     OrdOdStateChg.ChgDesc.ORDER_TO_CHARGE, null, null, null, sysdate);
