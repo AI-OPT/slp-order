@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -103,10 +102,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     private void createOrder(OrderTradeCenterRequest request, Timestamp sysDate, long orderId) {
         LOG.debug("开始处理订单主表[" + orderId + "]资料信息..");
         OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
-        if(StringUtil.isBlank(ordBaseInfo.getOrderType())){
+        if (StringUtil.isBlank(ordBaseInfo.getOrderType())) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单类型为空");
         }
-        if(StringUtil.isBlank(ordBaseInfo.getUserId())){
+        if (StringUtil.isBlank(ordBaseInfo.getUserId())) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户Id为空");
         }
         OrdOrder ordOrder = new OrdOrder();
@@ -143,13 +142,15 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             Timestamp sysDate, long orderId) {
         LOG.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
         /* 1. 创建商品明细 */
+        OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
+        String orderType = ordBaseInfo.getOrderType();
         List<OrdProductResInfo> ordProductResList = new ArrayList<OrdProductResInfo>();
         List<OrdProductInfo> ordProductInfoList = request.getOrdProductInfoList();
         for (OrdProductInfo ordProductInfo : ordProductInfoList) {
             StorageNumRes storageNumRes = this.querySkuInfo(request.getTenantId(),
                     ordProductInfo.getSkuId(), ordProductInfo.getBuySum());
             Map<String, Integer> storageNum = storageNumRes.getStorageNum();
-            if(storageNum==null){
+            if (storageNum == null) {
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
             }
             long prodDetailId = SequenceUtil.createProdDetailId();
@@ -191,7 +192,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordProductResInfo.setSkuTotalFee(ordOdProd.getTotalFee());
             ordProductResList.add(ordProductResInfo);
             /* 3. 创建商品明细扩展表 */
-            this.createOrdOdProdExtend(prodDetailId, request, sysDate, orderId);
+            this.createOrdOdProdExtend(prodDetailId, request, sysDate, orderId, orderType);
         }
         return ordProductResList;
     }
@@ -282,11 +283,13 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private void createOrdOdProdExtend(long prodDetailId, OrderTradeCenterRequest request,
-            Timestamp sysDate, long orderId) {
-        OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
-        if (ordExtendInfo != null) {
-            orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
-                    ordExtendInfo.getInfoJson());
+            Timestamp sysDate, long orderId, String orderType) {
+        if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_FLOWRATE_RECHARGE.equals(orderType)) {
+            OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
+            if (ordExtendInfo != null) {
+                orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
+                        ordExtendInfo.getInfoJson());
+            }
         }
     }
 
@@ -318,15 +321,14 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private void updateOrderState(String tenantId, Timestamp sysDate, long orderId) {
         OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
-        String orgState=ordOrder.getState();
-        String newState=OrdersConstants.OrdOrder.State.WAIT_PAY;
+        String orgState = ordOrder.getState();
+        String newState = OrdersConstants.OrdOrder.State.WAIT_PAY;
         ordOrder.setState(newState);
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.updateById(ordOrder);
         // 写入订单状态变化轨迹表
-        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, orgState,
-                newState, OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null,
-                null, null, sysDate);
+        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, orgState, newState,
+                OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null, null, null, sysDate);
     }
 
     /**
