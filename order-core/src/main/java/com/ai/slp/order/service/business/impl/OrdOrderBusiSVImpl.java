@@ -244,7 +244,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                         "BASIC_ORG_ID",prodAttrInfoVo.getBasicOrgId());
                 ordProductVo.setBasicOrgName(sysParam==null?"":sysParam.getColumnDesc());
                 ordProductVo.setProvinceCode(prodAttrInfoVo.getProvinceCode());
-                ordProductVo.setProvinceName(iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode()));
+                String provinceName="";
+                if(prodAttrInfoVo.getProvinceCode()!=null){
+                    provinceName=iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode());
+                }
+                ordProductVo.setProvinceName(provinceName);
                 ordProductVo.setChargeFee(prodAttrInfoVo.getChargeFee());
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 ordProductVo.setProductImage(productImage);
