@@ -103,6 +103,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
             OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
+            if(ordOrder==null){
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单信息不存在[订单ID:" + orderId + "]");
+            }
             /* 2.订单支付完成后，对订单进行处理 */
             this.execOrders(ordOrder, request.getTenantId(), sysdate);
             /* 3.判断订单业务类型 */
