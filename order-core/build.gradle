@@ -13,6 +13,7 @@ dependencies {
     compile 'com.ai.slp.route:core:1.0-SNAPSHOT'
     compile 'com.ai.slp.product:product:1.0-SNAPSHOT'
     compile 'com.ai.slp.route:server:1.0-SNAPSHOT'
+    compile 'com.ai.slp.common:cache:1.0-SNAPSHOT'
 
 
 

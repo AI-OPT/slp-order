@@ -44,4 +44,7 @@
 
 	<dubbo:reference id="iRouteServer"
 		interface="com.ai.slp.route.api.server.interfaces.IRouteServer" />
+	<!-- 缓存 -->
+	<dubbo:reference id="iCacheSV"
+		interface="com.ai.slp.common.api.cache.interfaces.ICacheSV" />
 </beans>
