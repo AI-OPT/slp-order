@@ -103,7 +103,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                     .getTimestamp(orderListRequest.getOrderTimeEnd(), "yyyy-MM-dd HH:mm:ss"));
         }
         example.setOrderByClause("ORDER_TIME desc ");
-        example.setLimitStart((orderListRequest.getPageNo()) * orderListRequest.getPageSize());
+        int count = ordOrderAtomSV.countByExample(example);
+        example.setLimitStart((orderListRequest.getPageNo()-1) * orderListRequest.getPageSize());
         example.setLimitEnd(orderListRequest.getPageSize());
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         List<OrdOrderVo> ordOrderList = new ArrayList<OrdOrderVo>();
@@ -149,7 +150,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         pageInfo.setPageNo(orderListRequest.getPageNo());
         pageInfo.setPageSize(orderListRequest.getPageSize());
         pageInfo.setResult(ordOrderList);
-        pageInfo.setCount(ordOrderList.size());
+        pageInfo.setCount(count);
         response.setPageInfo(pageInfo);
         return response;
 
