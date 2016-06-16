@@ -15,6 +15,7 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.PageInfo;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
+import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.common.api.cache.interfaces.ICacheSV;
 import com.ai.slp.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
@@ -245,7 +246,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setBasicOrgName(sysParam==null?"":sysParam.getColumnDesc());
                 ordProductVo.setProvinceCode(prodAttrInfoVo.getProvinceCode());
                 String provinceName="";
-                if(prodAttrInfoVo.getProvinceCode()!=null){
+                if(!StringUtil.isBlank(prodAttrInfoVo.getProvinceCode())){
                     provinceName=iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode());
                 }
                 ordProductVo.setProvinceName(provinceName);
