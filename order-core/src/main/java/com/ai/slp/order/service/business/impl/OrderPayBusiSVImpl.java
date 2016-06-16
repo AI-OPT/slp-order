@@ -103,8 +103,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
             OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
-            if(ordOrder==null){
-                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单信息不存在[订单ID:" + orderId + "]");
+            if (ordOrder == null) {
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
+                        "订单信息不存在[订单ID:" + orderId + "]");
             }
             /* 2.订单支付完成后，对订单进行处理 */
             this.execOrders(ordOrder, request.getTenantId(), sysdate);
@@ -282,20 +283,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @ApiDocMethod
      */
     private boolean judgeOrderType(OrdOrder ordOrder, String tenantId, Timestamp sysdate) {
-        /* 1.如果是卡充,需要将订单状态改为待充值 */
         boolean flag = false;
         if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_FLOWRATE_CARD.equals(ordOrder
                 .getOrderType())) {
             flag = true;
-            String newState = OrdersConstants.OrdOrder.State.WAIT_CHARGE;
-            String oldState = ordOrder.getState();
-            ordOrder.setState(newState);
-            ordOrder.setStateChgTime(sysdate);
-            ordOrderAtomSV.updateById(ordOrder);
-            /* 2. 记入订单轨迹表 */
-            orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, oldState, newState,
-                    OrdOdStateChg.ChgDesc.ORDER_TO_CHARGE, null, null, null, sysdate);
-
         }
 
         return flag;
@@ -320,7 +311,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             criteria.andOrderIdEqualTo(ordOrder.getOrderId());
         }
         List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
-        if(CollectionUtil.isEmpty(ordOdProdExtendList)){
+        if (CollectionUtil.isEmpty(ordOdProdExtendList)) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息-扩展表信息为空");
         }
         /* 2.遍历取出值信息 */
@@ -458,6 +449,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         saleProductInfo.setRouteGroupId(routeGroupId);
         saleProductInfo.setTotalConsumption(ordOdProd.getSalePrice());
         String routeId = iRouteCoreService.findRoute(saleProductInfo);
+        if (StringUtil.isBlank(routeId)) {
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据路由组ID["
+                    + routeGroupId + "]订单金额[" + ordOdProd.getSalePrice() + "]未能找到供货路由");
+        }
         /* 3.根据路由ID查询相关信息 */
         SupplyProductQueryVo supplyProductQueryVo = new SupplyProductQueryVo();
         supplyProductQueryVo.setTenantId(tenantId);
@@ -501,7 +496,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         request.setRequestData(JSON.toJSONString(routeServReqVo));
         RouteServerResponse response = iRouteServer.callServerByRouteId(request);
         String responseData = response.getResponseData();
-        if(StringUtil.isBlank(responseData)){
+        if (StringUtil.isBlank(responseData)) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
         }
         RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
