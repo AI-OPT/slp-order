@@ -246,6 +246,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         feeTotal.setPayFee(0);
         // 支付方式
         feeTotal.setPayStyle(request.getPayType());
+        feeTotal.setUpdateTime(sysdate);
         /* 5.保存缴费冲抵后的费用总表信息 */
         ordOdFeeTotalAtomSV.updateByOrderId(feeTotal);
 
