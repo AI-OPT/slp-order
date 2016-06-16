@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +16,23 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.mds.IMessageConsumer;
+import com.ai.paas.ipaas.mds.IMessageProcessor;
+import com.ai.paas.ipaas.mds.IMessageSender;
+import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
+import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeOffset;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
@@ -90,6 +99,25 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
+    
+    @PostConstruct
+    public void RouteChargeMdsProcess(){
+        IMsgProcessorHandler msgProcessorHandler=new IMsgProcessorHandler() {
+            @Override
+            public IMessageProcessor[] createInstances(int paramInt) {
+                List<IMessageProcessor> processors = new ArrayList<>();
+                IMessageProcessor processor = null;
+                for (int i = 0; i < paramInt; i++) {
+                    processor = new RouteChargeMessProcessorImpl(ordOrderAtomSV);
+                    processors.add(processor);
+                }
+                return processors.toArray(new IMessageProcessor[processors.size()]);
+            }
+        };
+        IMessageConsumer msgConsumer= MDSClientFactory.getConsumerClient(
+                OrdersConstants.OrdOrder.SLP_CHARGE_TOPIC, msgProcessorHandler);
+        msgConsumer.start();
+    }
 
     /**
      * 订单收费
@@ -481,7 +509,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ordOdProdBean.setCostPrice(supplyProduct.getCostPrice());
         ordOdProdAtomSV.updateById(ordOdProdBean);
         /* 5.充值路由 */
-        IRouteServer iRouteServer = DubboConsumerFactory.getService("iRouteServer");
         IRouteServerRequest request = new IRouteServerRequest();
         request.setTenantId(tenantId);
         request.setRouteId(routeId);
@@ -494,14 +521,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         routeServReqVo.setProId(ordOdProdBean.getSupplyId());
         routeServReqVo.setUnitPrice(ordOdProdBean.getCostPrice());
         request.setRequestData(JSON.toJSONString(routeServReqVo));
-        RouteServerResponse response = iRouteServer.callServerByRouteId(request);
-        String responseData = response.getResponseData();
-        if (StringUtil.isBlank(responseData)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
-        }
-        RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
-        System.out.println(JSON.toJSONString(responseData));
-
+        chargeMds(request);
     }
 
     /**
@@ -520,6 +540,17 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         IProductServerSV iProductServerSV = DubboConsumerFactory.getService("iProductServerSV");
         ProductRoute productRoute = iProductServerSV.queryRouteGroupOfProd(productInfoQuery);
         return productRoute.getRouteGroupId();
+    }
+    /**
+     * 发送充值数据,调用路由o2p进行充值
+     * @param request
+     * @author zhangxw
+     * @ApiDocMethod
+     */
+    private void chargeMds(IRouteServerRequest request){
+        IMessageSender msgSender = MDSClientFactory.getSenderClient(OrdersConstants.OrdOrder.SLP_CHARGE_TOPIC);
+
+        msgSender.send(JSON.toJSONString(request), 0);//第二个参数为分区键，如果不分区，传入0
     }
 
     /**

@@ -3,6 +3,8 @@ package com.ai.slp.order.constants;
 public final class OrdersConstants {
 
     public static final class OrdOrder {
+        
+        public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
 
         public static final class DeliveryFlag {
             /**
