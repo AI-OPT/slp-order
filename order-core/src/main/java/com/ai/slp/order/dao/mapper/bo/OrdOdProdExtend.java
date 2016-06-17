@@ -11,6 +11,8 @@ public class OrdOdProdExtend {
 
     private String infoJson;
 
+    private String batchFlag;
+
     public long getProdDetalExtendId() {
         return prodDetalExtendId;
     }
@@ -49,5 +51,13 @@ public class OrdOdProdExtend {
 
     public void setInfoJson(String infoJson) {
         this.infoJson = infoJson == null ? null : infoJson.trim();
+    }
+
+    public String getBatchFlag() {
+        return batchFlag;
+    }
+
+    public void setBatchFlag(String batchFlag) {
+        this.batchFlag = batchFlag == null ? null : batchFlag.trim();
     }
 }

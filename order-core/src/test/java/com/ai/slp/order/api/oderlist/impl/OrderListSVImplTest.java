@@ -21,19 +21,19 @@ public class OrderListSVImplTest {
 
     @Test
     public void orderListTest() {
-        QueryOrderListRequest request = new QueryOrderListRequest();
-        request.setTenantId("SLP");
-        request.setUserId("234");
-        request.setPageNo(1);
-        request.setPageSize(3);
-        System.out.println(orderListSV.queryOrderList(request).getResponseHeader());
-        System.out.println(orderListSV.queryOrderList(request).getPageInfo().getResult().size());
-        
-//        QueryOrderRequest request = new QueryOrderRequest();
-//        request.setOrderId(2456229);
+//        QueryOrderListRequest request = new QueryOrderListRequest();
 //        request.setTenantId("SLP");
-//        QueryOrderResponse queryOrder = orderListSV.queryOrder(request);
-//        OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
-//        System.out.println(ordOrderVo.getBusiCode());
+//        request.setUserId("000000000000000949");
+//        request.setPageNo(1);
+//        request.setPageSize(5);
+//        System.out.println(orderListSV.queryOrderList(request).getResponseHeader());
+//        System.out.println(orderListSV.queryOrderList(request).getPageInfo().getResult().size());
+        
+        QueryOrderRequest request = new QueryOrderRequest();
+        request.setOrderId(78436478);
+        request.setTenantId("SLP");
+        QueryOrderResponse queryOrder = orderListSV.queryOrder(request);
+        OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
+        System.out.println(ordOrderVo.getBusiCode());
     }
 }

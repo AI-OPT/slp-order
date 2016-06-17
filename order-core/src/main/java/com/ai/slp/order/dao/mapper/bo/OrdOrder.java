@@ -71,6 +71,10 @@ public class OrdOrder {
 
     private String remark;
 
+    private String externalOrderId;
+
+    private String externalSupplyId;
+
     public long getOrderId() {
         return orderId;
     }
@@ -341,5 +345,21 @@ public class OrdOrder {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public String getExternalOrderId() {
+        return externalOrderId;
+    }
+
+    public void setExternalOrderId(String externalOrderId) {
+        this.externalOrderId = externalOrderId == null ? null : externalOrderId.trim();
+    }
+
+    public String getExternalSupplyId() {
+        return externalSupplyId;
+    }
+
+    public void setExternalSupplyId(String externalSupplyId) {
+        this.externalSupplyId = externalSupplyId == null ? null : externalSupplyId.trim();
     }
 }

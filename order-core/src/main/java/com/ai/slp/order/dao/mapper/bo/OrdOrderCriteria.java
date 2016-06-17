@@ -2374,6 +2374,146 @@ public class OrdOrderCriteria {
             addCriterion("REMARK not between", value1, value2, "remark");
             return (Criteria) this;
         }
+
+        public Criteria andExternalOrderIdIsNull() {
+            addCriterion("EXTERNAL_ORDER_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdIsNotNull() {
+            addCriterion("EXTERNAL_ORDER_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdEqualTo(String value) {
+            addCriterion("EXTERNAL_ORDER_ID =", value, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdNotEqualTo(String value) {
+            addCriterion("EXTERNAL_ORDER_ID <>", value, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdGreaterThan(String value) {
+            addCriterion("EXTERNAL_ORDER_ID >", value, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdGreaterThanOrEqualTo(String value) {
+            addCriterion("EXTERNAL_ORDER_ID >=", value, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdLessThan(String value) {
+            addCriterion("EXTERNAL_ORDER_ID <", value, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdLessThanOrEqualTo(String value) {
+            addCriterion("EXTERNAL_ORDER_ID <=", value, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdLike(String value) {
+            addCriterion("EXTERNAL_ORDER_ID like", value, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdNotLike(String value) {
+            addCriterion("EXTERNAL_ORDER_ID not like", value, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdIn(List<String> values) {
+            addCriterion("EXTERNAL_ORDER_ID in", values, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdNotIn(List<String> values) {
+            addCriterion("EXTERNAL_ORDER_ID not in", values, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdBetween(String value1, String value2) {
+            addCriterion("EXTERNAL_ORDER_ID between", value1, value2, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalOrderIdNotBetween(String value1, String value2) {
+            addCriterion("EXTERNAL_ORDER_ID not between", value1, value2, "externalOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdIsNull() {
+            addCriterion("EXTERNAL_SUPPLY_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdIsNotNull() {
+            addCriterion("EXTERNAL_SUPPLY_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdEqualTo(String value) {
+            addCriterion("EXTERNAL_SUPPLY_ID =", value, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdNotEqualTo(String value) {
+            addCriterion("EXTERNAL_SUPPLY_ID <>", value, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdGreaterThan(String value) {
+            addCriterion("EXTERNAL_SUPPLY_ID >", value, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdGreaterThanOrEqualTo(String value) {
+            addCriterion("EXTERNAL_SUPPLY_ID >=", value, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdLessThan(String value) {
+            addCriterion("EXTERNAL_SUPPLY_ID <", value, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdLessThanOrEqualTo(String value) {
+            addCriterion("EXTERNAL_SUPPLY_ID <=", value, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdLike(String value) {
+            addCriterion("EXTERNAL_SUPPLY_ID like", value, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdNotLike(String value) {
+            addCriterion("EXTERNAL_SUPPLY_ID not like", value, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdIn(List<String> values) {
+            addCriterion("EXTERNAL_SUPPLY_ID in", values, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdNotIn(List<String> values) {
+            addCriterion("EXTERNAL_SUPPLY_ID not in", values, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdBetween(String value1, String value2) {
+            addCriterion("EXTERNAL_SUPPLY_ID between", value1, value2, "externalSupplyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andExternalSupplyIdNotBetween(String value1, String value2) {
+            addCriterion("EXTERNAL_SUPPLY_ID not between", value1, value2, "externalSupplyId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -443,6 +443,76 @@ public class OrdOdProdExtendCriteria {
             addCriterion("INFO_JSON not between", value1, value2, "infoJson");
             return (Criteria) this;
         }
+
+        public Criteria andBatchFlagIsNull() {
+            addCriterion("BATCH_FLAG is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagIsNotNull() {
+            addCriterion("BATCH_FLAG is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagEqualTo(String value) {
+            addCriterion("BATCH_FLAG =", value, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagNotEqualTo(String value) {
+            addCriterion("BATCH_FLAG <>", value, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagGreaterThan(String value) {
+            addCriterion("BATCH_FLAG >", value, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagGreaterThanOrEqualTo(String value) {
+            addCriterion("BATCH_FLAG >=", value, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagLessThan(String value) {
+            addCriterion("BATCH_FLAG <", value, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagLessThanOrEqualTo(String value) {
+            addCriterion("BATCH_FLAG <=", value, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagLike(String value) {
+            addCriterion("BATCH_FLAG like", value, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagNotLike(String value) {
+            addCriterion("BATCH_FLAG not like", value, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagIn(List<String> values) {
+            addCriterion("BATCH_FLAG in", values, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagNotIn(List<String> values) {
+            addCriterion("BATCH_FLAG not in", values, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagBetween(String value1, String value2) {
+            addCriterion("BATCH_FLAG between", value1, value2, "batchFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andBatchFlagNotBetween(String value1, String value2) {
+            addCriterion("BATCH_FLAG not between", value1, value2, "batchFlag");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.orderpay.interfaces.IOrderPaySV;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
+import com.alibaba.fastjson.JSON;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/context/core-context.xml" })
@@ -23,12 +24,14 @@ public class OrderTradeCenterSVImplTest {
     public void orderTradeTest() {
         OrderPayRequest request = new OrderPayRequest();
         ArrayList<Long> arrayList = new ArrayList<Long>();
-        arrayList.add(7252050l);
+        arrayList.add(8246192l);
         request.setOrderIds(arrayList);
         request.setExternalId("123456");
-        request.setPayFee(49950l);
+        request.setPayFee(19960l);
         request.setPayType("21");
         request.setTenantId("SLP");
+        System.out.println(JSON.toJSONString(request));
+        System.out.println("==============");
 
         BaseResponse pay = iOrderPaySV.pay(request);
     }

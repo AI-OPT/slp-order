@@ -36,6 +36,8 @@
     <result column="ORDER_DESC" property="orderDesc" jdbcType="VARCHAR" />
     <result column="KEYWORDS" property="keywords" jdbcType="VARCHAR" />
     <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="EXTERNAL_ORDER_ID" property="externalOrderId" jdbcType="VARCHAR" />
+    <result column="EXTERNAL_SUPPLY_ID" property="externalSupplyId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -100,7 +102,7 @@
     USER_ID, ACCT_ID, SUBS_ID, SUPPLIER_ID, STORAGE_ID, ROUTE_ID, PROVINCE_CODE, CITY_CODE, 
     STATE, STATE_CHG_TIME, DISPLAY_FLAG, DISPLAY_FLAG_CHG_TIME, DELIVERY_FLAG, LOCK_FLAG, 
     LOCK_TIME, ORDER_TIME, SELLER_ID, CHL_ID, OPER_ID, WORKFLOW_ID, REASON_TYPE, REASON_DESC, 
-    FINISH_TIME, ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, REMARK
+    FINISH_TIME, ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" >
     select
@@ -148,7 +150,8 @@
       CHL_ID, OPER_ID, WORKFLOW_ID, 
       REASON_TYPE, REASON_DESC, FINISH_TIME, 
       ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, 
-      REMARK)
+      REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID
+      )
     values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{busiCode,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{subFlag,jdbcType=VARCHAR}, #{parentOrderId,jdbcType=BIGINT}, 
       #{batchNo,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{acctId,jdbcType=BIGINT}, 
@@ -160,7 +163,8 @@
       #{chlId,jdbcType=VARCHAR}, #{operId,jdbcType=VARCHAR}, #{workflowId,jdbcType=VARCHAR}, 
       #{reasonType,jdbcType=VARCHAR}, #{reasonDesc,jdbcType=VARCHAR}, #{finishTime,jdbcType=TIMESTAMP}, 
       #{origOrderId,jdbcType=BIGINT}, #{orderDesc,jdbcType=VARCHAR}, #{keywords,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR})
+      #{remark,jdbcType=VARCHAR}, #{externalOrderId,jdbcType=VARCHAR}, #{externalSupplyId,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
     insert into ord_order
@@ -251,6 +255,12 @@
       <if test="remark != null" >
         REMARK,
       </if>
+      <if test="externalOrderId != null" >
+        EXTERNAL_ORDER_ID,
+      </if>
+      <if test="externalSupplyId != null" >
+        EXTERNAL_SUPPLY_ID,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{orderId,jdbcType=BIGINT},
@@ -338,6 +348,12 @@
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="externalOrderId != null" >
+        #{externalOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="externalSupplyId != null" >
+        #{externalSupplyId,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -452,6 +468,12 @@
       <if test="record.remark != null" >
         REMARK = #{record.remark,jdbcType=VARCHAR},
       </if>
+      <if test="record.externalOrderId != null" >
+        EXTERNAL_ORDER_ID = #{record.externalOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.externalSupplyId != null" >
+        EXTERNAL_SUPPLY_ID = #{record.externalSupplyId,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -492,7 +514,9 @@
       ORIG_ORDER_ID = #{record.origOrderId,jdbcType=BIGINT},
       ORDER_DESC = #{record.orderDesc,jdbcType=VARCHAR},
       KEYWORDS = #{record.keywords,jdbcType=VARCHAR},
-      REMARK = #{record.remark,jdbcType=VARCHAR}
+      REMARK = #{record.remark,jdbcType=VARCHAR},
+      EXTERNAL_ORDER_ID = #{record.externalOrderId,jdbcType=VARCHAR},
+      EXTERNAL_SUPPLY_ID = #{record.externalSupplyId,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -599,6 +623,12 @@
       <if test="remark != null" >
         REMARK = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="externalOrderId != null" >
+        EXTERNAL_ORDER_ID = #{externalOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="externalSupplyId != null" >
+        EXTERNAL_SUPPLY_ID = #{externalSupplyId,jdbcType=VARCHAR},
+      </if>
     </set>
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
@@ -636,7 +666,9 @@
       ORIG_ORDER_ID = #{origOrderId,jdbcType=BIGINT},
       ORDER_DESC = #{orderDesc,jdbcType=VARCHAR},
       KEYWORDS = #{keywords,jdbcType=VARCHAR},
-      REMARK = #{remark,jdbcType=VARCHAR}
+      REMARK = #{remark,jdbcType=VARCHAR},
+      EXTERNAL_ORDER_ID = #{externalOrderId,jdbcType=VARCHAR},
+      EXTERNAL_SUPPLY_ID = #{externalSupplyId,jdbcType=VARCHAR}
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>
