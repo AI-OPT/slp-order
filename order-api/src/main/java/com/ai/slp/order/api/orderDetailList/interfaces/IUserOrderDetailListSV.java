@@ -2,6 +2,11 @@ package com.ai.slp.order.api.orderDetailList.interfaces;
 
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import com.ai.opt.base.vo.PageInfo;
 import com.ai.slp.order.api.orderDetailList.param.OrdOrderDetailParams;
 import com.ai.slp.order.api.orderDetailList.param.OrderDetailListRequest;
@@ -13,7 +18,9 @@ import com.ai.slp.order.api.orderDetailList.param.OrderDetailListRequest;
  * 
  * @author zhangyh7
  */
-
+@Path("/userorder")
+@Consumes({ MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
 public interface IUserOrderDetailListSV {
     
     

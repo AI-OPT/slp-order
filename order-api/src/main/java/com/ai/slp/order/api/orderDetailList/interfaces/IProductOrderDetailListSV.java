@@ -1,8 +1,17 @@
 package com.ai.slp.order.api.orderDetailList.interfaces;
 
 import com.ai.slp.order.api.orderDetailList.param.ProductOrderDetailListRequest;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import com.ai.slp.order.api.orderDetailList.param.ProductOrderDetailListParam;
 
+@Path("/prodorder")
+@Consumes({ MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
 public interface IProductOrderDetailListSV {
 
     @interface GetOrdOrderDetailInfo{}
