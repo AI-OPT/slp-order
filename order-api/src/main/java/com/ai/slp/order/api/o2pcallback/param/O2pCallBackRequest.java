@@ -9,7 +9,7 @@ public class O2pCallBackRequest extends BaseInfo {
     /**
      * 外部订单Id
      */
-    private long externalOrderId;
+    private String externalOrderId;
 
     /**
      * 外部供货商Id
@@ -21,7 +21,7 @@ public class O2pCallBackRequest extends BaseInfo {
      */
     private String state;
 
-    public long getExternalOrderId() {
+    public String getExternalOrderId() {
         return externalOrderId;
     }
 
@@ -33,7 +33,7 @@ public class O2pCallBackRequest extends BaseInfo {
         return state;
     }
 
-    public void setExternalOrderId(long externalOrderId) {
+    public void setExternalOrderId(String externalOrderId) {
         this.externalOrderId = externalOrderId;
     }
 
