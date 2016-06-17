@@ -14,6 +14,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.o2pcallback.param.O2pCallBackRequest;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
@@ -38,11 +39,11 @@ public class O2pCallBackBusiSVImpl implements IO2pCallBackBusiSV {
         OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(o2pCallBackRequest.getTenantId());
-//        if (o2pCallBackRequest.getExternalOrderId()!=0) {
-//            criteria.andOrderTypeEqualTo(o2pCallBackRequest.getExternalOrderId());
-//        }
+        if (!StringUtil.isBlank(o2pCallBackRequest.getExternalOrderId())) {
+            criteria.andExternalOrderIdEqualTo(o2pCallBackRequest.getExternalOrderId());
+        }
         if (!StringUtils.isBlank(o2pCallBackRequest.getExternalSupplyId())) {
-            criteria.andUserIdEqualTo(o2pCallBackRequest.getExternalSupplyId());
+            criteria.andExternalSupplyIdEqualTo(o2pCallBackRequest.getExternalSupplyId());
         }
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         if (!CollectionUtil.isEmpty(list)) {
