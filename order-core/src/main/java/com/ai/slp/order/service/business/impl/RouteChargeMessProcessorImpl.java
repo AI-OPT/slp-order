@@ -35,6 +35,7 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
 
     @Override
     public void process(MessageAndMetadata message) throws Exception {
+        logger.info("开始处理充值消息.........");
         if (null == message)
             return;
         String content = new String(message.getMessage(), "UTF-8");
