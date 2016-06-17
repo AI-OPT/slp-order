@@ -23,11 +23,13 @@ public interface IOrderTradeCenterSV {
 
     /**
      * 订单提交
-     * 
      * @param request
      * @return
+     * @throws BusinessException
+     * @throws SystemException
      * @author zhangxw
      * @ApiDocMethod
+     * @ApiCode ORDER_APPLY_001
      */
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException;

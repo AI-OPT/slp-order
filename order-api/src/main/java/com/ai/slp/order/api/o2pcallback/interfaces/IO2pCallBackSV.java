@@ -31,6 +31,7 @@ public interface IO2pCallBackSV {
      * @throws SystemException
      * @author zhangxw
      * @ApiDocMethod
+     * @ApiCode O2PCALLBACK_001
      * @RestRelativeURL o2pservice/callback
      */
 	@POST
