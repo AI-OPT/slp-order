@@ -10,7 +10,6 @@ import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
 import com.ai.paas.ipaas.util.StringUtil;
-import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.vo.RouteServResVo;
@@ -55,8 +54,8 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
         String orderId = routeServResVo.getOrderId();
         OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
-//        ordOrder.setXXX
-//        ordOrder.setXXX
+        ordOrder.setExternalOrderId(routeServResVo.getCoopOrderId());
+        ordOrder.setExternalSupplyId("");// 725版本实现该功能
         ordOrder.setState(routeServResVo.getCoopOrderStatus());
         ordOrder.setStateChgTime(DateUtil.getSysDate());
         ordOrderAtomSV.updateById(ordOrder);

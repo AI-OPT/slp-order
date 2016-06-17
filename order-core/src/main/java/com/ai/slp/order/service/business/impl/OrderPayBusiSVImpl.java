@@ -29,10 +29,8 @@ import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
-import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
-import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeOffset;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
@@ -52,7 +50,6 @@ import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
 import com.ai.slp.order.vo.RouteServReqVo;
-import com.ai.slp.order.vo.RouteServResVo;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductInfoQuery;
 import com.ai.slp.product.api.product.param.ProductRoute;
@@ -60,9 +57,7 @@ import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
 import com.ai.slp.route.api.core.interfaces.IRouteCoreService;
 import com.ai.slp.route.api.core.params.SaleProductInfo;
-import com.ai.slp.route.api.server.interfaces.IRouteServer;
 import com.ai.slp.route.api.server.params.IRouteServerRequest;
-import com.ai.slp.route.api.server.params.RouteServerResponse;
 import com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProduct;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProductQueryVo;
@@ -99,10 +94,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
-    
+
     @PostConstruct
-    public void RouteChargeMdsProcess(){
-        IMsgProcessorHandler msgProcessorHandler=new IMsgProcessorHandler() {
+    public void RouteChargeMdsProcess() {
+        IMsgProcessorHandler msgProcessorHandler = new IMsgProcessorHandler() {
             @Override
             public IMessageProcessor[] createInstances(int paramInt) {
                 List<IMessageProcessor> processors = new ArrayList<>();
@@ -114,7 +109,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
                 return processors.toArray(new IMessageProcessor[processors.size()]);
             }
         };
-        IMessageConsumer msgConsumer= MDSClientFactory.getConsumerClient(
+        IMessageConsumer msgConsumer = MDSClientFactory.getConsumerClient(
                 OrdersConstants.OrdOrder.SLP_CHARGE_TOPIC, msgProcessorHandler);
         msgConsumer.start();
     }
@@ -234,11 +229,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     private void chargeAgainst(OrdOdFeeTotal feeTotal, OrderPayRequest request, Timestamp sysdate)
             throws BusinessException, SystemException {
-        if("WEIXIN".equals(request.getPayType())){
+        if ("WEIXIN".equals(request.getPayType())) {
             request.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.WEIXIN);
-        }else if("ZFB".equals(request.getPayType())){
+        } else if ("ZFB".equals(request.getPayType())) {
             request.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.ZFB);
-        }else if("YL".equals(request.getPayType())){
+        } else if ("YL".equals(request.getPayType())) {
             request.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.YL);
         }
         Long orderId = feeTotal.getOrderId();
@@ -548,16 +543,19 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ProductRoute productRoute = iProductServerSV.queryRouteGroupOfProd(productInfoQuery);
         return productRoute.getRouteGroupId();
     }
+
     /**
      * 发送充值数据,调用路由o2p进行充值
+     * 
      * @param request
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void chargeMds(IRouteServerRequest request){
-        IMessageSender msgSender = MDSClientFactory.getSenderClient(OrdersConstants.OrdOrder.SLP_CHARGE_TOPIC);
+    private void chargeMds(IRouteServerRequest request) {
+        IMessageSender msgSender = MDSClientFactory
+                .getSenderClient(OrdersConstants.OrdOrder.SLP_CHARGE_TOPIC);
 
-        msgSender.send(JSON.toJSONString(request), 0);//第二个参数为分区键，如果不分区，传入0
+        msgSender.send(JSON.toJSONString(request), 0);// 第二个参数为分区键，如果不分区，传入0
     }
 
     /**
