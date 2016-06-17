@@ -29,7 +29,7 @@ public interface IOrderPaySV {
      * @throws SystemException
      * @author zhangxw
      * @ApiDocMethod
-     * @ApiCode O2PCALLBACK_001
+     * @ApiCode ORDER_PAY_001
      */
     public BaseResponse pay(OrderPayRequest request)throws BusinessException,SystemException;
     @interface pay{}
