@@ -47,11 +47,13 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         IRouteServerRequest request = JSON.parseObject(content, IRouteServerRequest.class);
         if (request == null)
             return;
+        logger.info("调用充值服务.........");
         RouteServerResponse response = iRouteServer.callServerByRouteId(request);
         String responseData = response.getResponseData();
         if (StringUtil.isBlank(responseData)) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "充值路由返回参数为空");
         }
+        logger.info("更新订单表.........");
         RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
         String orderId = routeServResVo.getOrderId();
         OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
