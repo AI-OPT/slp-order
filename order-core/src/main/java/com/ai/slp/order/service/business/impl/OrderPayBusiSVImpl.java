@@ -234,6 +234,13 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     private void chargeAgainst(OrdOdFeeTotal feeTotal, OrderPayRequest request, Timestamp sysdate)
             throws BusinessException, SystemException {
+        if("WEIXIN".equals(request.getPayType())){
+            request.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.WEIXIN);
+        }else if("ZFB".equals(request.getPayType())){
+            request.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.ZFB);
+        }else if("YL".equals(request.getPayType())){
+            request.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.YL);
+        }
         Long orderId = feeTotal.getOrderId();
         /* 1.获取该订单的费用明细信息,如果不存在费用明细，则报错 */
         List<OrdOdProd> ordOdProds = this.getOrdOdProds(request.getTenantId(), orderId);

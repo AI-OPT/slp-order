@@ -3,7 +3,7 @@ package com.ai.slp.order.constants;
 public final class OrdersConstants {
 
     public static final class OrdOrder {
-        
+
         public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
 
         public static final class DeliveryFlag {
@@ -560,6 +560,25 @@ public final class OrdersConstants {
              * 支出
              */
             public static final String OUT = "out";
+
+        }
+
+        public static class PayStyle {
+
+            /**
+             * 支付宝
+             */
+            public static final String ZFB = "21";
+
+            /**
+             * 银联
+             */
+            public static final String YL = "22";
+
+            /**
+             * 微信支付
+             */
+            public static final String WEIXIN = "23";
 
         }
 
