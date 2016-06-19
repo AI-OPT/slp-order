@@ -31,7 +31,7 @@
                     address="${default.dubbo.registry.address}"/>
     <dubbo:consumer retries="2"/>
 	
-	<context:component-scan base-package="com.ai.slp.order.dubbo" />
+	<!-- <context:component-scan base-package="com.ai.slp.order.dubbo" /> -->
 	<dubbo:reference interface="com.ai.slp.order.api.orderlist.interfaces.IOrderListSV" id="orderListRPC"/>
 	<dubbo:reference interface="com.ai.slp.order.api.demo.interfaces.IDemoSV" id="demoRPC"/>
 </beans>
