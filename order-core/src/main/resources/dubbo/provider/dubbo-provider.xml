@@ -24,7 +24,7 @@
 	<dubbo:registry protocol="${dubbo.registry.protocol}"
 		address="${dubbo.registry.address}" file="${dubbo.registry.file}" />
 
-	<dubbo:protocol name="${dubbo.protocol}" port="${dubbo.port}" 
+	<dubbo:protocol name="${dubbo.protocol}" port="${slp.order.dubbo.port}" 
 	server="${dubbo.protocol.server}" 
 	contextpath="${dubbo.protocol.contextpath}"
 	threads="500" accepts="500"	
