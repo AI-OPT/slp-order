@@ -30,6 +30,8 @@ public class OrdProductResInfo implements Serializable {
      * 总计
      */
     private long skuTotalFee;
+    
+    private String imageUrl;
 
     public String getSkuId() {
         return skuId;
@@ -70,5 +72,13 @@ public class OrdProductResInfo implements Serializable {
     public void setSkuTotalFee(long skuTotalFee) {
         this.skuTotalFee = skuTotalFee;
     }
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 
 }
