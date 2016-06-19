@@ -11,6 +11,7 @@ import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.alibaba.fastjson.JSON;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/context/core-context.xml"})
@@ -34,6 +35,7 @@ public class OrderListSVImplTest {
         request.setTenantId("SLP");
         QueryOrderResponse queryOrder = orderListSV.queryOrder(request);
         OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
-        System.out.println(ordOrderVo.getBusiCode());
+        System.out.println("param="+JSON.toJSONString(request));
+        System.out.println("result="+JSON.toJSONString(ordOrderVo));
     }
 }

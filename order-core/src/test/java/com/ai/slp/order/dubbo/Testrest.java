@@ -12,6 +12,7 @@ import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.alibaba.fastjson.JSON;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:dubbo/applicationContext-dubbo-service-consumer.xml" })
@@ -28,24 +29,25 @@ public class Testrest {
         return ctx.getBean(beanName);
     }
     
-    /*@Autowired
-    private IOrderListSV orderListSV;*/
+    @Autowired
+    private IOrderListSV orderListSV;
+    @Autowired
+    private IDemoSV demoSV;
     
 
     @Test
     public void orderListTest() {
-    	IOrderListSV orderListSV=(IOrderListSV) ctx.getBean(IOrderListSV.class);
-        QueryOrderRequest request = new QueryOrderRequest();
+    	QueryOrderRequest request = new QueryOrderRequest();
         request.setOrderId(78436478);
         request.setTenantId("SLP");
         QueryOrderResponse queryOrder = orderListSV.queryOrder(request);
         OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
-        System.out.println(ordOrderVo.getBusiCode());
+        System.out.println("result="+JSON.toJSONString(ordOrderVo));
     }
     @Test
     public void demotest() {
-    	IDemoSV orderListSV=(IDemoSV) ctx.getBean(IDemoSV.class);
-    	System.out.println(orderListSV.hello("world"));
+//    	IDemoSV orderListSV=(IDemoSV) ctx.getBean(IDemoSV.class);
+    	System.out.println(demoSV.hello("world"));
     }
     
     

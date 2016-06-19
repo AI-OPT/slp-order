@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.orderlist.interfaces;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -33,9 +34,12 @@ public interface IOrderListSV {
 	 * @author zhangqiang7
 	 * @ApiDocMethod
      * @ApiCode ORDERQUERY_001
+     * @RestRelativeURL orderlist/queryOrderList
 	 */
+	@POST
+	@Path("/queryOrderList")
 	QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest) throws BusinessException, SystemException;
-	@interface queryOrderList{}
+	//@interface queryOrderList{}
 
 	/**
 	 * 订单详情查询
@@ -46,7 +50,10 @@ public interface IOrderListSV {
 	 * @author jiaxs
 	 * @ApiDocMethod
      * @ApiCode ORDERQUERY_002
+     * @RestRelativeURL orderlist/queryOrder
 	 */
+	@POST
+	@Path("/queryOrder")
 	QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException, SystemException;
-	@interface queryOrder{}
+	//@interface queryOrder{}
 }
