@@ -114,12 +114,8 @@ public class CartProdInfo implements Serializable{
         this.state = state;
     }
 
-    public Long getUsableNum() {
+    public long getUsableNum() {
         return usableNum;
-    }
-
-    public void setUsableNum(Long usableNum) {
-        this.usableNum = usableNum;
     }
 
     public String getVfsId() {
