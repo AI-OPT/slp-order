@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.orderpay.interfaces;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -30,8 +31,11 @@ public interface IOrderPaySV {
      * @author zhangxw
      * @ApiDocMethod
      * @ApiCode ORDER_PAY_001
+     * @RestRelativeURL orderpay/pay
      */
+	@POST
+	@Path("/pay")
     public BaseResponse pay(OrderPayRequest request)throws BusinessException,SystemException;
-    @interface pay{}
+    //@interface pay{}
 
 }

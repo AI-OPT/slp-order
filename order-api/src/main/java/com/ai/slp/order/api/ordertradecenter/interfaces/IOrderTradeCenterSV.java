@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.ordertradecenter.interfaces;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -30,10 +31,13 @@ public interface IOrderTradeCenterSV {
      * @author zhangxw
      * @ApiDocMethod
      * @ApiCode ORDER_APPLY_001
+     * @RestRelativeURL ordertrade/apply
      */
+	@POST
+	@Path("/apply")
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException;
 
-    @interface apply {}
+    //@interface apply {}
 
 }

@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.shopcart.interfaces;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -31,10 +32,13 @@ public interface IShopCartSV {
      * @throws SystemException
      * @author liutng5
      * @ApiCode SHOP_CART_0100
+     * @RestRelativeURL shopcart/addProd
      */
+	@POST
+	@Path("/addProd")
     public CartProdOptRes addProd(CartProd cartProd)
         throws BusinessException,SystemException;
-    @interface AddProd{}
+    //@interface AddProd{}
 
     /**
      * 查询用户的购物车详细信息
@@ -45,9 +49,12 @@ public interface IShopCartSV {
      * @throws SystemException
      * @author liutng5
      * @ApiCode SHOP_CART_0101
+     * @RestRelativeURL shopcart/queryCartOfUser
      */
+	@POST
+	@Path("/queryCartOfUser")
     public CartProdList queryCartOfUser(UserInfo userInfo)throws BusinessException,SystemException;
-    @interface QueryCartOfUser{}
+    //@interface QueryCartOfUser{}
 
     /**
      * 调整购物车内商品数量
@@ -58,9 +65,12 @@ public interface IShopCartSV {
      * @throws SystemException
      * @author liutng5
      * @ApiCode SHOP_CART_0102
+     * @RestRelativeURL shopcart/updateProdNum
      */
+	@POST
+	@Path("/updateProdNum")
     public CartProdOptRes updateProdNum(CartProd cartProd) throws BusinessException,SystemException;
-    @interface UpdateProdNum{}
+    //@interface UpdateProdNum{}
 
     /**
      * 删除购物车商品,单个和批量都可以
@@ -71,9 +81,12 @@ public interface IShopCartSV {
      * @throws SystemException
      * @author liutng5
      * @ApiCode SHOP_CART_0103
+     * @RestRelativeURL shopcart/deleteMultiProd
      */
+	@POST
+	@Path("/deleteMultiProd")
     public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd)throws BusinessException,SystemException;
-    @interface DeleteMultiProd{}
+    //@interface DeleteMultiProd{}
 
     /**
      * 查询用户的购物车概况信息
@@ -84,6 +97,9 @@ public interface IShopCartSV {
      * @throws SystemException
      * @author liutng5
      * @ApiCode SHOP_CART_0104
+     * @RestRelativeURL shopcart/queryPointsOfCart
      */
+	@POST
+	@Path("/queryPointsOfCart")
     public CartProdOptRes queryPointsOfCart(UserInfo userInfo)throws BusinessException,SystemException;
 }
