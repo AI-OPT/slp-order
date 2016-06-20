@@ -21,4 +21,11 @@ public class DemoSVImpl implements IDemoSV {
 		return "Hello,"+name;
 	}
 
+	@Override
+	public String hellotest(String name, int age, String positon) {
+		String realName=(name==null?"world":name);
+		String realPositon=(positon==null?"Manager":positon);
+		return "Hello,["+realName+","+age+","+realPositon+"]";
+	}
+
 }
