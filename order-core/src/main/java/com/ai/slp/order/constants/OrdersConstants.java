@@ -5,6 +5,8 @@ public final class OrdersConstants {
     public static final class OrdOrder {
 
         public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
+        
+        public static final String ORDER_PHONENUM_DSS = "Order_PhoneNum";
 
         public static final class DeliveryFlag {
             /**
@@ -591,6 +593,23 @@ public final class OrdersConstants {
              * 1 支付中心
              */
             public static final String PAY_CENTER = "1";
+
+        }
+
+    }
+
+    public static final class OrdOdProdExtend {
+
+        public static class BatchFlag {
+            /**
+             * 1 是
+             */
+            public static final String YES = "1";
+
+            /**
+             * 0 否
+             */
+            public static final String NO = "0";
 
         }
 

@@ -11,12 +11,25 @@ public class OrdExtendInfo implements Serializable {
      */
     private String infoJson;
 
+    /**
+     * 批量标识
+     */
+    private String batchFlag;
+
     public String getInfoJson() {
         return infoJson;
     }
 
     public void setInfoJson(String infoJson) {
         this.infoJson = infoJson;
+    }
+
+    public String getBatchFlag() {
+        return batchFlag;
+    }
+
+    public void setBatchFlag(String batchFlag) {
+        this.batchFlag = batchFlag;
     }
 
 }

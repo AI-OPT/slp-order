@@ -16,12 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.opt.sdk.components.dss.DSSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.dss.base.interfaces.IDSSClient;
 import com.ai.paas.ipaas.mds.IMessageConsumer;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.IMessageSender;
@@ -123,6 +125,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
         /* 1.处理费用信息 */
         Timestamp sysdate = DateUtil.getSysDate();
+        IDSSClient client=DSSClientFactory.getDSSClient(OrdersConstants.OrdOrder.ORDER_PHONENUM_DSS);
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
             OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
@@ -138,7 +141,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
                 continue;
             }
             /* 4.拆分子订单 */
-            this.resoleOrders(ordOrder, request.getTenantId());
+            this.resoleOrders(ordOrder, request.getTenantId(),client);
             /* 5.归档 */
             this.archiveOrderData(request);
         }
@@ -330,11 +333,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * 
      * @param request
      * @author zhangxw
+     * @param client 
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      * @ApiDocMethod
      */
-    private void resoleOrders(OrdOrder ordOrder, String tenantId) {
+    private void resoleOrders(OrdOrder ordOrder, String tenantId, IDSSClient client) {
         logger.debug("开始对订单[" + ordOrder.getOrderId() + "]进行拆分..");
         /* 1.查询商品明细拓展表 */
         OrdOdProdExtendCriteria example = new OrdOdProdExtendCriteria();
@@ -350,6 +354,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         /* 2.遍历取出值信息 */
         for (OrdOdProdExtend ordOdProdExtend : ordOdProdExtendList) {
             String infoJson = ordOdProdExtend.getInfoJson();
+            String batchFlag = ordOdProdExtend.getBatchFlag();
+            if(OrdersConstants.OrdOdProdExtend.BatchFlag.YES.equals(batchFlag)){
+                byte[] filebytes = client.read(infoJson);
+                System.out.println(new String(filebytes));
+            }
             InfoJsonVo infoJsonVo = JSON.parseObject(infoJson, InfoJsonVo.class);
             List<ProdExtendInfoVo> prodExtendInfoVoList = infoJsonVo.getProdExtendInfoVoList();
             for (ProdExtendInfoVo prodExtendInfoVo : prodExtendInfoVoList) {

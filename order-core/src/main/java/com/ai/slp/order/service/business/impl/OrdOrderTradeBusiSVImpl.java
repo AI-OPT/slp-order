@@ -13,10 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.sdk.components.dss.DSSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.dss.base.interfaces.IDSSClient;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdExtendInfo;
@@ -65,6 +67,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
         OrderTradeCenterResponse response = new OrderTradeCenterResponse();
+        IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.OrdOrder.ORDER_PHONENUM_DSS);
         /* 1.生成订单号 */
         long orderId = SequenceUtil.createOrderId();
         LOG.debug("开始处理-订单号[" + orderId + "]订单提交..");
@@ -72,7 +75,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         /* 2.创建业务订单信息 */
         this.createOrder(request, sysDate, orderId);
         /* 3.创建商品明细信息 */
-        List<OrdProductResInfo> ordProductResList = this.createOrderProd(request, sysDate, orderId);
+        List<OrdProductResInfo> ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
         /* 4.费用信息处理 */
         OrdFeeInfo ordFeeInfo = this.createFeeInfo(request, sysDate, orderId);
         /* 5.创建发票信息 */
@@ -136,10 +139,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @param sysDate
      * @param orderId
      * @author zhangxw
+     * @param client 
      * @ApiDocMethod
      */
     private List<OrdProductResInfo> createOrderProd(OrderTradeCenterRequest request,
-            Timestamp sysDate, long orderId) {
+            Timestamp sysDate, long orderId, IDSSClient client) {
         LOG.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
         /* 1. 创建商品明细 */
         OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
@@ -192,7 +196,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordProductResInfo.setSkuTotalFee(ordOdProd.getTotalFee());
             ordProductResList.add(ordProductResInfo);
             /* 3. 创建商品明细扩展表 */
-            this.createOrdOdProdExtend(prodDetailId, request, sysDate, orderId, orderType);
+            this.createOrdOdProdExtend(prodDetailId, request, sysDate, orderId, orderType,client);
         }
         return ordProductResList;
     }
@@ -283,13 +287,22 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private void createOrdOdProdExtend(long prodDetailId, OrderTradeCenterRequest request,
-            Timestamp sysDate, long orderId, String orderType) {
+            Timestamp sysDate, long orderId, String orderType,IDSSClient client) {
         if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_FLOWRATE_RECHARGE.equals(orderType)) {
             OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
-            if (ordExtendInfo != null) {
+            if (ordExtendInfo == null)
+                return;
+            String batchFlag = ordExtendInfo.getBatchFlag();
+            String infoJson = ordExtendInfo.getInfoJson();
+            if (batchFlag != null) {
+                if (OrdersConstants.OrdOdProdExtend.BatchFlag.YES.equals(batchFlag)) {
+                    infoJson = client.save(infoJson.getBytes(), "phonenumbers");
+                }
                 orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
-                        ordExtendInfo.getInfoJson());
+                        infoJson);
+
             }
+
         }
     }
 
