@@ -381,10 +381,13 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         storageNumUserReq.setSkuNum(skuNum);
         IStorageNumSV iStorageNumSV = DubboConsumerFactory.getService(IStorageNumSV.class);
         StorageNumRes useStorageNum = iStorageNumSV.useStorageNum(storageNumUserReq);
-        boolean success = useStorageNum.getResponseHeader().isSuccess();
-        String resultMessage = useStorageNum.getResponseHeader().getResultMessage();
-        if(!success)
-            throw new BusinessException("", "调用使用库存异常:" + skuId +"  "+ skuNum + "错误信息如下:"+resultMessage+ "]");
-        return useStorageNum;
+        
+        return iStorageNumSV.useStorageNum(storageNumUserReq);
+        
+//        boolean success = useStorageNum.getResponseHeader().isSuccess();
+//        String resultMessage = useStorageNum.getResponseHeader().getResultMessage();
+//        if(!success)
+//            throw new BusinessException("", "调用使用库存异常:" + skuId +"  "+ skuNum + "错误信息如下:"+resultMessage+ "]");
+//        return useStorageNum;
     }
 }
