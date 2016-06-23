@@ -1,6 +1,7 @@
 package com.ai.slp.order.service.business.impl;
 
 import com.ai.opt.base.exception.BusinessException;
+import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
@@ -369,11 +370,11 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
 //        skuInfo.setUsableNum(5);
 
         if (skuInfo==null || skuInfo.getUsableNum()<=0){
-            throw new BusinessException("","商品已售罄或下架");
+            throw new SystemException("","商品已售罄或下架");
         }
         if ( buyNum>skuInfo.getUsableNum()){
             logger.warn("单品库存{},检查库存{}",skuInfo.getUsableNum(),buyNum);
-            throw new BusinessException("","商品库存不足["+buyNum+"]");
+            throw new SystemException("","商品库存不足["+buyNum+"]");
         }
     }
 
