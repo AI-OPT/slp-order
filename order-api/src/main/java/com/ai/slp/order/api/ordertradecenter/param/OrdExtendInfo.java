@@ -12,7 +12,7 @@ public class OrdExtendInfo implements Serializable {
     private String infoJson;
 
     /**
-     * 批量标识
+     * 批量标识 1 是 0 否
      */
     private String batchFlag;
 

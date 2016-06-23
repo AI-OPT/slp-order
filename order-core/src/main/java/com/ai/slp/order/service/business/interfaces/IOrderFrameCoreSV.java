@@ -50,9 +50,10 @@ public interface IOrderFrameCoreSV {
      * @throws BusinessException
      * @throws SystemException
      * @author zhangxw
+     * @param batchFlag 
      * @ApiDocMethod
      */
     public void createOrdProdExtend(long prodDetailId, long orderId, String tenantId,
-            String infoJson) throws BusinessException, SystemException;
+            String infoJson, String batchFlag) throws BusinessException, SystemException;
 
 }

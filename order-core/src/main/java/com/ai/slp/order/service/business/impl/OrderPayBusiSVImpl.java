@@ -357,7 +357,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             String batchFlag = ordOdProdExtend.getBatchFlag();
             if(OrdersConstants.OrdOdProdExtend.BatchFlag.YES.equals(batchFlag)){
                 byte[] filebytes = client.read(infoJson);
-                System.out.println(new String(filebytes));
+                infoJson=new String(filebytes);
             }
             InfoJsonVo infoJsonVo = JSON.parseObject(infoJson, InfoJsonVo.class);
             List<ProdExtendInfoVo> prodExtendInfoVoList = infoJsonVo.getProdExtendInfoVoList();

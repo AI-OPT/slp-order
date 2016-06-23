@@ -64,7 +64,7 @@ public class OrderFrameCoreSVImpl implements IOrderFrameCoreSV {
 
     @Override
     public void createOrdProdExtend(long prodDetailId, long orderId, String tenantId,
-            String infoJson) throws BusinessException, SystemException {
+            String infoJson,String batchFlag) throws BusinessException, SystemException {
         if (orderId == 0) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "保存订单扩展信息-订单号");
         }
@@ -74,6 +74,7 @@ public class OrderFrameCoreSVImpl implements IOrderFrameCoreSV {
         bean.setOrderId(orderId);
         bean.setTenantId(tenantId);
         bean.setInfoJson(infoJson);
+        bean.setBatchFlag(batchFlag);
         ordOdProdExtendAtomSV.insertSelective(bean);
     }
 

@@ -31,7 +31,7 @@ public class OrderTradeCenterSVImplTest {
         OrderTradeCenterRequest request = new OrderTradeCenterRequest();
         OrdBaseInfo ordBaseInfo = new OrdBaseInfo();
         ordBaseInfo.setUserId("123");
-        ordBaseInfo.setOrderType("1000");
+        ordBaseInfo.setOrderType("100010");
 
         List<OrdProductInfo> ordProductInfoList = new ArrayList<OrdProductInfo>();
         OrdProductInfo ordProductInfo = new OrdProductInfo();
@@ -51,6 +51,7 @@ public class OrderTradeCenterSVImplTest {
         InfoJsonVo infoJsonVo = new InfoJsonVo();
         infoJsonVo.setProdExtendInfoVoList(prodExtendInfoVoList);
         OrdExtendInfo ordExtendInfo = new OrdExtendInfo();
+        ordExtendInfo.setBatchFlag("1");
         ordExtendInfo.setInfoJson(JSON.toJSONString(infoJsonVo));
         
         request.setOrdBaseInfo(ordBaseInfo);

@@ -291,15 +291,17 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_FLOWRATE_RECHARGE.equals(orderType)) {
             OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
             if (ordExtendInfo == null)
-                return;
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "请求参数商品扩展信息为空");
             String batchFlag = ordExtendInfo.getBatchFlag();
+            if(StringUtil.isBlank(batchFlag))
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "请求参数批量标识为空");
             String infoJson = ordExtendInfo.getInfoJson();
             if (batchFlag != null) {
                 if (OrdersConstants.OrdOdProdExtend.BatchFlag.YES.equals(batchFlag)) {
                     infoJson = client.save(infoJson.getBytes(), "phonenumbers");
                 }
                 orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
-                        infoJson);
+                        infoJson,batchFlag);
 
             }
 
