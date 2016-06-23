@@ -98,7 +98,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 || cartProd.getBuyNum()<=0)
             cartProd.setBuyNum(1l);
         String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
-        checkSkuInfoTotal(tenantId,cartProd.getSkuId(),cartProd.getBuyNum());
+        
         ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
 
@@ -133,11 +133,13 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         else if (skuNumLimit>0 && odCartProd.getBuySum()>skuNumLimit){
             throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
         }
-
+        checkSkuInfoTotal(tenantId,cartProd.getSkuId(),odCartProd.getBuySum());
+        
         //添加/更新商品信息
         iCacheClient.hset(cartUserId,odCartProd.getSkuId(),JSON.toJSONString(odCartProd));
         //更新购物车上商品总数量
         pointsVo.setProdTotal(pointsVo.getProdTotal()+cartProd.getBuyNum());
+        
         //更新概览
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
         sendCartProdMds(odCartProd);
