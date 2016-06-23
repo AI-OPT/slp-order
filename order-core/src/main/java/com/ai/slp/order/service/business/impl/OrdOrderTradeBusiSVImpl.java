@@ -67,7 +67,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
         OrderTradeCenterResponse response = new OrderTradeCenterResponse();
-        IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.OrdOrder.ORDER_PHONENUM_DSS);
+        IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
         /* 1.生成订单号 */
         long orderId = SequenceUtil.createOrderId();
         LOG.debug("开始处理-订单号[" + orderId + "]订单提交..");

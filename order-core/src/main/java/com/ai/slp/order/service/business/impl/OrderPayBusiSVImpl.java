@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.components.dss.DSSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
@@ -23,6 +24,7 @@ import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.dss.base.interfaces.IDSSClient;
 import com.ai.paas.ipaas.mds.IMessageConsumer;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
@@ -112,7 +114,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             }
         };
         IMessageConsumer msgConsumer = MDSClientFactory.getConsumerClient(
-                OrdersConstants.OrdOrder.SLP_CHARGE_TOPIC, msgProcessorHandler);
+                OrdersConstants.SLP_CHARGE_TOPIC, msgProcessorHandler);
         msgConsumer.start();
     }
 
@@ -125,7 +127,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
         /* 1.处理费用信息 */
         Timestamp sysdate = DateUtil.getSysDate();
-        IDSSClient client=DSSClientFactory.getDSSClient(OrdersConstants.OrdOrder.ORDER_PHONENUM_DSS);
+        IDSSClient client = DSSClientFactory
+                .getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
             OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
@@ -141,7 +144,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
                 continue;
             }
             /* 4.拆分子订单 */
-            this.resoleOrders(ordOrder, request.getTenantId(),client);
+            this.resoleOrders(ordOrder, request.getTenantId(), client);
             /* 5.归档 */
             this.archiveOrderData(request);
         }
@@ -232,7 +235,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     private void chargeAgainst(OrdOdFeeTotal feeTotal, OrderPayRequest request, Timestamp sysdate)
             throws BusinessException, SystemException {
-        if(StringUtil.isBlank(request.getPayType())){
+        if (StringUtil.isBlank(request.getPayType())) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "支付类型为空");
         }
         if ("WEIXIN".equals(request.getPayType())) {
@@ -333,7 +336,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * 
      * @param request
      * @author zhangxw
-     * @param client 
+     * @param client
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      * @ApiDocMethod
@@ -355,9 +358,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         for (OrdOdProdExtend ordOdProdExtend : ordOdProdExtendList) {
             String infoJson = ordOdProdExtend.getInfoJson();
             String batchFlag = ordOdProdExtend.getBatchFlag();
-            if(OrdersConstants.OrdOdProdExtend.BatchFlag.YES.equals(batchFlag)){
+            if (OrdersConstants.OrdOdProdExtend.BatchFlag.YES.equals(batchFlag)) {
                 byte[] filebytes = client.read(infoJson);
-                infoJson=new String(filebytes);
+                infoJson = new String(filebytes);
             }
             InfoJsonVo infoJsonVo = JSON.parseObject(infoJson, InfoJsonVo.class);
             List<ProdExtendInfoVo> prodExtendInfoVoList = infoJsonVo.getProdExtendInfoVoList();
@@ -531,7 +534,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         routeServReqVo.setBizType(ordOdProdBean.getProdType());
         routeServReqVo.setAccountVal(ordOdProdBean.getExtendInfo());
         routeServReqVo.setBuyNum(1);
-        routeServReqVo.setNotifyUrl("");
+        routeServReqVo.setNotifyUrl(this.getNotifyUrl(OrdersConstants.O2P_NOTIFYURL));
         routeServReqVo.setProId(ordOdProdBean.getSupplyId());
         routeServReqVo.setUnitPrice(ordOdProdBean.getCostPrice());
         request.setRequestData(JSON.toJSONString(routeServReqVo));
@@ -557,6 +560,27 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     }
 
     /**
+     * 获取o2p回调通知url
+     * @param urlParams
+     * @return
+     * @author zhangxw
+     * @ApiDocMethod
+     */
+    public String getNotifyUrl(String urlParams) {
+        String ccsParams = urlParams;
+        if (!urlParams.startsWith("/"))
+            ccsParams = "/" + ccsParams;
+        String notifyUrl = "";
+        try {
+            notifyUrl = CCSClientFactory.getDefaultConfigClient().get(ccsParams);
+        } catch (ConfigException e) {
+            logger.error("获取配置信息失败", e);
+            e.printStackTrace();
+        }
+        return notifyUrl;
+    }
+
+    /**
      * 发送充值数据,调用路由o2p进行充值
      * 
      * @param request
@@ -565,7 +589,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     private void chargeMds(IRouteServerRequest request) {
         IMessageSender msgSender = MDSClientFactory
-                .getSenderClient(OrdersConstants.OrdOrder.SLP_CHARGE_TOPIC);
+                .getSenderClient(OrdersConstants.SLP_CHARGE_TOPIC);
 
         msgSender.send(JSON.toJSONString(request), 0);// 第二个参数为分区键，如果不分区，传入0
     }

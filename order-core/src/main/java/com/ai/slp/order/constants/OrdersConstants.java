@@ -2,11 +2,14 @@ package com.ai.slp.order.constants;
 
 public final class OrdersConstants {
 
+    public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
+
+    public static final String ORDER_PHONENUM_DSS = "Order_PhoneNum";
+    
+    public static final String O2P_NOTIFYURL = "o2p_nofityurl";
+
     public static final class OrdOrder {
 
-        public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
-        
-        public static final String ORDER_PHONENUM_DSS = "Order_PhoneNum";
 
         public static final class DeliveryFlag {
             /**
