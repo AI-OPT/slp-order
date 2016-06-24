@@ -10,7 +10,7 @@ import com.ai.opt.sdk.dts.service.param.TaskData;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(group = "dts-slp-order")
-public class DTSManager4SlpOrderSV implements IDTSManagerSV {
+public class DTSManager4SlpOrderSVImpl implements IDTSManagerSV {
 
     @Override
     public void addOrUpdateTask(TaskData arg0) throws BusinessException, SystemException {
