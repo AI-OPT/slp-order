@@ -13,7 +13,7 @@ public class DTSAdd {
         job.setJobStatus("1");
         job.setImplClassName(NoPayOrderAutoCancelTask.class.getName());
         job.setDesc("ָ测试任务");
-        job.setCronExpression("0/5 * * * * ?");
+        job.setCronExpression("0 0/1 * * * ?");
         job.setJobGroup("dts-slp-order");
         job.setJobName("测试1");
         job.getEnvVars().put("var1", "1");
