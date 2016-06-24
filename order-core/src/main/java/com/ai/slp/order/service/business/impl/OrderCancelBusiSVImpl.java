@@ -23,7 +23,7 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
-import com.ai.slp.order.service.business.interfaces.OrderCancelBusiSV;
+import com.ai.slp.order.service.business.interfaces.IOrderCancelBusiSV;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
 import com.alibaba.fastjson.JSON;
@@ -36,7 +36,7 @@ import com.alibaba.fastjson.JSON;
  */
 @Service
 @Transactional
-public class OrderCancelBusiSVImpl implements OrderCancelBusiSV {
+public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
 
     private static final Log LOG = LogFactory.getLog(OrderCancelBusiSVImpl.class);
 
