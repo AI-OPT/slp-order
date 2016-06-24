@@ -6,6 +6,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.dts.factory.DTSSchedulerFactory;
 import com.ai.opt.sdk.dts.service.interfaces.IDTSManagerSV;
+import com.ai.opt.sdk.dts.service.param.TaskCond;
 import com.ai.opt.sdk.dts.service.param.TaskData;
 import com.alibaba.dubbo.config.annotation.Service;
 
@@ -23,9 +24,9 @@ public class DTSManager4SlpOrderSVImpl implements IDTSManagerSV {
     }
 
     @Override
-    public TaskData getTaskData(String arg0, String arg1, String arg2) throws BusinessException,
-            SystemException {
-        return DTSSchedulerFactory.getTaskData(arg0, arg1, arg2);
+    public TaskData getTaskData(TaskCond taskCond) throws BusinessException, SystemException {
+        return DTSSchedulerFactory.getTaskData(taskCond.getSchedulerName(), taskCond.getJobName(),
+                taskCond.getJobGroup());
     }
 
     @Override
