@@ -18,6 +18,7 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.common.api.cache.interfaces.ICacheSV;
 import com.ai.slp.common.api.cache.param.SysParam;
+import com.ai.slp.common.api.cache.param.SysParamSingleCond;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
 import com.ai.slp.order.api.orderlist.param.OrderPayVo;
@@ -120,8 +121,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setOrderType(order.getOrderType());
                 ordOrderVo.setBusiCode(order.getBusiCode());
                 ordOrderVo.setState(order.getState());
-                SysParam sysParamState=iCacheSV.getSysParam("SLP", "ORD_ORDER",
+                SysParamSingleCond sysParamSingleCond = new SysParamSingleCond("SLP", "ORD_ORDER",
                         "STATE",order.getState());
+                SysParam sysParamState=iCacheSV.getSysParamSingle(sysParamSingleCond);
                 ordOrderVo.setStateName(sysParamState==null?"":sysParamState.getColumnDesc());
                 ordOrderVo.setOrderTime(order.getOrderTime());
                 ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
@@ -129,8 +131,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setPaidFee(ordOdFeeTotal.getPaidFee());
                 ordOrderVo.setPayFee(ordOdFeeTotal.getPayFee());
                 ordOrderVo.setPayStyle(ordOdFeeTotal.getPayStyle());
-                SysParam sysParam = iCacheSV.getSysParam("SLP", "ORD_OD_FEE_TOTAL",
+                SysParamSingleCond sysParamPayStyle = new SysParamSingleCond("SLP", "ORD_OD_FEE_TOTAL",
                         "PAY_STYLE",ordOdFeeTotal.getPayStyle());
+                SysParam sysParam = iCacheSV.getSysParamSingle(sysParamPayStyle);
                 ordOrderVo.setPayStyleName(sysParam==null?"":sysParam.getColumnDesc());
                 ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
                 ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());
@@ -200,8 +203,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 OrderPayVo orderPayVo = new OrderPayVo();
                 orderPayVo.setPayStyle(ordOdFeeProd.getPayStyle());
                 orderPayVo.setPaidFee(ordOdFeeProd.getPaidFee());
-                SysParam sysParam = iCacheSV.getSysParam("SLP", "ORD_OD_FEE_TOTAL",
+                SysParamSingleCond sysParamPayStyle = new SysParamSingleCond("SLP", "ORD_OD_FEE_TOTAL",
                         "PAY_STYLE",ordOdFeeProd.getPayStyle());
+                SysParam sysParam = iCacheSV.getSysParamSingle(sysParamPayStyle);
                 orderPayVo.setPayStyleName(sysParam==null?"":sysParam.getColumnDesc());
                 payDataList.add(orderPayVo);
             }
@@ -241,8 +245,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 String extendInfo = ordOdProd.getExtendInfo();
                 ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo, ProdAttrInfoVo.class);
                 ordProductVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
-                SysParam sysParam = iCacheSV.getSysParam("SLP", "PRODUCT",
+                SysParamSingleCond sysParamBasicOrg = new SysParamSingleCond("SLP", "PRODUCT",
                         "BASIC_ORG_ID",prodAttrInfoVo.getBasicOrgId());
+                SysParam sysParam = iCacheSV.getSysParamSingle(sysParamBasicOrg);
                 ordProductVo.setBasicOrgName(sysParam==null?"":sysParam.getColumnDesc());
                 ordProductVo.setProvinceCode(prodAttrInfoVo.getProvinceCode());
                 String provinceName="";
@@ -374,8 +379,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setOrderType(order.getOrderType());
                 ordOrderVo.setBusiCode(order.getBusiCode());
                 ordOrderVo.setState(order.getState());
-                SysParam sysParamState=iCacheSV.getSysParam("SLP", "ORD_ORDER",
+                SysParamSingleCond sysParamSingleCond = new SysParamSingleCond("SLP", "ORD_ORDER",
                         "STATE",order.getState());
+                SysParam sysParamState=iCacheSV.getSysParamSingle(sysParamSingleCond);
                 ordOrderVo.setStateName(sysParamState==null?"":sysParamState.getColumnDesc());
                 ordOrderVo.setOrderTime(order.getOrderTime());
                 ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
@@ -384,8 +390,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setPaidFee(ordOdFeeTotal.getPaidFee());
                 ordOrderVo.setPayFee(ordOdFeeTotal.getPayFee());
                 ordOrderVo.setPayStyle(ordOdFeeTotal.getPayStyle());
-                SysParam sysParam = iCacheSV.getSysParam("SLP", "ORD_OD_FEE_TOTAL",
+                SysParamSingleCond sysParamPayStyle = new SysParamSingleCond("SLP", "ORD_OD_FEE_TOTAL",
                         "PAY_STYLE",ordOdFeeTotal.getPayStyle());
+                SysParam sysParam = iCacheSV.getSysParamSingle(sysParamPayStyle);
                 ordOrderVo.setPayStyleName(sysParam==null?"":sysParam.getColumnDesc());
                 ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
                 ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());

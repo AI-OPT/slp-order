@@ -27,6 +27,7 @@ import com.ai.slp.order.service.business.interfaces.IOrderCancelBusiSV;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
 /**
  * 超过30分钟未支付订单自动关闭实现 Date: 2016年6月23日 <br>
@@ -61,7 +62,7 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
                     + ordOrder.getOrderId() + "]");
         for (OrdOdProd ordOdProd : ordOdProds) {
             Map<String, Integer> storageNum = JSON.parseObject(ordOdProd.getSkuStorageId(),
-                    Map.class);
+                    new TypeReference<Map<String, Integer>>(){});
             this.backStorageNum(ordOdProd.getTenantId(), ordOdProd.getSkuId(), storageNum);
         }
     }
