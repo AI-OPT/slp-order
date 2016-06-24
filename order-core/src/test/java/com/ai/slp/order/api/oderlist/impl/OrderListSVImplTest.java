@@ -19,7 +19,7 @@ import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
-import com.ai.slp.order.service.business.interfaces.OrderCancelBusiSV;
+import com.ai.slp.order.service.business.interfaces.IOrderCancelBusiSV;
 import com.alibaba.fastjson.JSON;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,7 +33,7 @@ public class OrderListSVImplTest {
     private IOrdOrderAtomSV ordOrderAtomSV;
 
     @Autowired
-    private OrderCancelBusiSV orderCancelBusiSV;
+    private IOrderCancelBusiSV orderCancelBusiSV;
 
     @Test
     public void orderListTest() {
