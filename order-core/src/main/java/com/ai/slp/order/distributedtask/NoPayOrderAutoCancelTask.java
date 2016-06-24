@@ -37,7 +37,7 @@ public class NoPayOrderAutoCancelTask implements ITask {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        log.debug("开始执行订单待支付状态超过30分钟自动关闭定时任务..");
+        log.error("开始执行订单待支付状态超过30分钟自动关闭定时任务..");
         ApplicationContext ac = new FileSystemXmlApplicationContext(
                 "classpath:context/core-context.xml");
         IOrderCancelBusiSV orderCancelBusiSV = ((IOrderCancelBusiSV) ac
@@ -61,7 +61,7 @@ public class NoPayOrderAutoCancelTask implements ITask {
                 continue;
             }
         }
-        log.debug("结束执行订单待支付状态超过30分钟自动撤单定时任务..");
+        log.error("结束执行订单待支付状态超过30分钟自动撤单定时任务..");
 
     }
 

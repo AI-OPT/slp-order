@@ -99,7 +99,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
 
-    @PostConstruct
+//    @PostConstruct
     public void RouteChargeMdsProcess() {
         IMsgProcessorHandler msgProcessorHandler = new IMsgProcessorHandler() {
             @Override
