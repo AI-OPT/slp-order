@@ -27,9 +27,6 @@
 	<dubbo:reference id="iLoginSV"
 		interface="com.ai.slp.user.api.login.interfaces.ILoginSV" />
 
-	<dubbo:reference id="iProductServerSv"
-		interface="com.ai.slp.product.api.product.interfaces.IProductServerSV" />
-
 	<dubbo:reference id="iStorageNumSV"
 		interface="com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV" />
 
@@ -47,4 +44,7 @@
 	<!-- 缓存 -->
 	<dubbo:reference id="iCacheSV"
 		interface="com.ai.slp.common.api.cache.interfaces.ICacheSV" />
+		
+	<dubbo:reference id="iOrderCancelSV"
+		interface="com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV" />
 </beans>
