@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.PageInfo;
+import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
@@ -105,7 +106,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                     .getTimestamp(orderListRequest.getOrderTimeEnd(), "yyyy-MM-dd HH:mm:ss"));
         }
         example.setOrderByClause("ORDER_TIME desc ");
-        int count = ordOrderAtomSV.countByExample(example);
+        int count=this.getCount(example,orderListRequest.getPayStyle());
         example.setLimitStart((orderListRequest.getPageNo()-1) * orderListRequest.getPageSize());
         example.setLimitEnd(orderListRequest.getPageSize());
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
@@ -158,6 +159,34 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         response.setPageInfo(pageInfo);
         return response;
 
+    }
+    /**
+     * 获取总条数
+     * @param example
+     * @param payStyle
+     * @return
+     * @author zhangxw
+     * @ApiDocMethod
+     */
+    private int getCount(OrdOrderCriteria example, String payStyle) {
+        int count=0;
+        if(StringUtil.isBlank(payStyle)){
+            count = ordOrderAtomSV.countByExample(example);
+        }else{
+            List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
+            if(CollectionUtil.isEmpty(list)){
+                throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "没有查到数据");
+            }
+            for (OrdOrder order : list) {
+                List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(order.getTenantId(),
+                        order.getOrderId(), payStyle);
+                if (!CollectionUtil.isEmpty(orderFeeTotalList)) {
+                    count++;
+                }
+
+            }
+        }
+        return count;
     }
 
     /**
@@ -279,7 +308,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
         skuInfoQuery.setTenantId(tenantId);
         skuInfoQuery.setSkuId(skuId);
-        IProductServerSV iProductServerSV = DubboConsumerFactory.getService("iProductServerSV");
+        IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
         ProductSkuInfo productSkuInfo = iProductServerSV.queryProductSkuById(skuInfoQuery);
         productImage.setVfsId(productSkuInfo.getVfsId());
         productImage.setPicType(productSkuInfo.getPicType());
