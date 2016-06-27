@@ -12,15 +12,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
-import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
-import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
-import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderCancelBusiSV;
-import com.alibaba.fastjson.JSON;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/context/core-context.xml" })
@@ -37,21 +34,22 @@ public class OrderListSVImplTest {
 
     @Test
     public void orderListTest() {
-        // QueryOrderListRequest request = new QueryOrderListRequest();
-        // request.setTenantId("SLP");
-        // request.setUserId("000000000000000949");
-        // request.setPageNo(1);
-        // request.setPageSize(5);
-        // System.out.println(orderListSV.queryOrderList(request).getResponseHeader());
-        // System.out.println(orderListSV.queryOrderList(request).getPageInfo().getResult().size());
+         QueryOrderListRequest request = new QueryOrderListRequest();
+         request.setTenantId("SLP");
+         request.setUserId("000000000000000949");
+         request.setPayStyle("21");
+         request.setPageNo(1);
+         request.setPageSize(5);
+         System.out.println(orderListSV.queryOrderList(request).getResponseHeader());
+         System.out.println(orderListSV.queryOrderList(request).getPageInfo().getResult().size());
 
-        QueryOrderRequest request = new QueryOrderRequest();
-        request.setOrderId(78436478);
-        request.setTenantId("SLP");
-        QueryOrderResponse queryOrder = orderListSV.queryOrder(request);
-        OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
-        System.out.println("param=" + JSON.toJSONString(request));
-        System.out.println("result=" + JSON.toJSONString(ordOrderVo));
+//        QueryOrderRequest request = new QueryOrderRequest();
+//        request.setOrderId(78436478);
+//        request.setTenantId("SLP");
+//        QueryOrderResponse queryOrder = orderListSV.queryOrder(request);
+//        OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
+//        System.out.println("param=" + JSON.toJSONString(request));
+//        System.out.println("result=" + JSON.toJSONString(ordOrderVo));
     }
 
     @Test

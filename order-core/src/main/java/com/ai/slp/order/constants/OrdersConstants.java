@@ -86,9 +86,9 @@ public final class OrdersConstants {
             public static final String FINISH_CHARGE = "121";
 
             /**
-             * 122 审核不通过
+             * 122 充值失败
              */
-            public static final String AUDIT_FAILED = "122";
+            public static final String CHARGE_FAILED = "122";
 
             /**
              * 13 待配货 　 　
@@ -196,14 +196,14 @@ public final class OrdersConstants {
             public static final String REVOKE_FINISH_CONFIRMED = "221";
 
             /**
-             * 23待退款
+             * 31待退款
              */
-            public static final String WAIT_REPAY = "23";
+            public static final String WAIT_REPAY = "31";
 
             /**
-             * 231已退款
+             * 311已退款
              */
-            public static final String FINISH_REPAY = "231";
+            public static final String FINISH_REPAY = "311";
 
             /**
              * 撤销完成
