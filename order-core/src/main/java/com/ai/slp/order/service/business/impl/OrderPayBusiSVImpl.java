@@ -5,8 +5,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +97,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
 
-    //@PostConstruct
+    // @PostConstruct
     public void RouteChargeMdsProcess() {
         IMsgProcessorHandler msgProcessorHandler = new IMsgProcessorHandler() {
             @Override
@@ -127,8 +125,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
         /* 1.处理费用信息 */
         Timestamp sysdate = DateUtil.getSysDate();
-        IDSSClient client = DSSClientFactory
-                .getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
+        IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
             OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
@@ -561,6 +558,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 
     /**
      * 获取o2p回调通知url
+     * 
      * @param urlParams
      * @return
      * @author zhangxw

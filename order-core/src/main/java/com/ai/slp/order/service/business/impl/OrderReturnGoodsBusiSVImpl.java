@@ -66,9 +66,9 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         long orderId = ordOrder.getOrderId();
         LOG.debug("开始处理-订单号[" + orderId + "]订单退货..");
         /* 1.创建退货订单表 */
-        this.createReturnOrder(ordOrder, sysDate);
+        long returnOrderId = this.createReturnOrder(ordOrder, sysDate);
         /* 2.调用退款服务 */
-        this.returnPay(ordOrder, sysDate);
+        this.returnPay(ordOrder, sysDate,returnOrderId);
         /* 3.退回库存量 */
         this.backStorageNum(ordOrder);
     }
@@ -81,7 +81,7 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void createReturnOrder(OrdOrder ordOrder, Timestamp sysDate) {
+    private long createReturnOrder(OrdOrder ordOrder, Timestamp sysDate) {
         /* 1.创建退货订单表 */
         long subOrderId = SequenceUtil.createOrderId();
         OrdOrder returnGoodsOrdOrder = new OrdOrder();
@@ -94,7 +94,7 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         returnGoodsOrdOrder.setState(OrdersConstants.OrdOrder.State.WAIT_REPAY);
         returnGoodsOrdOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.insertSelective(returnGoodsOrdOrder);
-
+        return subOrderId;
     }
 
     /**
@@ -103,9 +103,10 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
      * @param ordOrder
      * @param sysDate
      * @author zhangxw
+     * @param returnOrderId 
      * @ApiDocMethod
      */
-    private void returnPay(OrdOrder ordOrder, Timestamp sysDate) {
+    private void returnPay(OrdOrder ordOrder, Timestamp sysDate, long returnOrderId) {
         /* 1.调用退款 */
         OrdOdFeeTotal ordOdFeeTotal = this.getOrdOdFeeTotal(ordOrder.getTenantId(),
                 ordOrder.getOrderId());
@@ -134,12 +135,28 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         ordOrder.setState(OrdersConstants.OrdOrder.State.FINISH_REPAY);
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.updateById(ordOrder);
-        /* 3.记录存款流水号 */
+        /* 3.记录费用信息 */
+        this.saveFeeInfo(ordOdFeeTotal,ordOrder,depositFund,returnOrderId,sysDate);
+
+    }
+    /**
+     * 记录存款流水号和费用汇总相关信息
+     * @param ordOdFeeTotal
+     * @param ordOrder
+     * @param depositFund
+     * @param returnOrderId
+     * @author zhangxw
+     * @param sysDate 
+     * @ApiDocMethod
+     */
+    private void saveFeeInfo(OrdOdFeeTotal ordOdFeeTotal, OrdOrder ordOrder, String depositFund,
+            long returnOrderId, Timestamp sysDate) {
+        /* 1.写入支付机构表 */
         long balacneIfId = SequenceUtil.createBalacneIfId();
         OrdBalacneIf ordBalacneIf = new OrdBalacneIf();
         ordBalacneIf.setBalacneIfId(balacneIfId);
         ordBalacneIf.setTenantId(ordOrder.getTenantId());
-        ordBalacneIf.setOrderId(ordOrder.getOrderId());
+        ordBalacneIf.setOrderId(returnOrderId);
         ordBalacneIf.setPayStyle(ordOdFeeTotal.getPayStyle());
         ordBalacneIf.setPayFee(ordOdFeeTotal.getPaidFee());
         ordBalacneIf.setPaySystemId(OrdersConstants.OrdBalacneIf.paySystemId.PAY_CENTER);
@@ -147,7 +164,15 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         ordBalacneIf.setCreateTime(sysDate);
         ordBalacneIf.setRemark("支付成功");
         ordBalacneIfAtomSV.insertSelective(ordBalacneIf);
-
+        /* 2.写入费用总表 */
+        OrdOdFeeTotal ordOdFeeTotalNew = new OrdOdFeeTotal();
+        BeanUtils.copyProperties(ordOdFeeTotalNew, ordOdFeeTotal);
+        ordOdFeeTotalNew.setOrderId(returnOrderId);
+        ordOdFeeTotal.setTenantId(ordOrder.getTenantId());
+        ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
+        ordOdFeeTotal.setUpdateTime(sysDate);
+        ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
+        ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
     }
 
     /**
