@@ -89,6 +89,7 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
 
         returnGoodsOrdOrder.setOrderId(subOrderId);
         returnGoodsOrdOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER);
+        returnGoodsOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
         returnGoodsOrdOrder.setOrigOrderId(ordOrder.getOrderId());
         returnGoodsOrdOrder.setOrderTime(sysDate);
         returnGoodsOrdOrder.setState(OrdersConstants.OrdOrder.State.WAIT_REPAY);
