@@ -50,7 +50,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     @Autowired
     IOrdOdCartProdAtomSV cartProdAtomSV;
 
-    @PostConstruct
+    //@PostConstruct
     public void shopCartProdMdsProcess(){
         IMsgProcessorHandler msgProcessorHandler=new IMsgProcessorHandler() {
             @Override
