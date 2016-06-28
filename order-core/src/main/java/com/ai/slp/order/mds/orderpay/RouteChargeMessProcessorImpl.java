@@ -1,4 +1,4 @@
-package com.ai.slp.order.service.business.impl;
+package com.ai.slp.order.mds.orderpay;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,5 +1,13 @@
 package com.ai.slp.order.ipass;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
@@ -9,16 +17,6 @@ import com.ai.paas.ipaas.mds.IMessageSender;
 import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
 import com.ai.slp.order.constants.ShopCartConstants;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
-import com.ai.slp.order.service.business.impl.ShopCartMessProcessorImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by jackieliu on 16/5/19.

@@ -24,10 +24,7 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.dss.base.interfaces.IDSSClient;
-import com.ai.paas.ipaas.mds.IMessageConsumer;
-import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.IMessageSender;
-import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -97,24 +94,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
 
-    // @PostConstruct
-    public void RouteChargeMdsProcess() {
-        IMsgProcessorHandler msgProcessorHandler = new IMsgProcessorHandler() {
-            @Override
-            public IMessageProcessor[] createInstances(int paramInt) {
-                List<IMessageProcessor> processors = new ArrayList<>();
-                IMessageProcessor processor = null;
-                for (int i = 0; i < paramInt; i++) {
-                    processor = new RouteChargeMessProcessorImpl(ordOrderAtomSV);
-                    processors.add(processor);
-                }
-                return processors.toArray(new IMessageProcessor[processors.size()]);
-            }
-        };
-        IMessageConsumer msgConsumer = MDSClientFactory.getConsumerClient(
-                OrdersConstants.SLP_CHARGE_TOPIC, msgProcessorHandler);
-        msgConsumer.start();
-    }
 
     /**
      * 订单收费

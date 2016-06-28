@@ -1,4 +1,4 @@
-package com.ai.slp.order.service.business.impl;
+package com.ai.slp.order.mds.shopcart;
 
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;

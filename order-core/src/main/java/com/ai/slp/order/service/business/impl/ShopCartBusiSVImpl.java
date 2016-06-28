@@ -1,5 +1,17 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
@@ -8,10 +20,7 @@ import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
-import com.ai.paas.ipaas.mds.IMessageConsumer;
-import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.IMessageSender;
-import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
@@ -27,18 +36,6 @@ import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by jackieliu on 16/5/17.
@@ -49,25 +46,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     private static Logger logger = LoggerFactory.getLogger(ShopCartBusiSVImpl.class);
     @Autowired
     IOrdOdCartProdAtomSV cartProdAtomSV;
-
-    //@PostConstruct
-    public void shopCartProdMdsProcess(){
-        IMsgProcessorHandler msgProcessorHandler=new IMsgProcessorHandler() {
-            @Override
-            public IMessageProcessor[] createInstances(int paramInt) {
-                List<IMessageProcessor> processors = new ArrayList<>();
-                IMessageProcessor processor = null;
-                for (int i = 0; i < paramInt; i++) {
-                    processor = new ShopCartMessProcessorImpl(cartProdAtomSV);
-                    processors.add(processor);
-                }
-                return processors.toArray(new IMessageProcessor[processors.size()]);
-            }
-        };
-        IMessageConsumer msgConsumer= MDSClientFactory.getConsumerClient(
-                ShopCartConstants.MdsParams.SHOP_CART_TOPIC, msgProcessorHandler);
-        msgConsumer.start();
-    }
 
     /**
      * 查询用户购物车概览
