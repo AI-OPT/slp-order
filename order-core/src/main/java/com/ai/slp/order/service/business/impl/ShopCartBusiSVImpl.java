@@ -365,7 +365,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
         skuInfoQuery.setTenantId(tenantId);
         skuInfoQuery.setSkuId(skuId);
-        IProductServerSV productServerSV = DubboConsumerFactory.getService("iProductServerSv");
+        IProductServerSV productServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
         return productServerSV.queryProductSkuById(skuInfoQuery);
     }
 
