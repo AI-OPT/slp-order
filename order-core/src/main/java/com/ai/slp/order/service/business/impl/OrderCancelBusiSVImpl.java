@@ -24,6 +24,7 @@ import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderCancelBusiSV;
+import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
 import com.alibaba.fastjson.JSON;
@@ -46,16 +47,24 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
 
     @Autowired
     IOrdOdProdAtomSV ordOdProdAtomSV;
+    
+    @Autowired
+    private IOrderFrameCoreSV orderFrameCoreSV;
 
     @Override
     public void orderCancel(OrdOrder ordOrder) throws BusinessException, SystemException {
         LOG.debug("开始处理订单[" + ordOrder.getOrderId() + "]关闭具体服务");
         /* 1.更新订单表中状态为“取消” */
+        String orgState=ordOrder.getState();
+        String newState=OrdersConstants.OrdOrder.State.CANCEL;
         Timestamp sysDate = DateUtil.getSysDate();
-        ordOrder.setState(OrdersConstants.OrdOrder.State.CANCEL);
+        ordOrder.setState(newState);
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.updateById(ordOrder);
-        /* 2.库存回退 */
+        /* 2.写入订单状态变化轨迹表 */
+        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
+                newState, OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_CANCEL, null, null, null, sysDate);
+        /* 3.库存回退 */
         List<OrdOdProd> ordOdProds = this.getOrdOdProds(ordOrder.getOrderId());
         if (CollectionUtil.isEmpty(ordOdProds))
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息["

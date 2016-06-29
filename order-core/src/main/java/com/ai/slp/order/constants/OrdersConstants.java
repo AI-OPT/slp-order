@@ -91,9 +91,9 @@ public final class OrdersConstants {
             public static final String CHARGE_FAILED = "122";
 
             /**
-             * 13 待配货 　 　
+             * 123 充值未知
              */
-            public static final String WAIT_DISTRIBUTION = "13";
+            public static final String CHARGE_UNKNOWN = "123";
 
             /**
              * 131 已配货
@@ -156,9 +156,9 @@ public final class OrdersConstants {
             public static final String CANCEL = "91";
 
             /**
-             * 92撤销
+             * 已退货
              */
-            public static final String REVOKE = "92";
+            public static final String FINISH_REFUND = "92";
 
             /**
              * 93退货审核不通过
@@ -250,10 +250,6 @@ public final class OrdersConstants {
              */
             public static final String WAIT_BUSINESS_CARD_FILE = "37";
 
-            /**
-             * 已退货
-             */
-            public static final String FINISH_REFUND = "95";
 
         }
 
@@ -360,6 +356,16 @@ public final class OrdersConstants {
              * 订单充值完成
              */
             public static final String ORDER_CHARGED = "您提交的订单已经充值完成";
+            
+            /**
+             * 订单充值失败
+             */
+            public static final String ORDER_CHARGE_FAILED = "您提交的订单充值失败";
+            
+            /**
+             * 订单充值未知
+             */
+            public static final String ORDER_CHARGE_UNKNOWN = "您提交的订单充值未知";
 
             /**
              * 订单进入待审核环节
@@ -507,9 +513,9 @@ public final class OrdersConstants {
             public static final String WAIT_WRITE_CARD = "您的订单待写卡处理";
 
             /**
-             * 订单 - 已写卡
+             * 订单 - 退货完成
              */
-            public static final String FINISH_WRITE_CARD = "您的订单写卡完成";
+            public static final String FINISH_RETURN_GOODS = "您的订单退货完成";
 
             /**
              * 订单不需要收费，后台自动执行订单

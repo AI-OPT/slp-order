@@ -464,7 +464,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         /* 1.获取路由组ID */
         String routeGroupId = this.getRouteGroupId(tenantId, ordOdProd.getProdId());
         /* 2.路由计算获取路由ID */
-        IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService("iRouteCoreService");
+        IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService(IRouteCoreService.class);
         SaleProductInfo saleProductInfo = new SaleProductInfo();
         saleProductInfo.setTenantId(tenantId);
         saleProductInfo.setRouteGroupId(routeGroupId);
@@ -481,7 +481,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         supplyProductQueryVo.setSaleCount(1);
         supplyProductQueryVo.setStandardProductId(ordOdProd.getStandardProdId());
         ISupplyProductServiceSV iSupplyProductServiceSV = DubboConsumerFactory
-                .getService("iSupplyProductServiceSV");
+                .getService(ISupplyProductServiceSV.class);
         SupplyProduct supplyProduct = iSupplyProductServiceSV
                 .updateSupplyProductSaleCount(supplyProductQueryVo);
         /* 4.更新订单商品明细表字段 */

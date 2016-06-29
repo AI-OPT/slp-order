@@ -26,6 +26,7 @@ import com.ai.slp.balance.api.deposit.interfaces.IDepositSV;
 import com.ai.slp.balance.api.deposit.param.DepositParam;
 import com.ai.slp.balance.api.deposit.param.TransSummary;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
@@ -35,6 +36,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderReturnGoodBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
@@ -60,6 +62,9 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
     @Autowired
     IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
 
+    @Autowired
+    private IOrderFrameCoreSV orderFrameCoreSV;
+
     @Override
     public void orderReturnGoods(OrdOrder ordOrder, Timestamp sysDate) throws BusinessException,
             SystemException {
@@ -68,9 +73,12 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         /* 1.创建退货订单表 */
         long returnOrderId = this.createReturnOrder(ordOrder, sysDate);
         /* 2.调用退款服务 */
-        this.returnPay(ordOrder, sysDate,returnOrderId);
+        this.returnPay(ordOrder, sysDate, returnOrderId);
         /* 3.退回库存量 */
         this.backStorageNum(ordOrder);
+        /* 4写入订单轨迹表 */
+        this.writeOrderCreateStateChg(ordOrder.getTenantId(), sysDate, ordOrder.getOrderId(),
+                ordOrder.getState());
     }
 
     /**
@@ -104,7 +112,7 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
      * @param ordOrder
      * @param sysDate
      * @author zhangxw
-     * @param returnOrderId 
+     * @param returnOrderId
      * @ApiDocMethod
      */
     private void returnPay(OrdOrder ordOrder, Timestamp sysDate, long returnOrderId) {
@@ -137,17 +145,19 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.updateById(ordOrder);
         /* 3.记录费用信息 */
-        this.saveFeeInfo(ordOdFeeTotal,ordOrder,depositFund,returnOrderId,sysDate);
+        this.saveFeeInfo(ordOdFeeTotal, ordOrder, depositFund, returnOrderId, sysDate);
 
     }
+
     /**
      * 记录存款流水号和费用汇总相关信息
+     * 
      * @param ordOdFeeTotal
      * @param ordOrder
      * @param depositFund
      * @param returnOrderId
      * @author zhangxw
-     * @param sysDate 
+     * @param sysDate
      * @ApiDocMethod
      */
     private void saveFeeInfo(OrdOdFeeTotal ordOdFeeTotal, OrdOrder ordOrder, String depositFund,
@@ -169,11 +179,10 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         OrdOdFeeTotal ordOdFeeTotalNew = new OrdOdFeeTotal();
         BeanUtils.copyProperties(ordOdFeeTotalNew, ordOdFeeTotal);
         ordOdFeeTotalNew.setOrderId(returnOrderId);
-        ordOdFeeTotal.setTenantId(ordOrder.getTenantId());
-        ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
-        ordOdFeeTotal.setUpdateTime(sysDate);
-        ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
-        ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
+        ordOdFeeTotalNew.setTenantId(ordOrder.getTenantId());
+        ordOdFeeTotalNew.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
+        ordOdFeeTotalNew.setUpdateTime(sysDate);
+        ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotalNew);
     }
 
     /**
@@ -275,6 +284,24 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         String resultMessage = response.getResponseHeader().getResultMessage();
         if (!success)
             throw new BusinessException("", "调用回退库存异常:" + skuId + "错误信息如下:" + resultMessage + "]");
+
+    }
+
+    /**
+     * 写入订单状态变化轨迹
+     * 
+     * @param request
+     * @param sysDate
+     * @param orderId
+     * @author zhangxw
+     * @param orgState
+     * @ApiDocMethod
+     */
+    private void writeOrderCreateStateChg(String tenantId, Timestamp sysDate, long orderId,
+            String orgState) {
+        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, orgState,
+                OrdersConstants.OrdOrder.State.FINISH_REFUND,
+                OrdOdStateChg.ChgDesc.FINISH_RETURN_GOODS, null, null, null, sysDate);
 
     }
 
