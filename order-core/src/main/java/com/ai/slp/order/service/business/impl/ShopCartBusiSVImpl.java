@@ -1,17 +1,5 @@
 package com.ai.slp.order.service.business.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
@@ -36,6 +24,17 @@ import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jackieliu on 16/5/17.
@@ -255,8 +254,8 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 prodInfo.setProductName(skuInfo.getProdName());
                 prodInfo.setInsertTime(cartProd.getInsertTime());
                 prodInfo.setBuyNum(cartProd.getBuySum().longValue());
-                //若库存量小于购物车添加数量,则使用库存量
-                if (skuInfo.getUsableNum()<prodInfo.getBuyNum()){
+                //若库存量大于0,且小于购物车添加数量,则使用库存量
+                if (skuInfo.getUsableNum()>0 && skuInfo.getUsableNum()<prodInfo.getBuyNum()){
                     prodInfo.setBuyNum(skuInfo.getUsableNum());
                 }
                 cartProdInfoList.add(prodInfo);
