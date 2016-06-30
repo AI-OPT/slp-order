@@ -3,6 +3,7 @@ package com.ai.slp.order.util;
 import java.util.Random;
 
 import com.ai.opt.sdk.components.sequence.util.SeqUtil;
+import com.ai.opt.sdk.util.DateUtil;
 
 public final class SequenceUtil {
 
@@ -30,7 +31,7 @@ public final class SequenceUtil {
     public static Long createOrderId() {
         String seq = SeqUtil.getNewId(ORD_ORDER$ORDER_ID$SEQ, 10);
         int rannum = (int) (new Random().nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
-        String orderId = "2"+seq + rannum;
+        String orderId = "2" + seq + rannum;
         return Long.valueOf(orderId);
     }
 
@@ -59,5 +60,12 @@ public final class SequenceUtil {
 
     public static Long createBalacneIfId() {
         return SeqUtil.getNewId(ORD_BALACNE_IF$BALACNE_IF_ID$SEQ);
+    }
+
+    public static String getExternalId() {
+        String dateString = DateUtil.getDateString(DateUtil.YYYYMMDDHHMMSS);
+        int rannum = (int) (new Random().nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
+        String result = rannum + dateString;
+        return result;
     }
 }

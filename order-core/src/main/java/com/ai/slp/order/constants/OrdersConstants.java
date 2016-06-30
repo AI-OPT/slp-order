@@ -577,6 +577,12 @@ public final class OrdersConstants {
         }
 
         public static class PayStyle {
+            
+            /**
+             * 余额支付
+             */
+            public static final String YE = "1";
+
 
             /**
              * 支付宝
