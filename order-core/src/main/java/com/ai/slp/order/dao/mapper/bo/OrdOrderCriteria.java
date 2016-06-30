@@ -2514,6 +2514,76 @@ public class OrdOrderCriteria {
             addCriterion("EXTERNAL_SUPPLY_ID not between", value1, value2, "externalSupplyId");
             return (Criteria) this;
         }
+
+        public Criteria andDownstreamOrderIdIsNull() {
+            addCriterion("DOWNSTREAM_ORDER_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdIsNotNull() {
+            addCriterion("DOWNSTREAM_ORDER_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdEqualTo(String value) {
+            addCriterion("DOWNSTREAM_ORDER_ID =", value, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdNotEqualTo(String value) {
+            addCriterion("DOWNSTREAM_ORDER_ID <>", value, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdGreaterThan(String value) {
+            addCriterion("DOWNSTREAM_ORDER_ID >", value, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdGreaterThanOrEqualTo(String value) {
+            addCriterion("DOWNSTREAM_ORDER_ID >=", value, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdLessThan(String value) {
+            addCriterion("DOWNSTREAM_ORDER_ID <", value, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdLessThanOrEqualTo(String value) {
+            addCriterion("DOWNSTREAM_ORDER_ID <=", value, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdLike(String value) {
+            addCriterion("DOWNSTREAM_ORDER_ID like", value, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdNotLike(String value) {
+            addCriterion("DOWNSTREAM_ORDER_ID not like", value, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdIn(List<String> values) {
+            addCriterion("DOWNSTREAM_ORDER_ID in", values, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdNotIn(List<String> values) {
+            addCriterion("DOWNSTREAM_ORDER_ID not in", values, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdBetween(String value1, String value2) {
+            addCriterion("DOWNSTREAM_ORDER_ID between", value1, value2, "downstreamOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDownstreamOrderIdNotBetween(String value1, String value2) {
+            addCriterion("DOWNSTREAM_ORDER_ID not between", value1, value2, "downstreamOrderId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
