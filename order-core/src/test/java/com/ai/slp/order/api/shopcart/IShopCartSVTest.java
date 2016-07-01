@@ -27,8 +27,8 @@ public class IShopCartSVTest {
         CartProd cartProd = new CartProd();
         cartProd.setTenantId("SLP");
         cartProd.setUserId("000000000000000480");
-        cartProd.setSkuId("4");
-        cartProd.setBuyNum(3l);
+        cartProd.setSkuId("6");
+        cartProd.setBuyNum(5l);
         shopCartSV.addProd(cartProd);
     }
 
@@ -38,6 +38,15 @@ public class IShopCartSVTest {
         userInfo.setTenantId("SLP");
         userInfo.setUserId("000000000000000994");
         shopCartSV.queryCartOfUser(userInfo);
+    }
+    
+    @Test
+    public void updateProdNumTest(){
+    	CartProd cartProd = new CartProd();
+    	cartProd.setTenantId("SLP");
+    	cartProd.setUserId("000000000000000480");
+    	cartProd.setBuyNum(6l);
+    	shopCartSV.updateProdNum(cartProd);
     }
 
     @Test
