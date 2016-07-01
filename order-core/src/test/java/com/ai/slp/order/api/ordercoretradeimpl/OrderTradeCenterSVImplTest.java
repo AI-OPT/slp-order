@@ -63,33 +63,33 @@ public class OrderTradeCenterSVImplTest {
         OrderTradeCenterResponse apply = orderTradeCenterSV.apply(request);
     }
 
-    @Test
-    public void orderApiTradeTest() {
-        OrderApiTradeCenterRequest request = new OrderApiTradeCenterRequest();
-        request.setTenantId("SLP");
-        request.setUserId("000000000000001457");
-        request.setOrderType("100010");
-        request.setBasicOrgId("10");
-        request.setBuySum(4);
-        request.setChargeFee("40");
-        request.setSkuId("1000000000002516");
-        request.setAcctId(11235);
-        request.setUserType("12");
-        request.setOrderTime("2016-06-03");
-        request.setPayStyle("21");
-        request.setSalePrice(2400);
-        request.setDownstreamOrderId("sdfsfsd32432");
-        List<ProdExtendInfoVo> prodExtendInfoVoList = new ArrayList<ProdExtendInfoVo>();
-        ProdExtendInfoVo prodExtendInfoVo = new ProdExtendInfoVo();
-        prodExtendInfoVo.setProdExtendInfoValue("13969859856");
-        prodExtendInfoVoList.add(prodExtendInfoVo);
-        InfoJsonVo infoJsonVo = new InfoJsonVo();
-        infoJsonVo.setProdExtendInfoVoList(prodExtendInfoVoList);
-        OrdExtendInfo ordExtendInfo = new OrdExtendInfo();
-        ordExtendInfo.setInfoJson(JSON.toJSONString(infoJsonVo));
-
-        request.setOrdExtendInfo(ordExtendInfo);
-        request.setTenantId("SLP");
-        BaseResponse apply = orderTradeCenterSV.apiApply(request);
-    }
+//    @Test
+//    public void orderApiTradeTest() {
+//        OrderApiTradeCenterRequest request = new OrderApiTradeCenterRequest();
+//        request.setTenantId("SLP");
+//        request.setUserId("000000000000001457");
+//        request.setOrderType("100010");
+//        request.setBasicOrgId("10");
+//        request.setBuySum(4);
+//        request.setChargeFee("40");
+//        request.setSkuId("1000000000002516");
+//        request.setAcctId(11235);
+//        request.setUserType("12");
+//        request.setOrderTime("2016-06-03");
+//        request.setPayStyle("21");
+//        request.setSalePrice(2400);
+//        request.setDownstreamOrderId("sdfsfsd32432");
+//        List<ProdExtendInfoVo> prodExtendInfoVoList = new ArrayList<ProdExtendInfoVo>();
+//        ProdExtendInfoVo prodExtendInfoVo = new ProdExtendInfoVo();
+//        prodExtendInfoVo.setProdExtendInfoValue("13969859856");
+//        prodExtendInfoVoList.add(prodExtendInfoVo);
+//        InfoJsonVo infoJsonVo = new InfoJsonVo();
+//        infoJsonVo.setProdExtendInfoVoList(prodExtendInfoVoList);
+//        OrdExtendInfo ordExtendInfo = new OrdExtendInfo();
+//        ordExtendInfo.setInfoJson(JSON.toJSONString(infoJsonVo));
+//
+//        request.setOrdExtendInfo(ordExtendInfo);
+//        request.setTenantId("SLP");
+//        BaseResponse apply = orderTradeCenterSV.apiApply(request);
+//    }
 }

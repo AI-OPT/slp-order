@@ -48,16 +48,6 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
     private long salePrice;
 
     /**
-     * 运营商
-     */
-    private String basicOrgId;
-
-    /**
-     * 省份
-     */
-    private String provinceCode;
-
-    /**
      * 充值面额
      */
     private String chargeFee;
@@ -78,9 +68,9 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
     private String orderTime;
 
     /**
-     * 订单拓展信息
+     * 手机号
      */
-    private OrdExtendInfo ordExtendInfo;
+    private String infoJson;
 
     public String getUserId() {
         return userId;
@@ -104,14 +94,6 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
 
     public long getSalePrice() {
         return salePrice;
-    }
-
-    public String getBasicOrgId() {
-        return basicOrgId;
-    }
-
-    public String getProvinceCode() {
-        return provinceCode;
     }
 
     public String getChargeFee() {
@@ -154,14 +136,6 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
         this.salePrice = salePrice;
     }
 
-    public void setBasicOrgId(String basicOrgId) {
-        this.basicOrgId = basicOrgId;
-    }
-
-    public void setProvinceCode(String provinceCode) {
-        this.provinceCode = provinceCode;
-    }
-
     public void setChargeFee(String chargeFee) {
         this.chargeFee = chargeFee;
     }
@@ -186,12 +160,12 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
         this.downstreamOrderId = downstreamOrderId;
     }
 
-    public OrdExtendInfo getOrdExtendInfo() {
-        return ordExtendInfo;
+    public String getInfoJson() {
+        return infoJson;
     }
 
-    public void setOrdExtendInfo(OrdExtendInfo ordExtendInfo) {
-        this.ordExtendInfo = ordExtendInfo;
+    public void setInfoJson(String infoJson) {
+        this.infoJson = infoJson;
     }
 
 }

@@ -25,9 +25,10 @@ import com.ai.slp.balance.api.deduct.interfaces.IDeductSV;
 import com.ai.slp.balance.api.deduct.param.DeductParam;
 import com.ai.slp.balance.api.deduct.param.DeductResponse;
 import com.ai.slp.balance.api.deduct.param.TransSummary;
+import com.ai.slp.common.api.servicenum.interfaces.IServiceNumSV;
+import com.ai.slp.common.api.servicenum.param.ServiceNum;
 import com.ai.slp.order.api.orderpay.interfaces.IOrderPaySV;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
-import com.ai.slp.order.api.ordertradecenter.param.OrdExtendInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
@@ -42,7 +43,9 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderApiTradeBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdAttrInfoVo;
+import com.ai.slp.order.vo.ProdExtendInfoVo;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumRes;
 import com.ai.slp.product.api.storageserver.param.StorageNumUseReq;
@@ -198,6 +201,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
             long orderId, StorageNumRes storageNumRes) {
         LOG.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
         /* 1. 创建商品明细 */
+        String infoJson = request.getInfoJson();
+        IServiceNumSV serviceNumSV = DubboConsumerFactory.getService(IServiceNumSV.class);
+        ServiceNum serviceNumByPhone = serviceNumSV.getServiceNumByPhone(infoJson);
         String orderType = request.getOrderType();
         Map<String, Integer> storageNum = storageNumRes.getStorageNum();
         if (storageNum == null) {
@@ -226,8 +232,8 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         ordOdProd.setAdjustFee(ordOdProd.getTotalFee() - ordOdProd.getDiscountFee()
                 - ordOdProd.getOperDiscountFee());
         ProdAttrInfoVo vo = new ProdAttrInfoVo();
-        vo.setBasicOrgId(request.getBasicOrgId());
-        vo.setProvinceCode(request.getProvinceCode());
+        vo.setBasicOrgId(serviceNumByPhone.getBasicOrgCode());
+        vo.setProvinceCode(serviceNumByPhone.getProvinceCode());
         vo.setChargeFee(request.getChargeFee());
         ordOdProd.setProdDesc("");
         ordOdProd.setExtendInfo(JSON.toJSONString(vo));
@@ -251,12 +257,19 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
     private void createOrdOdProdExtend(long prodDetailId, OrderApiTradeCenterRequest request,
             long orderId, String orderType) {
         if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_FLOWRATE_RECHARGE.equals(orderType)) {
-            OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
-            if (ordExtendInfo == null)
-                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "请求参数商品扩展信息为空");
-            String infoJson = ordExtendInfo.getInfoJson();
+            String infoJson = request.getInfoJson();
+            if (infoJson == null)
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
+                        "请求参数手机号信息为空");
+            InfoJsonVo infoJsonVo = new InfoJsonVo();
+            ProdExtendInfoVo prodExtendInfoVo = new ProdExtendInfoVo();
+            prodExtendInfoVo.setProdExtendInfoValue(infoJson);
+            List<ProdExtendInfoVo> prodExtendInfoVoList = new ArrayList<ProdExtendInfoVo>();
+            prodExtendInfoVoList.add(prodExtendInfoVo);
+            infoJsonVo.setProdExtendInfoVoList(prodExtendInfoVoList);
+            String jsonString = JSON.toJSONString(infoJsonVo);
             orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
-                    infoJson, OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
+                    jsonString, OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
 
         }
     }
@@ -411,7 +424,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
             payRequest.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.YE);
             payRequest.setTenantId(request.getTenantId());
             BaseResponse payResponse = iOrderPaySV.pay(payRequest);
-            if(payResponse==null){
+            if (payResponse == null) {
                 throw new BusinessException("", "订单支付返回值为空[订单ID:" + orderId + "]");
             }
             LOG.info("订单支付成功：orderId=" + orderId);

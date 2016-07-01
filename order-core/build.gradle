@@ -18,6 +18,7 @@ dependencies {
     compile 'com.ai.slp.balance:accountquery:1.0-SNAPSHOT'
     //账户余额扣款
     compile 'com.ai.slp.balance:deduct:1.0-SNAPSHOT'
+    compile 'com.ai.slp.common:servicenum:1.0.1-SNAPSHOT'
 
 
 
