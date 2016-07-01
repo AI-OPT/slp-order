@@ -39,7 +39,9 @@ public interface OrdOrderAttachMapper {
     String userId, @Param("orderType")
     String orderType, @Param("orderId")
     Long orderId, @Param("payStyle")
-    String payStyle, @Param("orderTimeBegin")
+    String payStyle, @Param("tenantId")
+    String tenantId, @Param("states")
+    String states, @Param("orderTimeBegin")
     String orderTimeBegin, @Param("orderTimeEnd")
     String orderTimeEnd);
 
@@ -49,7 +51,9 @@ public interface OrdOrderAttachMapper {
     String userId, @Param("orderType")
     String orderType, @Param("orderId")
     Long orderId, @Param("payStyle")
-    String payStyle, @Param("orderTimeBegin")
+    String payStyle, @Param("tenantId")
+    String tenantId, @Param("states")
+    String states, @Param("orderTimeBegin")
     String orderTimeBegin, @Param("orderTimeEnd")
     String orderTimeEnd);
 

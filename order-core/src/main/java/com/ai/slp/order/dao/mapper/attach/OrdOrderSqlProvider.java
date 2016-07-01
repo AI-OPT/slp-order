@@ -19,16 +19,18 @@ public class OrdOrderSqlProvider {
 	   +"update_time,order_time,total_fee,discount_fee,"
 	   +"adjust_fee,paid_fee,pay_fee from "
 				+ "ord_order oo,ord_od_fee_total of where oo.sub_flag="+param.get("subFlag")+" and oo.user_id= "
-				+ param.get("userId"));
+				+ param.get("userId")+" and oo.TENANT_ID= "+ param.get("tenantId"));
 		String orderType = param.containsKey("orderType")?(String) param.get("orderType"):null;
 		if(!StringUtil.isBlank(orderType))
 			seqBuffer.append(" and oo.order_type = " + orderType);
-		String orderId = param.containsKey("orderId")?(String) param.get("orderId"):null;
-		if(!StringUtil.isBlank(orderId))
-			seqBuffer.append(" and oo.order_id = " + orderId);
+		if(param.get("orderId")!=null)
+			seqBuffer.append(" and oo.order_id = " + param.get("orderId"));
 		String payStyle = param.containsKey("payStyle")?(String) param.get("payStyle"):null;
 		if(!StringUtil.isBlank(payStyle))
 			seqBuffer.append(" and of.pay_style=" + payStyle);
+		String states = param.containsKey("states")?(String) param.get("states"):null;
+        if(!StringUtil.isBlank(states))
+            seqBuffer.append(" and oo.state in(" + states+")");
 		if(param.get("orderTimeBegin") != null && param.get("orderTimeEnd") != null){
 			seqBuffer.append(" and oo.order_time between '" + param.get("orderTimeBegin") + "' and '"+param.get("orderTimeEnd")+"'");
 		}
@@ -44,7 +46,7 @@ public class OrdOrderSqlProvider {
 		StringBuffer seqBuffer = new StringBuffer();
 		seqBuffer.append("select count(*) from "
 				+ "ord_order oo,ord_od_fee_total of where oo.sub_flag="+param.get("subFlag")+" and oo.user_id= "
-				+ param.get("userId"));
+				+ param.get("userId")+" and oo.TENANT_ID= "+ param.get("tenantId"));
 		String orderType = param.containsKey("orderType")?(String) param.get("orderType"):null;
         if(!StringUtil.isBlank(orderType))
             seqBuffer.append(" and oo.order_type = " + orderType);
@@ -54,6 +56,9 @@ public class OrdOrderSqlProvider {
         String payStyle = param.containsKey("payStyle")?(String) param.get("payStyle"):null;
         if(!StringUtil.isBlank(payStyle))
             seqBuffer.append(" and of.pay_style=" + payStyle);
+        String states = param.containsKey("states")?(String) param.get("states"):null;
+        if(!StringUtil.isBlank(states))
+            seqBuffer.append(" and oo.state in(" + states+")");
 		if(param.get("orderTimeBegin") != null && param.get("orderTimeEnd") != null){
 			seqBuffer.append(" and oo.order_time between '" + param.get("orderTimeBegin") + "' and '"+param.get("orderTimeEnd")+"'");
 		}

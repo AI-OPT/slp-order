@@ -20,7 +20,7 @@ public interface IOrdOrderAttachAtomSV {
 	 * @param orderListRequest
 	 * @return
 	 */
-	public List<OrdOrderAttach> queryOrderBySearch(String subFlag,QueryOrderListRequest orderListRequest);
+	public List<OrdOrderAttach> queryOrderBySearch(String subFlag,QueryOrderListRequest orderListRequest,String states);
 	
 	/**
 	 * 查询订单数量
@@ -28,5 +28,5 @@ public interface IOrdOrderAttachAtomSV {
 	 * @param orderListRequest
 	 * @return
 	 */
-	public int queryCount(String subFlag,QueryOrderListRequest orderListRequest);
+	public int queryCount(String subFlag,QueryOrderListRequest orderListRequest,String states);
 }
