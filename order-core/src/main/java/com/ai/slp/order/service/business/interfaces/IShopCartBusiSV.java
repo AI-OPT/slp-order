@@ -1,6 +1,5 @@
 package com.ai.slp.order.service.business.interfaces;
 
-import com.ai.opt.base.exception.BusinessException;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
@@ -26,7 +25,7 @@ public interface IShopCartBusiSV {
      * @param cartProd
      * @return
      */
-    public CartProdOptRes addCartProd(CartProd cartProd) throws BusinessException;
+    public CartProdOptRes addCartProd(CartProd cartProd);
 
     /**
      * 更新购物车中商品数量
