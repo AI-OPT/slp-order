@@ -69,7 +69,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * @return
      */
     @Override
-    public CartProdOptRes addCartProd(CartProd cartProd) {
+    public CartProdOptRes addCartProd(CartProd cartProd) throws BusinessException{
         //若购买数量为空,或小于0,则设置默认为1
         if (cartProd.getBuyNum() == null
                 || cartProd.getBuyNum()<=0)

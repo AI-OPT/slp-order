@@ -74,6 +74,7 @@ public class O2pCallBackBusiSVImpl implements IO2pCallBackBusiSV {
         }
         ordOrder.setState(newState);
         ordOrder.setStateChgTime(sysDate);
+        ordOrder.setFinishTime(sysDate);
         ordOrderAtomSV.updateById(ordOrder);
         /* 3.写入订单状态变化轨迹表 */
         orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,

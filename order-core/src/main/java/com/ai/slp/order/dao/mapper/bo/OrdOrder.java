@@ -75,6 +75,8 @@ public class OrdOrder {
 
     private String externalSupplyId;
 
+    private String downstreamOrderId;
+
     public long getOrderId() {
         return orderId;
     }
@@ -361,5 +363,13 @@ public class OrdOrder {
 
     public void setExternalSupplyId(String externalSupplyId) {
         this.externalSupplyId = externalSupplyId == null ? null : externalSupplyId.trim();
+    }
+
+    public String getDownstreamOrderId() {
+        return downstreamOrderId;
+    }
+
+    public void setDownstreamOrderId(String downstreamOrderId) {
+        this.downstreamOrderId = downstreamOrderId == null ? null : downstreamOrderId.trim();
     }
 }

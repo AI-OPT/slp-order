@@ -27,6 +27,7 @@ import com.ai.slp.balance.api.deduct.param.DeductResponse;
 import com.ai.slp.balance.api.deduct.param.TransSummary;
 import com.ai.slp.order.api.orderpay.interfaces.IOrderPaySV;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
+import com.ai.slp.order.api.ordertradecenter.param.OrdExtendInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
@@ -106,7 +107,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
-        // criteria.andOrderIdEqualTo(downstreamOrderId);
+        criteria.andDownstreamOrderIdEqualTo(downstreamOrderId);
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         if (!CollectionUtil.isEmpty(list)) {
             throw new BusinessException("110012", "下游订单已经存在[downstreamOrderId:" + downstreamOrderId
@@ -171,9 +172,11 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         ordOrder.setCityCode("");
         ordOrder.setState(OrdersConstants.OrdOrder.State.NEW);
         ordOrder.setStateChgTime(sysDate);
+        ordOrder.setDownstreamOrderId(request.getDownstreamOrderId());
         ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
         ordOrder.setDisplayFlagChgTime(sysDate);
         ordOrder.setDeliveryFlag(OrdersConstants.OrdOrder.DeliveryFlag.NONE);
+        ordOrder.setLockTime(DateUtil.getTimestamp(request.getOrderTime()));
         ordOrder.setOrderTime(sysDate);
         ordOrder.setOrderDesc("");
         ordOrder.setKeywords("");
@@ -248,9 +251,10 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
     private void createOrdOdProdExtend(long prodDetailId, OrderApiTradeCenterRequest request,
             long orderId, String orderType) {
         if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_FLOWRATE_RECHARGE.equals(orderType)) {
-            String infoJson = request.getInfoJson();
-            if (StringUtil.isBlank(infoJson))
-                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "请求参数手机号为空");
+            OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
+            if (ordExtendInfo == null)
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "请求参数商品扩展信息为空");
+            String infoJson = ordExtendInfo.getInfoJson();
             orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
                     infoJson, OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
 
@@ -378,7 +382,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         deductParam.setBusinessCode(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
         deductParam.setAccountId(request.getAcctId());
         deductParam.setSubsId(0);
-        deductParam.setCheckPwd(0);
+        deductParam.setCheckPwd(1);
         List<TransSummary> transSummaryList = new ArrayList<TransSummary>();
         TransSummary transSummary = new TransSummary();
         transSummary.setAmount(payFee);

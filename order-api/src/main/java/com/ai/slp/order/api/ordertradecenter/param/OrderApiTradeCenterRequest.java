@@ -78,9 +78,9 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
     private String orderTime;
 
     /**
-     * 手机号
+     * 订单拓展信息
      */
-    private String infoJson;
+    private OrdExtendInfo ordExtendInfo;
 
     public String getUserId() {
         return userId;
@@ -186,12 +186,12 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
         this.downstreamOrderId = downstreamOrderId;
     }
 
-    public String getInfoJson() {
-        return infoJson;
+    public OrdExtendInfo getOrdExtendInfo() {
+        return ordExtendInfo;
     }
 
-    public void setInfoJson(String infoJson) {
-        this.infoJson = infoJson;
+    public void setOrdExtendInfo(OrdExtendInfo ordExtendInfo) {
+        this.ordExtendInfo = ordExtendInfo;
     }
 
 }

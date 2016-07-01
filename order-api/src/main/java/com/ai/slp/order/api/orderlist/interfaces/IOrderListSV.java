@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -54,5 +55,20 @@ public interface IOrderListSV {
 	@POST
 	@Path("/queryOrder")
 	QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException, SystemException;
+	
+	/**
+     * 订单单个查询(api)
+     * @param orderRequest
+     * @return
+     * @throws BusinessException
+     * @throws SystemException
+     * @author jiaxs
+     * @ApiDocMethod
+     * @ApiCode ORDERQUERY_003
+     * @RestRelativeURL orderlist/queryApiOrder
+     */
+    @POST
+    @Path("/queryApiOrder")
+    QueryOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest) throws BusinessException, SystemException;
 	
 }

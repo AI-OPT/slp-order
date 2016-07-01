@@ -44,7 +44,10 @@
 	<!-- 缓存 -->
 	<dubbo:reference id="iCacheSV"
 		interface="com.ai.slp.common.api.cache.interfaces.ICacheSV" />
-		
+
 	<dubbo:reference id="iOrderCancelSV"
 		interface="com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV" />
+		
+	<dubbo:reference id="iDeductSV"
+		interface="com.ai.slp.balance.api.deduct.interfaces.IDeductSV" />
 </beans>
