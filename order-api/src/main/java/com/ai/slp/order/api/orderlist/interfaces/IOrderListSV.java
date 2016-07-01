@@ -68,7 +68,7 @@ public interface IOrderListSV {
      * @RestRelativeURL orderlist/queryApiOrder
      */
     @POST
-    @Path("/queryOrder")
+    @Path("/queryApiOrder")
     QueryOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest) throws BusinessException, SystemException;
 	
 }
