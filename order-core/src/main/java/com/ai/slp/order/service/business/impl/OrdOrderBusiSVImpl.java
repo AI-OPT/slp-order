@@ -24,6 +24,7 @@ import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
 import com.ai.slp.order.api.orderlist.param.OrderPayVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
+import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -106,8 +107,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                     .getTimestamp(orderListRequest.getOrderTimeEnd(), "yyyy-MM-dd HH:mm:ss"));
         }
         example.setOrderByClause("ORDER_TIME desc ");
-        int count=this.getCount(example,orderListRequest.getPayStyle());
-        example.setLimitStart((orderListRequest.getPageNo()-1) * orderListRequest.getPageSize());
+        int count = this.getCount(example, orderListRequest.getPayStyle());
+        example.setLimitStart((orderListRequest.getPageNo() - 1) * orderListRequest.getPageSize());
         example.setLimitEnd(orderListRequest.getPageSize());
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         List<OrdOrderVo> ordOrderList = new ArrayList<OrdOrderVo>();
@@ -123,30 +124,31 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setBusiCode(order.getBusiCode());
                 ordOrderVo.setState(order.getState());
                 SysParamSingleCond sysParamSingleCond = new SysParamSingleCond("SLP", "ORD_ORDER",
-                        "STATE",order.getState());
-                SysParam sysParamState=iCacheSV.getSysParamSingle(sysParamSingleCond);
-                ordOrderVo.setStateName(sysParamState==null?"":sysParamState.getColumnDesc());
+                        "STATE", order.getState());
+                SysParam sysParamState = iCacheSV.getSysParamSingle(sysParamSingleCond);
+                ordOrderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
                 ordOrderVo.setOrderTime(order.getOrderTime());
                 ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
                 ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
                 ordOrderVo.setPaidFee(ordOdFeeTotal.getPaidFee());
                 ordOrderVo.setPayFee(ordOdFeeTotal.getPayFee());
                 ordOrderVo.setPayStyle(ordOdFeeTotal.getPayStyle());
-                SysParamSingleCond sysParamPayStyle = new SysParamSingleCond("SLP", "ORD_OD_FEE_TOTAL",
-                        "PAY_STYLE",ordOdFeeTotal.getPayStyle());
+                SysParamSingleCond sysParamPayStyle = new SysParamSingleCond("SLP",
+                        "ORD_OD_FEE_TOTAL", "PAY_STYLE", ordOdFeeTotal.getPayStyle());
                 SysParam sysParam = iCacheSV.getSysParamSingle(sysParamPayStyle);
-                ordOrderVo.setPayStyleName(sysParam==null?"":sysParam.getColumnDesc());
+                ordOrderVo.setPayStyleName(sysParam == null ? "" : sysParam.getColumnDesc());
                 ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
                 ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());
                 int phoneCount = this.getProdExtendInfo(orderListRequest.getTenantId(),
                         order.getOrderId());
                 ordOrderVo.setPhoneCount(phoneCount);
                 /* 3.订单费用明细查询 */
-                List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,order.getOrderId());
+                List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
+                        order.getOrderId());
                 ordOrderVo.setPayDataList(orderFeeProdList);
                 /* 4.订单费用明细查询 */
-                List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,order.getTenantId(),
-                        order.getOrderId());
+                List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,
+                        order.getTenantId(), order.getOrderId());
                 ordOrderVo.setProductList(productList);
                 ordOrderList.add(ordOrderVo);
             }
@@ -160,8 +162,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         return response;
 
     }
+
     /**
      * 获取总条数
+     * 
      * @param example
      * @param payStyle
      * @return
@@ -169,17 +173,17 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
      * @ApiDocMethod
      */
     private int getCount(OrdOrderCriteria example, String payStyle) {
-        int count=0;
-        if(StringUtil.isBlank(payStyle)){
+        int count = 0;
+        if (StringUtil.isBlank(payStyle)) {
             count = ordOrderAtomSV.countByExample(example);
-        }else{
+        } else {
             List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
-            if(CollectionUtil.isEmpty(list)){
+            if (CollectionUtil.isEmpty(list)) {
                 throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "没有查到数据");
             }
             for (OrdOrder order : list) {
-                List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(order.getTenantId(),
-                        order.getOrderId(), payStyle);
+                List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(
+                        order.getTenantId(), order.getOrderId(), payStyle);
                 if (!CollectionUtil.isEmpty(orderFeeTotalList)) {
                     count++;
                 }
@@ -217,7 +221,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
      * @param orderId
      * @return
      * @author zhangxw
-     * @param iCacheSV 
+     * @param iCacheSV
      * @ApiDocMethod
      */
     private List<OrderPayVo> getOrderFeeProdList(ICacheSV iCacheSV, long orderId) {
@@ -232,10 +236,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 OrderPayVo orderPayVo = new OrderPayVo();
                 orderPayVo.setPayStyle(ordOdFeeProd.getPayStyle());
                 orderPayVo.setPaidFee(ordOdFeeProd.getPaidFee());
-                SysParamSingleCond sysParamPayStyle = new SysParamSingleCond("SLP", "ORD_OD_FEE_TOTAL",
-                        "PAY_STYLE",ordOdFeeProd.getPayStyle());
+                SysParamSingleCond sysParamPayStyle = new SysParamSingleCond("SLP",
+                        "ORD_OD_FEE_TOTAL", "PAY_STYLE", ordOdFeeProd.getPayStyle());
                 SysParam sysParam = iCacheSV.getSysParamSingle(sysParamPayStyle);
-                orderPayVo.setPayStyleName(sysParam==null?"":sysParam.getColumnDesc());
+                orderPayVo.setPayStyleName(sysParam == null ? "" : sysParam.getColumnDesc());
                 payDataList.add(orderPayVo);
             }
         }
@@ -248,7 +252,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
      * @param orderId
      * @return
      * @author zhangxw
-     * @param iCacheSV 
+     * @param iCacheSV
      * @param tenantId
      * @ApiDocMethod
      */
@@ -275,13 +279,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo, ProdAttrInfoVo.class);
                 ordProductVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
                 SysParamSingleCond sysParamBasicOrg = new SysParamSingleCond("SLP", "PRODUCT",
-                        "BASIC_ORG_ID",prodAttrInfoVo.getBasicOrgId());
+                        "BASIC_ORG_ID", prodAttrInfoVo.getBasicOrgId());
                 SysParam sysParam = iCacheSV.getSysParamSingle(sysParamBasicOrg);
-                ordProductVo.setBasicOrgName(sysParam==null?"":sysParam.getColumnDesc());
+                ordProductVo.setBasicOrgName(sysParam == null ? "" : sysParam.getColumnDesc());
                 ordProductVo.setProvinceCode(prodAttrInfoVo.getProvinceCode());
-                String provinceName="";
-                if(!StringUtil.isBlank(prodAttrInfoVo.getProvinceCode())){
-                    provinceName=iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode());
+                String provinceName = "";
+                if (!StringUtil.isBlank(prodAttrInfoVo.getProvinceCode())) {
+                    provinceName = iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode());
                 }
                 ordProductVo.setProvinceName(provinceName);
                 ordProductVo.setChargeFee(prodAttrInfoVo.getChargeFee());
@@ -409,9 +413,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setBusiCode(order.getBusiCode());
                 ordOrderVo.setState(order.getState());
                 SysParamSingleCond sysParamSingleCond = new SysParamSingleCond("SLP", "ORD_ORDER",
-                        "STATE",order.getState());
-                SysParam sysParamState=iCacheSV.getSysParamSingle(sysParamSingleCond);
-                ordOrderVo.setStateName(sysParamState==null?"":sysParamState.getColumnDesc());
+                        "STATE", order.getState());
+                SysParam sysParamState = iCacheSV.getSysParamSingle(sysParamSingleCond);
+                ordOrderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
                 ordOrderVo.setOrderTime(order.getOrderTime());
                 ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
                 ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
@@ -419,21 +423,22 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setPaidFee(ordOdFeeTotal.getPaidFee());
                 ordOrderVo.setPayFee(ordOdFeeTotal.getPayFee());
                 ordOrderVo.setPayStyle(ordOdFeeTotal.getPayStyle());
-                SysParamSingleCond sysParamPayStyle = new SysParamSingleCond("SLP", "ORD_OD_FEE_TOTAL",
-                        "PAY_STYLE",ordOdFeeTotal.getPayStyle());
+                SysParamSingleCond sysParamPayStyle = new SysParamSingleCond("SLP",
+                        "ORD_OD_FEE_TOTAL", "PAY_STYLE", ordOdFeeTotal.getPayStyle());
                 SysParam sysParam = iCacheSV.getSysParamSingle(sysParamPayStyle);
-                ordOrderVo.setPayStyleName(sysParam==null?"":sysParam.getColumnDesc());
+                ordOrderVo.setPayStyleName(sysParam == null ? "" : sysParam.getColumnDesc());
                 ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
                 ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());
                 int phoneCount = this.getProdExtendInfo(orderRequest.getTenantId(),
                         order.getOrderId());
                 ordOrderVo.setPhoneCount(phoneCount);
                 /* 3.订单费用明细查询 */
-                List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,order.getOrderId());
+                List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
+                        order.getOrderId());
                 ordOrderVo.setPayDataList(orderFeeProdList);
                 /* 4.订单费用明细查询 */
-                List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,order.getTenantId(),
-                        order.getOrderId());
+                List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,
+                        order.getTenantId(), order.getOrderId());
                 ordOrderVo.setProductList(productList);
             }
 
@@ -441,6 +446,27 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         response.setOrdOrderVo(ordOrderVo);
         return response;
 
+    }
+
+    @Override
+    public QueryOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest)
+            throws BusinessException, SystemException {
+        QueryOrderResponse response = new QueryOrderResponse();
+        OrdOrderCriteria example = new OrdOrderCriteria();
+        OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        criteria.andTenantIdEqualTo(orderRequest.getTenantId());
+        if (!StringUtil.isBlank(orderRequest.getDownstreamOrderId())) {
+            criteria.andDownstreamOrderIdEqualTo(orderRequest.getDownstreamOrderId());
+        }
+        List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
+        if (!CollectionUtil.isEmpty(list)) {
+            OrdOrder ordOrder = list.get(0);
+            QueryOrderRequest queryOrderRequest = new QueryOrderRequest();
+            queryOrderRequest.setTenantId(orderRequest.getTenantId());
+            queryOrderRequest.setOrderId(ordOrder.getOrderId());
+            response = this.queryOrder(queryOrderRequest);
+        }
+        return response;
     }
 
 }
