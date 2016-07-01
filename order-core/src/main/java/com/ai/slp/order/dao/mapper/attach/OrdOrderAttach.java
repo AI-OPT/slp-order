@@ -11,7 +11,9 @@ import com.ai.opt.base.vo.BaseInfo;
  */
 public class OrdOrderAttach extends BaseInfo{
 	
-	/**
+	private static final long serialVersionUID = 1L;
+
+    /**
      * 业务订单ID
      */
     private Long orderId;

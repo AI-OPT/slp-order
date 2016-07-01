@@ -2,6 +2,8 @@ package com.ai.slp.order.dao.mapper.attach;
 
 import java.util.Map;
 
+import com.ai.paas.ipaas.util.StringUtil;
+
 public class OrdOrderSqlProvider {
 	
 	
@@ -18,12 +20,15 @@ public class OrdOrderSqlProvider {
 	   +"adjust_fee,paid_fee,pay_fee from "
 				+ "ord_order oo,ord_od_fee_total of where oo.sub_flag="+param.get("subFlag")+" and oo.user_id= "
 				+ param.get("userId"));
-		if(param.get("orderType") != null)
-			seqBuffer.append(" and oo.order_type = " + param.get("orderType"));
-		if(param.get("orderId") != null)
-			seqBuffer.append(" and oo.order_id = " + param.get("orderId"));
-		if(param.get("payStyle") != null)
-			seqBuffer.append(" and of.pay_style=" + param.get("payStyle"));
+		String orderType = param.containsKey("orderType")?(String) param.get("orderType"):null;
+		if(!StringUtil.isBlank(orderType))
+			seqBuffer.append(" and oo.order_type = " + orderType);
+		String orderId = param.containsKey("orderId")?(String) param.get("orderId"):null;
+		if(!StringUtil.isBlank(orderId))
+			seqBuffer.append(" and oo.order_id = " + orderId);
+		String payStyle = param.containsKey("payStyle")?(String) param.get("payStyle"):null;
+		if(!StringUtil.isBlank(payStyle))
+			seqBuffer.append(" and of.pay_style=" + payStyle);
 		if(param.get("orderTimeBegin") != null && param.get("orderTimeEnd") != null){
 			seqBuffer.append(" and oo.order_time between '" + param.get("orderTimeBegin") + "' and '"+param.get("orderTimeEnd")+"'");
 		}
@@ -40,12 +45,15 @@ public class OrdOrderSqlProvider {
 		seqBuffer.append("select count(*) from "
 				+ "ord_order oo,ord_od_fee_total of where oo.sub_flag="+param.get("subFlag")+" and oo.user_id= "
 				+ param.get("userId"));
-		if(param.get("orderType") != null)
-			seqBuffer.append(" and oo.order_type = " + param.get("orderType"));
-		if(param.get("orderId") != null)
-			seqBuffer.append(" and oo.order_id = " + param.get("orderId"));
-		if(param.get("payStyle") != null)
-			seqBuffer.append(" and of.pay_style=" + param.get("payStyle"));
+		String orderType = param.containsKey("orderType")?(String) param.get("orderType"):null;
+        if(!StringUtil.isBlank(orderType))
+            seqBuffer.append(" and oo.order_type = " + orderType);
+        String orderId = param.containsKey("orderId")?(String) param.get("orderId"):null;
+        if(!StringUtil.isBlank(orderId))
+            seqBuffer.append(" and oo.order_id = " + orderId);
+        String payStyle = param.containsKey("payStyle")?(String) param.get("payStyle"):null;
+        if(!StringUtil.isBlank(payStyle))
+            seqBuffer.append(" and of.pay_style=" + payStyle);
 		if(param.get("orderTimeBegin") != null && param.get("orderTimeEnd") != null){
 			seqBuffer.append(" and oo.order_time between '" + param.get("orderTimeBegin") + "' and '"+param.get("orderTimeEnd")+"'");
 		}

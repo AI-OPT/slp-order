@@ -5,49 +5,52 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.type.JdbcType;
-
 
 /**
- * 多表查询订单信息
- * Date: 2016年6月29日
+ * 多表查询订单信息 Date: 2016年6月29日
+ * 
  * @author caofz
- *
+ * 
  */
 public interface OrdOrderAttachMapper {
-	
-	/**
-	 * 结算管理-商城商品列表分页查询
-	 */
-	@SelectProvider(type = OrdOrderSqlProvider.class, method = "queryOrdOrder")
-	@Results({
-			@Result(id = true, property = "orderId", column = "order_id"),
-			@Result(property = "tenantId", column = "tenant_id"),
-			@Result(property = "busiCode", column = "busi_code"),
-			@Result(property = "orderType", column = "order_type"),
-			@Result(property = "state", column = "state"),
-			@Result(property = "payStyle", column = "pay_style"),
-			@Result(property = "payTime", column = "update_time"),
-			@Result(property = "orderTime", column = "order_time"),
-			@Result(property = "totalFee", column = "total_fee"),
-			@Result(property = "discountFee", column = "discount_fee"),
-			@Result(property = "adjustFee", column = "adjust_fee"),
-			@Result(property = "paidFee", column = "paid_fee"),
-			@Result(property = "payFee", column = "pay_fee")
-	})
-	public List<OrdOrderAttach> getOrdOrder(@Param("subFlag") String subFlag, @Param("pageCount") Integer pageCount,
-			@Param("pageSize") Integer pageSize,@Param("userId") String userId,
-			@Param("orderType") String orderType, @Param("orderId") Long orderId,
-			@Param("payStyle") String payStyle, @Param("orderTimeBegin") String orderTimeBegin,
-			@Param("orderTimeEnd") String orderTimeEnd);
-	
-	
-	@SelectProvider(type = OrdOrderSqlProvider.class, method = "count")
-	public int getCount(@Param("subFlag") String subFlag,@Param("userId") String userId,
-			@Param("orderType") String orderType, @Param("orderId") Long orderId,
-			@Param("payStyle") String payStyle, @Param("orderTimeBegin") String orderTimeBegin,
-			@Param("orderTimeEnd") String orderTimeEnd);
-	
+
+    /**
+     * 结算管理-商城商品列表分页查询
+     */
+    @SelectProvider(type = OrdOrderSqlProvider.class, method = "queryOrdOrder")
+    @Results({ @Result(id = true, property = "orderId", column = "order_id"),
+            @Result(property = "tenantId", column = "tenant_id"),
+            @Result(property = "busiCode", column = "busi_code"),
+            @Result(property = "orderType", column = "order_type"),
+            @Result(property = "state", column = "state"),
+            @Result(property = "payStyle", column = "pay_style"),
+            @Result(property = "payTime", column = "update_time"),
+            @Result(property = "orderTime", column = "order_time"),
+            @Result(property = "totalFee", column = "total_fee"),
+            @Result(property = "discountFee", column = "discount_fee"),
+            @Result(property = "adjustFee", column = "adjust_fee"),
+            @Result(property = "paidFee", column = "paid_fee"),
+            @Result(property = "payFee", column = "pay_fee") })
+    public List<OrdOrderAttach> getOrdOrder(@Param("subFlag")
+    String subFlag, @Param("pageCount")
+    Integer pageCount, @Param("pageSize")
+    Integer pageSize, @Param("userId")
+    String userId, @Param("orderType")
+    String orderType, @Param("orderId")
+    Long orderId, @Param("payStyle")
+    String payStyle, @Param("orderTimeBegin")
+    String orderTimeBegin, @Param("orderTimeEnd")
+    String orderTimeEnd);
+
+    @SelectProvider(type = OrdOrderSqlProvider.class, method = "count")
+    public int getCount(@Param("subFlag")
+    String subFlag, @Param("userId")
+    String userId, @Param("orderType")
+    String orderType, @Param("orderId")
+    Long orderId, @Param("payStyle")
+    String payStyle, @Param("orderTimeBegin")
+    String orderTimeBegin, @Param("orderTimeEnd")
+    String orderTimeEnd);
+
 }
