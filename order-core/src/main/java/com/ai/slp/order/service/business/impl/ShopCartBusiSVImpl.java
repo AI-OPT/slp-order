@@ -2,7 +2,6 @@ package com.ai.slp.order.service.business.impl;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
@@ -107,26 +106,13 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
         //到达商品种类上限
         if (prodNumLimit>0 && prodNumLimit<pointsVo.getProdNum()){
-//        	return errorInfo("购物车商品数量已经达到上限,无法添加");
             throw new SystemException("","购物车商品数量已经达到上限,无法添加");
         }
         //达到购物车单个商品数量上线
         else if (skuNumLimit>0 && odCartProd.getBuySum()>skuNumLimit){
-//        	return errorInfo("此商品数量达到购物车允许最大数量,无法添加.");
             throw new SystemException("","此商品数量达到购物车允许最大数量,无法添加.");
         }
-//        checkSkuInfoTotal(tenantId,cartProd.getSkuId(),odCartProd.getBuySum());
-        ProductSkuInfo skuInfo = querySkuInfo(tenantId,cartProd.getSkuId());
-        if (skuInfo==null || skuInfo.getUsableNum()<=0){
-//        	return errorInfo("商品已售罄或下架,无法添加.");
-            throw new SystemException("","商品已售罄或下架");
-        }
-        long buyNum = odCartProd.getBuySum();
-        if ( buyNum>skuInfo.getUsableNum()){
-            logger.warn("单品库存{},检查库存{}",skuInfo.getUsableNum(),buyNum);
-//            return errorInfo("商品库存不足["+buyNum+"].");
-            throw new SystemException("","商品库存不足["+buyNum+"]");
-        }
+        checkSkuInfoTotal(tenantId,cartProd.getSkuId(),odCartProd.getBuySum());
         //添加/更新商品信息
         iCacheClient.hset(cartUserId,odCartProd.getSkuId(),JSON.toJSONString(odCartProd));
         //更新购物车上商品总数量
@@ -140,12 +126,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
     }
-
-	private CartProdOptRes errorInfo(String msg) {
-		CartProdOptRes cartProdOptRes = new CartProdOptRes();
-		cartProdOptRes.setResponseHeader(new ResponseHeader(false,"",msg));
-		return cartProdOptRes;
-	}
 
     /**
      * 更新购物车中商品数量
