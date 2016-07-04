@@ -1,14 +1,14 @@
 package com.ai.slp.order.api.shopcart.interfaces;
 
+import com.ai.opt.base.exception.BusinessException;
+import com.ai.opt.base.exception.SystemException;
+import com.ai.slp.order.api.shopcart.param.*;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import com.ai.opt.base.exception.BusinessException;
-import com.ai.opt.base.exception.SystemException;
-import com.ai.slp.order.api.shopcart.param.*;
 
 /**
  * 购物车服务
@@ -36,8 +36,7 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/addProd")
-    public CartProdOptRes addProd(CartProd cartProd)
-        throws BusinessException,SystemException;
+    public CartProdOptRes addProd(CartProd cartProd) throws SystemException;
     //@interface AddProd{}
 
     /**
@@ -53,7 +52,7 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/queryCartOfUser")
-    public CartProdList queryCartOfUser(UserInfo userInfo)throws BusinessException,SystemException;
+    public CartProdList queryCartOfUser(UserInfo userInfo)throws SystemException;
     //@interface QueryCartOfUser{}
 
     /**
@@ -69,7 +68,7 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/updateProdNum")
-    public CartProdOptRes updateProdNum(CartProd cartProd) throws BusinessException,SystemException;
+    public CartProdOptRes updateProdNum(CartProd cartProd) throws SystemException;
     //@interface UpdateProdNum{}
 
     /**
@@ -85,7 +84,7 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/deleteMultiProd")
-    public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd)throws BusinessException,SystemException;
+    public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd)throws SystemException;
     //@interface DeleteMultiProd{}
 
     /**
@@ -101,5 +100,5 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/queryPointsOfCart")
-    public CartProdOptRes queryPointsOfCart(UserInfo userInfo)throws BusinessException,SystemException;
+    public CartProdOptRes queryPointsOfCart(UserInfo userInfo)throws SystemException;
 }

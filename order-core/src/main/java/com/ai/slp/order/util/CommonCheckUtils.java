@@ -1,6 +1,6 @@
 package com.ai.slp.order.util;
 
-import com.ai.opt.base.exception.BusinessException;
+import com.ai.opt.base.exception.SystemException;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -13,6 +13,6 @@ public final class CommonCheckUtils {
      */
     public static void checkTenantId(String tenantId,String errCode){
         if (StringUtils.isBlank(tenantId))
-            throw new BusinessException(errCode,"租户标识不能为空");
+            throw new SystemException(errCode,"租户标识不能为空");
     }
 }
