@@ -1,7 +1,7 @@
 package com.ai.slp.order.service.business.impl;
 
 import com.ai.opt.base.exception.BusinessException;
-import com.ai.opt.base.vo.ResponseHeader;
+import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
@@ -106,26 +106,13 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
         //到达商品种类上限
         if (prodNumLimit>0 && prodNumLimit<pointsVo.getProdNum()){
-        	return errorInfo("购物车商品数量已经达到上限,无法添加");
-//            throw new BusinessException("","购物车商品数量已经达到上限,无法添加");
+            throw new SystemException("","购物车商品数量已经达到上限,无法添加");
         }
         //达到购物车单个商品数量上线
         else if (skuNumLimit>0 && odCartProd.getBuySum()>skuNumLimit){
-        	return errorInfo("此商品数量达到购物车允许最大数量,无法添加.");
-//            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
+            throw new SystemException("","此商品数量达到购物车允许最大数量,无法添加.");
         }
-//        checkSkuInfoTotal(tenantId,cartProd.getSkuId(),odCartProd.getBuySum());
-        ProductSkuInfo skuInfo = querySkuInfo(tenantId,cartProd.getSkuId());
-        if (skuInfo==null || skuInfo.getUsableNum()<=0){
-        	return errorInfo("商品已售罄或下架,无法添加.");
-//            throw new BusinessException("","商品已售罄或下架");
-        }
-        long buyNum = odCartProd.getBuySum();
-        if ( buyNum>skuInfo.getUsableNum()){
-            logger.warn("单品库存{},检查库存{}",skuInfo.getUsableNum(),buyNum);
-            return errorInfo("商品库存不足["+buyNum+"].");
-//            throw new BusinessException("","商品库存不足["+buyNum+"]");
-        }
+        checkSkuInfoTotal(tenantId,cartProd.getSkuId(),odCartProd.getBuySum());
         //添加/更新商品信息
         iCacheClient.hset(cartUserId,odCartProd.getSkuId(),JSON.toJSONString(odCartProd));
         //更新购物车上商品总数量
@@ -139,17 +126,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
     }
-
-	private CartProdOptRes errorInfo(String msg) {
-		CartProdOptRes cartProdOptRes;
-		ResponseHeader responseHeader = new ResponseHeader();
-		responseHeader.setIsSuccess(false);
-		responseHeader.setResultCode("");
-		responseHeader.setResultMessage(msg);
-		cartProdOptRes = new CartProdOptRes();
-		cartProdOptRes.setResponseHeader(responseHeader);
-		return cartProdOptRes;
-	}
 
     /**
      * 更新购物车中商品数量
@@ -175,7 +151,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
         //达到购物车单个商品数量上线
         if (skuNumLimit>0 && cartProd.getBuyNum()>skuNumLimit){
-            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
+            throw new SystemException("","此商品数量达到购物车允许最大数量,无法添加.");
         }
         String cartProdStr = iCacheClient.hget(cartUserId,cartProd.getSkuId());
         //更新商品数量
@@ -293,7 +269,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                     skuIdList.add(skuId);
                     deleteCartProd(tenantId,userId,skuIdList);
                 }else {
-                    throw e;
+                    throw new SystemException(e);
                 }
             }
 
@@ -371,11 +347,11 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
 //        skuInfo.setUsableNum(5);
 
         if (skuInfo==null || skuInfo.getUsableNum()<=0){
-            throw new BusinessException("","商品已售罄或下架");
+            throw new SystemException("","商品已售罄或下架");
         }
         if ( buyNum>skuInfo.getUsableNum()){
             logger.warn("单品库存{},检查库存{}",skuInfo.getUsableNum(),buyNum);
-            throw new BusinessException("","商品库存不足["+buyNum+"]");
+            throw new SystemException("","商品库存不足["+buyNum+"]");
         }
     }
 

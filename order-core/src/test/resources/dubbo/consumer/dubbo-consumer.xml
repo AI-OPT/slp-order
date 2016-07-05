@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans     
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+           http://code.alibabatech.com/schema/dubbo
+           http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+	<bean id="dubboConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="order" value="1" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="locations" value="classpath:dubbo/dubbo.properties" />
+	</bean>
+
+	<dubbo:application name="consumer-of-${dubbo.appname}" />
+
+	<dubbo:registry protocol="${dubbo.registry.protocol}"
+		address="${dubbo.registry.address}" />
+
+	<dubbo:monitor protocol="registry" />
+
+	<!-- <dubbo:consumer timeout="${dubbo.consoumer.timeout}" /> -->
+
+	<dubbo:reference id="iLoginSV"
+					 interface="com.ai.slp.user.api.login.interfaces.ILoginSV" />
+
+	<dubbo:reference id="iStorageNumSV"
+					 interface="com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV" />
+
+	<dubbo:reference id="iRouteCoreService"
+					 interface="com.ai.slp.route.api.core.interfaces.IRouteCoreService" />
+
+	<dubbo:reference id="iSupplyProductServiceSV"
+					 interface="com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV" />
+
+	<dubbo:reference id="iProductServerSV"
+					 interface="com.ai.slp.product.api.product.interfaces.IProductServerSV" />
+
+	<dubbo:reference id="iRouteServer"
+					 interface="com.ai.slp.route.api.server.interfaces.IRouteServer" />
+	<!-- 缓存 -->
+	<dubbo:reference id="iCacheSV"
+					 interface="com.ai.slp.common.api.cache.interfaces.ICacheSV" />
+
+	<dubbo:reference id="iOrderCancelSV"
+					 interface="com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV" />
+
+	<dubbo:reference id="iDeductSV"
+					 interface="com.ai.slp.balance.api.deduct.interfaces.IDeductSV" />
+
+	<dubbo:reference id="iShopCartSV"
+		interface="com.ai.slp.order.api.shopcart.interfaces.IShopCartSV" />
+
+</beans>
