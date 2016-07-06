@@ -1,9 +1,11 @@
 package com.ai.slp.order.api.shopcart;
 
+import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.slp.order.api.shopcart.interfaces.IShopCartSV;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
+import com.ai.slp.order.api.shopcart.param.UserInfo;
 import org.junit.Test;
 
 /**
@@ -20,5 +22,20 @@ public class IShopCartDubboTest {
         cartProd.setSkuId("2");
         cartProd.setBuyNum(2l);
         CartProdOptRes optRes = shopCartSV.addProd(cartProd);
+    }
+
+    @Test
+    public void queryPointsOfCartTest(){
+        IShopCartSV shopCartSV = DubboConsumerFactory.getService(IShopCartSV.class);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setTenantId("SLP");
+        userInfo.setUserId("000000000000000480");
+        CartProdOptRes optRes = shopCartSV.queryPointsOfCart(userInfo);
+        ResponseHeader header = optRes.getResponseHeader();
+        if (header!=null && !header.isSuccess()){
+            System.out.println(header.getResultCode()+":"+header.getResultMessage());
+        }else {
+            System.out.println("查询正常,内容如下:\r\n"+optRes.toString());
+        }
     }
 }
