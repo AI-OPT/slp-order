@@ -21,7 +21,7 @@
 		address="${dubbo.registry.address}" file="${dubbo.registry.file}" />
 
 	<dubbo:protocol name="${dubbo.protocol}" port="${slp.order.dubbo.port}" 
-		server="${dubbo.protocol.server}" extension="com.ai.opt.sdk.dubbo.extension.DubboRestExceptionMapper"
+		server="${dubbo.protocol.server}"
 		contextpath="${dubbo.protocol.contextpath}"
 		threads="500" accepts="500"	
 	/>
