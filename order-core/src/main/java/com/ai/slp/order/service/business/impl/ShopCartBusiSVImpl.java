@@ -32,10 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jackieliu on 16/5/17.
@@ -330,8 +327,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      */
     private void sendCartProdMds(OrdOdCartProd prod){
         IMessageSender msgSender = MDSClientFactory.getSenderClient(ShopCartConstants.MdsParams.SHOP_CART_TOPIC);
-
-        msgSender.send(JSON.toJSONString(prod), 0);//第二个参数为分区键，如果不分区，传入0
+        msgSender.send(JSON.toJSONString(prod),new Random(10000).nextLong());//第二个参数为分区参考数
     }
 
     /**
