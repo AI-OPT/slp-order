@@ -47,7 +47,10 @@
 
 	<dubbo:reference id="iOrderCancelSV"
 		interface="com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV" />
-		
+
 	<dubbo:reference id="iDeductSV"
 		interface="com.ai.slp.balance.api.deduct.interfaces.IDeductSV" />
+
+	<dubbo:reference id="iServiceNumSV"
+		interface="com.ai.slp.common.api.servicenum.interfaces.IServiceNumSV" />
 </beans>

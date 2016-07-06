@@ -11,12 +11,25 @@ public class QueryApiOrderRequest extends BaseInfo {
      */
     private String downstreamOrderId;
 
+    /**
+     * 用户Id
+     */
+    private String userId;
+
     public String getDownstreamOrderId() {
         return downstreamOrderId;
     }
 
     public void setDownstreamOrderId(String downstreamOrderId) {
         this.downstreamOrderId = downstreamOrderId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
 }

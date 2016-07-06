@@ -87,22 +87,22 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
         QueryOrderListResponse response = new QueryOrderListResponse();
         PageInfo<OrdOrderVo> pageInfo = new PageInfo<OrdOrderVo>();
-        String states="";
-        StringBuffer sb=new StringBuffer("");
+        String states = "";
+        StringBuffer sb = new StringBuffer("");
         List<String> stateList = orderListRequest.getStateList();
-        if(!CollectionUtil.isEmpty(stateList)){
-            for(String state:stateList){
-                sb=sb.append(state).append(",");
+        if (!CollectionUtil.isEmpty(stateList)) {
+            for (String state : stateList) {
+                sb = sb.append(state).append(",");
             }
-            states=sb.toString();
-            states=states.substring(0, sb.length()-1);
+            states = sb.toString();
+            states = states.substring(0, sb.length() - 1);
         }
         /* 多表查询订单个数 */
         int count = ordOrderAttachAtomSV.queryCount(OrdersConstants.OrdOrder.SubFlag.NO,
-                orderListRequest,states);
+                orderListRequest, states);
         /* 多表查询订单信息 */
         List<OrdOrderAttach> list = ordOrderAttachAtomSV.queryOrderBySearch(
-                OrdersConstants.OrdOrder.SubFlag.NO, orderListRequest,states);
+                OrdersConstants.OrdOrder.SubFlag.NO, orderListRequest, states);
         List<OrdOrderVo> ordOrderList = new ArrayList<OrdOrderVo>();
         for (OrdOrderAttach orderAttach : list) {
             OrdOrderVo ordOrderVo = new OrdOrderVo();
@@ -411,6 +411,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         criteria.andTenantIdEqualTo(orderRequest.getTenantId());
         if (!StringUtil.isBlank(orderRequest.getDownstreamOrderId())) {
             criteria.andDownstreamOrderIdEqualTo(orderRequest.getDownstreamOrderId());
+        }
+        if (!StringUtil.isBlank(orderRequest.getUserId())) {
+            criteria.andUserIdEqualTo(orderRequest.getUserId());
         }
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         if (!CollectionUtil.isEmpty(list)) {
