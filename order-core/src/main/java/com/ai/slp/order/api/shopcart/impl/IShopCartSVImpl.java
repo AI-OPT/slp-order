@@ -130,12 +130,14 @@ public class IShopCartSVImpl implements IShopCartSV {
     public CartProdOptRes queryPointsOfCart(UserInfo userInfo) throws SystemException {
         CommonCheckUtils.checkTenantId(userInfo.getTenantId(),"");
         CartProdOptRes optRes = null;
-        try {
-            optRes = shopCartBusiSV.queryCartOptions(userInfo.getTenantId(),userInfo.getUserId());
-        }catch (BusinessException|SystemException e){
-            optRes = new CartProdOptRes();
-            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
-        }
+        if (optRes == null)
+            throw new SystemException("","任性的错误");
+//        try {
+//            optRes = shopCartBusiSV.queryCartOptions(userInfo.getTenantId(),userInfo.getUserId());
+//        }catch (BusinessException|SystemException e){
+//            optRes = new CartProdOptRes();
+//            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
+//        }
         return optRes;
     }
 }
