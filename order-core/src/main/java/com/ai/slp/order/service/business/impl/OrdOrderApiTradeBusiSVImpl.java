@@ -204,6 +204,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         String infoJson = request.getInfoJson();
         IServiceNumSV serviceNumSV = DubboConsumerFactory.getService(IServiceNumSV.class);
         ServiceNum serviceNumByPhone = serviceNumSV.getServiceNumByPhone(infoJson);
+        if(serviceNumByPhone==null){
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "手机号"+infoJson+"没有找到相应的省份信息");
+        }
         String orderType = request.getOrderType();
         Map<String, Integer> storageNum = storageNumRes.getStorageNum();
         if (storageNum == null) {
