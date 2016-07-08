@@ -19,6 +19,7 @@ import com.ai.slp.order.api.demo.param.HelloParam;
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
 public interface IDemoSV {
+	
 	/**
 	 * hello 单个字符串参数
 	 * @param name
