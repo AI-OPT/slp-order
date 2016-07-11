@@ -28,6 +28,11 @@ public class RouteServResVo {
      * 供应商平台的订单号
      */
     private String coopOrderId;
+    
+    /**
+     * 外部供货商ID
+     */
+    private String coSysId;
 
     /**
      * 错误码
@@ -87,4 +92,12 @@ public class RouteServResVo {
         this.errDesc = errDesc;
     }
 
+	public String getCoSysId() {
+		return coSysId;
+	}
+
+	public void setCoSysId(String coSysId) {
+		this.coSysId = coSysId;
+	}
+    
 }
