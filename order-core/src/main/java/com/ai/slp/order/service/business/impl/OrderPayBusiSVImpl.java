@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -568,7 +569,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         IMessageSender msgSender = MDSClientFactory
                 .getSenderClient(OrdersConstants.SLP_CHARGE_TOPIC);
 
-        msgSender.send(JSON.toJSONString(request), 0);// 第二个参数为分区键，如果不分区，传入0
+        msgSender.send(JSON.toJSONString(request), new Random(10000).nextLong());// 第二个参数为分区键，如果不分区，传入0
+        logger.info("send sucess...");
     }
 
     /**
