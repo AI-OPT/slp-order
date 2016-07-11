@@ -58,7 +58,7 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         String orderId = routeServResVo.getOrderId();
         OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
         ordOrder.setExternalOrderId(routeServResVo.getCoopOrderId());
-        ordOrder.setExternalSupplyId("");// 725版本实现该功能
+        ordOrder.setExternalSupplyId(routeServResVo.getCoSysId());// 725版本实现该功能
         ordOrder.setState(routeServResVo.getCoopOrderStatus());
         ordOrder.setStateChgTime(DateUtil.getSysDate());
         ordOrderAtomSV.updateById(ordOrder);
