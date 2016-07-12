@@ -28,6 +28,7 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.ai.slp.order.constants.ErrorCodeConstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.attach.OrdOrderAttach;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
@@ -408,13 +409,18 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         QueryOrderResponse response = new QueryOrderResponse();
         OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        if(StringUtil.isBlank(orderRequest.getTenantId())) {
+        	throw new BusinessException(ErrorCodeConstants.REQUIRED_IS_EMPTY, "租户id为空");
+        }
         criteria.andTenantIdEqualTo(orderRequest.getTenantId());
-        if (!StringUtil.isBlank(orderRequest.getDownstreamOrderId())) {
-            criteria.andDownstreamOrderIdEqualTo(orderRequest.getDownstreamOrderId());
+        if (StringUtil.isBlank(orderRequest.getDownstreamOrderId())) {
+        	throw new BusinessException(ErrorCodeConstants.REQUIRED_IS_EMPTY, "外部订单id(下游)为空");
         }
-        if (!StringUtil.isBlank(orderRequest.getUserId())) {
-            criteria.andUserIdEqualTo(orderRequest.getUserId());
+        criteria.andDownstreamOrderIdEqualTo(orderRequest.getDownstreamOrderId());
+        if (StringUtil.isBlank(orderRequest.getUserId())) {
+        	throw new BusinessException(ErrorCodeConstants.REQUIRED_IS_EMPTY, "用户id为空");	
         }
+        criteria.andUserIdEqualTo(orderRequest.getUserId());
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         if (!CollectionUtil.isEmpty(list)) {
             OrdOrder ordOrder = list.get(0);
