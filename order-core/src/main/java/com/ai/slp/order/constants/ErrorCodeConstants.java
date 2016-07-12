@@ -14,4 +14,22 @@ public final class ErrorCodeConstants {
          */
         public static final String PRODUCT_NO_EXIST = "1002";
     }
+    
+    public final class Order{
+    	/**
+    	 * 订单不存在
+    	 */
+    	public static final String ORDER_NO_EXIST="211002";
+    }
+    
+    /**
+     * 传入的参数为空
+     */
+    public static final String REQUIRED_IS_EMPTY="211000";
+    
+    /**
+     * 系统异常
+     */
+    public static final String SYSTEM_ERROR="211001";
+    
 }
