@@ -18,6 +18,8 @@ public class OrdOrder {
     private long batchNo;
 
     private String userId;
+    
+    private String userType;
 
     private long acctId;
 
@@ -140,8 +142,16 @@ public class OrdOrder {
     public void setUserId(String userId) {
         this.userId = userId == null ? null : userId.trim();
     }
+    
+    public String getUserType() {
+		return userType;
+	}
 
-    public long getAcctId() {
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+	public long getAcctId() {
         return acctId;
     }
 
