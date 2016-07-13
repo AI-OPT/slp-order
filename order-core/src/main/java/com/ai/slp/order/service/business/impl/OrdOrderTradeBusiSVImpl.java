@@ -111,6 +111,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         if (StringUtil.isBlank(ordBaseInfo.getUserId())) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户Id为空");
         }
+        if(StringUtil.isBlank(ordBaseInfo.getUserType())) {
+        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户类型为空");
+        }
         OrdOrder ordOrder = new OrdOrder();
         ordOrder.setOrderId(orderId);
         ordOrder.setTenantId(request.getTenantId());
@@ -118,6 +121,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setOrderType(ordBaseInfo.getOrderType());
         ordOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
         ordOrder.setUserId(ordBaseInfo.getUserId());
+        ordOrder.setUserType(ordBaseInfo.getUserType());
         ordOrder.setProvinceCode(ordBaseInfo.getProvinceCode());
         ordOrder.setCityCode(ordBaseInfo.getCityCode());
         ordOrder.setState(OrdersConstants.OrdOrder.State.NEW);
@@ -153,6 +157,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         for (OrdProductInfo ordProductInfo : ordProductInfoList) {
             StorageNumRes storageNumRes = this.querySkuInfo(request.getTenantId(),
                     ordProductInfo.getSkuId(), ordProductInfo.getBuySum());
+            /* if(!storageNumRes.getResponseHeader().getResultCode().equals(ResultCodeConstants.SUCCESS_CODE)){
+        	throw new BusinessException(storageNumRes.getResponseHeader().getResultCode(), 
+        			storageNumRes.getResponseHeader().getResultMessage());
+        	} */
             Map<String, Integer> storageNum = storageNumRes.getStorageNum();
             if (storageNum == null) {
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
