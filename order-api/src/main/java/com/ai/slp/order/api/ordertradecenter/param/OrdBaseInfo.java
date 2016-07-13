@@ -13,7 +13,12 @@ public class OrdBaseInfo implements Serializable {
      */
     @NotBlank(message = "用户Id不能为空")
     private String userId;
-
+    
+    /**
+     * 用户类型
+     */
+    @NotBlank(message="用户类型不能为空")
+    private String userType;
     /**
      * 订单类型
      */
@@ -58,6 +63,10 @@ public class OrdBaseInfo implements Serializable {
     public String getUserId() {
         return userId;
     }
+    
+    public String getUserType() {
+    	return userType;
+    }
 
     public String getOrderType() {
         return orderType;
@@ -93,6 +102,10 @@ public class OrdBaseInfo implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+    
+    public void setUserType(String userType) {
+    	this.userType = userType;
     }
 
     public void setOrderType(String orderType) {
