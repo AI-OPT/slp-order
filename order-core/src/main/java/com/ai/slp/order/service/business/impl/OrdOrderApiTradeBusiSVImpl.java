@@ -164,6 +164,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         if (StringUtil.isBlank(request.getUserId())) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户Id为空");
         }
+        if(StringUtil.isBlank(request.getUserType())) {
+        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户类型为空");
+        }
         OrdOrder ordOrder = new OrdOrder();
         ordOrder.setOrderId(orderId);
         ordOrder.setTenantId(request.getTenantId());
@@ -171,6 +174,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         ordOrder.setOrderType(request.getOrderType());
         ordOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
         ordOrder.setUserId(request.getUserId());
+        ordOrder.setUserType(request.getUserType());
         ordOrder.setProvinceCode("");
         ordOrder.setCityCode("");
         ordOrder.setState(OrdersConstants.OrdOrder.State.NEW);
@@ -202,6 +206,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         LOG.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
         /* 1. 创建商品明细 */
         String infoJson = request.getInfoJson();
+        if(!StringUtil.isBlank(infoJson)&&infoJson.length()>7) {
+        	infoJson=infoJson.trim().substring(0, 7);        
+        }
         IServiceNumSV serviceNumSV = DubboConsumerFactory.getService(IServiceNumSV.class);
         ServiceNum serviceNumByPhone = serviceNumSV.getServiceNumByPhone(infoJson);
         if(serviceNumByPhone==null){
