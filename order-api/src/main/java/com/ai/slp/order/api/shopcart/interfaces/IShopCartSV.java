@@ -36,7 +36,7 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/addProd")
-    public CartProdOptRes addProd(CartProd cartProd) throws SystemException;
+    public CartProdOptRes addProd(CartProd cartProd) throws BusinessException,SystemException;
     //@interface AddProd{}
 
     /**
@@ -52,7 +52,7 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/queryCartOfUser")
-    public CartProdList queryCartOfUser(UserInfo userInfo)throws SystemException;
+    public CartProdList queryCartOfUser(UserInfo userInfo)throws BusinessException,SystemException;
     //@interface QueryCartOfUser{}
 
     /**
@@ -68,7 +68,7 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/updateProdNum")
-    public CartProdOptRes updateProdNum(CartProd cartProd) throws SystemException;
+    public CartProdOptRes updateProdNum(CartProd cartProd) throws BusinessException,SystemException;
     //@interface UpdateProdNum{}
 
     /**
@@ -84,7 +84,7 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/deleteMultiProd")
-    public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd)throws SystemException;
+    public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd)throws BusinessException,SystemException;
     //@interface DeleteMultiProd{}
 
     /**
@@ -100,5 +100,5 @@ public interface IShopCartSV {
      */
 	@POST
 	@Path("/queryPointsOfCart")
-    public CartProdOptRes queryPointsOfCart(UserInfo userInfo)throws SystemException;
+    public CartProdOptRes queryPointsOfCart(UserInfo userInfo)throws BusinessException,SystemException;
 }
