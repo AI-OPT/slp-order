@@ -9,6 +9,7 @@ import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
+import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -44,12 +45,9 @@ public class OrderListSVImpl implements IOrderListSV {
     }
 
     @Override
-    public QueryOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest)
+    public QueryApiOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest)
             throws BusinessException, SystemException {
-        QueryOrderResponse response = ordOrderBusiSV.queryApiOrder(orderRequest);
-        ResponseHeader responseHeader = new ResponseHeader(true,
-                ExceptCodeConstants.Special.SUCCESS, "成功");
-        response.setResponseHeader(responseHeader);
+    	QueryApiOrderResponse response = ordOrderBusiSV.queryApiOrder(orderRequest);
         return response;
     }
 
