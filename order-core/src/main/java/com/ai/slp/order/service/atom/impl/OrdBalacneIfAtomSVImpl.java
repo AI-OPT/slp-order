@@ -1,8 +1,9 @@
 package com.ai.slp.order.service.atom.impl;
 
+import java.util.List;
 import org.springframework.stereotype.Component;
-
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
+import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria;
 import com.ai.slp.order.dao.mapper.factory.MapperFactory;
 import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
 
@@ -12,6 +13,10 @@ public class OrdBalacneIfAtomSVImpl implements IOrdBalacneIfAtomSV {
     @Override
     public int insertSelective(OrdBalacneIf record) {
         return MapperFactory.getOrdBalacneIfMapper().insertSelective(record);
+    }
+    
+    public List<OrdBalacneIf> selectByExample(OrdBalacneIfCriteria example) {
+    	return MapperFactory.getOrdBalacneIfMapper().selectByExample(example);
     }
 
 }

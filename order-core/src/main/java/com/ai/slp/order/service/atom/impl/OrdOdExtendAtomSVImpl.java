@@ -1,8 +1,9 @@
 package com.ai.slp.order.service.atom.impl;
 
+import java.util.List;
 import org.springframework.stereotype.Component;
-
 import com.ai.slp.order.dao.mapper.bo.OrdOdExtend;
+import com.ai.slp.order.dao.mapper.bo.OrdOdExtendCriteria;
 import com.ai.slp.order.dao.mapper.factory.MapperFactory;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdExtendAtomSV;
 
@@ -14,4 +15,10 @@ public class OrdOdExtendAtomSVImpl implements IOrdOdExtendAtomSV {
         return MapperFactory.getOrdOdExtendMapper().insertSelective(record);
     }
 
+	@Override
+	public List<OrdOdExtend> selectByExample(OrdOdExtendCriteria example) {
+		return MapperFactory.getOrdOdExtendMapper().selectByExample(example);
+	}
+    
+    
 }
