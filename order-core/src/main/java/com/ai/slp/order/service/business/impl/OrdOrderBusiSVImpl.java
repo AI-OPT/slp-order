@@ -417,82 +417,78 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             throws BusinessException, SystemException {
     	logger.info("api查询业务...");
         QueryApiOrderResponse response= new QueryApiOrderResponse();
-        try {
-			OrdOrderCriteria example = new OrdOrderCriteria();
-			OrdOrderCriteria.Criteria criteria = example.createCriteria();
-			if(StringUtil.isBlank(orderRequest.getTenantId())) {
-				response.setResponseHeader(new ResponseHeader(false, ErrorCodeConstants.REQUIRED_IS_EMPTY, "租户id为空"));
-				return response;
-			}
-			criteria.andTenantIdEqualTo(orderRequest.getTenantId());
-			if (StringUtil.isBlank(orderRequest.getDownstreamOrderId())) {
-				response.setResponseHeader(new ResponseHeader(false, ErrorCodeConstants.REQUIRED_IS_EMPTY, "外部订单id(下游)为空"));
-				return response;
-			}
-			criteria.andDownstreamOrderIdEqualTo(orderRequest.getDownstreamOrderId());
-			if (StringUtil.isBlank(orderRequest.getUserId())) {
-				response.setResponseHeader(new ResponseHeader(false, ErrorCodeConstants.REQUIRED_IS_EMPTY, "用户id为空"));
-				return response;
-			}
-			criteria.andUserIdEqualTo(orderRequest.getUserId());
-			List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
-			OrdOrderApiVo orderApiVo=null;
-			if(CollectionUtil.isEmpty(list)) {
-				response.setResponseHeader(new ResponseHeader(false, ErrorCodeConstants.Order.ORDER_NO_EXIST, "订单不存在"));
-				return response;
-			}else{
-			    OrdOrder ordOrder = list.get(0);
-				/* 2.订单费用信息查询 */
-			    List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(ordOrder.getTenantId(),
-			    		ordOrder.getOrderId(), "");
-			    if(!CollectionUtil.isEmpty(orderFeeTotalList)) {
-			    	OrdOdFeeTotal ordOdFeeTotal = orderFeeTotalList.get(0);
-			    	orderApiVo=new OrdOrderApiVo();
-			    	orderApiVo.setTenantId(ordOrder.getTenantId());
-			    	orderApiVo.setUserId(ordOrder.getUserId());
-			    	orderApiVo.setAcctId(ordOrder.getAcctId());
-			    	orderApiVo.setSubsId(ordOrder.getSubsId());
-			    	orderApiVo.setOrderType(ordOrder.getOrderType());
-			    	orderApiVo.setDeliveryFlag(ordOrder.getDeliveryFlag());
-			    	orderApiVo.setOrderDesc(ordOrder.getOrderDesc());
-			    	orderApiVo.setKeywords(ordOrder.getKeywords());
-			    	orderApiVo.setRemark(ordOrder.getRemark());
-			    	orderApiVo.setState(ordOrder.getState());
-			    	orderApiVo.setBusiCode(ordOrder.getBusiCode());
-			    	orderApiVo.setDefaultPayStyle(ordOdFeeTotal.getPayStyle());
-			    	orderApiVo.setTotalFee(ordOdFeeTotal.getTotalFee());
-			    	orderApiVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
-			    	orderApiVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
-			    	orderApiVo.setOperDiscountDesc(ordOdFeeTotal.getOperDiscountDesc());
-			    	orderApiVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
-			    	orderApiVo.setPaidFee(ordOdFeeTotal.getPaidFee());
-			    	/*3.订单商品明细查询*/
-			    	List<OrdProductApiVo> ordProductApiList = this.getOrdProductApiList(ordOrder.getTenantId(), 
-			    			ordOrder.getOrderId());
-			    	orderApiVo.setProductApiList(ordProductApiList);
-			    	/*4.支付信息查询*/
-			    	OrdBalacneIf ordBalacneIf = this.getOrdBalacneIfList(ordOrder.getTenantId(),ordOrder.getOrderId());
-			    	if(ordBalacneIf!=null) {
-			    		orderApiVo.setPayStyle(ordBalacneIf.getPayStyle());
-			    		orderApiVo.setPayFee(ordBalacneIf.getPayFee());
-			    		orderApiVo.setBalacneIfId(ordBalacneIf.getBalacneIfId());
-			    	} 
-			    	/*5.订单扩展信息*/
-			    	List<OrdOdProdExtend> ordOdProdExtendList = this.getOrdOdProdExtendList(ordOrder.getTenantId(),
-			    			ordOrder.getOrderId());
-			    	if(!CollectionUtil.isEmpty(ordOdProdExtendList)) {
-			    		OrdOdProdExtend ordOdProdExtend = ordOdProdExtendList.get(0);
-			    		orderApiVo.setInfoJson( ordOdProdExtend.getInfoJson());
-			    	}
-			    }
-			}
-			response.setOrderApiVo(orderApiVo);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			response.setResponseHeader(new ResponseHeader(false, ErrorCodeConstants.SYSTEM_ERROR, "系统异常"));
-			return response;
+		OrdOrderCriteria example = new OrdOrderCriteria();
+		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		if(StringUtil.isBlank(orderRequest.getTenantId())) {
+			throw new BusinessException(ErrorCodeConstants.REQUIRED_IS_EMPTY, "租户id为空");
 		}
-        return response;
+		criteria.andTenantIdEqualTo(orderRequest.getTenantId());
+		if (StringUtil.isBlank(orderRequest.getDownstreamOrderId())) {
+			throw new BusinessException(ErrorCodeConstants.REQUIRED_IS_EMPTY, "外部订单id(下游)为空");
+		}
+		criteria.andDownstreamOrderIdEqualTo(orderRequest.getDownstreamOrderId());
+		if (StringUtil.isBlank(orderRequest.getUserId())) {
+			throw new BusinessException(ErrorCodeConstants.REQUIRED_IS_EMPTY, "用户id为空");
+		}
+		criteria.andUserIdEqualTo(orderRequest.getUserId());
+		criteria.andSubFlagEqualTo(OrdersConstants.OrdOrder.SubFlag.YES);
+		List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
+		OrdOrderApiVo orderApiVo=null;
+		if(CollectionUtil.isEmpty(list)) {
+			throw new BusinessException(ErrorCodeConstants.Order.ORDER_NO_EXIST, "订单不存在");
+		}else{
+		    try {
+				OrdOrder ordOrder = list.get(0);
+				/* 2.订单费用信息查询 */
+				List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(ordOrder.getTenantId(),
+						ordOrder.getOrderId(), "");
+				if(!CollectionUtil.isEmpty(orderFeeTotalList)) {
+					OrdOdFeeTotal ordOdFeeTotal = orderFeeTotalList.get(0);
+					orderApiVo=new OrdOrderApiVo();
+					orderApiVo.setTenantId(ordOrder.getTenantId());
+					orderApiVo.setUserId(ordOrder.getUserId());
+					orderApiVo.setAcctId(ordOrder.getAcctId());
+					orderApiVo.setSubsId(ordOrder.getSubsId());
+					orderApiVo.setOrderType(ordOrder.getOrderType());
+					orderApiVo.setDeliveryFlag(ordOrder.getDeliveryFlag());
+					orderApiVo.setOrderDesc(ordOrder.getOrderDesc());
+					orderApiVo.setKeywords(ordOrder.getKeywords());
+					orderApiVo.setRemark(ordOrder.getRemark());
+					orderApiVo.setState(ordOrder.getState());
+					orderApiVo.setBusiCode(ordOrder.getBusiCode());
+					orderApiVo.setDefaultPayStyle(ordOdFeeTotal.getPayStyle());
+					orderApiVo.setTotalFee(ordOdFeeTotal.getTotalFee());
+					orderApiVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
+					orderApiVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
+					orderApiVo.setOperDiscountDesc(ordOdFeeTotal.getOperDiscountDesc());
+					orderApiVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
+					orderApiVo.setPaidFee(ordOdFeeTotal.getPaidFee());
+					/*3.订单商品明细查询*/
+					List<OrdProductApiVo> ordProductApiList = this.getOrdProductApiList(ordOrder.getTenantId(), 
+							ordOrder.getOrderId());
+					orderApiVo.setProductApiList(ordProductApiList);
+					/*4.支付信息查询*/
+					OrdBalacneIf ordBalacneIf = this.getOrdBalacneIfList(ordOrder.getTenantId(),ordOrder.getOrderId());
+					if(ordBalacneIf!=null) {
+						orderApiVo.setPayStyle(ordBalacneIf.getPayStyle());
+						orderApiVo.setPayFee(ordBalacneIf.getPayFee());
+						orderApiVo.setBalacneIfId(ordBalacneIf.getBalacneIfId());
+					} 
+					/*5.订单扩展信息*/
+					List<OrdOdProdExtend> ordOdProdExtendList = this.getOrdOdProdExtendList(ordOrder.getTenantId(),
+							ordOrder.getOrderId());
+					if(!CollectionUtil.isEmpty(ordOdProdExtendList)) {
+						OrdOdProdExtend ordOdProdExtend = ordOdProdExtendList.get(0);
+						orderApiVo.setInfoJson( ordOdProdExtend.getInfoJson());
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+				throw new SystemException(ErrorCodeConstants.SYSTEM_ERROR, "系统异常");
+			}
+		}
+		response.setOrderApiVo(orderApiVo);
+		return response;
      }
     
     /**

@@ -48,6 +48,9 @@ public class OrderListSVImpl implements IOrderListSV {
     public QueryApiOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest)
             throws BusinessException, SystemException {
     	QueryApiOrderResponse response = ordOrderBusiSV.queryApiOrder(orderRequest);
+        ResponseHeader responseHeader = new ResponseHeader(true,
+                ExceptCodeConstants.Special.SUCCESS, "成功");
+        response.setResponseHeader(responseHeader);
         return response;
     }
 
