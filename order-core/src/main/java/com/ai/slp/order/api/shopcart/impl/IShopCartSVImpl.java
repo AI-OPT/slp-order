@@ -33,7 +33,7 @@ public class IShopCartSVImpl implements IShopCartSV {
      * @ApiCode SHOP_CART_0100
      */
     @Override
-    public CartProdOptRes addProd(CartProd cartProd) throws SystemException {
+    public CartProdOptRes addProd(CartProd cartProd) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(cartProd.getTenantId(),"");
         CartProdOptRes optRes = null;
         try {
@@ -56,7 +56,7 @@ public class IShopCartSVImpl implements IShopCartSV {
      * @ApiCode SHOP_CART_0101
      */
     @Override
-    public CartProdList queryCartOfUser(UserInfo userInfo) throws SystemException {
+    public CartProdList queryCartOfUser(UserInfo userInfo) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(userInfo.getTenantId(),"");
         CartProdList prodList = new CartProdList();
         try {
@@ -81,7 +81,7 @@ public class IShopCartSVImpl implements IShopCartSV {
      * @ApiCode SHOP_CART_0102
      */
     @Override
-    public CartProdOptRes updateProdNum(CartProd cartProd) throws SystemException {
+    public CartProdOptRes updateProdNum(CartProd cartProd) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(cartProd.getTenantId(),"");
         CartProdOptRes optRes = null;
         try {
@@ -104,7 +104,7 @@ public class IShopCartSVImpl implements IShopCartSV {
      * @ApiCode SHOP_CART_0103
      */
     @Override
-    public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd) throws SystemException {
+    public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(multiCartProd.getTenantId(),"");
         CartProdOptRes optRes = null;
         try {
@@ -127,17 +127,15 @@ public class IShopCartSVImpl implements IShopCartSV {
      * @ApiCode SHOP_CART_0104
      */
     @Override
-    public CartProdOptRes queryPointsOfCart(UserInfo userInfo) throws SystemException {
+    public CartProdOptRes queryPointsOfCart(UserInfo userInfo) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(userInfo.getTenantId(),"");
         CartProdOptRes optRes = null;
-        if (optRes == null)
-            throw new SystemException("","任性的错误");
-//        try {
-//            optRes = shopCartBusiSV.queryCartOptions(userInfo.getTenantId(),userInfo.getUserId());
-//        }catch (BusinessException|SystemException e){
-//            optRes = new CartProdOptRes();
-//            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
-//        }
+        try {
+            optRes = shopCartBusiSV.queryCartOptions(userInfo.getTenantId(),userInfo.getUserId());
+        }catch (BusinessException|SystemException e){
+            optRes = new CartProdOptRes();
+            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
+        }
         return optRes;
     }
 }
