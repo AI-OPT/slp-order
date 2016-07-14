@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
+import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -69,6 +70,6 @@ public interface IOrderListSV {
      */
     @POST
     @Path("/queryApiOrder")
-    QueryOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest) throws BusinessException, SystemException;
+    QueryApiOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest) throws BusinessException, SystemException;
 	
 }
