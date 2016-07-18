@@ -157,10 +157,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         for (OrdProductInfo ordProductInfo : ordProductInfoList) {
             StorageNumRes storageNumRes = this.querySkuInfo(request.getTenantId(),
                     ordProductInfo.getSkuId(), ordProductInfo.getBuySum());
-            /* if(!storageNumRes.getResponseHeader().getResultCode().equals(ResultCodeConstants.SUCCESS_CODE)){
-        	throw new BusinessException(storageNumRes.getResponseHeader().getResultCode(), 
+            boolean isSuccess = storageNumRes.getResponseHeader().getIsSuccess();
+            if(!isSuccess){
+            	throw new BusinessException(storageNumRes.getResponseHeader().getResultCode(), 
         			storageNumRes.getResponseHeader().getResultMessage());
-        	} */
+        	}
             Map<String, Integer> storageNum = storageNumRes.getStorageNum();
             if (storageNum == null) {
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
@@ -310,7 +311,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
                 }
                 orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
                         infoJson,batchFlag);
-
             }
 
         }
