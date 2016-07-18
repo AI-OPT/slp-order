@@ -112,10 +112,6 @@ public class OrdOrderApiVo extends BaseInfo{
 	 */
 	private Long payFee;
 	
-	/**
-	 * 附加信息
-	 */
-	private String infoJson;
 	
 	/**
      * 商品集合
@@ -290,21 +286,4 @@ public class OrdOrderApiVo extends BaseInfo{
 		this.payFee = payFee;
 	}
 
-	public String getInfoJson() {
-		return infoJson;
-	}
-
-	public void setInfoJson(String infoJson) {
-		this.infoJson = infoJson;
-	}
-	
-/*	public List<OrderPayApiVo> getPayApiList() {
-		return payApiList;
-	}
-
-	public void setPayApiList(List<OrderPayApiVo> payApiList) {
-		this.payApiList = payApiList;
-	}
-	*/
-	
 }
