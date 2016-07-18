@@ -94,8 +94,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
-
-
+    
     /**
      * 订单收费
      * 
@@ -388,16 +387,30 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
         }
         OrdOdProd parentOrdOdProd = ordOdProdList.get(0);
-        parentOrdOdProd.getTenantId();
         OrdOdProd ordOdProd = new OrdOdProd();
         BeanUtils.copyProperties(ordOdProd, parentOrdOdProd);
         ordOdProd.setProdDetalId(prodDetailId);
         ordOdProd.setOrderId(subOrderId);
         ordOdProd.setExtendInfo(prodExtendInfoValue);
         ordOdProdAtomSV.insertSelective(ordOdProd);
+        /*3.创建子订单-费用汇总表*/
+        OrdOdFeeTotal parentOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(tenantId, 
+        		parentOrdOrder.getOrderId());
+        if(parentOrdOdFeeTotal==null) {
+        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单费用总表为空");
+        }
+        OrdOdFeeTotal ordOdFeeTotal=new OrdOdFeeTotal();
+        BeanUtils.copyProperties(ordOdFeeTotal, parentOrdOdFeeTotal);
+        ordOdFeeTotal.setOrderId(subOrderId);
+        ordOdFeeTotal.setTotalFee(ordOdProd.getTotalFee());
+        ordOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
+        long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
+        ordOdFeeTotal.setAdjustFee(apaidFee);
+        ordOdFeeTotal.setPaidFee(apaidFee);
+        ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
+        ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
         /* 3.调用路由,并更新订单明细表 */
         this.callRoute(tenantId, prodDetailId, ordOdProd);
-
     }
 
     /**
@@ -512,8 +525,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         routeServReqVo.setAccountVal(ordOdProdBean.getExtendInfo());
         routeServReqVo.setBuyNum(1);
         routeServReqVo.setNotifyUrl(this.getNotifyUrl(OrdersConstants.O2P_NOTIFYURL));
-        routeServReqVo.setProId(ordOdProdBean.getSupplyId());
-        routeServReqVo.setUnitPrice(ordOdProdBean.getCostPrice());
+        routeServReqVo.setProId(ordOdProdBean.getSupplyId());//ordOdProdBean.getProdId()
+        routeServReqVo.setUnitPrice(ordOdProdBean.getCostPrice());//ordOdProdBean.getSalePrice();
         request.setRequestData(JSON.toJSONString(routeServReqVo));
         chargeMds(request);
     }
