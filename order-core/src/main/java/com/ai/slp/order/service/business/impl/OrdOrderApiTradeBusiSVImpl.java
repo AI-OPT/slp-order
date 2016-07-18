@@ -32,6 +32,7 @@ import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
+import com.ai.slp.order.constants.ResultCodeConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
@@ -109,11 +110,17 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
     private void checkOrder(String tenantId, String downstreamOrderId) {
         OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        if(StringUtil.isBlank(tenantId)) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "租户Id为空");
+        }
+        if(StringUtil.isBlank(downstreamOrderId)) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "下游订单为空");
+        }
         criteria.andTenantIdEqualTo(tenantId);
         criteria.andDownstreamOrderIdEqualTo(downstreamOrderId);
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         if (!CollectionUtil.isEmpty(list)) {
-            throw new BusinessException("110012", "下游订单已经存在[downstreamOrderId:" + downstreamOrderId
+            throw new BusinessException(ResultCodeConstants.ApiOrder.ORDER_REPEAT, "订单已经存在[downstreamOrderId:" + downstreamOrderId
                     + "]");
         }
     }
@@ -126,6 +133,12 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @return
      */
     private StorageNumRes querySkuInfo(OrderApiTradeCenterRequest request) {
+        if (StringUtil.isBlank(request.getUserId())) {
+            throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "用户Id为空");
+        }
+        if(StringUtil.isBlank(request.getBuySum()+"")) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"购买数量不能为空"); 
+        }
         StorageNumUseReq storageNumUseReq = new StorageNumUseReq();
         storageNumUseReq.setTenantId(request.getTenantId());
         storageNumUseReq.setSkuId(request.getSkuId());
@@ -136,7 +149,8 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         IStorageNumSV iStorageNumSV = DubboConsumerFactory.getService(IStorageNumSV.class);
         StorageNumRes useStorageNum = iStorageNumSV.useStorageNum(storageNumUseReq);
         if (useStorageNum == null)
-            throw new BusinessException("", "商品信息不存在[skuId:" + request.getSkuId() + "]");
+            throw new BusinessException(ResultCodeConstants.ApiOrder.PROD_NO_EXIST, 
+            		"商品信息不存在[skuId:" + request.getSkuId() + "]");
         ResponseHeader responseHeader = useStorageNum.getResponseHeader();
         boolean success = responseHeader.isSuccess();
         if (!success) {
@@ -159,13 +173,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
     private void createOrder(OrderApiTradeCenterRequest request, Timestamp sysDate, long orderId) {
         LOG.debug("开始处理订单主表[" + orderId + "]资料信息..");
         if (StringUtil.isBlank(request.getOrderType())) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单类型为空");
-        }
-        if (StringUtil.isBlank(request.getUserId())) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户Id为空");
-        }
-        if(StringUtil.isBlank(request.getUserType())) {
-        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户类型为空");
+            throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "订单类型为空");
         }
         OrdOrder ordOrder = new OrdOrder();
         ordOrder.setOrderId(orderId);
@@ -206,8 +214,11 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         LOG.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
         /* 1. 创建商品明细 */
         String infoJson = request.getInfoJson();
-        if(!StringUtil.isBlank(infoJson)&&infoJson.length()>7) {
-        	infoJson=infoJson.trim().substring(0, 7);        
+        if(StringUtil.isBlank(infoJson)) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"请求参数手机号信息为空"); 
+        }
+        if(StringUtil.isBlank(request.getChargeFee())) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"充值的费用为空"); 
         }
         IServiceNumSV serviceNumSV = DubboConsumerFactory.getService(IServiceNumSV.class);
         ServiceNum serviceNumByPhone = serviceNumSV.getServiceNumByPhone(infoJson);
@@ -217,7 +228,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         String orderType = request.getOrderType();
         Map<String, Integer> storageNum = storageNumRes.getStorageNum();
         if (storageNum == null) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
+            throw new BusinessException(ResultCodeConstants.ApiOrder.SKU_NO_EXIST, "商品库存为空");
         }
         long prodDetailId = SequenceUtil.createProdDetailId();
         OrdOdProd ordOdProd = new OrdOdProd();
@@ -269,7 +280,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_FLOWRATE_RECHARGE.equals(orderType)) {
             String infoJson = request.getInfoJson();
             if (infoJson == null)
-                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
+                throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,
                         "请求参数手机号信息为空");
             InfoJsonVo infoJsonVo = new InfoJsonVo();
             ProdExtendInfoVo prodExtendInfoVo = new ProdExtendInfoVo();
@@ -279,7 +290,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
             infoJsonVo.setProdExtendInfoVoList(prodExtendInfoVoList);
             String jsonString = JSON.toJSONString(infoJsonVo);
             orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
-                    jsonString, OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
+            		jsonString, OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
 
         }
     }
@@ -420,7 +431,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
             throw new BusinessException("", "余额扣款返回值为空[账户ID:" + request.getAcctId() + "]");
         ResponseHeader responseHeader = response.getResponseHeader();
         if (!responseHeader.isSuccess()) {
-            throw new BusinessException("110099", responseHeader.getResultMessage());
+            throw new BusinessException(ResultCodeConstants.ApiOrder.MONEY_NOT_ENOUGH, responseHeader.getResultMessage());
         }
         LOG.info("订单支付：扣款流水:" + response.getSerialNo());
         /* 2. 调用后台订单支付 */
