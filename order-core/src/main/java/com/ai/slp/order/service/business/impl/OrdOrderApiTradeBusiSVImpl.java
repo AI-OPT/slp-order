@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,11 +54,13 @@ import com.ai.slp.product.api.storageserver.param.StorageNumRes;
 import com.ai.slp.product.api.storageserver.param.StorageNumUseReq;
 import com.alibaba.fastjson.JSON;
 
+import sun.util.logging.resources.logging;
+
 @Service
 @Transactional
 public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
 
-    private static final Log LOG = LogFactory.getLog(OrdOrderApiTradeBusiSVImpl.class);
+    private static final Logger logger =LoggerFactory.getLogger(OrdOrderApiTradeBusiSVImpl.class);
 
     @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
@@ -77,28 +81,56 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
     public BaseResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
             SystemException {
         BaseResponse response = new BaseResponse();
-        /* 1.校验订单 */
+        /* 1.校验必填项*/
+        this.checkParamRequired(request);
+        /* 2.校验订单 */
         this.checkOrder(request.getTenantId(), request.getDownstreamOrderId());
-        /* 2.调用商品,使用库存 */
+        /* 3.调用商品,使用库存 */
         StorageNumRes querySkuInfo = this.querySkuInfo(request);
-        /* 3.创建业务订单信息 */
+        /* 4.创建业务订单信息 */
         long orderId = SequenceUtil.createOrderId();
-        LOG.debug("开始处理-订单号[" + orderId + "]订单提交..");
+        logger.debug("开始处理-订单号[" + orderId + "]订单提交..");
         Timestamp sysDate = DateUtil.getSysDate();
         this.createOrder(request, sysDate, orderId);
-        /* 4.创建商品明细信息 */
+        /* 5.创建商品明细信息 */
         this.createOrderProd(request, sysDate, orderId, querySkuInfo);
-        /* 5.费用信息处理 */
+        /* 6.费用信息处理 */
         long payFee = this.createFeeInfo(request, sysDate, orderId);
-        /* 6. 记录一条订单创建轨迹记录 */
+        /* 7. 记录一条订单创建轨迹记录 */
         this.writeOrderCreateStateChg(request, sysDate, orderId);
-        /* 7. 更新订单状态 */
+        /* 8. 更新订单状态 */
         this.updateOrderState(request.getTenantId(), sysDate, orderId);
-        /* 8. 订单支付 */
+        /* 9. 订单支付 */
         this.deductFund(request, payFee, orderId);
         return response;
     }
-
+    
+    
+    /**
+     * 参数必填项校验
+     */
+    private void checkParamRequired(OrderApiTradeCenterRequest request) {
+    	logger.info("参数校验...");
+    	if (StringUtil.isBlank(request.getUserId())) {
+    		throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "用户Id为空");
+    	}
+    	if (StringUtil.isBlank(request.getSkuId())) {
+    		throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "skuId为空");
+    	}
+        if(StringUtil.isBlank(request.getBuySum()+"")) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"购买数量不能为空"); 
+        }
+        if(StringUtil.isBlank(request.getInfoJson())) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"手机号信息为空"); 
+        }
+        if(StringUtil.isBlank(request.getChargeFee())) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"充值面额为空"); 
+        }
+        if(StringUtil.isBlank(request.getOrderType())) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"订单类型为空"); 
+        }
+    }
+    
     /**
      * 对订单进行校验
      * 
@@ -108,14 +140,14 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @ApiDocMethod
      */
     private void checkOrder(String tenantId, String downstreamOrderId) {
-        OrdOrderCriteria example = new OrdOrderCriteria();
-        OrdOrderCriteria.Criteria criteria = example.createCriteria();
         if(StringUtil.isBlank(tenantId)) {
         	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "租户Id为空");
         }
         if(StringUtil.isBlank(downstreamOrderId)) {
         	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "下游订单为空");
         }
+        OrdOrderCriteria example = new OrdOrderCriteria();
+        OrdOrderCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
         criteria.andDownstreamOrderIdEqualTo(downstreamOrderId);
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
@@ -133,12 +165,6 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @return
      */
     private StorageNumRes querySkuInfo(OrderApiTradeCenterRequest request) {
-        if (StringUtil.isBlank(request.getUserId())) {
-            throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "用户Id为空");
-        }
-        if(StringUtil.isBlank(request.getBuySum()+"")) {
-        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"购买数量不能为空"); 
-        }
         StorageNumUseReq storageNumUseReq = new StorageNumUseReq();
         storageNumUseReq.setTenantId(request.getTenantId());
         storageNumUseReq.setSkuId(request.getSkuId());
@@ -171,10 +197,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @ApiDocMethod
      */
     private void createOrder(OrderApiTradeCenterRequest request, Timestamp sysDate, long orderId) {
-        LOG.debug("开始处理订单主表[" + orderId + "]资料信息..");
-        if (StringUtil.isBlank(request.getOrderType())) {
-            throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "订单类型为空");
-        }
+    	logger.debug("开始处理订单主表[" + orderId + "]资料信息..");
         OrdOrder ordOrder = new OrdOrder();
         ordOrder.setOrderId(orderId);
         ordOrder.setTenantId(request.getTenantId());
@@ -211,15 +234,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      */
     private void createOrderProd(OrderApiTradeCenterRequest request, Timestamp sysDate,
             long orderId, StorageNumRes storageNumRes) {
-        LOG.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
+    	logger.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
         /* 1. 创建商品明细 */
         String infoJson = request.getInfoJson();
-        if(StringUtil.isBlank(infoJson)) {
-        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"请求参数手机号信息为空"); 
-        }
-        if(StringUtil.isBlank(request.getChargeFee())) {
-        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"充值的费用为空"); 
-        }
         IServiceNumSV serviceNumSV = DubboConsumerFactory.getService(IServiceNumSV.class);
         ServiceNum serviceNumByPhone = serviceNumSV.getServiceNumByPhone(infoJson);
         if(serviceNumByPhone==null){
@@ -291,7 +308,6 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
             String jsonString = JSON.toJSONString(infoJsonVo);
             orderFrameCoreSV.createOrdProdExtend(prodDetailId, orderId, request.getTenantId(),
             		jsonString, OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
-
         }
     }
 
@@ -372,7 +388,6 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         orderFrameCoreSV.ordOdStateChg(orderId, request.getTenantId(), null,
                 OrdersConstants.OrdOrder.State.NEW, OrdOdStateChg.ChgDesc.ORDER_CREATE, null, null,
                 null, sysDate);
-
     }
 
     /**
@@ -424,7 +439,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         transSummaryList.add(transSummary);
         deductParam.setTransSummary(transSummaryList);
         deductParam.setTotalAmount(payFee);
-        LOG.info("订单支付：请求参数:" + JSON.toJSONString(deductParam));
+        logger.info("订单支付：请求参数:" + JSON.toJSONString(deductParam));
         IDeductSV iDeductSV = DubboConsumerFactory.getService(IDeductSV.class);
         DeductResponse response = iDeductSV.deductFund(deductParam);
         if (response == null)
@@ -433,7 +448,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         if (!responseHeader.isSuccess()) {
             throw new BusinessException(ResultCodeConstants.ApiOrder.MONEY_NOT_ENOUGH, responseHeader.getResultMessage());
         }
-        LOG.info("订单支付：扣款流水:" + response.getSerialNo());
+        logger.info("订单支付：扣款流水:" + response.getSerialNo());
         /* 2. 调用后台订单支付 */
         try {
             OrderPayRequest payRequest = new OrderPayRequest();
@@ -448,10 +463,10 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
             if (payResponse == null) {
                 throw new BusinessException("", "订单支付返回值为空[订单ID:" + orderId + "]");
             }
-            LOG.info("订单支付成功：orderId=" + orderId);
+            logger.info("订单支付成功：orderId=" + orderId);
         } catch (Exception e) {
             e.printStackTrace();
-            LOG.error("调用订单支付服务失败：orderId=" + orderId);
+            logger.error("调用订单支付服务失败：orderId=" + orderId);
         }
     }
 
