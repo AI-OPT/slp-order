@@ -439,7 +439,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		}else{
 		    try {
 				OrdOrder ordOrder = list.get(0);
-				/* 2.订单费用信息查询 */
+				/* 1.订单费用信息查询 */
 				List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(ordOrder.getTenantId(),
 						ordOrder.getOrderId(), "");
 				if(!CollectionUtil.isEmpty(orderFeeTotalList)) {
@@ -463,24 +463,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					orderApiVo.setOperDiscountDesc(ordOdFeeTotal.getOperDiscountDesc());
 					orderApiVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
 					orderApiVo.setPaidFee(ordOdFeeTotal.getPaidFee());
-					/*3.订单商品明细查询*/
+					/*2.订单商品明细查询*/
 					List<OrdProductApiVo> ordProductApiList = this.getOrdProductApiList(ordOrder.getTenantId(), 
 							ordOrder.getOrderId());
 					orderApiVo.setProductApiList(ordProductApiList);
-					/*4.支付信息查询*/
-					OrdBalacneIf ordBalacneIf = this.getOrdBalacneIfList(ordOrder.getTenantId(),ordOrder.getOrderId());
-					if(ordBalacneIf!=null) {
-						orderApiVo.setPayStyle(ordBalacneIf.getPayStyle());
-						orderApiVo.setPayFee(ordBalacneIf.getPayFee());
-						orderApiVo.setBalacneIfId(ordBalacneIf.getBalacneIfId());
-					} 
-					/*5.订单扩展信息*/
-					List<OrdOdProdExtend> ordOdProdExtendList = this.getOrdOdProdExtendList(ordOrder.getTenantId(),
-							ordOrder.getOrderId());
-					if(!CollectionUtil.isEmpty(ordOdProdExtendList)) {
-						OrdOdProdExtend ordOdProdExtend = ordOdProdExtendList.get(0);
-						orderApiVo.setInfoJson( ordOdProdExtend.getInfoJson());
-					}
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -531,6 +517,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 apiVo.setChargeFee(prodAttrInfoVo.getChargeFee());
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 apiVo.setProductImage(productImage);
+                //附加信息
+                apiVo.setInfoJson(ordOdProd.getExtendInfo());
         		productList.add(apiVo);
 			}
         }
