@@ -365,7 +365,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         long subOrderId = SequenceUtil.createOrderId();
         OrdOrder childOrdOrder = new OrdOrder();
         BeanUtils.copyProperties(childOrdOrder, parentOrdOrder);
-
         childOrdOrder.setOrderId(subOrderId);
         childOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.YES);
         childOrdOrder.setParentOrderId(parentOrdOrder.getOrderId());
@@ -391,7 +390,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         BeanUtils.copyProperties(ordOdProd, parentOrdOdProd);
         ordOdProd.setProdDetalId(prodDetailId);
         ordOdProd.setOrderId(subOrderId);
-        ordOdProd.setExtendInfo(prodExtendInfoValue);
         ordOdProdAtomSV.insertSelective(ordOdProd);
         /*3.创建子订单-费用汇总表*/
         OrdOdFeeTotal parentOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(tenantId, 
@@ -410,7 +408,16 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ordOdFeeTotal.setPaidFee(apaidFee);
         ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
         ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
-        /* 3.调用路由,并更新订单明细表 */
+        /* 4.创建子订单商品明细信息扩展表*/
+        Long prodDetailExtendId = SequenceUtil.createProdDetailExtendId();
+        OrdOdProdExtend subOrdOdProdExtend=new OrdOdProdExtend();
+        subOrdOdProdExtend.setInfoJson(prodExtendInfoValue);
+        subOrdOdProdExtend.setOrderId(subOrderId);
+        subOrdOdProdExtend.setProdDetalId(prodDetailId);
+        subOrdOdProdExtend.setProdDetalExtendId(prodDetailExtendId);
+        subOrdOdProdExtend.setTenantId("SLP");
+        subOrdOdProdExtend.setBatchFlag(OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
+        /* 5.调用路由,并更新订单明细表 */
         this.callRoute(tenantId, prodDetailId, ordOdProd);
     }
 
