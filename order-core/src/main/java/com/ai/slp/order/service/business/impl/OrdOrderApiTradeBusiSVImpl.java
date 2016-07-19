@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,11 +48,12 @@ import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
+import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
 import com.ai.slp.product.api.storageserver.param.StorageNumRes;
 import com.ai.slp.product.api.storageserver.param.StorageNumUseReq;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
-import sun.util.logging.resources.logging;
 
 @Service
 @Transactional
@@ -101,10 +100,25 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         /* 8. 更新订单状态 */
         this.updateOrderState(request.getTenantId(), sysDate, orderId);
         /* 9. 订单支付 */
-        this.deductFund(request, payFee, orderId);
+        try {
+			this.deductFund(request, payFee, orderId);
+		} catch (BusinessException e) {
+			logger.error("余额不足时,库存回退...");
+			if(e.getErrorCode().equals(ResultCodeConstants.ApiOrder.MONEY_NOT_ENOUGH)) {
+				List<OrdOdProd> ordOdProds = this.getOrdOdProds(orderId);
+		        if (CollectionUtil.isEmpty(ordOdProds))
+		            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息["
+		                    + orderId + "]");
+		        for (OrdOdProd ordOdProd : ordOdProds) {
+		            Map<String, Integer> storageNum = JSON.parseObject(ordOdProd.getSkuStorageId(),
+		                    new TypeReference<Map<String, Integer>>(){});
+		            this.backStorageNum(ordOdProd.getTenantId(), ordOdProd.getSkuId(), storageNum);
+		        }
+			}
+			throw new BusinessException(e);
+		}
         return response;
     }
-    
     
     /**
      * 参数必填项校验
@@ -128,6 +142,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         }
         if(StringUtil.isBlank(request.getOrderType())) {
         	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"订单类型为空"); 
+        }
+        if(StringUtil.isBlank(request.getLockTime())) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"时间戳为空"); 
         }
     }
     
@@ -216,6 +233,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         ordOrder.setDeliveryFlag(OrdersConstants.OrdOrder.DeliveryFlag.NONE);
         ordOrder.setLockTime(DateUtil.getTimestamp(request.getOrderTime()));
         ordOrder.setOrderTime(sysDate);
+        ordOrder.setLockTime(DateUtil.getTimestamp(request.getLockTime()));
         ordOrder.setOrderDesc("");
         ordOrder.setKeywords("");
         ordOrder.setRemark("");
@@ -488,5 +506,46 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+    
+    /**
+     * 获取订单商品费用明细
+     * 
+     * @param orderId
+     * @return
+     * @throws Exception
+     * @author zhangxw
+     * @ApiDocMethod
+     */
+    private List<OrdOdProd> getOrdOdProds(Long orderId) throws BusinessException, SystemException {
+        OrdOdProdCriteria example = new OrdOdProdCriteria();
+        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+        // 添加搜索条件
+        if (orderId.intValue() != 0 && orderId != null) {
+            criteria.andOrderIdEqualTo(orderId);
+        }
+        return ordOdProdAtomSV.selectByExample(example);
+    }
+    
+    /**
+     * 库存回退
+     * 
+     * @param tenantId
+     * @param skuId
+     * @param storageNum
+     * @author zhangxw
+     * @ApiDocMethod
+     */
+    private void backStorageNum(String tenantId, String skuId, Map<String, Integer> storageNum) {
+        StorageNumBackReq storageNumBackReq = new StorageNumBackReq();
+        storageNumBackReq.setTenantId(tenantId);
+        storageNumBackReq.setSkuId(skuId);
+        storageNumBackReq.setStorageNum(storageNum);
+        IStorageNumSV iStorageNumSV = DubboConsumerFactory.getService(IStorageNumSV.class);
+        BaseResponse response = iStorageNumSV.backStorageNum(storageNumBackReq);
+        boolean success = response.getResponseHeader().isSuccess();
+        String resultMessage = response.getResponseHeader().getResultMessage();
+        if (!success)
+            throw new BusinessException("", "调用回退库存异常:" + skuId + "错误信息如下:" + resultMessage + "]");
     }
 }
