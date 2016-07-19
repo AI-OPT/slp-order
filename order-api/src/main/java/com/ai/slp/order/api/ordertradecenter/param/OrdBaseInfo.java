@@ -17,8 +17,8 @@ public class OrdBaseInfo implements Serializable {
     /**
      * 用户类型
      */
-    @NotBlank(message="用户类型不能为空")
     private String userType;
+    
     /**
      * 订单类型
      */
