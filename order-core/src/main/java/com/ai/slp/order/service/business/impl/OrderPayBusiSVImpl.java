@@ -328,7 +328,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         }
         List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
         if (CollectionUtil.isEmpty(ordOdProdExtendList)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息-扩展表信息为空");
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息扩展表不存在[orderId:"+ordOrder.getOrderId()+"]");
         }
         /* 2.遍历取出值信息 */
         for (OrdOdProdExtend ordOdProdExtend : ordOdProdExtendList) {
@@ -375,7 +375,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         OrdOdProdCriteria example = new OrdOdProdCriteria();
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
-
         if (parentOrdOrder.getOrderId() != 0) {
             criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
         }
@@ -384,7 +383,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         }
         List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
         if (CollectionUtil.isEmpty(ordOdProdList)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+            		"商品明细信息不存在[orderId:"+parentOrdOrder.getOrderId()+"prodDetalId:"+parentProdDetalId+"]");
         }
         OrdOdProd parentOrdOdProd = ordOdProdList.get(0);
         OrdOdProd ordOdProd = new OrdOdProd();
@@ -397,7 +397,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         OrdOdFeeTotal parentOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(tenantId, 
         		parentOrdOrder.getOrderId());
         if(parentOrdOdFeeTotal==null) {
-        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单费用总表为空");
+        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+        			"订单费用总表[orderId:"+parentOrdOrder.getOrderId()+"]");
         }
         OrdOdFeeTotal ordOdFeeTotal=new OrdOdFeeTotal();
         BeanUtils.copyProperties(ordOdFeeTotal, parentOrdOdFeeTotal);
