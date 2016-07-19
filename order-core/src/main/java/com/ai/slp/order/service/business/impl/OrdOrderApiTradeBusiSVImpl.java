@@ -131,8 +131,8 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
     	if (StringUtil.isBlank(request.getSkuId())) {
     		throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "skuId为空");
     	}
-        if(StringUtil.isBlank(request.getBuySum()+"")) {
-        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"购买数量不能为空"); 
+        if(request.getBuySum()<=0) {
+        	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"购买数量不能为空并大于0"); 
         }
         if(StringUtil.isBlank(request.getInfoJson())) {
         	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"手机号信息为空"); 
