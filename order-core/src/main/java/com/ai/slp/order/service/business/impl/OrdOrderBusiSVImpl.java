@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.PageInfo;
-import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
@@ -35,8 +34,6 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.constants.ErrorCodeConstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.attach.OrdOrderAttach;
-import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
-import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -47,7 +44,6 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtendCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
-import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
@@ -87,9 +83,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 
     @Autowired
     private IOrdOrderAttachAtomSV ordOrderAttachAtomSV;
-    
-    @Autowired
-    private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
     
     @Override
     public QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest)
@@ -518,45 +511,30 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 apiVo.setProductImage(productImage);
                 //附加信息
-                apiVo.setInfoJson(ordOdProd.getExtendInfo());
+                List<OrdOdProdExtend> ordOdProdExtendList = this.getOrdOdProdExtendList(tenantId, 
+                		orderId,ordOdProd.getProdDetalId());
+                if(!CollectionUtil.isEmpty(ordOdProdExtendList)) {
+                	OrdOdProdExtend ordOdProdExtend = ordOdProdExtendList.get(0);
+                	apiVo.setInfoJson(ordOdProdExtend.getInfoJson());
+                }
         		productList.add(apiVo);
 			}
         }
     	return productList;
     }
     
-    
     /**
-     * 订单支付信息
-     * @param tenantId
-     * @param orderId
-     * @return
+     * 订单商品明细信息扩展表
      */
-    public OrdBalacneIf getOrdBalacneIfList(String tenantId, long orderId) {
-    	OrdBalacneIf ordBalacneIf =null;
-    	OrdBalacneIfCriteria example=new OrdBalacneIfCriteria();
-    	OrdBalacneIfCriteria.Criteria criteria = example.createCriteria();
-    	criteria.andTenantIdEqualTo(tenantId);
-    	criteria.andOrderIdEqualTo(orderId);
-    	List<OrdBalacneIf> ordBalacneIfList = ordBalacneIfAtomSV.selectByExample(example);
-    	if(!CollectionUtil.isEmpty(ordBalacneIfList)) {
-    		 ordBalacneIf = ordBalacneIfList.get(0);
-    	}
-    	return ordBalacneIf;
-    }
-    
-    /**
-     * 订单扩展信息
-     * @param tenantId
-     * @param orderId
-     * @return
-     */
-    public List<OrdOdProdExtend> getOrdOdProdExtendList(String tenantId, long orderId) {
+    public List<OrdOdProdExtend> getOrdOdProdExtendList(String tenantId,
+    		long orderId,long prodDetalId) {
     	OrdOdProdExtendCriteria example=new OrdOdProdExtendCriteria();
-    	OrdOdProdExtendCriteria.Criteria criteria = example.createCriteria();
+    	OrdOdProdExtendCriteria.Criteria criteria= example.createCriteria();
     	criteria.andTenantIdEqualTo(tenantId);
     	criteria.andOrderIdEqualTo(orderId);
-    	List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
+    	criteria.andProdDetalIdEqualTo(prodDetalId);
+    	List<OrdOdProdExtend> ordOdProdExtendList = 
+    			ordOdProdExtendAtomSV.selectByExample(example);
     	return ordOdProdExtendList;
     }
 }
