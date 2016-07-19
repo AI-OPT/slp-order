@@ -1,6 +1,5 @@
 package com.ai.slp.order.api.ordertradecenter.param;
 
-import java.sql.Timestamp;
 
 import com.ai.opt.base.vo.BaseInfo;
 
@@ -65,15 +64,10 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
     private String payStyle;
 
     /**
-     * 订单时间
+     * 时间戳
      */
     private String orderTime;
     
-    /**
-     * 时间戳
-     */
-    private String lockTime;
-
     /**
      * 手机号
      */
@@ -174,13 +168,4 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
     public void setInfoJson(String infoJson) {
         this.infoJson = infoJson;
     }
-
-	public String getLockTime() {
-		return lockTime;
-	}
-
-	public void setLockTime(String lockTime) {
-		this.lockTime = lockTime;
-	}
-    
 }
