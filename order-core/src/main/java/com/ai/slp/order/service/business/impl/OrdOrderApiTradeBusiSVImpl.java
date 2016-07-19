@@ -103,7 +103,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         try {
 			this.deductFund(request, payFee, orderId);
 		} catch (BusinessException e) {
-			logger.error("余额不足时,库存回退...");
+			logger.error("调取余额时出现问题,库存回退...");
 			if(e.getErrorCode().equals(ResultCodeConstants.ApiOrder.MONEY_NOT_ENOUGH)) {
 				List<OrdOdProd> ordOdProds = this.getOrdOdProds(orderId);
 		        if (CollectionUtil.isEmpty(ordOdProds))
@@ -143,7 +143,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         if(StringUtil.isBlank(request.getOrderType())) {
         	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"订单类型为空"); 
         }
-        if(StringUtil.isBlank(request.getLockTime())) {
+        if(StringUtil.isBlank(request.getOrderTime())) {
         	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"时间戳为空"); 
         }
     }
@@ -231,9 +231,8 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
         ordOrder.setDisplayFlagChgTime(sysDate);
         ordOrder.setDeliveryFlag(OrdersConstants.OrdOrder.DeliveryFlag.NONE);
-        ordOrder.setLockTime(DateUtil.getTimestamp(request.getOrderTime()));
+        ordOrder.setLockTime(DateUtil.getTimestamp(request.getOrderTime(),"yyyyMMddHHmmss"));
         ordOrder.setOrderTime(sysDate);
-        ordOrder.setLockTime(DateUtil.getTimestamp(request.getLockTime()));
         ordOrder.setOrderDesc("");
         ordOrder.setKeywords("");
         ordOrder.setRemark("");
