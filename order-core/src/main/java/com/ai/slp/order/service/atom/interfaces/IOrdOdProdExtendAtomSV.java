@@ -10,4 +10,6 @@ public interface IOrdOdProdExtendAtomSV {
     int insertSelective(OrdOdProdExtend record);
 
     List<OrdOdProdExtend> selectByExample(OrdOdProdExtendCriteria example);
+    
+    OrdOdProdExtend selectByPrimaryKey(long prodDetalExtendId);
 }
