@@ -39,6 +39,7 @@
     <result column="EXTERNAL_ORDER_ID" property="externalOrderId" jdbcType="VARCHAR" />
     <result column="EXTERNAL_SUPPLY_ID" property="externalSupplyId" jdbcType="VARCHAR" />
     <result column="DOWNSTREAM_ORDER_ID" property="downstreamOrderId" jdbcType="VARCHAR" />
+    <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -104,7 +105,7 @@
     STATE, STATE_CHG_TIME, DISPLAY_FLAG, DISPLAY_FLAG_CHG_TIME, DELIVERY_FLAG, LOCK_FLAG, 
     LOCK_TIME, ORDER_TIME, SELLER_ID, CHL_ID, OPER_ID, WORKFLOW_ID, REASON_TYPE, REASON_DESC, 
     FINISH_TIME, ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID, 
-    DOWNSTREAM_ORDER_ID
+    DOWNSTREAM_ORDER_ID,USER_TYPE
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" >
     select
