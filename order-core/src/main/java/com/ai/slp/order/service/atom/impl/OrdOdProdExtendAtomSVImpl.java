@@ -22,4 +22,9 @@ public class OrdOdProdExtendAtomSVImpl implements IOrdOdProdExtendAtomSV {
         return MapperFactory.getOrdOdProdExtendMapper().selectByExample(example);
     }
 
+	@Override
+	public OrdOdProdExtend selectByPrimaryKey(long prodDetalExtendId) {
+		return MapperFactory.getOrdOdProdExtendMapper().selectByPrimaryKey(prodDetalExtendId);
+	}
+
 }
