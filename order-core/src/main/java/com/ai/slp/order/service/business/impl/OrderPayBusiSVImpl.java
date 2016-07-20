@@ -1,17 +1,5 @@
 package com.ai.slp.order.service.business.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
@@ -30,20 +18,8 @@ import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
-import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
-import com.ai.slp.order.dao.mapper.bo.OrdOdFeeOffset;
-import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtendCriteria;
-import com.ai.slp.order.dao.mapper.bo.OrdOrder;
-import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeOffsetAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdProdExtendAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.dao.mapper.bo.*;
+import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
@@ -62,6 +38,17 @@ import com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProduct;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProductQueryVo;
 import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * 订单收费 Date: 2016年5月24日 <br>
@@ -595,8 +582,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     private void chargeMds(IRouteServerRequest request) {
         IMessageSender msgSender = MDSClientFactory
                 .getSenderClient(OrdersConstants.SLP_CHARGE_TOPIC);
-
-        msgSender.send(JSON.toJSONString(request), new Random(10000).nextLong());// 第二个参数为分区键，如果不分区，传入0
+        String context = JSON.toJSONString(request);
+        logger.info("\r\n{}",context);
+        msgSender.send(context, new Random(10000).nextLong());// 第二个参数为分区键，如果不分区，传入0
         logger.info("send sucess...");
     }
 

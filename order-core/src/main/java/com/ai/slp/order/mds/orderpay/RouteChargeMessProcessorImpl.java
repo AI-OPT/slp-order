@@ -1,10 +1,5 @@
 package com.ai.slp.order.mds.orderpay;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.ai.opt.base.exception.BusinessException;
-import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
@@ -17,6 +12,8 @@ import com.ai.slp.route.api.server.interfaces.IRouteServer;
 import com.ai.slp.route.api.server.params.IRouteServerRequest;
 import com.ai.slp.route.api.server.params.RouteServerResponse;
 import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 充值消息处理 Date: 2016年6月16日 <br>
@@ -39,6 +36,7 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         if (null == message)
             return;
         String content = new String(message.getMessage(), "UTF-8");
+        System.out.println("RouteChargeMessProcessorImpl "+content);
         logger.info("--Topic:{}\r\n----key:{}\r\n----content:{}", message.getTopic(), new String(
                 message.getKey(), "UTF-8"), content);
 
@@ -51,7 +49,9 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         RouteServerResponse response = iRouteServer.callServerByRouteId(request);
         String responseData = response.getResponseData();
         if (StringUtil.isBlank(responseData)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "充值路由返回参数为空");
+            logger.info("error");
+            return;
+//            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "充值路由返回参数为空");
         }
         logger.info("更新订单表.........");
         RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
