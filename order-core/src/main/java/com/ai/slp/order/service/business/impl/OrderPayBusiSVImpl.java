@@ -417,6 +417,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         subOrdOdProdExtend.setProdDetalExtendId(prodDetailExtendId);
         subOrdOdProdExtend.setTenantId("SLP");
         subOrdOdProdExtend.setBatchFlag(OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
+        ordOdProdExtendAtomSV.insertSelective(subOrdOdProdExtend);
         /* 5.调用路由,并更新订单明细表 */
         this.callRoute(tenantId, prodDetailId, ordOdProd);
     }
