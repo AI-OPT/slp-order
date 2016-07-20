@@ -1,7 +1,5 @@
 package com.ai.slp.order.mds.orderpay;
 
-import com.ai.opt.base.exception.BusinessException;
-import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
@@ -51,7 +49,9 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         RouteServerResponse response = iRouteServer.callServerByRouteId(request);
         String responseData = response.getResponseData();
         if (StringUtil.isBlank(responseData)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "充值路由返回参数为空");
+            logger.info("error");
+            return;
+//            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "充值路由返回参数为空");
         }
         logger.info("更新订单表.........");
         RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
