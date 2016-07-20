@@ -419,7 +419,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         subOrdOdProdExtend.setBatchFlag(OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
         ordOdProdExtendAtomSV.insertSelective(subOrdOdProdExtend);
         /* 5.调用路由,并更新订单明细表 */
-        this.callRoute(tenantId, prodDetailId, ordOdProd);
+        this.callRoute(tenantId, prodDetailId, ordOdProd,prodDetailExtendId);
     }
 
     /**
@@ -483,7 +483,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @param string
      * @ApiDocMethod
      */
-    private void callRoute(String tenantId, long prodDetailId, OrdOdProd ordOdProd) {
+    private void callRoute(String tenantId, long prodDetailId, OrdOdProd ordOdProd,long prodDetailExtendId) {
         /* 1.获取路由组ID */
         String routeGroupId = this.getRouteGroupId(tenantId, ordOdProd.getProdId());
         /* 2.路由计算获取路由ID */
@@ -516,7 +516,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         }
         List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
         if (CollectionUtil.isEmpty(ordOdProdList)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息");
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息[prodDetailId"+prodDetailId+"]");
         }
         OrdOdProd ordOdProdBean = ordOdProdList.get(0);
         ordOdProdBean.setRouteId(routeId);
@@ -524,6 +524,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ordOdProdBean.setSellerId(supplyProduct.getSellerId());
         ordOdProdBean.setCostPrice(supplyProduct.getCostPrice());
         ordOdProdAtomSV.updateById(ordOdProdBean);
+        OrdOdProdExtend ordOdProdExtend = ordOdProdExtendAtomSV.selectByPrimaryKey(prodDetailExtendId);
+        if(ordOdProdExtend==null) {
+        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息[prodDetailExtendId:"+prodDetailExtendId+"]");
+        }
         /* 5.充值路由 */
         IRouteServerRequest request = new IRouteServerRequest();
         request.setTenantId(tenantId);
@@ -531,7 +535,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         RouteServReqVo routeServReqVo = new RouteServReqVo();
         routeServReqVo.setOrderId(String.valueOf(ordOdProd.getOrderId()));
         routeServReqVo.setBizType(ordOdProdBean.getProdType());
-        routeServReqVo.setAccountVal(ordOdProdBean.getExtendInfo());
+        routeServReqVo.setAccountVal(ordOdProdExtend.getInfoJson());
         routeServReqVo.setBuyNum(1);
         routeServReqVo.setNotifyUrl(this.getNotifyUrl(OrdersConstants.O2P_NOTIFYURL));
         routeServReqVo.setProId(ordOdProdBean.getProdId());
