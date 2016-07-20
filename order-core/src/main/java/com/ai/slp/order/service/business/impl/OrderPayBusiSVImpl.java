@@ -534,8 +534,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         routeServReqVo.setAccountVal(ordOdProdBean.getExtendInfo());
         routeServReqVo.setBuyNum(1);
         routeServReqVo.setNotifyUrl(this.getNotifyUrl(OrdersConstants.O2P_NOTIFYURL));
-        routeServReqVo.setProId(ordOdProdBean.getSupplyId());//ordOdProdBean.getProdId()
-        routeServReqVo.setUnitPrice(ordOdProdBean.getCostPrice());//ordOdProdBean.getSalePrice();
+        routeServReqVo.setProId(ordOdProdBean.getProdId());
+        routeServReqVo.setUnitPrice(ordOdProdBean.getSalePrice()*30);
         request.setRequestData(JSON.toJSONString(routeServReqVo));
         chargeMds(request);
     }
