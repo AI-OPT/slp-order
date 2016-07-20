@@ -42,8 +42,20 @@ public class RouteServReqVo {
      * 回调通知地址
      */
     private String notifyUrl;
+    
+    private String coSysId;
+    
+    
 
-    public String getOrderId() {
+    public String getCoSysId() {
+		return coSysId;
+	}
+
+	public void setCoSysId(String coSysId) {
+		this.coSysId = coSysId;
+	}
+
+	public String getOrderId() {
         return orderId;
     }
 
