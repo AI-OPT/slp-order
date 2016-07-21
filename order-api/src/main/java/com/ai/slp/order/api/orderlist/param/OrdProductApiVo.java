@@ -80,11 +80,6 @@ public class OrdProductApiVo extends BaseInfo{
      */
     private String skuId;
     
-    /**
-	 * 附加信息
-	 */
-	private String infoJson;
-    
 	public String getProdId() {
 		return prodId;
 	}
@@ -197,12 +192,4 @@ public class OrdProductApiVo extends BaseInfo{
 		this.adjustFee = adjustFee;
 	}
 
-	public String getInfoJson() {
-		return infoJson;
-	}
-
-	public void setInfoJson(String infoJson) {
-		this.infoJson = infoJson;
-	}
-	
 }
