@@ -143,7 +143,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         if(StringUtil.isBlank(request.getOrderType())) {
         	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"订单类型为空"); 
         }
-        if(StringUtil.isBlank(request.getOrderTime())) {
+        if(StringUtil.isBlank(request.getLockTime())) {
         	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY,"时间戳为空"); 
         }
     }
@@ -231,7 +231,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
         ordOrder.setDisplayFlagChgTime(sysDate);
         ordOrder.setDeliveryFlag(OrdersConstants.OrdOrder.DeliveryFlag.NONE);
-        ordOrder.setLockTime(DateUtil.getTimestamp(request.getOrderTime(),"yyyyMMddHHmmss"));
+        ordOrder.setLockTime(DateUtil.getTimestamp(request.getLockTime(),"yyyyMMddHHmmss"));
         ordOrder.setOrderTime(sysDate);
         ordOrder.setOrderDesc("");
         ordOrder.setKeywords("");
