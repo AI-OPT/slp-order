@@ -21,7 +21,6 @@ import com.ai.slp.common.api.cache.param.SysParam;
 import com.ai.slp.common.api.cache.param.SysParamSingleCond;
 import com.ai.slp.order.api.orderlist.param.OrdOrderApiVo;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
-import com.ai.slp.order.api.orderlist.param.OrdProductApiVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
 import com.ai.slp.order.api.orderlist.param.OrderPayVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
@@ -431,35 +430,34 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			throw new BusinessException(ErrorCodeConstants.Order.ORDER_NO_EXIST, "订单不存在");
 		}else{
 		    try {
-				OrdOrder ordOrder = list.get(0);
-				/* 1.订单费用信息查询 */
-				List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(ordOrder.getTenantId(),
-						ordOrder.getOrderId(), "");
-				if(!CollectionUtil.isEmpty(orderFeeTotalList)) {
-					OrdOdFeeTotal ordOdFeeTotal = orderFeeTotalList.get(0);
-					orderApiVo=new OrdOrderApiVo();
-					orderApiVo.setTenantId(ordOrder.getTenantId());
-					orderApiVo.setUserId(ordOrder.getUserId());
-					orderApiVo.setAcctId(ordOrder.getAcctId());
-					orderApiVo.setSubsId(ordOrder.getSubsId());
-					orderApiVo.setOrderType(ordOrder.getOrderType());
-					orderApiVo.setDeliveryFlag(ordOrder.getDeliveryFlag());
-					orderApiVo.setOrderDesc(ordOrder.getOrderDesc());
-					orderApiVo.setKeywords(ordOrder.getKeywords());
-					orderApiVo.setRemark(ordOrder.getRemark());
-					orderApiVo.setState(ordOrder.getState());
-					orderApiVo.setBusiCode(ordOrder.getBusiCode());
-					orderApiVo.setDefaultPayStyle(ordOdFeeTotal.getPayStyle());
-					orderApiVo.setTotalFee(ordOdFeeTotal.getTotalFee());
-					orderApiVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
-					orderApiVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
-					orderApiVo.setOperDiscountDesc(ordOdFeeTotal.getOperDiscountDesc());
-					orderApiVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
-					orderApiVo.setPaidFee(ordOdFeeTotal.getPaidFee());
-					/*2.订单商品明细查询*/
-					List<OrdProductApiVo> ordProductApiList = this.getOrdProductApiList(ordOrder.getTenantId(), 
-							ordOrder.getOrderId());
-					orderApiVo.setProductApiList(ordProductApiList);
+		    	for (OrdOrder ordOrder : list) {
+		    		/* 1.订单费用信息查询 */
+		    		List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(ordOrder.getTenantId(),
+		    				ordOrder.getOrderId(), "");
+		    		if(!CollectionUtil.isEmpty(orderFeeTotalList)) {
+		    			OrdOdFeeTotal ordOdFeeTotal = orderFeeTotalList.get(0);
+		    			orderApiVo=new OrdOrderApiVo();
+		    			orderApiVo.setTenantId(ordOrder.getTenantId());
+		    			orderApiVo.setUserId(ordOrder.getUserId());
+		    			orderApiVo.setAcctId(ordOrder.getAcctId());
+		    			orderApiVo.setSubsId(ordOrder.getSubsId());
+		    			orderApiVo.setOrderType(ordOrder.getOrderType());
+		    			orderApiVo.setDeliveryFlag(ordOrder.getDeliveryFlag());
+		    			orderApiVo.setOrderDesc(ordOrder.getOrderDesc());
+		    			orderApiVo.setKeywords(ordOrder.getKeywords());
+		    			orderApiVo.setRemark(ordOrder.getRemark());
+		    			orderApiVo.setState(ordOrder.getState());
+		    			orderApiVo.setBusiCode(ordOrder.getBusiCode());
+		    			orderApiVo.setDefaultPayStyle(ordOdFeeTotal.getPayStyle());
+		    			orderApiVo.setTotalFee(ordOdFeeTotal.getTotalFee());
+		    			orderApiVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
+		    			orderApiVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
+		    			orderApiVo.setOperDiscountDesc(ordOdFeeTotal.getOperDiscountDesc());
+		    			orderApiVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
+		    			orderApiVo.setPaidFee(ordOdFeeTotal.getPaidFee());
+		    			/*2.订单商品明细及扩展信息查询*/
+		    			this.getOrdProductApiList(ordOrder.getTenantId(), ordOrder.getOrderId(),orderApiVo);
+		    		}
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -473,54 +471,49 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     /**
      * 商品集合API
      */
-    private List<OrdProductApiVo> getOrdProductApiList(String tenantId, long orderId) { 
-    	List<OrdProductApiVo> productList = new ArrayList<OrdProductApiVo>();
+    private void getOrdProductApiList(String tenantId, long orderId,OrdOrderApiVo orderApiVo) { 
         OrdOdProdCriteria example = new OrdOdProdCriteria();
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
         criteria.andOrderIdEqualTo(orderId);
         List<OrdOdProd> ordOdProdApiList = ordOdProdAtomSV.selectByExample(example);
         if(!CollectionUtil.isEmpty(ordOdProdApiList)) {
-        	for (OrdOdProd ordOdProd : ordOdProdApiList) {
-        		OrdProductApiVo apiVo=new OrdProductApiVo();
-        		apiVo.setProdId(ordOdProd.getProdId());
-        		apiVo.setProdName(ordOdProd.getProdName());
-        		apiVo.setBuySum(ordOdProd.getBuySum());
-        		apiVo.setTotalFee(ordOdProd.getTotalFee());
-        		apiVo.setDiscountFee(ordOdProd.getDiscountFee());
-        		apiVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
-        		apiVo.setOperDiscountDesc(ordOdProd.getOperDiscountDesc());
-        		apiVo.setAdjustFee(ordOdProd.getAdjustFee());
+        	OrdOdProd ordOdProd = ordOdProdApiList.get(0);
+        		orderApiVo.setProdId(ordOdProd.getProdId());
+        		orderApiVo.setProdName(ordOdProd.getProdName());
+        		orderApiVo.setBuySum(ordOdProd.getBuySum());
+        		orderApiVo.setTotalFee(ordOdProd.getTotalFee());
+        		orderApiVo.setDiscountFee(ordOdProd.getDiscountFee());
+        		orderApiVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
+        		orderApiVo.setOperDiscountDesc(ordOdProd.getOperDiscountDesc());
+        		orderApiVo.setAdjustFee(ordOdProd.getAdjustFee());
         		//文档上返回报文体没有的
         		String extendInfo = ordOdProd.getExtendInfo();
         		ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo, ProdAttrInfoVo.class);
-        		apiVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
+        		orderApiVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
                 SysParamSingleCond sysParamBasicOrg = new SysParamSingleCond("SLP", "PRODUCT",
                           "BASIC_ORG_ID", prodAttrInfoVo.getBasicOrgId());
                 ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
                 SysParam sysParam = iCacheSV.getSysParamSingle(sysParamBasicOrg);
-                apiVo.setBasicOrgName(sysParam == null ? "" : sysParam.getColumnDesc());
+                orderApiVo.setBasicOrgName(sysParam == null ? "" : sysParam.getColumnDesc());
                 String provinceName = "";
                 if (!StringUtil.isBlank(prodAttrInfoVo.getProvinceCode())) {
                     provinceName = iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode());
                 }
-                apiVo.setProvinceName(provinceName);
-                apiVo.setProdName(ordOdProd.getProdName());
-                apiVo.setSkuId(ordOdProd.getSkuId());
-                apiVo.setChargeFee(prodAttrInfoVo.getChargeFee());
+                orderApiVo.setProvinceName(provinceName);
+                orderApiVo.setProdName(ordOdProd.getProdName());
+                orderApiVo.setSkuId(ordOdProd.getSkuId());
+                orderApiVo.setChargeFee(prodAttrInfoVo.getChargeFee());
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
-                apiVo.setProductImage(productImage);
+                orderApiVo.setProductImage(productImage);
                 //附加信息
                 List<OrdOdProdExtend> ordOdProdExtendList = this.getOrdOdProdExtendList(tenantId, 
                 		orderId,ordOdProd.getProdDetalId());
                 if(!CollectionUtil.isEmpty(ordOdProdExtendList)) {
                 	OrdOdProdExtend ordOdProdExtend = ordOdProdExtendList.get(0);
-                	apiVo.setInfoJson(ordOdProdExtend.getInfoJson());
+                	orderApiVo.setInfoJson(ordOdProdExtend.getInfoJson());
                 }
-        		productList.add(apiVo);
-			}
         }
-    	return productList;
     }
     
     /**
