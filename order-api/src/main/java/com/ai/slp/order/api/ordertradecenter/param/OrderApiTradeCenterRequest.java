@@ -66,7 +66,7 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
     /**
      * 时间戳
      */
-    private String orderTime;
+    private String lockTime;
     
     /**
      * 手机号
@@ -109,8 +109,8 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
         return payStyle;
     }
 
-    public String getOrderTime() {
-        return orderTime;
+    public String getLockTime() {
+        return lockTime;
     }
 
     public void setUserId(String userId) {
@@ -149,8 +149,8 @@ public class OrderApiTradeCenterRequest extends BaseInfo {
         this.payStyle = payStyle;
     }
 
-    public void setOrderTime(String orderTime) {
-        this.orderTime = orderTime;
+    public void setLockTime(String lockTime) {
+        this.lockTime = lockTime;
     }
 
     public String getDownstreamOrderId() {
