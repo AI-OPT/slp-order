@@ -21,6 +21,7 @@ import com.ai.slp.common.api.cache.param.SysParam;
 import com.ai.slp.common.api.cache.param.SysParamSingleCond;
 import com.ai.slp.order.api.orderlist.param.OrdOrderApiVo;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
+import com.ai.slp.order.api.orderlist.param.OrdProductApiVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
 import com.ai.slp.order.api.orderlist.param.OrderPayVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
@@ -425,11 +426,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		criteria.andUserIdEqualTo(orderRequest.getUserId());
 		criteria.andSubFlagEqualTo(OrdersConstants.OrdOrder.SubFlag.YES);
 		List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
+		List<OrdOrderApiVo> ordOrderApiVos=null;
 		OrdOrderApiVo orderApiVo=null;
 		if(CollectionUtil.isEmpty(list)) {
 			throw new BusinessException(ErrorCodeConstants.Order.ORDER_NO_EXIST, "订单不存在");
 		}else{
 		    try {
+		    	ordOrderApiVos=new ArrayList<OrdOrderApiVo>();
 		    	for (OrdOrder ordOrder : list) {
 		    		/* 1.订单费用信息查询 */
 		    		List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(ordOrder.getTenantId(),
@@ -448,7 +451,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		    			orderApiVo.setRemark(ordOrder.getRemark());
 		    			orderApiVo.setState(ordOrder.getState());
 		    			orderApiVo.setBusiCode(ordOrder.getBusiCode());
-		    			orderApiVo.setDefaultPayStyle(ordOdFeeTotal.getPayStyle());
+		    			orderApiVo.setPayStyle(ordOdFeeTotal.getPayStyle());
 		    			orderApiVo.setTotalFee(ordOdFeeTotal.getTotalFee());
 		    			orderApiVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
 		    			orderApiVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
@@ -457,6 +460,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		    			orderApiVo.setPaidFee(ordOdFeeTotal.getPaidFee());
 		    			/*2.订单商品明细及扩展信息查询*/
 		    			this.getOrdProductApiList(ordOrder.getTenantId(), ordOrder.getOrderId(),orderApiVo);
+		    			ordOrderApiVos.add(orderApiVo);
 		    		}
 				}
 			} catch (Exception e) {
@@ -464,7 +468,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				throw new SystemException(ErrorCodeConstants.SYSTEM_ERROR, "系统异常");
 			}
 		}
-		response.setOrderApiVo(orderApiVo);
+		response.setOrderApiVo(ordOrderApiVos);
 		return response;
      }
     
@@ -479,35 +483,37 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         List<OrdOdProd> ordOdProdApiList = ordOdProdAtomSV.selectByExample(example);
         if(!CollectionUtil.isEmpty(ordOdProdApiList)) {
         	OrdOdProd ordOdProd = ordOdProdApiList.get(0);
-        		orderApiVo.setProdId(ordOdProd.getProdId());
-        		orderApiVo.setProdName(ordOdProd.getProdName());
-        		orderApiVo.setBuySum(ordOdProd.getBuySum());
-        		orderApiVo.setTotalFee(ordOdProd.getTotalFee());
-        		orderApiVo.setDiscountFee(ordOdProd.getDiscountFee());
-        		orderApiVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
-        		orderApiVo.setOperDiscountDesc(ordOdProd.getOperDiscountDesc());
-        		orderApiVo.setAdjustFee(ordOdProd.getAdjustFee());
+        	OrdProductApiVo ordProductApiVo=new OrdProductApiVo();
+        	ordProductApiVo.setProdId(ordOdProd.getProdId());
+        	ordProductApiVo.setProdName(ordOdProd.getProdName());
+        	ordProductApiVo.setBuySum(ordOdProd.getBuySum());
+        	ordProductApiVo.setTotalFee(ordOdProd.getTotalFee());
+        	ordProductApiVo.setDiscountFee(ordOdProd.getDiscountFee());
+        	ordProductApiVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
+        	ordProductApiVo.setOperDiscountDesc(ordOdProd.getOperDiscountDesc());
+        	ordProductApiVo.setAdjustFee(ordOdProd.getAdjustFee());
         		//文档上返回报文体没有的
         		String extendInfo = ordOdProd.getExtendInfo();
         		ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo, ProdAttrInfoVo.class);
-        		orderApiVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
+        		ordProductApiVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
                 SysParamSingleCond sysParamBasicOrg = new SysParamSingleCond("SLP", "PRODUCT",
                           "BASIC_ORG_ID", prodAttrInfoVo.getBasicOrgId());
                 ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
                 SysParam sysParam = iCacheSV.getSysParamSingle(sysParamBasicOrg);
-                orderApiVo.setBasicOrgName(sysParam == null ? "" : sysParam.getColumnDesc());
+                ordProductApiVo.setBasicOrgName(sysParam == null ? "" : sysParam.getColumnDesc());
                 String provinceName = "";
                 if (!StringUtil.isBlank(prodAttrInfoVo.getProvinceCode())) {
                     provinceName = iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode());
                 }
-                orderApiVo.setProvinceName(provinceName);
-                orderApiVo.setProdName(ordOdProd.getProdName());
-                orderApiVo.setSkuId(ordOdProd.getSkuId());
-                orderApiVo.setChargeFee(prodAttrInfoVo.getChargeFee());
+                ordProductApiVo.setProvinceName(provinceName);
+                ordProductApiVo.setProdName(ordOdProd.getProdName());
+                ordProductApiVo.setSkuId(ordOdProd.getSkuId());
+                ordProductApiVo.setChargeFee(prodAttrInfoVo.getChargeFee());
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
-                orderApiVo.setProductImage(productImage);
+                ordProductApiVo.setProductImage(productImage);
+                orderApiVo.setOrdProductApiVo(ordProductApiVo);
                 //附加信息
-                List<OrdOdProdExtend> ordOdProdExtendList = this.getOrdOdProdExtendList(tenantId, 
+                List<OrdOdProdExtend> ordOdProdExtendList = this.getOrdOdProdExtendList(tenantId,
                 		orderId,ordOdProd.getProdDetalId());
                 if(!CollectionUtil.isEmpty(ordOdProdExtendList)) {
                 	OrdOdProdExtend ordOdProdExtend = ordOdProdExtendList.get(0);
