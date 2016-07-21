@@ -1,6 +1,5 @@
 package com.ai.slp.order.api.orderlist.param;
 
-import java.util.List;
 
 import com.ai.opt.base.vo.BaseInfo;
 
@@ -69,30 +68,6 @@ public class OrdOrderApiVo extends BaseInfo{
     private String defaultPayStyle;
     
     /**
-     * 总费用
-     */
-    private Long totalFee;
-    
-    /**
-     * 总优惠金额 
-     */
-    private Long discountFee;
-    
-    /**
-     * 减免金额
-     */
-    private Long operDiscountFee;
-    
-    /**
-     * 减免原因
-     */
-    private String operDiscountDesc;
-    /**
-     * 总应收费用
-     */
-    private Long adjustFee;
-    
-    /**
      * 总已收费用
      */
     private Long paidFee;
@@ -114,10 +89,79 @@ public class OrdOrderApiVo extends BaseInfo{
 	
 	
 	/**
-     * 商品集合
+     * 销售品ID
      */
-    private List<OrdProductApiVo> productApiList;
+    private String prodId;
+    
+    /**
+     * 销售品名称
+     */
+    private String prodName;
+    
+    /**
+     * 购买数量
+     */
+    private Long buySum; 
+    
+    /**
+     * 总费用
+     */
+    private Long totalFee;
+    
+    /**
+     * 优惠费用
+     */
+    private Long discountFee;
+    
+    /**
+     * 减免金额
+     */
+    private Long operDiscountFee;
+    
+    /**
+     * 减免原因
+     */
+    private String operDiscountDesc;
+    /**
+     * 应收费用
+     */
+    private Long adjustFee;
+    
+    /**
+     * 运营商(商品附加信息)
+     */
+    private String basicOrgId;
+    
+    /**
+     * 运营商
+     */
+    private String basicOrgName;
 
+    /**
+     * 省份
+     */
+    private String provinceName;
+
+    /**
+     * 充值面额(商品附加信息)
+     */
+    private String chargeFee;
+    
+    /**
+     * 商品图片
+     */
+    private ProductImage productImage;
+    
+    /**
+     * 单品ID
+     */
+    private String skuId;
+    
+	/**
+	 * 附加信息
+	 */
+	private String infoJson;
+    
 	public String getUserId() {
 		return userId;
 	}
@@ -188,14 +232,6 @@ public class OrdOrderApiVo extends BaseInfo{
 
 	public void setRemark(String remark) {
 		this.remark = remark;
-	}
-
-	public List<OrdProductApiVo> getProductApiList() {
-		return productApiList;
-	}
-
-	public void setProductApiList(List<OrdProductApiVo> productApiList) {
-		this.productApiList = productApiList;
 	}
 
 	public String getState() {
@@ -285,5 +321,87 @@ public class OrdOrderApiVo extends BaseInfo{
 	public void setPayFee(Long payFee) {
 		this.payFee = payFee;
 	}
+
+	public String getProdId() {
+		return prodId;
+	}
+
+	public void setProdId(String prodId) {
+		this.prodId = prodId;
+	}
+
+	public String getProdName() {
+		return prodName;
+	}
+
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
+	public Long getBuySum() {
+		return buySum;
+	}
+
+	public void setBuySum(Long buySum) {
+		this.buySum = buySum;
+	}
+
+	public String getBasicOrgId() {
+		return basicOrgId;
+	}
+
+	public void setBasicOrgId(String basicOrgId) {
+		this.basicOrgId = basicOrgId;
+	}
+
+	public String getBasicOrgName() {
+		return basicOrgName;
+	}
+
+	public void setBasicOrgName(String basicOrgName) {
+		this.basicOrgName = basicOrgName;
+	}
+
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public String getChargeFee() {
+		return chargeFee;
+	}
+
+	public void setChargeFee(String chargeFee) {
+		this.chargeFee = chargeFee;
+	}
+
+	public ProductImage getProductImage() {
+		return productImage;
+	}
+
+	public void setProductImage(ProductImage productImage) {
+		this.productImage = productImage;
+	}
+
+	public String getSkuId() {
+		return skuId;
+	}
+
+	public void setSkuId(String skuId) {
+		this.skuId = skuId;
+	}
+
+	public String getInfoJson() {
+		return infoJson;
+	}
+
+	public void setInfoJson(String infoJson) {
+		this.infoJson = infoJson;
+	}
+	
+	
 
 }
