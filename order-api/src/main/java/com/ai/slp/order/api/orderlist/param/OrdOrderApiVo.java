@@ -65,43 +65,7 @@ public class OrdOrderApiVo extends BaseInfo{
     /**
      * 默认支付方式
      */
-    private String defaultPayStyle;
-    
-    /**
-     * 总已收费用
-     */
-    private Long paidFee;
-    
-	/**
-	 * 支付方式
-	 */
-	private String payStyle;
-	
-	/**
-	 * 支付流水
-	 */
-	private Long balacneIfId;
-	
-	/**
-	 * 支付金额
-	 */
-	private Long payFee;
-	
-	
-	/**
-     * 销售品ID
-     */
-    private String prodId;
-    
-    /**
-     * 销售品名称
-     */
-    private String prodName;
-    
-    /**
-     * 购买数量
-     */
-    private Long buySum; 
+    private String payStyle;
     
     /**
      * 总费用
@@ -109,12 +73,12 @@ public class OrdOrderApiVo extends BaseInfo{
     private Long totalFee;
     
     /**
-     * 优惠费用
+     * 总优惠金额
      */
     private Long discountFee;
     
     /**
-     * 减免金额
+     * 总减免费用
      */
     private Long operDiscountFee;
     
@@ -122,46 +86,32 @@ public class OrdOrderApiVo extends BaseInfo{
      * 减免原因
      */
     private String operDiscountDesc;
+    
     /**
-     * 应收费用
+     * 总应收费用
      */
     private Long adjustFee;
     
     /**
-     * 运营商(商品附加信息)
+     * 总已收费用
      */
-    private String basicOrgId;
-    
-    /**
-     * 运营商
-     */
-    private String basicOrgName;
-
-    /**
-     * 省份
-     */
-    private String provinceName;
-
-    /**
-     * 充值面额(商品附加信息)
-     */
-    private String chargeFee;
-    
-    /**
-     * 商品图片
-     */
-    private ProductImage productImage;
-    
-    /**
-     * 单品ID
-     */
-    private String skuId;
+    private Long paidFee;
     
 	/**
 	 * 附加信息
 	 */
 	private String infoJson;
-    
+	
+	private OrdProductApiVo ordProductApiVo;
+	
+	public OrdProductApiVo getOrdProductApiVo() {
+		return ordProductApiVo;
+	}
+
+	public void setOrdProductApiVo(OrdProductApiVo ordProductApiVo) {
+		this.ordProductApiVo = ordProductApiVo;
+	}
+
 	public String getUserId() {
 		return userId;
 	}
@@ -296,102 +246,6 @@ public class OrdOrderApiVo extends BaseInfo{
 
 	public void setPaidFee(Long paidFee) {
 		this.paidFee = paidFee;
-	}
-
-	public String getDefaultPayStyle() {
-		return defaultPayStyle;
-	}
-
-	public void setDefaultPayStyle(String defaultPayStyle) {
-		this.defaultPayStyle = defaultPayStyle;
-	}
-
-	public Long getBalacneIfId() {
-		return balacneIfId;
-	}
-
-	public void setBalacneIfId(Long balacneIfId) {
-		this.balacneIfId = balacneIfId;
-	}
-
-	public Long getPayFee() {
-		return payFee;
-	}
-
-	public void setPayFee(Long payFee) {
-		this.payFee = payFee;
-	}
-
-	public String getProdId() {
-		return prodId;
-	}
-
-	public void setProdId(String prodId) {
-		this.prodId = prodId;
-	}
-
-	public String getProdName() {
-		return prodName;
-	}
-
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
-	}
-
-	public Long getBuySum() {
-		return buySum;
-	}
-
-	public void setBuySum(Long buySum) {
-		this.buySum = buySum;
-	}
-
-	public String getBasicOrgId() {
-		return basicOrgId;
-	}
-
-	public void setBasicOrgId(String basicOrgId) {
-		this.basicOrgId = basicOrgId;
-	}
-
-	public String getBasicOrgName() {
-		return basicOrgName;
-	}
-
-	public void setBasicOrgName(String basicOrgName) {
-		this.basicOrgName = basicOrgName;
-	}
-
-	public String getProvinceName() {
-		return provinceName;
-	}
-
-	public void setProvinceName(String provinceName) {
-		this.provinceName = provinceName;
-	}
-
-	public String getChargeFee() {
-		return chargeFee;
-	}
-
-	public void setChargeFee(String chargeFee) {
-		this.chargeFee = chargeFee;
-	}
-
-	public ProductImage getProductImage() {
-		return productImage;
-	}
-
-	public void setProductImage(ProductImage productImage) {
-		this.productImage = productImage;
-	}
-
-	public String getSkuId() {
-		return skuId;
-	}
-
-	public void setSkuId(String skuId) {
-		this.skuId = skuId;
 	}
 
 	public String getInfoJson() {
