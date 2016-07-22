@@ -122,7 +122,7 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         DepositParam depositParam = new DepositParam();
         depositParam.setTenantId(ordOrder.getTenantId());
         depositParam.setSystemId("slp-order");
-        long acctId = this.getAccountId(ordOrder.getTenantId(), ordOrder.getSubsId());
+        long acctId = this.getAccountId(ordOrder.getTenantId(), ordOrder.getAcctId());
         depositParam.setAccountId(acctId);
         depositParam.setBusiSerialNo(String.valueOf(ordOrder.getOrderId()));
         depositParam.setSubsId(ordOrder.getSubsId());
@@ -194,14 +194,14 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private long getAccountId(String tenantId, long subsId) {
+    private long getAccountId(String tenantId, long acctId) {
         AccountIdParam accountIdParam = new AccountIdParam();
         accountIdParam.setTenantId(tenantId);
-        accountIdParam.setAccountId(subsId);
+        accountIdParam.setAccountId(acctId);
         IAccountQuerySV accountQuerySV = DubboConsumerFactory.getService(IAccountQuerySV.class);
         AccountInfoVo accountInfoVo = accountQuerySV.queryAccontById(accountIdParam);
         if (accountInfoVo == null) {
-            throw new BusinessException("", "账户信息为空[用户ID:" + subsId + "]");
+            throw new BusinessException("", "账户信息为空[用户ID:" + acctId + "]");
         }
         return accountInfoVo.getAcctId();
     }
