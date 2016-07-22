@@ -53,4 +53,7 @@
 
 	<dubbo:reference id="iServiceNumSV"
 		interface="com.ai.slp.common.api.servicenum.interfaces.IServiceNumSV" />
+		
+	<dubbo:reference id="iAccountQuerySV"
+		interface="com.ai.slp.balance.api.accountquery.interfaces.IAccountQuerySV" />
 </beans>
