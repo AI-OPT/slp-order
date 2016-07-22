@@ -236,6 +236,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         ordOrder.setOrderDesc("");
         ordOrder.setKeywords("");
         ordOrder.setRemark("");
+        ordOrder.setAcctId(request.getAcctId());
         ordOrderAtomSV.insertSelective(ordOrder);
     }
 
