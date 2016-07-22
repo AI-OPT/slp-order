@@ -56,4 +56,7 @@
 		
 	<dubbo:reference id="iAccountQuerySV"
 		interface="com.ai.slp.balance.api.accountquery.interfaces.IAccountQuerySV" />
+		
+	<dubbo:reference id="iDepositSV"
+		interface="com.ai.slp.balance.api.deposit.interfaces.IDepositSV" />
 </beans>
