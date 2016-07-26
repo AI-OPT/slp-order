@@ -24,6 +24,7 @@ import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.InfoJsonVo;
+import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
 import com.ai.slp.order.vo.RouteServReqVo;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
@@ -527,7 +528,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         routeServReqVo.setNotifyUrl(this.getNotifyUrl(OrdersConstants.O2P_NOTIFYURL));
         routeServReqVo.setProId(ordOdProdBean.getProdId());
         routeServReqVo.setUnitPrice(ordOdProdBean.getSalePrice()*30);
-        routeServReqVo.setCoSysId("123123");
+        routeServReqVo.setCoSysId(ordOdProdBean.getSellerId());
+        String extendInfo = ordOdProdBean.getExtendInfo();
+      	ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo,ProdAttrInfoVo.class);
+      	routeServReqVo.setOperatorId(prodAttrInfoVo.getBasicOrgId()); 
         request.setRequestData(JSON.toJSONString(routeServReqVo));
         chargeMds(request);
     }
