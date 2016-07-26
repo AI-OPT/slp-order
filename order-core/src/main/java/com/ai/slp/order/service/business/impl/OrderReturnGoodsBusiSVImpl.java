@@ -122,7 +122,14 @@ public class OrderReturnGoodsBusiSVImpl implements IOrderReturnGoodBusiSV {
         DepositParam depositParam = new DepositParam();
         depositParam.setTenantId(ordOrder.getTenantId());
         depositParam.setSystemId("slp-order");
-        long acctId = this.getAccountId(ordOrder.getTenantId(), ordOrder.getAcctId());
+        long acctId;
+        if(ordOrder.getSubsId()==0 && ordOrder.getAcctId()!=0) {
+        	/*针对apiapply*/
+        	acctId=ordOrder.getAcctId();
+        }else {
+        	/*针对apply服务*/
+        	acctId = this.getAccountId(ordOrder.getTenantId(), ordOrder.getSubsId());
+        }
         depositParam.setAccountId(acctId);
         depositParam.setBusiSerialNo(String.valueOf(ordOrder.getOrderId()));
         depositParam.setSubsId(ordOrder.getSubsId());
