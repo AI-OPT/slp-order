@@ -10,8 +10,10 @@ import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.ordertradecenter.interfaces.IOrderTradeCenterSV;
 import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
+import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterResponse;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
+import com.ai.slp.order.constants.ResultCodeConstants;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderApiTradeBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -38,12 +40,17 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     }
 
     @Override
-    public BaseResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
+    public OrderApiTradeCenterResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
             SystemException {
-        BaseResponse response = ordOrderApiTradeBusiSV.apiApply(request);
-        ResponseHeader responseHeader = new ResponseHeader(true,
-                ExceptCodeConstants.Special.SUCCESS, "成功");
-        response.setResponseHeader(responseHeader);
+    	OrderApiTradeCenterResponse response;
+		try {
+			response = ordOrderApiTradeBusiSV.apiApply(request);
+			ResponseHeader responseHeader = new ResponseHeader(true,
+					ExceptCodeConstants.Special.SUCCESS, "成功");
+			response.setResponseHeader(responseHeader);
+		} catch (SystemException e) {
+			throw new SystemException(ResultCodeConstants.ApiOrder.SYSTEM_ERROR, "系统异常");
+		}
         return response;
     }
 
