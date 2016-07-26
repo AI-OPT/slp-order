@@ -30,6 +30,7 @@ import com.ai.slp.common.api.servicenum.param.ServiceNum;
 import com.ai.slp.order.api.orderpay.interfaces.IOrderPaySV;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
+import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterResponse;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.constants.ResultCodeConstants;
@@ -77,9 +78,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
     private IOrderPaySV iOrderPaySV;
 
     @Override
-    public BaseResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
+    public OrderApiTradeCenterResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
             SystemException {
-        BaseResponse response = new BaseResponse();
+    	OrderApiTradeCenterResponse response = new OrderApiTradeCenterResponse();
         /* 1.校验必填项*/
         this.checkParamRequired(request);
         /* 2.校验订单 */
@@ -102,6 +103,8 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         /* 9. 订单支付 */
         try {
 			this.deductFund(request, payFee, orderId);
+			response.setDownstreamOrderId(request.getDownstreamOrderId());
+			response.setState(OrdersConstants.OrdOrder.State.FINISH_PAID);
 		} catch (BusinessException e) {
 			logger.error("调取余额时出现问题,库存回退...");
 			if(e.getErrorCode().equals(ResultCodeConstants.ApiOrder.MONEY_NOT_ENOUGH)) {
