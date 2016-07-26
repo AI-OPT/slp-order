@@ -43,11 +43,25 @@ public class RouteServReqVo {
      */
     private String notifyUrl;
     
+    /**
+     * 供应商Id
+     */
     private String coSysId;
     
+    /**
+     *运营商 
+     */
+    private String operatorId;
     
+	public String getOperatorId() {
+		return operatorId;
+	}
 
-    public String getCoSysId() {
+	public void setOperatorId(String operatorId) {
+		this.operatorId = operatorId;
+	}
+
+	public String getCoSysId() {
 		return coSysId;
 	}
 
