@@ -8,8 +8,8 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
+import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterResponse;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 
@@ -55,7 +55,7 @@ public interface IOrderTradeCenterSV {
      */
     @POST
     @Path("/apiApply")
-    public BaseResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
+    public OrderApiTradeCenterResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
             SystemException;
 
 }
