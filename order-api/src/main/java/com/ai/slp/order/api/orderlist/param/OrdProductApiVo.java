@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.orderlist.param;
 
+import java.io.Serializable;
+
 import com.ai.opt.base.vo.BaseInfo;
 
 /**
@@ -7,7 +9,7 @@ import com.ai.opt.base.vo.BaseInfo;
  * @author caofz
  *
  */
-public class OrdProductApiVo extends BaseInfo{
+public class OrdProductApiVo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
