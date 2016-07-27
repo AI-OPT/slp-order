@@ -62,8 +62,9 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         	/*充值出现错误*/
             logger.info("error...");
             String requestData = request.getRequestData();
+            //requestData:{"accountVal":"13552497625","bizType":"10000010020000","buyNum":1,"coSysId":"130000000000000001","notifyUrl":"http://10.1.245.9:10887/slp-order/o2pservice/callback","operatorId":"10","orderId":"2000000373489477","proId":"1000000000000055","unitPrice":300}
             logger.info("requestData:"+requestData);
-            String regex="\'orderId\':\'(.*?)\',\'proId\'";
+            String regex="'orderId':'(.*?)','proId'";
             Matcher matcher=Pattern.compile(regex).matcher(requestData);  
             while(matcher.find())  
             {  
