@@ -9,6 +9,7 @@ import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
+import com.ai.slp.order.service.business.interfaces.IOrderReturnGoodBusiSV;
 import com.ai.slp.order.vo.RouteServResVo;
 import com.ai.slp.route.api.server.interfaces.IRouteServer;
 import com.ai.slp.route.api.server.params.IRouteServerRequest;
@@ -33,10 +34,14 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
     private IOrdOrderAtomSV ordOrderAtomSV;
     
     private IOrderFrameCoreSV orderFrameCoreSV;
+    
+    private IOrderReturnGoodBusiSV orderReturnGoodBusiSV;
 
-    public RouteChargeMessProcessorImpl(IOrdOrderAtomSV ordOrderAtomSV,IOrderFrameCoreSV orderFrameCoreSV) {
+    public RouteChargeMessProcessorImpl(IOrdOrderAtomSV ordOrderAtomSV,
+    		IOrderFrameCoreSV orderFrameCoreSV,IOrderReturnGoodBusiSV orderReturnGoodBusiSV) {
         this.ordOrderAtomSV = ordOrderAtomSV;
         this.orderFrameCoreSV = orderFrameCoreSV;
+        this.orderReturnGoodBusiSV=orderReturnGoodBusiSV;
     }
 
     @Override
@@ -59,7 +64,7 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         String responseData = response.getResponseData();
         Timestamp sysDate = DateUtil.getSysDate();
         if (StringUtil.isBlank(responseData)) {
-        	/*充值出现错误*/
+        	/*充值出现错误后则为充值失败*/
             logger.info("error...");
             String requestData = request.getRequestData();
             logger.info("requestData:"+requestData);
@@ -78,6 +83,8 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
 			/* 写入订单状态变化轨迹表 */
 			orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
 			          newState, chgDesc, null, null, null, sysDate);
+			/* 如果订单状态为充值失败,则调用退款服务 */
+	        orderReturnGoodBusiSV.orderReturnGoods(ordOrder, sysDate);
 			/*更新父订单状态*/
 			OrdOrder parentOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), ordOrder.getParentOrderId());
 			String parentOrgState=parentOrdOrder.getState();

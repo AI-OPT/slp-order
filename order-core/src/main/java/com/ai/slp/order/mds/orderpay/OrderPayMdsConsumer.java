@@ -16,6 +16,7 @@ import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
+import com.ai.slp.order.service.business.interfaces.IOrderReturnGoodBusiSV;
 
 @Component
 public class OrderPayMdsConsumer extends AbstractMdsConsumer {
@@ -26,6 +27,9 @@ public class OrderPayMdsConsumer extends AbstractMdsConsumer {
 	
     @Autowired
     private IOrderFrameCoreSV orderFrameCoreSV;
+    
+    @Autowired
+    private IOrderReturnGoodBusiSV orderReturnGoodBusiSV;
 	
 	@Override
 	public void startMdsConsumer() throws Exception {
@@ -36,7 +40,8 @@ public class OrderPayMdsConsumer extends AbstractMdsConsumer {
                 List<IMessageProcessor> processors = new ArrayList<>();
                 IMessageProcessor processor = null;
                 for (int i = 0; i < paramInt; i++) {
-                    processor = new RouteChargeMessProcessorImpl(ordOrderAtomSV,orderFrameCoreSV);
+                    processor = new RouteChargeMessProcessorImpl(ordOrderAtomSV,
+                    		orderFrameCoreSV,orderReturnGoodBusiSV);
                     processors.add(processor);
                 }
                 return processors.toArray(new IMessageProcessor[processors.size()]);
