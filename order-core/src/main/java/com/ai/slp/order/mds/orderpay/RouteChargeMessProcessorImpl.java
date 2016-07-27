@@ -14,6 +14,7 @@ import com.ai.slp.route.api.server.interfaces.IRouteServer;
 import com.ai.slp.route.api.server.params.IRouteServerRequest;
 import com.ai.slp.route.api.server.params.RouteServerResponse;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.regex.Matcher;
@@ -62,28 +63,34 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         	/*充值出现错误*/
             logger.info("error...");
             String requestData = request.getRequestData();
-            //requestData:{"accountVal":"13552497625","bizType":"10000010020000","buyNum":1,"coSysId":"130000000000000001","notifyUrl":"http://10.1.245.9:10887/slp-order/o2pservice/callback","operatorId":"10","orderId":"2000000373489477","proId":"1000000000000055","unitPrice":300}
             logger.info("requestData:"+requestData);
-            String regex="'orderId':'(.*?)','proId'";
-            Matcher matcher=Pattern.compile(regex).matcher(requestData);  
-            while(matcher.find())  
-            {  
-              String orderId=matcher.group(1);  
-              logger.info("orderId:"+orderId);
-              OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
-              String orgState=ordOrder.getState();
-              String newState=OrdersConstants.OrdOrder.State.CHARGE_FAILED;
-              String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_CHARGE_FAILED;
-              ordOrder.setState(newState);
-              ordOrder.setStateChgTime(sysDate);
-              ordOrder.setFinishTime(sysDate);
-              /* 改变子订单信息*/
-              ordOrderAtomSV.updateById(ordOrder);
-              /* 写入订单状态变化轨迹表 */
-              orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
-                      newState, chgDesc, null, null, null, sysDate);
-            }  
-            return;
+            JSONObject object = JSON.parseObject(requestData);
+			String orderId=object.getString("orderId");
+			logger.info("orderId:"+orderId);
+			OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
+			String orgState=ordOrder.getState();
+			String newState=OrdersConstants.OrdOrder.State.CHARGE_FAILED;
+			String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_CHARGE_FAILED;
+			ordOrder.setState(newState);
+			ordOrder.setStateChgTime(sysDate);
+			ordOrder.setFinishTime(sysDate);
+			/* 更新子订单状态*/
+			ordOrderAtomSV.updateById(ordOrder);
+			/* 写入订单状态变化轨迹表 */
+			orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
+			          newState, chgDesc, null, null, null, sysDate);
+			/*更新父订单状态*/
+			OrdOrder parentOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), ordOrder.getParentOrderId());
+			String parentOrgState=parentOrdOrder.getState();
+			String parentNewState=OrdersConstants.OrdOrder.State.COMPLETED;
+			String parentChgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_COMPLETED;
+			parentOrdOrder.setState(parentNewState);
+			parentOrdOrder.setStateChgTime(sysDate);
+			ordOrderAtomSV.updateById(parentOrdOrder);
+			/* 写入订单状态变化轨迹表 */
+			orderFrameCoreSV.ordOdStateChg(parentOrdOrder.getOrderId(), parentOrdOrder.getTenantId(), parentOrgState,
+					parentNewState, parentChgDesc, null, null, null, sysDate);
+			return;
         }
         
         logger.info("更新订单表.........");
