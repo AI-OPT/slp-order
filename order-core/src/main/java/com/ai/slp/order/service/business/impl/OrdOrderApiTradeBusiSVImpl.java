@@ -104,7 +104,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         try {
 			this.deductFund(request, payFee, orderId);
 			response.setDownstreamOrderId(request.getDownstreamOrderId());
-			response.setState(OrdersConstants.OrdOrder.State.FINISH_PAID);
+			response.setState(OrdersConstants.OrdOrder.State.WAIT_CHARGE);
 		} catch (BusinessException e) {
 			logger.error("调取余额时出现问题,库存回退...");
 			if(e.getErrorCode().equals(ResultCodeConstants.ApiOrder.MONEY_NOT_ENOUGH)) {
