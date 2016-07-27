@@ -5,13 +5,20 @@ import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.vo.RouteServResVo;
 import com.ai.slp.route.api.server.interfaces.IRouteServer;
 import com.ai.slp.route.api.server.params.IRouteServerRequest;
 import com.ai.slp.route.api.server.params.RouteServerResponse;
 import com.alibaba.fastjson.JSON;
+
+import java.sql.Timestamp;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +32,10 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(RouteChargeMessProcessorImpl.class);
 
     private IOrdOrderAtomSV ordOrderAtomSV;
+    
+    private IOrderFrameCoreSV orderFrameCoreSV;
 
-    public RouteChargeMessProcessorImpl(IOrdOrderAtomSV ordOrderAtomSV) {
+    public RouteChargeMessProcessorImpl(IOrdOrderAtomSV ordOrderAtomSV,IOrderFrameCoreSV orderFrameCoreSV) {
         this.ordOrderAtomSV = ordOrderAtomSV;
     }
 
@@ -48,11 +57,34 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         logger.info("调用充值服务.........");
         RouteServerResponse response = iRouteServer.callServerByRouteId(request);
         String responseData = response.getResponseData();
+        Timestamp sysDate = DateUtil.getSysDate();
         if (StringUtil.isBlank(responseData)) {
-            logger.info("error");
+        	/*充值出现错误*/
+            logger.info("error...");
+            String requestData = request.getRequestData();
+            logger.info("requestData:"+requestData);
+            String regex="\'orderId\':\'(.*?)\',\'proId\'";
+            Matcher matcher=Pattern.compile(regex).matcher(requestData);  
+            while(matcher.find())  
+            {  
+              String orderId=matcher.group(1);  
+              logger.info("orderId:"+orderId);
+              OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
+              String orgState=ordOrder.getState();
+              String newState=OrdersConstants.OrdOrder.State.CHARGE_FAILED;
+              String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_CHARGE_FAILED;
+              ordOrder.setState(newState);
+              ordOrder.setStateChgTime(sysDate);
+              ordOrder.setFinishTime(sysDate);
+              /* 改变子订单信息*/
+              ordOrderAtomSV.updateById(ordOrder);
+              /* 写入订单状态变化轨迹表 */
+              orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
+                      newState, chgDesc, null, null, null, sysDate);
+            }  
             return;
-//            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "充值路由返回参数为空");
         }
+        
         logger.info("更新订单表.........");
         RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
         String orderId = routeServResVo.getOrderId();
@@ -60,8 +92,7 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         ordOrder.setExternalOrderId(routeServResVo.getCoopOrderId());
         ordOrder.setExternalSupplyId(routeServResVo.getCoSysId());// 725版本实现该功能
         ordOrder.setState(routeServResVo.getCoopOrderStatus());
-        ordOrder.setStateChgTime(DateUtil.getSysDate());
+        ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.updateById(ordOrder);
     }
-
 }
