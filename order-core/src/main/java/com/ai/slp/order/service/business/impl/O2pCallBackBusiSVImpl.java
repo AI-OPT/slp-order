@@ -83,7 +83,16 @@ public class O2pCallBackBusiSVImpl implements IO2pCallBackBusiSV {
         if (OrdersConstants.OrdOrder.State.CHARGE_FAILED.equals(newState)) {
             orderReturnGoodBusiSV.orderReturnGoods(ordOrder, sysDate);
         }
-
+        /* 5.更新父订单状态*/
+		OrdOrder parentOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), ordOrder.getParentOrderId());
+		String parentOrgState=parentOrdOrder.getState();
+		String parentNewState=OrdersConstants.OrdOrder.State.COMPLETED;
+		String parentChgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_COMPLETED;
+		parentOrdOrder.setState(parentNewState);
+		parentOrdOrder.setStateChgTime(sysDate);
+		ordOrderAtomSV.updateById(parentOrdOrder);
+		/* 写入订单状态变化轨迹表 */
+		orderFrameCoreSV.ordOdStateChg(parentOrdOrder.getOrderId(), parentOrdOrder.getTenantId(), parentOrgState,
+				parentNewState, parentChgDesc, null, null, null, sysDate);
     }
-
 }
