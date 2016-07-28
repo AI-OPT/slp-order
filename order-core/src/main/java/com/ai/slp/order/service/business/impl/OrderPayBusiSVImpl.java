@@ -356,6 +356,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         childOrdOrder.setOrderId(subOrderId);
         childOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.YES);
         childOrdOrder.setParentOrderId(parentOrdOrder.getOrderId());
+        childOrdOrder.setState(OrdersConstants.OrdOrder.State.WAIT_CHARGE);
         ordOrderAtomSV.insertSelective(childOrdOrder);
         /* 2.创建子订单-商品明细信息 */
         long prodDetailId = SequenceUtil.createProdDetailId();
@@ -406,6 +407,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         subOrdOdProdExtend.setTenantId("SLP");
         subOrdOdProdExtend.setBatchFlag(OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
         ordOdProdExtendAtomSV.insertSelective(subOrdOdProdExtend);
+        /* 写入订单状态变化轨迹表 */
+        String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_CHARGE;
+		orderFrameCoreSV.ordOdStateChg(childOrdOrder.getOrderId(), childOrdOrder.getTenantId(), parentOrdOrder.getState(),
+				OrdersConstants.OrdOrder.State.WAIT_CHARGE, chgDesc, null, null, null, DateUtil.getSysDate());
         /* 5.调用路由,并更新订单明细表 */
         this.callRoute(tenantId, prodDetailId, ordOdProd,prodDetailExtendId);
     }
