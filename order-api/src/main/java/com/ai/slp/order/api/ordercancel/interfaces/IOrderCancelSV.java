@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.slp.order.api.ordercancel.param.OrderCancelRequest;
 
 /**
  * 订单关闭 Date: 2016年6月24日 <br>
@@ -22,7 +23,7 @@ import com.ai.opt.base.vo.BaseResponse;
 public interface IOrderCancelSV {
 
    /**
-    * 订单关闭
+    * 订单自动关闭
     * @return
     * @throws BusinessException
     * @throws SystemException
@@ -35,7 +36,20 @@ public interface IOrderCancelSV {
     @Path("/noPayOrderCancel")
     BaseResponse noPayOrderCancel() throws BusinessException, SystemException;
    
-
+    
+   /**
+    * 未支付订单处理服务（手动关闭）
+    * @return
+    * @throws BusinessException
+    * @throws SystemException
+    * @author caofz
+    * @ApiDocMethod
+    * @ApiCode ORDERCANCEL_002
+    * @RestRelativeURL ordercancel/handCancelNoPayOrder
+    */
+    @POST
+    @Path("/handCancelNoPayOrder")
+    BaseResponse handCancelNoPayOrder(OrderCancelRequest request) throws BusinessException, SystemException;
     
 
 }
