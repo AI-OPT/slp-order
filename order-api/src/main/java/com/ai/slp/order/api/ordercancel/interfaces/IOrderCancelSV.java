@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.slp.order.api.ordercancel.param.OrderCancelRequest;
 
 /**
  * 订单关闭 Date: 2016年6月24日 <br>
@@ -35,7 +36,16 @@ public interface IOrderCancelSV {
     @Path("/noPayOrderCancel")
     BaseResponse noPayOrderCancel() throws BusinessException, SystemException;
    
-
+    /**
+     * 手动关闭订单
+     * @param request
+     * @return
+     * @throws BusinessException
+     * @throws SystemException
+     */
+    @POST
+    @Path("/handCancelNoPayOrder")
+    public BaseResponse handCancelNoPayOrder(OrderCancelRequest request) throws BusinessException, SystemException;
     
 
 }
