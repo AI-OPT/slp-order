@@ -12,15 +12,18 @@ import org.springframework.stereotype.Component;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.opt.base.vo.ResponseHeader;
+import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV;
+import com.ai.slp.order.api.ordercancel.param.OrderCancelRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
-import com.ai.slp.order.distributedtask.NoPayOrderAutoCancelTask;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderCancelBusiSV;
+import com.ai.slp.order.util.CommonCheckUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(validation = "true")
@@ -40,7 +43,7 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
         BaseResponse baseResponse = new BaseResponse();
         List<OrdOrder> orders = null;
         try {
-            orders = this.getNoPayOrderList(ordOrderAtomSV);
+            orders = this.getNoPayOrderListInTime(ordOrderAtomSV);
         } catch (Exception ex) {
             log.error("待撤销订单失败", ex);
             throw new SystemException(ex);
@@ -58,16 +61,46 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
         }
         return baseResponse;
     }
+    
+    @Override
+	public BaseResponse handCancelNoPayOrder(OrderCancelRequest request) throws BusinessException, SystemException {
+		/* 1.参数检验*/
+		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
+		if(request.getOrderId()==0) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单Id为空");
+		}
+		BaseResponse response=new BaseResponse();
+		List<OrdOrder> orders=null;
+		/* 2.获取未支付的订单*/
+		try {
+			orders = this.getNoPayOrderList(ordOrderAtomSV,request);
+		} catch (Exception e) {
+			log.error("待取消订单失败", e);
+			throw new SystemException(e);
+		}
+		/* 3.判断订单是否存在*/
+		if(CollectionUtil.isEmpty(orders)) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"待取消订单为空[orderId:"+request.getOrderId()+"]");
+		}
+		OrdOrder ordOrder = orders.get(0);
+		/* 4.取消订单*/
+		orderCancelBusiSV.orderCancel(ordOrder);
+		ResponseHeader header=new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "关闭未支付订单");
+		response.setResponseHeader(header);
+		return response;
+	}
+    
 
     /**
-     * 获取超过30分钟未支付的订单列表
+     * 获取超过30分钟未支付的订单列表(自动)
      * 
      * @return
      * @author zhangxw
      * @param ordOrderAtomSV
      * @ApiDocMethod
      */
-    public List<OrdOrder> getNoPayOrderList(IOrdOrderAtomSV ordOrderAtomSV) {
+    public List<OrdOrder> getNoPayOrderListInTime(IOrdOrderAtomSV ordOrderAtomSV) {
         Timestamp sysDate = DateUtil.getSysDate();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(sysDate);
@@ -80,5 +113,24 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         return list;
     }
-
+    
+    
+    /**
+     * 获取未支付的订单列表(手动)
+     * 
+     * @return
+     * @author caofz
+     * @param ordOrderAtomSV,request
+     * @ApiDocMethod
+     */
+    public List<OrdOrder> getNoPayOrderList(IOrdOrderAtomSV ordOrderAtomSV,OrderCancelRequest request) {
+    	OrdOrderCriteria example=new OrdOrderCriteria();
+    	OrdOrderCriteria.Criteria criteria = example.createCriteria();
+    	criteria.andTenantIdEqualTo(request.getTenantId());
+    	criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
+    	criteria.andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_PAY);
+    	criteria.andOrderIdEqualTo(request.getOrderId());
+    	List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
+    	return list;
+    }
 }

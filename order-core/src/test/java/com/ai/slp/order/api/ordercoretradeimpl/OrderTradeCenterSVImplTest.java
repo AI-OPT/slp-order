@@ -15,6 +15,7 @@ import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdExtendInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
+import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterResponse;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.ai.slp.order.vo.InfoJsonVo;
@@ -34,6 +35,7 @@ public class OrderTradeCenterSVImplTest {
         OrdBaseInfo ordBaseInfo = new OrdBaseInfo();
         ordBaseInfo.setUserId("123");
         ordBaseInfo.setOrderType("100010");
+        ordBaseInfo.setUserType("10");
 
         List<OrdProductInfo> ordProductInfoList = new ArrayList<OrdProductInfo>();
         OrdProductInfo ordProductInfo = new OrdProductInfo();
@@ -64,23 +66,24 @@ public class OrderTradeCenterSVImplTest {
     }
 
     @Test
-    public void orderApiTradeTest() {
-        OrderApiTradeCenterRequest request = new OrderApiTradeCenterRequest();
+    public void orderApiTradeTest() { 	
+       OrderApiTradeCenterRequest request = new OrderApiTradeCenterRequest();
         request.setTenantId("SLP");
-        request.setUserId("000000000000001457");
+        request.setUserId("000000000000001203");
+        request.setUserType("11");
         request.setOrderType("100010");
-        request.setBuySum(4);
-        request.setChargeFee("40");
-        request.setSkuId("1000000000002516");
-        request.setAcctId(11235);
-        request.setUserType("12");
-        request.setOrderTime("2016-06-03");
-        request.setPayStyle("21");
-        request.setSalePrice(2400);
-        request.setDownstreamOrderId("sdfsfsd32432");
-        request.setInfoJson("13500001234");
-
+        request.setChargeFee("70MB");
+        request.setSkuId("1000000000002455");
+        request.setAcctId(11272);
+        request.setLockTime("20160630143723");
+        request.setPayStyle("1");
+        request.setSalePrice(10);
+        request.setDownstreamOrderId("7251537");
+        request.setInfoJson("13552496249");
         request.setTenantId("SLP");
-        BaseResponse apply = orderTradeCenterSV.apiApply(request);
+        request.setBuySum(1);
+        OrderApiTradeCenterResponse apiApply = orderTradeCenterSV.apiApply(request);
+        System.out.println("11");
+ 
     }
 }

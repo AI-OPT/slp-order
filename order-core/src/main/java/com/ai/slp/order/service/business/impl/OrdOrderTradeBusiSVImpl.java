@@ -23,6 +23,8 @@ import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdExtendInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdFeeInfo;
+import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
+import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductResInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
@@ -30,10 +32,14 @@ import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
+import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
+import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
@@ -62,6 +68,12 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 
     @Autowired
     private IOrderFrameCoreSV orderFrameCoreSV;
+    
+    @Autowired
+    private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
+    
+    @Autowired
+    private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
 
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
@@ -270,6 +282,22 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private void createOrderFeeInvoice(OrderTradeCenterRequest request, Timestamp sysDate,
             long orderId) {
+    	LOG.debug("开始处理订单发票[" + orderId + "]信息..");
+    	OrdInvoiceInfo ordInvoiceInfo = request.getOrdInvoiceInfo();
+    	/* 1.判断是否需要发票*/
+    	if(ordInvoiceInfo==null) {
+    		return;
+    	}
+    	OrdOdInvoice ordInvoice=new OrdOdInvoice();
+    	ordInvoice.setOrderId(orderId);
+    	ordInvoice.setTenantId(request.getTenantId());
+    	ordInvoice.setInvoiceTitle(ordInvoiceInfo.getInvoiceTitle());
+    	ordInvoice.setInvoiceType(ordInvoiceInfo.getInvoiceType());
+    	//TODO
+    	//登记打印内容? 多个商品具体哪些需要打印发票
+    	
+    	
+    	ordOdInvoiceAtomSV.insertSelective(ordInvoice);
     }
 
     /**
@@ -283,6 +311,34 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private void createOrderLogistics(OrderTradeCenterRequest request, Timestamp sysDate,
             long orderId) {
+    	LOG.debug("开始处理订单配送[" + orderId + "]信息..");
+    	OrdLogisticsInfo ordLogisticsInfo = request.getOrdLogisticsInfo();
+    	/* 1.参数检验*/
+    	this.checkLogisticsInfo(ordLogisticsInfo);
+    	/* 2.创建配送信息*/
+    	OrdOdLogistics logistics=new OrdOdLogistics();
+    	long logisticsId=SequenceUtil.genLogisticsId();
+    	logistics.setLogisticsId(logisticsId);
+    	logistics.setTenantId(request.getTenantId());
+    	logistics.setOrderId(orderId);
+    	logistics.setLogisticsType(ordLogisticsInfo.getLogisticsType());
+    	logistics.setContactCompany(ordLogisticsInfo.getContactCompany());
+    	logistics.setContactName(ordLogisticsInfo.getContactName());
+    	logistics.setContactTel(ordLogisticsInfo.getContactTel());
+    	logistics.setContactEmail(ordLogisticsInfo.getContactEmail());
+    	//TODO
+    	//直接存入编码
+    	logistics.setProvinceCode(ordLogisticsInfo.getProvinceCode());
+    	logistics.setCityCode(ordLogisticsInfo.getCityCode());
+    	logistics.setCountyCode(ordLogisticsInfo.getCountyCode());
+    	logistics.setPostcode(ordLogisticsInfo.getPostCode());
+    	logistics.setAreaCode(ordLogisticsInfo.getAreaCode());
+    	logistics.setAddress(ordLogisticsInfo.getAddress());
+    	logistics.setExpressId(ordLogisticsInfo.getExpressId());
+    	logistics.setExpressSelfId(ordLogisticsInfo.getExpressSelfId());
+    	logistics.setLogisticsTimeId(ordLogisticsInfo.getLogisticsTime());
+    	logistics.setRemark(ordLogisticsInfo.getRemark());
+    	ordOdLogisticsAtomSV.insertSelective(logistics);
     }
 
     /**
@@ -389,6 +445,41 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         storageNumUserReq.setSkuNum(skuNum);
         IStorageNumSV iStorageNumSV = DubboConsumerFactory.getService(IStorageNumSV.class);
         return iStorageNumSV.useStorageNum(storageNumUserReq);
-
+    }
+    
+    /**
+     * 配送信息校验
+     */
+    private void checkLogisticsInfo(OrdLogisticsInfo ordLogisticsInfo) {
+    	if(ordLogisticsInfo==null) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+    	}
+    	if(StringUtil.isBlank(ordLogisticsInfo.getLogisticsType())) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "配送方式不能为空");
+    	}
+    	if(StringUtil.isBlank(ordLogisticsInfo.getContactName())) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人姓名不能为空");
+    	}
+    	if(StringUtil.isBlank(ordLogisticsInfo.getContactTel())) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人电话不能为空");
+    	}
+    	if(StringUtil.isBlank(ordLogisticsInfo.getProvinceCode())) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人省份不能为空");
+    	}
+    	if(StringUtil.isBlank(ordLogisticsInfo.getCityCode())) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人地市不能为空");
+    	}
+    	if(StringUtil.isBlank(ordLogisticsInfo.getCountyCode())) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人区县不能为空");
+    	}
+    	if(StringUtil.isBlank(ordLogisticsInfo.getPostCode())) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人邮编不能为空");
+    	}
+    	if(StringUtil.isBlank(ordLogisticsInfo.getAddress())) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "详细地址不能为空");
+    	}
+    	if(StringUtil.isBlank(ordLogisticsInfo.getExpressId())) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流公司ID不能为空");
+    	}
     }
 }
