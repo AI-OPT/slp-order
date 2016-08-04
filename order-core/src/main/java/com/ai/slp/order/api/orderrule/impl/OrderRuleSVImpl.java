@@ -81,8 +81,21 @@ public class OrderRuleSVImpl implements IOrderRuleSV {
 	 */
 	@Override
 	public OrderRuleDetailResponse findOrderRuleDetail() throws BusinessException, SystemException {
-		// TODO Auto-generated method stub
-		return null;
+		OrderRuleDetailResponse response = new OrderRuleDetailResponse();
+		//
+		ResponseHeader responseHeader = new ResponseHeader();
+		//
+		try{
+			response = this.ordRuleBusiSV.findOrderRuleDetail();
+		}catch(Exception e){
+			//
+			responseHeader.setResultCode("999999");
+			responseHeader.setResultMessage("失败");
+			//
+			response.setResponseHeader(responseHeader);
+		}
+		//
+		return response;
 	}
 
 }

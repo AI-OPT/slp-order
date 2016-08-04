@@ -10,8 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.slp.order.api.orderrule.param.OrderRuleDetailResponse;
+import com.ai.slp.order.api.orderrule.param.OrderRuleDetailVo;
 import com.ai.slp.order.api.orderrule.param.OrderRuleRequest;
 import com.ai.slp.order.api.orderrule.param.OrderRuleResponse;
+import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdRule;
 import com.ai.slp.order.service.atom.interfaces.IOrdRuleAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdRuleBusiSV;
@@ -82,6 +85,57 @@ public class OrdRuleBusiSVImpl implements IOrdRuleBusiSV {
 		//
 		response.setResponseHeader(responseHeader);
 	
+		//
+		return response;
+	}
+	@Override
+	public OrderRuleDetailResponse findOrderRuleDetail() {
+		List<String> orderRuleIds = new ArrayList<String>();
+		//
+		orderRuleIds.add(OrdRuleConstants.TIME_MONITOR_ID);
+		orderRuleIds.add(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);
+		orderRuleIds.add(OrdRuleConstants.BUY_IP_MONITOR_ID);
+		orderRuleIds.add(OrdRuleConstants.MERGE_ORDER_SETTING_ID);
+		//
+		List<OrdRule> ordRuleList = this.ordRuleAtomSV.queryOrdRule(orderRuleIds);
+		OrderRuleDetailResponse response = new OrderRuleDetailResponse();
+		OrderRuleDetailVo orderRuleDetailVo = new OrderRuleDetailVo();
+		ResponseHeader responseHeader = new ResponseHeader();
+		//
+		for(OrdRule ordRule : ordRuleList){
+			//
+			if(OrdRuleConstants.TIME_MONITOR_ID.equals(ordRule.getOrderRuleId())){
+				orderRuleDetailVo.setTimeMonitorId(ordRule.getOrderRuleId());
+				orderRuleDetailVo.setTimeMonitorTime(ordRule.getMonitorTime());
+				orderRuleDetailVo.setTimeMonitorTimeType(ordRule.getTimeType());
+				orderRuleDetailVo.setTimeMonitorOrderSum(ordRule.getOrderSum());
+			}
+			if(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID.equals(ordRule.getOrderRuleId())){
+				orderRuleDetailVo.setBuyEmployeeMonitorId(ordRule.getOrderRuleId());
+				orderRuleDetailVo.setBuyEmployeeMonitorTime(ordRule.getMonitorTime());
+				orderRuleDetailVo.setBuyEmployeeMonitorTimeType(ordRule.getTimeType());
+				orderRuleDetailVo.setBuyEmployeeMonitorOrderSum(ordRule.getOrderSum());
+			}
+			if(OrdRuleConstants.BUY_IP_MONITOR_ID.equals(ordRule.getOrderRuleId())){
+				orderRuleDetailVo.setBuyIpMonitorId(ordRule.getOrderRuleId());
+				orderRuleDetailVo.setBuyIpMonitorTime(ordRule.getMonitorTime());
+				orderRuleDetailVo.setBuyIpMonitorTimeType(ordRule.getTimeType());
+				orderRuleDetailVo.setBuyIpMonitorOrderSum(ordRule.getOrderSum());
+			}
+			if(OrdRuleConstants.MERGE_ORDER_SETTING_ID.equals(ordRule.getOrderRuleId())){
+				orderRuleDetailVo.setMergeOrderSettingId(ordRule.getOrderRuleId());
+				orderRuleDetailVo.setMergeOrderSettingTime(ordRule.getMonitorTime());
+				orderRuleDetailVo.setMergeOrderSettingTimeType(ordRule.getTimeType());
+				orderRuleDetailVo.setMergeOrderSettingOrderSum(ordRule.getOrderSum());
+			}
+			
+		}
+		responseHeader.setIsSuccess(true);
+		responseHeader.setResultCode("000000");
+		responseHeader.setResultMessage("成功");
+		//
+		response.setResponseHeader(responseHeader);
+		response.setOrderRuleDetailVo(orderRuleDetailVo);
 		//
 		return response;
 	}

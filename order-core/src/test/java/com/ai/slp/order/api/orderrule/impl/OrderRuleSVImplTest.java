@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.slp.order.api.orderrule.interfaces.IOrderRuleSV;
+import com.ai.slp.order.api.orderrule.param.OrderRuleDetailResponse;
 import com.ai.slp.order.api.orderrule.param.OrderRuleRequest;
 import com.ai.slp.order.api.orderrule.param.OrderRuleResponse;
 import com.ai.slp.order.constants.OrdRuleConstants;
@@ -60,6 +61,20 @@ public class OrderRuleSVImplTest {
 		OrderRuleResponse response = this.orderRuleSV.orderRuleSetting(request);
 		//
 		log.info("response:"+JSON.toJSONString(response));
+	}
+	/**
+	 * 订单规则详情
+	 * 
+	 * @author zhangzd
+	 * @ApiDocMethod
+	 * @ApiCode
+	 */
+	@Test
+	public void findOrderRuleDetail(){
+		OrderRuleDetailResponse response = this.orderRuleSV.findOrderRuleDetail();
+		//
+		log.info("response:"+JSON.toJSONString(response));
+		
 	}
 
 }
