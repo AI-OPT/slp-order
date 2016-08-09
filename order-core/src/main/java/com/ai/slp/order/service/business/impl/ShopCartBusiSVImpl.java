@@ -108,7 +108,10 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         else if (skuNumLimit>0 && odCartProd.getBuySum()>skuNumLimit){
             throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
         }
-        checkSkuInfoTotal(tenantId,cartProd.getSkuId(),odCartProd.getBuySum());
+        ProductSkuInfo skuInfo = querySkuInfo(tenantId,cartProd.getSkuId());
+        checkSkuInfoTotal(skuInfo,odCartProd.getBuySum());
+        if (StringUtils.isBlank(cartProdStr))
+            odCartProd.setSupplierId(skuInfo.getSupplierId());
         //添加/更新商品信息
         iCacheClient.hset(cartUserId,odCartProd.getSkuId(),JSON.toJSONString(odCartProd));
         //更新购物车上商品总数量
@@ -251,6 +254,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 prodInfo.setProductName(skuInfo.getProdName());
                 prodInfo.setInsertTime(cartProd.getInsertTime());
                 prodInfo.setBuyNum(cartProd.getBuySum().longValue());
+                prodInfo.setSupplierId(cartProd.getSupplierId());
                 //若库存量大于0,且小于购物车添加数量,则使用库存量
                 if (skuInfo.getUsableNum()>0 && skuInfo.getUsableNum()<prodInfo.getBuyNum()){
                     prodInfo.setBuyNum(skuInfo.getUsableNum());
@@ -333,6 +337,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * 检查SKU单品库存
      * @param tenantId
      * @param skuId
+     * @param buyNum
      * @return
      */
     private void checkSkuInfoTotal(String tenantId,String skuId,long buyNum){
@@ -341,6 +346,16 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
 //        ProductSkuInfo skuInfo = new ProductSkuInfo();
 //        skuInfo.setUsableNum(5);
 
+        checkSkuInfoTotal(skuInfo,buyNum);
+    }
+
+    /**
+     * 检查SKU单品库存
+     * @param skuInfo
+     * @param buyNum
+     * @return
+     */
+    private void checkSkuInfoTotal(ProductSkuInfo skuInfo,long buyNum){
         if (skuInfo==null || skuInfo.getUsableNum()<=0){
             throw new BusinessException("","商品已售罄或下架");
         }

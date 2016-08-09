@@ -9,6 +9,8 @@ public class OrdOdCartProd {
 
     private String tenantId;
 
+    private String supplierId;
+
     private String skuId;
 
     private Long buySum;
@@ -37,6 +39,14 @@ public class OrdOdCartProd {
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId == null ? null : tenantId.trim();
+    }
+
+    public String getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId == null ? null : supplierId.trim();
     }
 
     public String getSkuId() {
