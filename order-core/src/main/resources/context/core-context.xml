@@ -71,7 +71,9 @@
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
+	<!-- 使用annotation注解方式配置事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
 	<!--AOP 事务配置 -->
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
@@ -84,9 +86,7 @@
 		</tx:attributes>
 	</tx:advice>
 
-	<!-- 使用annotation注解方式配置事务 -->
-	<tx:annotation-driven transaction-manager="transactionManager" />
-
+	
 	<!-- 启动注解扫描 -->
 	<context:annotation-config />
 	<!-- 设定注解扫描基础包 -->
