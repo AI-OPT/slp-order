@@ -1,65 +1,66 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper" >
-  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
-    <id column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
-    <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
-    <result column="BUSI_CODE" property="busiCode" jdbcType="VARCHAR" />
-    <result column="ORDER_TYPE" property="orderType" jdbcType="VARCHAR" />
-    <result column="SUB_FLAG" property="subFlag" jdbcType="VARCHAR" />
-    <result column="PARENT_ORDER_ID" property="parentOrderId" jdbcType="BIGINT" />
-    <result column="BATCH_NO" property="batchNo" jdbcType="BIGINT" />
-    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
-    <result column="ACCT_ID" property="acctId" jdbcType="BIGINT" />
-    <result column="SUBS_ID" property="subsId" jdbcType="BIGINT" />
-    <result column="SUPPLIER_ID" property="supplierId" jdbcType="BIGINT" />
-    <result column="STORAGE_ID" property="storageId" jdbcType="VARCHAR" />
-    <result column="ROUTE_ID" property="routeId" jdbcType="VARCHAR" />
-    <result column="PROVINCE_CODE" property="provinceCode" jdbcType="VARCHAR" />
-    <result column="CITY_CODE" property="cityCode" jdbcType="VARCHAR" />
-    <result column="STATE" property="state" jdbcType="VARCHAR" />
-    <result column="STATE_CHG_TIME" property="stateChgTime" jdbcType="TIMESTAMP" />
-    <result column="DISPLAY_FLAG" property="displayFlag" jdbcType="VARCHAR" />
-    <result column="DISPLAY_FLAG_CHG_TIME" property="displayFlagChgTime" jdbcType="TIMESTAMP" />
-    <result column="DELIVERY_FLAG" property="deliveryFlag" jdbcType="VARCHAR" />
-    <result column="LOCK_FLAG" property="lockFlag" jdbcType="VARCHAR" />
-    <result column="LOCK_TIME" property="lockTime" jdbcType="TIMESTAMP" />
-    <result column="ORDER_TIME" property="orderTime" jdbcType="TIMESTAMP" />
-    <result column="SELLER_ID" property="sellerId" jdbcType="BIGINT" />
-    <result column="CHL_ID" property="chlId" jdbcType="VARCHAR" />
-    <result column="OPER_ID" property="operId" jdbcType="VARCHAR" />
-    <result column="WORKFLOW_ID" property="workflowId" jdbcType="VARCHAR" />
-    <result column="REASON_TYPE" property="reasonType" jdbcType="VARCHAR" />
-    <result column="REASON_DESC" property="reasonDesc" jdbcType="VARCHAR" />
-    <result column="FINISH_TIME" property="finishTime" jdbcType="TIMESTAMP" />
-    <result column="ORIG_ORDER_ID" property="origOrderId" jdbcType="BIGINT" />
-    <result column="ORDER_DESC" property="orderDesc" jdbcType="VARCHAR" />
-    <result column="KEYWORDS" property="keywords" jdbcType="VARCHAR" />
-    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
-    <result column="EXTERNAL_ORDER_ID" property="externalOrderId" jdbcType="VARCHAR" />
-    <result column="EXTERNAL_SUPPLY_ID" property="externalSupplyId" jdbcType="VARCHAR" />
-    <result column="DOWNSTREAM_ORDER_ID" property="downstreamOrderId" jdbcType="VARCHAR" />
-    <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper">
+  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOrder">
+    <id column="ORDER_ID" jdbcType="BIGINT" property="orderId" />
+    <result column="TENANT_ID" jdbcType="VARCHAR" property="tenantId" />
+    <result column="BUSI_CODE" jdbcType="VARCHAR" property="busiCode" />
+    <result column="ORDER_TYPE" jdbcType="VARCHAR" property="orderType" />
+    <result column="SUB_FLAG" jdbcType="VARCHAR" property="subFlag" />
+    <result column="PARENT_ORDER_ID" jdbcType="BIGINT" property="parentOrderId" />
+    <result column="BATCH_NO" jdbcType="BIGINT" property="batchNo" />
+    <result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+    <result column="ACCT_ID" jdbcType="BIGINT" property="acctId" />
+    <result column="SUBS_ID" jdbcType="BIGINT" property="subsId" />
+    <result column="SUPPLIER_ID" jdbcType="BIGINT" property="supplierId" />
+    <result column="STORAGE_ID" jdbcType="VARCHAR" property="storageId" />
+    <result column="ROUTE_ID" jdbcType="VARCHAR" property="routeId" />
+    <result column="PROVINCE_CODE" jdbcType="VARCHAR" property="provinceCode" />
+    <result column="CITY_CODE" jdbcType="VARCHAR" property="cityCode" />
+    <result column="STATE" jdbcType="VARCHAR" property="state" />
+    <result column="STATE_CHG_TIME" jdbcType="TIMESTAMP" property="stateChgTime" />
+    <result column="DISPLAY_FLAG" jdbcType="VARCHAR" property="displayFlag" />
+    <result column="DISPLAY_FLAG_CHG_TIME" jdbcType="TIMESTAMP" property="displayFlagChgTime" />
+    <result column="DELIVERY_FLAG" jdbcType="VARCHAR" property="deliveryFlag" />
+    <result column="LOCK_FLAG" jdbcType="VARCHAR" property="lockFlag" />
+    <result column="LOCK_TIME" jdbcType="TIMESTAMP" property="lockTime" />
+    <result column="ORDER_TIME" jdbcType="TIMESTAMP" property="orderTime" />
+    <result column="SELLER_ID" jdbcType="BIGINT" property="sellerId" />
+    <result column="CHL_ID" jdbcType="VARCHAR" property="chlId" />
+    <result column="OPER_ID" jdbcType="VARCHAR" property="operId" />
+    <result column="WORKFLOW_ID" jdbcType="VARCHAR" property="workflowId" />
+    <result column="REASON_TYPE" jdbcType="VARCHAR" property="reasonType" />
+    <result column="REASON_DESC" jdbcType="VARCHAR" property="reasonDesc" />
+    <result column="FINISH_TIME" jdbcType="TIMESTAMP" property="finishTime" />
+    <result column="ORIG_ORDER_ID" jdbcType="BIGINT" property="origOrderId" />
+    <result column="ORDER_DESC" jdbcType="VARCHAR" property="orderDesc" />
+    <result column="KEYWORDS" jdbcType="VARCHAR" property="keywords" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="EXTERNAL_ORDER_ID" jdbcType="VARCHAR" property="externalOrderId" />
+    <result column="EXTERNAL_SUPPLY_ID" jdbcType="VARCHAR" property="externalSupplyId" />
+    <result column="DOWNSTREAM_ORDER_ID" jdbcType="VARCHAR" property="downstreamOrderId" />
+    <result column="USER_TYPE" jdbcType="VARCHAR" property="userType" />
+    <result column="IP_ADDRESS" jdbcType="VARCHAR" property="ipAddress" />
   </resultMap>
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
                   and ${criterion.condition}
                 </when>
-                <when test="criterion.singleValue" >
+                <when test="criterion.singleValue">
                   and ${criterion.condition} #{criterion.value}
                 </when>
-                <when test="criterion.betweenValue" >
+                <when test="criterion.betweenValue">
                   and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
                 </when>
-                <when test="criterion.listValue" >
+                <when test="criterion.listValue">
                   and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
                     #{listItem}
                   </foreach>
                 </when>
@@ -70,25 +71,25 @@
       </foreach>
     </where>
   </sql>
-  <sql id="Update_By_Example_Where_Clause" >
-    <where >
-      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
                   and ${criterion.condition}
                 </when>
-                <when test="criterion.singleValue" >
+                <when test="criterion.singleValue">
                   and ${criterion.condition} #{criterion.value}
                 </when>
-                <when test="criterion.betweenValue" >
+                <when test="criterion.betweenValue">
                   and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
                 </when>
-                <when test="criterion.listValue" >
+                <when test="criterion.listValue">
                   and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
                     #{listItem}
                   </foreach>
                 </when>
@@ -99,49 +100,49 @@
       </foreach>
     </where>
   </sql>
-  <sql id="Base_Column_List" >
+  <sql id="Base_Column_List">
     ORDER_ID, TENANT_ID, BUSI_CODE, ORDER_TYPE, SUB_FLAG, PARENT_ORDER_ID, BATCH_NO, 
     USER_ID, ACCT_ID, SUBS_ID, SUPPLIER_ID, STORAGE_ID, ROUTE_ID, PROVINCE_CODE, CITY_CODE, 
     STATE, STATE_CHG_TIME, DISPLAY_FLAG, DISPLAY_FLAG_CHG_TIME, DELIVERY_FLAG, LOCK_FLAG, 
     LOCK_TIME, ORDER_TIME, SELLER_ID, CHL_ID, OPER_ID, WORKFLOW_ID, REASON_TYPE, REASON_DESC, 
     FINISH_TIME, ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID, 
-    DOWNSTREAM_ORDER_ID,USER_TYPE
+    DOWNSTREAM_ORDER_ID, USER_TYPE, IP_ADDRESS
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" >
+  <select id="selectByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" resultMap="BaseResultMap">
     select
-    <if test="distinct" >
+    <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
     from ord_order
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
-    <if test="orderByClause != null" >
+    <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
-    <if test="limitStart != null and limitStart>=0" >
+    <if test="limitStart != null and limitStart&gt;=0">
       limit #{limitStart} , #{limitEnd}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+  <select id="selectByPrimaryKey" parameterType="long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from ord_order
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="long" >
+  <delete id="deleteByPrimaryKey" parameterType="long">
     delete from ord_order
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" >
+  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria">
     delete from ord_order
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
+  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder">
     insert into ord_order (ORDER_ID, TENANT_ID, BUSI_CODE, 
       ORDER_TYPE, SUB_FLAG, PARENT_ORDER_ID, 
       BATCH_NO, USER_ID, ACCT_ID, 
@@ -154,7 +155,8 @@
       REASON_TYPE, REASON_DESC, FINISH_TIME, 
       ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, 
       REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID, 
-      DOWNSTREAM_ORDER_ID)
+      DOWNSTREAM_ORDER_ID, USER_TYPE, IP_ADDRESS
+      )
     values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{busiCode,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{subFlag,jdbcType=VARCHAR}, #{parentOrderId,jdbcType=BIGINT}, 
       #{batchNo,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{acctId,jdbcType=BIGINT}, 
@@ -167,337 +169,350 @@
       #{reasonType,jdbcType=VARCHAR}, #{reasonDesc,jdbcType=VARCHAR}, #{finishTime,jdbcType=TIMESTAMP}, 
       #{origOrderId,jdbcType=BIGINT}, #{orderDesc,jdbcType=VARCHAR}, #{keywords,jdbcType=VARCHAR}, 
       #{remark,jdbcType=VARCHAR}, #{externalOrderId,jdbcType=VARCHAR}, #{externalSupplyId,jdbcType=VARCHAR}, 
-      #{downstreamOrderId,jdbcType=VARCHAR})
+      #{downstreamOrderId,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
+  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder">
     insert into ord_order
-    <trim prefix="(" suffix=")" suffixOverrides="," >
+    <trim prefix="(" suffix=")" suffixOverrides=",">
       ORDER_ID,
-      <if test="tenantId != null" >
+      <if test="tenantId != null">
         TENANT_ID,
       </if>
-      <if test="busiCode != null" >
+      <if test="busiCode != null">
         BUSI_CODE,
       </if>
-      <if test="orderType != null" >
+      <if test="orderType != null">
         ORDER_TYPE,
       </if>
-      <if test="subFlag != null" >
+      <if test="subFlag != null">
         SUB_FLAG,
       </if>
       PARENT_ORDER_ID,
       BATCH_NO,
-      <if test="userId != null" >
+      <if test="userId != null">
         USER_ID,
       </if>
-     <if test="userType!=null">
-      	USER_TYPE,
-      </if> 
       ACCT_ID,
       SUBS_ID,
       SUPPLIER_ID,
-      <if test="storageId != null" >
+      <if test="storageId != null">
         STORAGE_ID,
       </if>
-      <if test="routeId != null" >
+      <if test="routeId != null">
         ROUTE_ID,
       </if>
-      <if test="provinceCode != null" >
+      <if test="provinceCode != null">
         PROVINCE_CODE,
       </if>
-      <if test="cityCode != null" >
+      <if test="cityCode != null">
         CITY_CODE,
       </if>
-      <if test="state != null" >
+      <if test="state != null">
         STATE,
       </if>
-      <if test="stateChgTime != null" >
+      <if test="stateChgTime != null">
         STATE_CHG_TIME,
       </if>
-      <if test="displayFlag != null" >
+      <if test="displayFlag != null">
         DISPLAY_FLAG,
       </if>
-      <if test="displayFlagChgTime != null" >
+      <if test="displayFlagChgTime != null">
         DISPLAY_FLAG_CHG_TIME,
       </if>
-      <if test="deliveryFlag != null" >
+      <if test="deliveryFlag != null">
         DELIVERY_FLAG,
       </if>
-      <if test="lockFlag != null" >
+      <if test="lockFlag != null">
         LOCK_FLAG,
       </if>
-      <if test="lockTime != null" >
+      <if test="lockTime != null">
         LOCK_TIME,
       </if>
-      <if test="orderTime != null" >
+      <if test="orderTime != null">
         ORDER_TIME,
       </if>
       SELLER_ID,
-      <if test="chlId != null" >
+      <if test="chlId != null">
         CHL_ID,
       </if>
-      <if test="operId != null" >
+      <if test="operId != null">
         OPER_ID,
       </if>
-      <if test="workflowId != null" >
+      <if test="workflowId != null">
         WORKFLOW_ID,
       </if>
-      <if test="reasonType != null" >
+      <if test="reasonType != null">
         REASON_TYPE,
       </if>
-      <if test="reasonDesc != null" >
+      <if test="reasonDesc != null">
         REASON_DESC,
       </if>
-      <if test="finishTime != null" >
+      <if test="finishTime != null">
         FINISH_TIME,
       </if>
       ORIG_ORDER_ID,
-      <if test="orderDesc != null" >
+      <if test="orderDesc != null">
         ORDER_DESC,
       </if>
-      <if test="keywords != null" >
+      <if test="keywords != null">
         KEYWORDS,
       </if>
-      <if test="remark != null" >
+      <if test="remark != null">
         REMARK,
       </if>
-      <if test="externalOrderId != null" >
+      <if test="externalOrderId != null">
         EXTERNAL_ORDER_ID,
       </if>
-      <if test="externalSupplyId != null" >
+      <if test="externalSupplyId != null">
         EXTERNAL_SUPPLY_ID,
       </if>
-      <if test="downstreamOrderId != null" >
+      <if test="downstreamOrderId != null">
         DOWNSTREAM_ORDER_ID,
       </if>
+      <if test="userType != null">
+        USER_TYPE,
+      </if>
+      <if test="ipAddress != null">
+        IP_ADDRESS,
+      </if>
     </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
       #{orderId,jdbcType=BIGINT},
-      <if test="tenantId != null" >
+      <if test="tenantId != null">
         #{tenantId,jdbcType=VARCHAR},
       </if>
-      <if test="busiCode != null" >
+      <if test="busiCode != null">
         #{busiCode,jdbcType=VARCHAR},
       </if>
-      <if test="orderType != null" >
+      <if test="orderType != null">
         #{orderType,jdbcType=VARCHAR},
       </if>
-      <if test="subFlag != null" >
+      <if test="subFlag != null">
         #{subFlag,jdbcType=VARCHAR},
       </if>
       #{parentOrderId,jdbcType=BIGINT},
       #{batchNo,jdbcType=BIGINT},
-      <if test="userId != null" >
+      <if test="userId != null">
         #{userId,jdbcType=VARCHAR},
       </if>
-      <if test="userType!=null">
-      	#{userType,jdbcType=VARCHAR},
-      </if> 
       #{acctId,jdbcType=BIGINT},
       #{subsId,jdbcType=BIGINT},
       #{supplierId,jdbcType=BIGINT},
-      <if test="storageId != null" >
+      <if test="storageId != null">
         #{storageId,jdbcType=VARCHAR},
       </if>
-      <if test="routeId != null" >
+      <if test="routeId != null">
         #{routeId,jdbcType=VARCHAR},
       </if>
-      <if test="provinceCode != null" >
+      <if test="provinceCode != null">
         #{provinceCode,jdbcType=VARCHAR},
       </if>
-      <if test="cityCode != null" >
+      <if test="cityCode != null">
         #{cityCode,jdbcType=VARCHAR},
       </if>
-      <if test="state != null" >
+      <if test="state != null">
         #{state,jdbcType=VARCHAR},
       </if>
-      <if test="stateChgTime != null" >
+      <if test="stateChgTime != null">
         #{stateChgTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="displayFlag != null" >
+      <if test="displayFlag != null">
         #{displayFlag,jdbcType=VARCHAR},
       </if>
-      <if test="displayFlagChgTime != null" >
+      <if test="displayFlagChgTime != null">
         #{displayFlagChgTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="deliveryFlag != null" >
+      <if test="deliveryFlag != null">
         #{deliveryFlag,jdbcType=VARCHAR},
       </if>
-      <if test="lockFlag != null" >
+      <if test="lockFlag != null">
         #{lockFlag,jdbcType=VARCHAR},
       </if>
-      <if test="lockTime != null" >
+      <if test="lockTime != null">
         #{lockTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="orderTime != null" >
+      <if test="orderTime != null">
         #{orderTime,jdbcType=TIMESTAMP},
       </if>
       #{sellerId,jdbcType=BIGINT},
-      <if test="chlId != null" >
+      <if test="chlId != null">
         #{chlId,jdbcType=VARCHAR},
       </if>
-      <if test="operId != null" >
+      <if test="operId != null">
         #{operId,jdbcType=VARCHAR},
       </if>
-      <if test="workflowId != null" >
+      <if test="workflowId != null">
         #{workflowId,jdbcType=VARCHAR},
       </if>
-      <if test="reasonType != null" >
+      <if test="reasonType != null">
         #{reasonType,jdbcType=VARCHAR},
       </if>
-      <if test="reasonDesc != null" >
+      <if test="reasonDesc != null">
         #{reasonDesc,jdbcType=VARCHAR},
       </if>
-      <if test="finishTime != null" >
+      <if test="finishTime != null">
         #{finishTime,jdbcType=TIMESTAMP},
       </if>
       #{origOrderId,jdbcType=BIGINT},
-      <if test="orderDesc != null" >
+      <if test="orderDesc != null">
         #{orderDesc,jdbcType=VARCHAR},
       </if>
-      <if test="keywords != null" >
+      <if test="keywords != null">
         #{keywords,jdbcType=VARCHAR},
       </if>
-      <if test="remark != null" >
+      <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="externalOrderId != null" >
+      <if test="externalOrderId != null">
         #{externalOrderId,jdbcType=VARCHAR},
       </if>
-      <if test="externalSupplyId != null" >
+      <if test="externalSupplyId != null">
         #{externalSupplyId,jdbcType=VARCHAR},
       </if>
-      <if test="downstreamOrderId != null" >
+      <if test="downstreamOrderId != null">
         #{downstreamOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null">
+        #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="ipAddress != null">
+        #{ipAddress,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" resultType="java.lang.Integer">
     select count(*) from ord_order
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <update id="updateByExampleSelective" parameterType="map" >
+  <update id="updateByExampleSelective" parameterType="map">
     update ord_order
-    <set >
-      <if test="record.orderId != null" >
+    <set>
+      <if test="record.orderId != null">
         ORDER_ID = #{record.orderId,jdbcType=BIGINT},
       </if>
-      <if test="record.tenantId != null" >
+      <if test="record.tenantId != null">
         TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
       </if>
-      <if test="record.busiCode != null" >
+      <if test="record.busiCode != null">
         BUSI_CODE = #{record.busiCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.orderType != null" >
+      <if test="record.orderType != null">
         ORDER_TYPE = #{record.orderType,jdbcType=VARCHAR},
       </if>
-      <if test="record.subFlag != null" >
+      <if test="record.subFlag != null">
         SUB_FLAG = #{record.subFlag,jdbcType=VARCHAR},
       </if>
-      <if test="record.parentOrderId != null" >
+      <if test="record.parentOrderId != null">
         PARENT_ORDER_ID = #{record.parentOrderId,jdbcType=BIGINT},
       </if>
-      <if test="record.batchNo != null" >
+      <if test="record.batchNo != null">
         BATCH_NO = #{record.batchNo,jdbcType=BIGINT},
       </if>
-      <if test="record.userId != null" >
+      <if test="record.userId != null">
         USER_ID = #{record.userId,jdbcType=VARCHAR},
       </if>
-      <if test="record.acctId != null" >
+      <if test="record.acctId != null">
         ACCT_ID = #{record.acctId,jdbcType=BIGINT},
       </if>
-      <if test="record.subsId != null" >
+      <if test="record.subsId != null">
         SUBS_ID = #{record.subsId,jdbcType=BIGINT},
       </if>
-      <if test="record.supplierId != null" >
+      <if test="record.supplierId != null">
         SUPPLIER_ID = #{record.supplierId,jdbcType=BIGINT},
       </if>
-      <if test="record.storageId != null" >
+      <if test="record.storageId != null">
         STORAGE_ID = #{record.storageId,jdbcType=VARCHAR},
       </if>
-      <if test="record.routeId != null" >
+      <if test="record.routeId != null">
         ROUTE_ID = #{record.routeId,jdbcType=VARCHAR},
       </if>
-      <if test="record.provinceCode != null" >
+      <if test="record.provinceCode != null">
         PROVINCE_CODE = #{record.provinceCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.cityCode != null" >
+      <if test="record.cityCode != null">
         CITY_CODE = #{record.cityCode,jdbcType=VARCHAR},
       </if>
-      <if test="record.state != null" >
+      <if test="record.state != null">
         STATE = #{record.state,jdbcType=VARCHAR},
       </if>
-      <if test="record.stateChgTime != null" >
+      <if test="record.stateChgTime != null">
         STATE_CHG_TIME = #{record.stateChgTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.displayFlag != null" >
+      <if test="record.displayFlag != null">
         DISPLAY_FLAG = #{record.displayFlag,jdbcType=VARCHAR},
       </if>
-      <if test="record.displayFlagChgTime != null" >
+      <if test="record.displayFlagChgTime != null">
         DISPLAY_FLAG_CHG_TIME = #{record.displayFlagChgTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.deliveryFlag != null" >
+      <if test="record.deliveryFlag != null">
         DELIVERY_FLAG = #{record.deliveryFlag,jdbcType=VARCHAR},
       </if>
-      <if test="record.lockFlag != null" >
+      <if test="record.lockFlag != null">
         LOCK_FLAG = #{record.lockFlag,jdbcType=VARCHAR},
       </if>
-      <if test="record.lockTime != null" >
+      <if test="record.lockTime != null">
         LOCK_TIME = #{record.lockTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.orderTime != null" >
+      <if test="record.orderTime != null">
         ORDER_TIME = #{record.orderTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.sellerId != null" >
+      <if test="record.sellerId != null">
         SELLER_ID = #{record.sellerId,jdbcType=BIGINT},
       </if>
-      <if test="record.chlId != null" >
+      <if test="record.chlId != null">
         CHL_ID = #{record.chlId,jdbcType=VARCHAR},
       </if>
-      <if test="record.operId != null" >
+      <if test="record.operId != null">
         OPER_ID = #{record.operId,jdbcType=VARCHAR},
       </if>
-      <if test="record.workflowId != null" >
+      <if test="record.workflowId != null">
         WORKFLOW_ID = #{record.workflowId,jdbcType=VARCHAR},
       </if>
-      <if test="record.reasonType != null" >
+      <if test="record.reasonType != null">
         REASON_TYPE = #{record.reasonType,jdbcType=VARCHAR},
       </if>
-      <if test="record.reasonDesc != null" >
+      <if test="record.reasonDesc != null">
         REASON_DESC = #{record.reasonDesc,jdbcType=VARCHAR},
       </if>
-      <if test="record.finishTime != null" >
+      <if test="record.finishTime != null">
         FINISH_TIME = #{record.finishTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.origOrderId != null" >
+      <if test="record.origOrderId != null">
         ORIG_ORDER_ID = #{record.origOrderId,jdbcType=BIGINT},
       </if>
-      <if test="record.orderDesc != null" >
+      <if test="record.orderDesc != null">
         ORDER_DESC = #{record.orderDesc,jdbcType=VARCHAR},
       </if>
-      <if test="record.keywords != null" >
+      <if test="record.keywords != null">
         KEYWORDS = #{record.keywords,jdbcType=VARCHAR},
       </if>
-      <if test="record.remark != null" >
+      <if test="record.remark != null">
         REMARK = #{record.remark,jdbcType=VARCHAR},
       </if>
-      <if test="record.externalOrderId != null" >
+      <if test="record.externalOrderId != null">
         EXTERNAL_ORDER_ID = #{record.externalOrderId,jdbcType=VARCHAR},
       </if>
-      <if test="record.externalSupplyId != null" >
+      <if test="record.externalSupplyId != null">
         EXTERNAL_SUPPLY_ID = #{record.externalSupplyId,jdbcType=VARCHAR},
       </if>
-      <if test="record.downstreamOrderId != null" >
+      <if test="record.downstreamOrderId != null">
         DOWNSTREAM_ORDER_ID = #{record.downstreamOrderId,jdbcType=VARCHAR},
       </if>
+      <if test="record.userType != null">
+        USER_TYPE = #{record.userType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ipAddress != null">
+        IP_ADDRESS = #{record.ipAddress,jdbcType=VARCHAR},
+      </if>
     </set>
-    <if test="_parameter != null" >
+    <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByExample" parameterType="map" >
+  <update id="updateByExample" parameterType="map">
     update ord_order
     set ORDER_ID = #{record.orderId,jdbcType=BIGINT},
       TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
@@ -535,126 +550,134 @@
       REMARK = #{record.remark,jdbcType=VARCHAR},
       EXTERNAL_ORDER_ID = #{record.externalOrderId,jdbcType=VARCHAR},
       EXTERNAL_SUPPLY_ID = #{record.externalSupplyId,jdbcType=VARCHAR},
-      DOWNSTREAM_ORDER_ID = #{record.downstreamOrderId,jdbcType=VARCHAR}
-    <if test="_parameter != null" >
+      DOWNSTREAM_ORDER_ID = #{record.downstreamOrderId,jdbcType=VARCHAR},
+      USER_TYPE = #{record.userType,jdbcType=VARCHAR},
+      IP_ADDRESS = #{record.ipAddress,jdbcType=VARCHAR}
+    <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder">
     update ord_order
-    <set >
-      <if test="tenantId != null" >
+    <set>
+      <if test="tenantId != null">
         TENANT_ID = #{tenantId,jdbcType=VARCHAR},
       </if>
-      <if test="busiCode != null" >
+      <if test="busiCode != null">
         BUSI_CODE = #{busiCode,jdbcType=VARCHAR},
       </if>
-      <if test="orderType != null" >
+      <if test="orderType != null">
         ORDER_TYPE = #{orderType,jdbcType=VARCHAR},
       </if>
-      <if test="subFlag != null" >
+      <if test="subFlag != null">
         SUB_FLAG = #{subFlag,jdbcType=VARCHAR},
       </if>
-      <if test="parentOrderId != null" >
+      <if test="parentOrderId != null">
         PARENT_ORDER_ID = #{parentOrderId,jdbcType=BIGINT},
       </if>
-      <if test="batchNo != null" >
+      <if test="batchNo != null">
         BATCH_NO = #{batchNo,jdbcType=BIGINT},
       </if>
-      <if test="userId != null" >
+      <if test="userId != null">
         USER_ID = #{userId,jdbcType=VARCHAR},
       </if>
-      <if test="acctId != null" >
+      <if test="acctId != null">
         ACCT_ID = #{acctId,jdbcType=BIGINT},
       </if>
-      <if test="subsId != null" >
+      <if test="subsId != null">
         SUBS_ID = #{subsId,jdbcType=BIGINT},
       </if>
-      <if test="supplierId != null" >
+      <if test="supplierId != null">
         SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},
       </if>
-      <if test="storageId != null" >
+      <if test="storageId != null">
         STORAGE_ID = #{storageId,jdbcType=VARCHAR},
       </if>
-      <if test="routeId != null" >
+      <if test="routeId != null">
         ROUTE_ID = #{routeId,jdbcType=VARCHAR},
       </if>
-      <if test="provinceCode != null" >
+      <if test="provinceCode != null">
         PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR},
       </if>
-      <if test="cityCode != null" >
+      <if test="cityCode != null">
         CITY_CODE = #{cityCode,jdbcType=VARCHAR},
       </if>
-      <if test="state != null" >
+      <if test="state != null">
         STATE = #{state,jdbcType=VARCHAR},
       </if>
-      <if test="stateChgTime != null" >
+      <if test="stateChgTime != null">
         STATE_CHG_TIME = #{stateChgTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="displayFlag != null" >
+      <if test="displayFlag != null">
         DISPLAY_FLAG = #{displayFlag,jdbcType=VARCHAR},
       </if>
-      <if test="displayFlagChgTime != null" >
+      <if test="displayFlagChgTime != null">
         DISPLAY_FLAG_CHG_TIME = #{displayFlagChgTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="deliveryFlag != null" >
+      <if test="deliveryFlag != null">
         DELIVERY_FLAG = #{deliveryFlag,jdbcType=VARCHAR},
       </if>
-      <if test="lockFlag != null" >
+      <if test="lockFlag != null">
         LOCK_FLAG = #{lockFlag,jdbcType=VARCHAR},
       </if>
-      <if test="lockTime != null" >
+      <if test="lockTime != null">
         LOCK_TIME = #{lockTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="orderTime != null" >
+      <if test="orderTime != null">
         ORDER_TIME = #{orderTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="sellerId != null" >
+      <if test="sellerId != null">
         SELLER_ID = #{sellerId,jdbcType=BIGINT},
       </if>
-      <if test="chlId != null" >
+      <if test="chlId != null">
         CHL_ID = #{chlId,jdbcType=VARCHAR},
       </if>
-      <if test="operId != null" >
+      <if test="operId != null">
         OPER_ID = #{operId,jdbcType=VARCHAR},
       </if>
-      <if test="workflowId != null" >
+      <if test="workflowId != null">
         WORKFLOW_ID = #{workflowId,jdbcType=VARCHAR},
       </if>
-      <if test="reasonType != null" >
+      <if test="reasonType != null">
         REASON_TYPE = #{reasonType,jdbcType=VARCHAR},
       </if>
-      <if test="reasonDesc != null" >
+      <if test="reasonDesc != null">
         REASON_DESC = #{reasonDesc,jdbcType=VARCHAR},
       </if>
-      <if test="finishTime != null" >
+      <if test="finishTime != null">
         FINISH_TIME = #{finishTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="origOrderId != null" >
+      <if test="origOrderId != null">
         ORIG_ORDER_ID = #{origOrderId,jdbcType=BIGINT},
       </if>
-      <if test="orderDesc != null" >
+      <if test="orderDesc != null">
         ORDER_DESC = #{orderDesc,jdbcType=VARCHAR},
       </if>
-      <if test="keywords != null" >
+      <if test="keywords != null">
         KEYWORDS = #{keywords,jdbcType=VARCHAR},
       </if>
-      <if test="remark != null" >
+      <if test="remark != null">
         REMARK = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="externalOrderId != null" >
+      <if test="externalOrderId != null">
         EXTERNAL_ORDER_ID = #{externalOrderId,jdbcType=VARCHAR},
       </if>
-      <if test="externalSupplyId != null" >
+      <if test="externalSupplyId != null">
         EXTERNAL_SUPPLY_ID = #{externalSupplyId,jdbcType=VARCHAR},
       </if>
-      <if test="downstreamOrderId != null" >
+      <if test="downstreamOrderId != null">
         DOWNSTREAM_ORDER_ID = #{downstreamOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null">
+        USER_TYPE = #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="ipAddress != null">
+        IP_ADDRESS = #{ipAddress,jdbcType=VARCHAR},
       </if>
     </set>
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder">
     update ord_order
     set TENANT_ID = #{tenantId,jdbcType=VARCHAR},
       BUSI_CODE = #{busiCode,jdbcType=VARCHAR},
@@ -691,7 +714,9 @@
       REMARK = #{remark,jdbcType=VARCHAR},
       EXTERNAL_ORDER_ID = #{externalOrderId,jdbcType=VARCHAR},
       EXTERNAL_SUPPLY_ID = #{externalSupplyId,jdbcType=VARCHAR},
-      DOWNSTREAM_ORDER_ID = #{downstreamOrderId,jdbcType=VARCHAR}
+      DOWNSTREAM_ORDER_ID = #{downstreamOrderId,jdbcType=VARCHAR},
+      USER_TYPE = #{userType,jdbcType=VARCHAR},
+      IP_ADDRESS = #{ipAddress,jdbcType=VARCHAR}
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>

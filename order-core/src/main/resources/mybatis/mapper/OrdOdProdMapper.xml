@@ -34,6 +34,7 @@
     <result column="UPDATE_CHL_ID" property="updateChlId" jdbcType="VARCHAR" />
     <result column="UPDATE_OPER_ID" property="updateOperId" jdbcType="VARCHAR" />
     <result column="SKU_STORAGE_ID" property="skuStorageId" jdbcType="VARCHAR" />
+    <result column="IS_INVOICE" property="isInvoice" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -98,7 +99,7 @@
     PROD_SN, SKU_ID, STANDARD_PROD_ID, SUPPLY_ID, STORAGE_ID, ROUTE_ID, VALID_TIME, INVALID_TIME, 
     STATE, BUY_SUM, SALE_PRICE, COST_PRICE, TOTAL_FEE, DISCOUNT_FEE, OPER_DISCOUNT_FEE, 
     OPER_DISCOUNT_DESC, ADJUST_FEE, JF, PROD_DESC, EXTEND_INFO, UPDATE_TIME, UPDATE_CHL_ID, 
-    UPDATE_OPER_ID, SKU_STORAGE_ID
+    UPDATE_OPER_ID, SKU_STORAGE_ID, IS_INVOICE
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria" >
     select
@@ -145,7 +146,8 @@
       DISCOUNT_FEE, OPER_DISCOUNT_FEE, OPER_DISCOUNT_DESC, 
       ADJUST_FEE, JF, PROD_DESC, 
       EXTEND_INFO, UPDATE_TIME, UPDATE_CHL_ID, 
-      UPDATE_OPER_ID, SKU_STORAGE_ID)
+      UPDATE_OPER_ID, SKU_STORAGE_ID, IS_INVOICE
+      )
     values (#{prodDetalId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{orderId,jdbcType=BIGINT}, 
       #{prodType,jdbcType=VARCHAR}, #{supplierId,jdbcType=BIGINT}, #{sellerId,jdbcType=VARCHAR}, 
       #{prodId,jdbcType=VARCHAR}, #{prodName,jdbcType=VARCHAR}, #{prodSn,jdbcType=VARCHAR}, 
@@ -156,7 +158,8 @@
       #{discountFee,jdbcType=BIGINT}, #{operDiscountFee,jdbcType=BIGINT}, #{operDiscountDesc,jdbcType=VARCHAR}, 
       #{adjustFee,jdbcType=BIGINT}, #{jf,jdbcType=BIGINT}, #{prodDesc,jdbcType=VARCHAR}, 
       #{extendInfo,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateChlId,jdbcType=VARCHAR}, 
-      #{updateOperId,jdbcType=VARCHAR}, #{skuStorageId,jdbcType=VARCHAR})
+      #{updateOperId,jdbcType=VARCHAR}, #{skuStorageId,jdbcType=VARCHAR}, #{isInvoice,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProd" >
     insert into ord_od_prod
@@ -235,6 +238,9 @@
       <if test="skuStorageId != null" >
         SKU_STORAGE_ID,
       </if>
+      <if test="isInvoice != null" >
+        IS_INVOICE,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{prodDetalId,jdbcType=BIGINT},
@@ -310,6 +316,9 @@
       </if>
       <if test="skuStorageId != null" >
         #{skuStorageId,jdbcType=VARCHAR},
+      </if>
+      <if test="isInvoice != null" >
+        #{isInvoice,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -418,6 +427,9 @@
       <if test="record.skuStorageId != null" >
         SKU_STORAGE_ID = #{record.skuStorageId,jdbcType=VARCHAR},
       </if>
+      <if test="record.isInvoice != null" >
+        IS_INVOICE = #{record.isInvoice,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -456,7 +468,8 @@
       UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
       UPDATE_CHL_ID = #{record.updateChlId,jdbcType=VARCHAR},
       UPDATE_OPER_ID = #{record.updateOperId,jdbcType=VARCHAR},
-      SKU_STORAGE_ID = #{record.skuStorageId,jdbcType=VARCHAR}
+      SKU_STORAGE_ID = #{record.skuStorageId,jdbcType=VARCHAR},
+      IS_INVOICE = #{record.isInvoice,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -557,6 +570,9 @@
       <if test="skuStorageId != null" >
         SKU_STORAGE_ID = #{skuStorageId,jdbcType=VARCHAR},
       </if>
+      <if test="isInvoice != null" >
+        IS_INVOICE = #{isInvoice,jdbcType=VARCHAR},
+      </if>
     </set>
     where PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT}
   </update>
@@ -592,7 +608,8 @@
       UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
       UPDATE_CHL_ID = #{updateChlId,jdbcType=VARCHAR},
       UPDATE_OPER_ID = #{updateOperId,jdbcType=VARCHAR},
-      SKU_STORAGE_ID = #{skuStorageId,jdbcType=VARCHAR}
+      SKU_STORAGE_ID = #{skuStorageId,jdbcType=VARCHAR},
+      IS_INVOICE = #{isInvoice,jdbcType=VARCHAR}
     where PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT}
   </update>
 </mapper>

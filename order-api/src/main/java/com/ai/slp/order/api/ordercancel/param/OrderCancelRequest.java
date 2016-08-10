@@ -14,13 +14,13 @@ public class OrderCancelRequest extends BaseInfo{
 	private static final long serialVersionUID = 1L;
 	
 	@NotNull(message = "订单Id不能为空")
-	private long orderId;
+	private Long orderId;
 
-	public long getOrderId() {
+	public Long getOrderId() {
 		return orderId;
 	}
 
-	public void setOrderId(long orderId) {
+	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
 	 

@@ -18,8 +18,6 @@ public class OrdOrder {
     private long batchNo;
 
     private String userId;
-    
-    private String userType;
 
     private long acctId;
 
@@ -78,6 +76,10 @@ public class OrdOrder {
     private String externalSupplyId;
 
     private String downstreamOrderId;
+
+    private String userType;
+
+    private String ipAddress;
 
     public long getOrderId() {
         return orderId;
@@ -142,16 +144,8 @@ public class OrdOrder {
     public void setUserId(String userId) {
         this.userId = userId == null ? null : userId.trim();
     }
-    
-    public String getUserType() {
-		return userType;
-	}
 
-	public void setUserType(String userType) {
-		this.userType = userType;
-	}
-
-	public long getAcctId() {
+    public long getAcctId() {
         return acctId;
     }
 
@@ -381,5 +375,21 @@ public class OrdOrder {
 
     public void setDownstreamOrderId(String downstreamOrderId) {
         this.downstreamOrderId = downstreamOrderId == null ? null : downstreamOrderId.trim();
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType == null ? null : userType.trim();
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress == null ? null : ipAddress.trim();
     }
 }

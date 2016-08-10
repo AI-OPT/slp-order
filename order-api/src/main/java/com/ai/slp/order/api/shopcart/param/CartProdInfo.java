@@ -13,6 +13,10 @@ import java.sql.Timestamp;
  */
 public class CartProdInfo implements Serializable{
     /**
+     * 销售商(租户)标识
+     */
+    private String supplierId;
+    /**
      * SKU单品标识
      */
     private String skuId;
@@ -61,6 +65,14 @@ public class CartProdInfo implements Serializable{
      * 销售价,单位:厘
      */
     private Long salePrice;
+
+    public String getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId;
+    }
 
     public String getProductName() {
         return productName;

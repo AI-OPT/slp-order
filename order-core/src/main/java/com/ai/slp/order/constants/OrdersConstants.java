@@ -94,7 +94,17 @@ public final class OrdersConstants {
              * 123 充值未知
              */
             public static final String CHARGE_UNKNOWN = "123";
-
+            
+            /**
+             * 13 待配货
+             */
+            public static final String WAIT_DISTRIBUTION="13";
+            
+            /**
+             * 130 提货单已打印
+             */
+            public static final String LADING_BILL_FINISH_PRINT="130";
+            
             /**
              * 131 已配货
              */
@@ -104,11 +114,26 @@ public final class OrdersConstants {
              * 14 待出库
              */
             public static final String WAIT_DELIVERY = "14";
+            
+            /**
+             * 140 发货单已打印
+             */
+            public static final String INVOICE_FINISH_PRINT="140";
 
             /**
              * 141 已出库
              */
             public static final String FINISH_DELIVERY = "141";
+            
+            /**
+             * 15 待发货
+             */
+            public static final String WAIT_SEND="15";
+            
+            /**
+             * 151 已发货
+             */
+            public static final String FINISH_SEND="151";
 
             /**
              * 16 待确认
@@ -184,6 +209,11 @@ public final class OrdersConstants {
              * 211已审核（撤单）
              */
             public static final String REVOKE_FINISH_AUDITED = "211";
+            
+            /**
+             * 212 审核失败
+             */
+            public static final String  AUDIT_FAILURE  = "212";
 
             /**
              * 22待商家确认
@@ -194,6 +224,16 @@ public final class OrdersConstants {
              * 221已商家确认
              */
             public static final String REVOKE_FINISH_CONFIRMED = "221";
+            
+	       /**
+	        * 23 待卖家收货确认
+	        */
+            public static final String WAIT_RECEIPT_CONFIRMATION ="23";
+
+            /**
+             * 231 卖家已收货确认
+             */
+            public static final String RECEIPT_CONFIRMATION ="231";
 
             /**
              * 31待退款
@@ -310,6 +350,11 @@ public final class OrdersConstants {
              * 3 换货
              */
             public static final String EXCHANGE = "3";
+            
+            /**
+             * 4 预售
+             */
+            public static final String  PRESALE="4";
 
         }
 
@@ -351,7 +396,7 @@ public final class OrdersConstants {
              * 订单待充值
              */
             public static final String ORDER_TO_CHARGE = "您提交的订单进入待充值状态";
-
+            
             /**
              * 订单充值完成
              */

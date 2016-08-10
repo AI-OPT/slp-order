@@ -64,7 +64,8 @@ public class OrderListSVImplTest {
     @Test
     public void testQueryOrder() {
     	QueryOrderRequest request=new QueryOrderRequest();
-    	request.setOrderId(2000000379038459l);
+    	request.setOrderId(0);
+    	request.setTenantId("SLP");
     	orderListSV.queryOrder(request);
     }
 }

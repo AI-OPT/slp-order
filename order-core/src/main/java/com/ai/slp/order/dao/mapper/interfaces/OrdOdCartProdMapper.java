@@ -2,8 +2,9 @@ package com.ai.slp.order.dao.mapper.interfaces;
 
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProdCriteria;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface OrdOdCartProdMapper {
     int countByExample(OrdOdCartProdCriteria example);

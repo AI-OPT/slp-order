@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.ordertradecenter.interfaces.IOrderTradeCenterSV;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdExtendInfo;
@@ -32,6 +31,7 @@ public class OrderTradeCenterSVImplTest {
     @Test
     public void orderTradeTest() {
         OrderTradeCenterRequest request = new OrderTradeCenterRequest();
+       // OrdBaseInfo ordBaseInfo = null;
         OrdBaseInfo ordBaseInfo = new OrdBaseInfo();
         ordBaseInfo.setUserId("123");
         ordBaseInfo.setOrderType("100010");
@@ -42,8 +42,17 @@ public class OrderTradeCenterSVImplTest {
         ordProductInfo.setBasicOrgId("10");
         ordProductInfo.setBuySum(4);
         ordProductInfo.setChargeFee("40");
-        ordProductInfo.setSkuId("1000000000002401");
+        ordProductInfo.setSkuId("1000000000002519");
+        ordProductInfo.setSupplierId(12l);
         ordProductInfoList.add(ordProductInfo);
+        
+        OrdProductInfo ordProductInfo1 = new OrdProductInfo();
+        ordProductInfo1.setBasicOrgId("10");
+        ordProductInfo1.setBuySum(5);
+        ordProductInfo1.setChargeFee("50");
+        ordProductInfo1.setSkuId("1000000000002459");
+        ordProductInfoList.add(ordProductInfo1);
+        ordProductInfo.setSupplierId(12l);
         List<ProdExtendInfoVo> prodExtendInfoVoList = new ArrayList<ProdExtendInfoVo>();
 
         ProdExtendInfoVo prodExtendInfoVo = new ProdExtendInfoVo();
@@ -83,6 +92,7 @@ public class OrderTradeCenterSVImplTest {
         request.setTenantId("SLP");
         request.setBuySum(1);
         OrderApiTradeCenterResponse apiApply = orderTradeCenterSV.apiApply(request);
+        System.out.println(apiApply);
         System.out.println("11");
  
     }

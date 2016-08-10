@@ -19,6 +19,7 @@ import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.*;
+import com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria.Criteria;
 import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
@@ -39,6 +40,8 @@ import com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProduct;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProductQueryVo;
 import com.alibaba.fastjson.JSON;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +51,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -82,6 +87,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
+    
+    @Autowired
+    private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
     
     /**
      * 订单收费
@@ -307,38 +315,114 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     private void resoleOrders(OrdOrder ordOrder, String tenantId, IDSSClient client) {
         logger.debug("开始对订单[" + ordOrder.getOrderId() + "]进行拆分..");
-        /* 1.查询商品明细拓展表 */
-        OrdOdProdExtendCriteria example = new OrdOdProdExtendCriteria();
-        OrdOdProdExtendCriteria.Criteria criteria = example.createCriteria();
-        criteria.andTenantIdEqualTo(tenantId);
-        if (ordOrder.getOrderId() != 0) {
-            criteria.andOrderIdEqualTo(ordOrder.getOrderId());
-        }
-        List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
-        if (CollectionUtil.isEmpty(ordOdProdExtendList)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息扩展表不存在[orderId:"+ordOrder.getOrderId()+"]");
-        }
-        /* 2.遍历取出值信息 */
-        for (OrdOdProdExtend ordOdProdExtend : ordOdProdExtendList) {
-            String infoJson = ordOdProdExtend.getInfoJson();
-            String batchFlag = ordOdProdExtend.getBatchFlag();
-            if (OrdersConstants.OrdOdProdExtend.BatchFlag.YES.equals(batchFlag)) {
-                byte[] filebytes = client.read(infoJson);
-                infoJson = new String(filebytes);
+        /* 购买实物类商品 */
+        if(OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(ordOrder.getOrderType())) {
+        	/* 1.查询商品明细表*/
+        	OrdOdProdCriteria example = new OrdOdProdCriteria();
+        	OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+        	criteria.andTenantIdEqualTo(tenantId);
+        	if (ordOrder.getOrderId() == 0) {
+        		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"订单id不能为空");        
+        	}
+        	criteria.andOrderIdEqualTo(ordOrder.getOrderId());
+        	List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
+        	if(CollectionUtil.isEmpty(ordOdProdList)) {
+        		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息表不存在[orderId:"+ordOrder.getOrderId()+"]");
+        	}
+        	Map<String, Long> map=new HashMap<String,Long>();
+        	for (OrdOdProd ordOdProd : ordOdProdList) {
+        		/* 2.生成子订单*/
+        		this.createEntitySubOrder(tenantId, ordOrder,ordOdProd,map);
+        	}
+        }else {
+        	/* 购买虚拟类商品*/
+        	/* 1.查询商品明细拓展表 */
+            OrdOdProdExtendCriteria example = new OrdOdProdExtendCriteria();
+            OrdOdProdExtendCriteria.Criteria criteria = example.createCriteria();
+            criteria.andTenantIdEqualTo(tenantId);
+            if (ordOrder.getOrderId() != 0) {
+                criteria.andOrderIdEqualTo(ordOrder.getOrderId());
             }
-            InfoJsonVo infoJsonVo = JSON.parseObject(infoJson, InfoJsonVo.class);
-            List<ProdExtendInfoVo> prodExtendInfoVoList = infoJsonVo.getProdExtendInfoVoList();
-            for (ProdExtendInfoVo prodExtendInfoVo : prodExtendInfoVoList) {
-                /* 3.生成子订单 */
-                this.createSubOrder(tenantId, ordOrder, ordOdProdExtend.getProdDetalId(),
-                        prodExtendInfoVo.getProdExtendInfoValue());
+            List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
+            if (CollectionUtil.isEmpty(ordOdProdExtendList)) {
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息扩展表不存在[orderId:"+ordOrder.getOrderId()+"]");
             }
-
+            /* 2.遍历取出值信息 */
+            for (OrdOdProdExtend ordOdProdExtend : ordOdProdExtendList) {
+                String infoJson = ordOdProdExtend.getInfoJson();
+                String batchFlag = ordOdProdExtend.getBatchFlag();
+                if (OrdersConstants.OrdOdProdExtend.BatchFlag.YES.equals(batchFlag)) {
+                    byte[] filebytes = client.read(infoJson);
+                    infoJson = new String(filebytes);
+                }
+                InfoJsonVo infoJsonVo = JSON.parseObject(infoJson, InfoJsonVo.class);
+                List<ProdExtendInfoVo> prodExtendInfoVoList = infoJsonVo.getProdExtendInfoVoList();
+                for (ProdExtendInfoVo prodExtendInfoVo : prodExtendInfoVoList) {
+                    /* 3.生成子订单 */
+                    this.createSubOrder(tenantId, ordOrder, ordOdProdExtend.getProdDetalId(),
+                            prodExtendInfoVo.getProdExtendInfoValue());
+                }
+            }
         }
     }
-
+    
+    
     /**
-     * 生成子订单
+     * 实物体生成子订单
+     * @param tenantId
+     * @param parentOrdOrder
+     * @param parentOrdOdProd
+     * @param map
+     * @author caofz
+     */
+    private void createEntitySubOrder(String tenantId, OrdOrder parentOrdOrder,
+    		OrdOdProd parentOrdOdProd,Map<String, Long> map) {
+    	/* 1.根据商品信息获取routeId*/
+    	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId());
+        IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService(IRouteCoreService.class);
+        SaleProductInfo saleProductInfo = new SaleProductInfo();
+        saleProductInfo.setTenantId(tenantId);
+        saleProductInfo.setRouteGroupId(routeGroupId);
+        saleProductInfo.setTotalConsumption(parentOrdOdProd.getSalePrice());
+        String routeId = iRouteCoreService.findRoute(saleProductInfo);
+    	if(StringUtil.isBlank(routeId)) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据路由组ID["
+                    + routeGroupId + "]订单金额[" + parentOrdOdProd.getSalePrice() + "]未能找到供货路由");
+    	}
+    	Long subOrderId=null;
+    	OrdOdProd ordOdProd =null;
+    	/* 2.判断routeId是否在map集合中*/
+    	if(!map.containsKey(routeId)) {
+    		/* 2.1.不包含的话,创建子订单表*/
+    		subOrderId = SequenceUtil.createOrderId();
+    		OrdOrder childOrdOrder = new OrdOrder();
+    		BeanUtils.copyProperties(childOrdOrder, parentOrdOrder);
+    		childOrdOrder.setOrderId(subOrderId);
+    		childOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.YES);
+    		childOrdOrder.setParentOrderId(parentOrdOrder.getOrderId());
+    		childOrdOrder.setState(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION);
+    		childOrdOrder.setStateChgTime(DateUtil.getSysDate());
+    		ordOrderAtomSV.insertSelective(childOrdOrder);
+    		/* 2.1.1.实物的情况下,创建其它子信息表*/
+    		ordOdProd = this.createTableInfo(subOrderId, parentOrdOrder, parentOrdOdProd, routeId,null);
+    		/* 2.1.2.把routeId和子订单Id放入集合中*/
+    		map.put(routeId, subOrderId);
+    	}else {
+    		/* 2.2.同一个routeId的情况下,订单合并*/
+    		subOrderId = map.get(routeId);
+    		ordOdProd = this.createTableInfo(subOrderId, parentOrdOrder, parentOrdOdProd, routeId,null);
+    	}
+        /* 3.写入订单状态变化轨迹表 */
+        String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DISTRIBUTION;
+		orderFrameCoreSV.ordOdStateChg(subOrderId, tenantId, parentOrdOrder.getState(),
+				OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION, chgDesc, null, null, null, DateUtil.getSysDate());
+        /* 4.调用路由,并更新订单明细表*/ 
+		this.callRoute(tenantId,ordOdProd,null,routeId,parentOrdOrder.getOrderType());
+    }
+    
+    
+    /**
+     * 虚拟类生成子订单
      * 
      * @param orderId
      * @param prodExtendInfoValue
@@ -357,64 +441,29 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         childOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.YES);
         childOrdOrder.setParentOrderId(parentOrdOrder.getOrderId());
         childOrdOrder.setState(OrdersConstants.OrdOrder.State.WAIT_CHARGE);
+        childOrdOrder.setStateChgTime(DateUtil.getSysDate());
         ordOrderAtomSV.insertSelective(childOrdOrder);
-        /* 2.创建子订单-商品明细信息 */
-        long prodDetailId = SequenceUtil.createProdDetailId();
-        OrdOdProdCriteria example = new OrdOdProdCriteria();
-        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-        criteria.andTenantIdEqualTo(tenantId);
-        if (parentOrdOrder.getOrderId() != 0) {
-            criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
-        }
-        if (parentProdDetalId != 0) {
-            criteria.andProdDetalIdEqualTo(parentProdDetalId);
-        }
-        List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
-        if (CollectionUtil.isEmpty(ordOdProdList)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-            		"商品明细信息不存在[orderId:"+parentOrdOrder.getOrderId()+"prodDetalId:"+parentProdDetalId+"]");
-        }
-        OrdOdProd parentOrdOdProd = ordOdProdList.get(0);
-        OrdOdProd ordOdProd = new OrdOdProd();
-        BeanUtils.copyProperties(ordOdProd, parentOrdOdProd);
-        ordOdProd.setProdDetalId(prodDetailId);
-        ordOdProd.setOrderId(subOrderId);
-        ordOdProdAtomSV.insertSelective(ordOdProd);
-        /*3.创建子订单-费用汇总表*/
-        OrdOdFeeTotal parentOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(tenantId, 
-        		parentOrdOrder.getOrderId());
-        if(parentOrdOdFeeTotal==null) {
-        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-        			"订单费用总表[orderId:"+parentOrdOrder.getOrderId()+"]");
-        }
-        OrdOdFeeTotal ordOdFeeTotal=new OrdOdFeeTotal();
-        BeanUtils.copyProperties(ordOdFeeTotal, parentOrdOdFeeTotal);
-        ordOdFeeTotal.setOrderId(subOrderId);
-        ordOdFeeTotal.setTotalFee(ordOdProd.getTotalFee());
-        ordOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
-        long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
-        ordOdFeeTotal.setAdjustFee(apaidFee);
-        ordOdFeeTotal.setPaidFee(apaidFee);
-        ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
-        ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
-        /* 4.创建子订单商品明细信息扩展表*/
+        /* 2.虚拟物品的情况下,创建其它子信息表*/
+        OrdOdProd ordOdProd = this.createTableInfo(subOrderId, parentOrdOrder, null, null,parentProdDetalId);
+        /* 3.创建子订单商品明细信息扩展表*/
         Long prodDetailExtendId = SequenceUtil.createProdDetailExtendId();
         OrdOdProdExtend subOrdOdProdExtend=new OrdOdProdExtend();
         subOrdOdProdExtend.setInfoJson(prodExtendInfoValue);
         subOrdOdProdExtend.setOrderId(subOrderId);
-        subOrdOdProdExtend.setProdDetalId(prodDetailId);
+        subOrdOdProdExtend.setProdDetalId(ordOdProd.getProdDetalId());
         subOrdOdProdExtend.setProdDetalExtendId(prodDetailExtendId);
-        subOrdOdProdExtend.setTenantId("SLP");
+        subOrdOdProdExtend.setTenantId(parentOrdOrder.getOrderType());
         subOrdOdProdExtend.setBatchFlag(OrdersConstants.OrdOdProdExtend.BatchFlag.NO);
         ordOdProdExtendAtomSV.insertSelective(subOrdOdProdExtend);
-        /* 写入订单状态变化轨迹表 */
+        /* 4.写入订单状态变化轨迹表 */
         String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_CHARGE;
 		orderFrameCoreSV.ordOdStateChg(childOrdOrder.getOrderId(), childOrdOrder.getTenantId(), parentOrdOrder.getState(),
 				OrdersConstants.OrdOrder.State.WAIT_CHARGE, chgDesc, null, null, null, DateUtil.getSysDate());
         /* 5.调用路由,并更新订单明细表 */
-        this.callRoute(tenantId, prodDetailId, ordOdProd,prodDetailExtendId);
+		this.callRoute(tenantId, ordOdProd, prodDetailExtendId, null, parentOrdOrder.getOrderType());
     }
 
+    
     /**
      * 订单支付确认后处理
      * 
@@ -436,14 +485,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             /* 2.2 记入订单轨迹表 */
             orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, oldState, newState,
                     OrdOdStateChg.ChgDesc.ORDER_PAID, null, null, null, sysdate);
-
         }
         /* 3.增加商品销量 */
         List<OrdOdProd> ordOdProds = this.getOrdOdProds(tenantId, ordOrder.getOrderId());
         for (OrdOdProd ordOdProd : ordOdProds) {
             this.addSaleNumOfProduct(tenantId, ordOdProd.getSkuId(), (int) ordOdProd.getBuySum());
         }
-
     }
 
     /**
@@ -468,7 +515,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 
     /**
      * 调用路由
-     * 
      * @param prodId
      * @param salePrice
      * @author zhangxw
@@ -476,74 +522,73 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @param string
      * @ApiDocMethod
      */
-    private void callRoute(String tenantId, long prodDetailId, OrdOdProd ordOdProd,long prodDetailExtendId) {
-        /* 1.获取路由组ID */
-        String routeGroupId = this.getRouteGroupId(tenantId, ordOdProd.getProdId());
-        /* 2.路由计算获取路由ID */
-        IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService(IRouteCoreService.class);
-        SaleProductInfo saleProductInfo = new SaleProductInfo();
-        saleProductInfo.setTenantId(tenantId);
-        saleProductInfo.setRouteGroupId(routeGroupId);
-        saleProductInfo.setTotalConsumption(ordOdProd.getSalePrice());
-        String routeId = iRouteCoreService.findRoute(saleProductInfo);
-        if (StringUtil.isBlank(routeId)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据路由组ID["
-                    + routeGroupId + "]订单金额[" + ordOdProd.getSalePrice() + "]未能找到供货路由");
-        }
-        /* 3.根据路由ID查询相关信息 */
+    private void callRoute(String tenantId, OrdOdProd ordOdProd,Long prodDetailExtendId,
+    		String routeId,String orderType) {
+    	String rid=null;
+    	/* 1.非实物类的情况下*/
+    	if(!OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(orderType)) {
+    		/* 1.1.获取路由组ID */
+    		String routeGroupId = this.getRouteGroupId(tenantId, ordOdProd.getProdId());
+    		/* 1.2.路由计算获取路由ID */
+    		IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService(IRouteCoreService.class);
+    		SaleProductInfo saleProductInfo = new SaleProductInfo();
+    		saleProductInfo.setTenantId(tenantId);
+    		saleProductInfo.setRouteGroupId(routeGroupId);
+    		saleProductInfo.setTotalConsumption(ordOdProd.getSalePrice());
+    		rid = iRouteCoreService.findRoute(saleProductInfo);
+    		if (StringUtil.isBlank(rid)) {
+    			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据路由组ID["
+    					+ routeGroupId + "]订单金额[" + ordOdProd.getSalePrice() + "]未能找到供货路由");
+    		}
+    	}else {
+    		rid=routeId;
+    	}
+        /* 2.根据路由ID查询相关信息 */
         SupplyProductQueryVo supplyProductQueryVo = new SupplyProductQueryVo();
         supplyProductQueryVo.setTenantId(tenantId);
-        supplyProductQueryVo.setRouteId(routeId);
+        supplyProductQueryVo.setRouteId(rid);
         supplyProductQueryVo.setSaleCount(1);
         supplyProductQueryVo.setStandardProductId(ordOdProd.getStandardProdId());
         ISupplyProductServiceSV iSupplyProductServiceSV = DubboConsumerFactory
                 .getService(ISupplyProductServiceSV.class);
-        SupplyProduct supplyProduct = iSupplyProductServiceSV
-                .updateSupplyProductSaleCount(supplyProductQueryVo);
-        /* 4.更新订单商品明细表字段 */
-        OrdOdProdCriteria example = new OrdOdProdCriteria();
-        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-        criteria.andTenantIdEqualTo(tenantId);
-        if (prodDetailId != 0) {
-            criteria.andProdDetalIdEqualTo(prodDetailId);
+        SupplyProduct supplyProduct = iSupplyProductServiceSV.updateSupplyProductSaleCount(supplyProductQueryVo);
+        /* 3.更新订单商品明细表字段 */
+        ordOdProd.setRouteId(routeId);
+        ordOdProd.setSupplyId(supplyProduct.getSupplyId());
+        ordOdProd.setSellerId(supplyProduct.getSellerId());
+        ordOdProd.setCostPrice(supplyProduct.getCostPrice());
+        ordOdProdAtomSV.updateById(ordOdProd);
+        //TODO
+        if(OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(orderType)) {
+        	return;
         }
-        List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
-        if (CollectionUtil.isEmpty(ordOdProdList)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息[prodDetailId"+prodDetailId+"]");
-        }
-        OrdOdProd ordOdProdBean = ordOdProdList.get(0);
-        ordOdProdBean.setRouteId(routeId);
-        ordOdProdBean.setSupplyId(supplyProduct.getSupplyId());
-        ordOdProdBean.setSellerId(supplyProduct.getSellerId());
-        ordOdProdBean.setCostPrice(supplyProduct.getCostPrice());
-        ordOdProdAtomSV.updateById(ordOdProdBean);
         OrdOdProdExtend ordOdProdExtend = ordOdProdExtendAtomSV.selectByPrimaryKey(prodDetailExtendId);
         if(ordOdProdExtend==null) {
         	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息[prodDetailExtendId:"+prodDetailExtendId+"]");
         }
-        /* 5.充值路由 */
+        /* 4.充值路由 */
         IRouteServerRequest request = new IRouteServerRequest();
         request.setTenantId(tenantId);
-        request.setRouteId(routeId);
+        request.setRouteId(rid);
         RouteServReqVo routeServReqVo = new RouteServReqVo();
         routeServReqVo.setOrderId(String.valueOf(ordOdProd.getOrderId()));
-        routeServReqVo.setBizType(ordOdProdBean.getProdType());
+        routeServReqVo.setBizType(ordOdProd.getProdType());
         routeServReqVo.setAccountVal(ordOdProdExtend.getInfoJson());
         routeServReqVo.setBuyNum(1);
         routeServReqVo.setNotifyUrl(this.getNotifyUrl(OrdersConstants.O2P_NOTIFYURL));
-        routeServReqVo.setProId(ordOdProdBean.getProdId());
-        routeServReqVo.setUnitPrice(ordOdProdBean.getSalePrice()*30);
-        routeServReqVo.setCoSysId(ordOdProdBean.getSellerId());
-        String extendInfo = ordOdProdBean.getExtendInfo();
+        routeServReqVo.setProId(ordOdProd.getProdId());
+        routeServReqVo.setUnitPrice(ordOdProd.getSalePrice()*30);
+        routeServReqVo.setCoSysId(ordOdProd.getSellerId());
+        String extendInfo = ordOdProd.getExtendInfo();
       	ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo,ProdAttrInfoVo.class);
       	routeServReqVo.setOperatorId(prodAttrInfoVo.getBasicOrgId()); 
         request.setRequestData(JSON.toJSONString(routeServReqVo));
         chargeMds(request);
     }
 
+
     /**
      * 根据商品ID查询路由组ID
-     * 
      * @param tenantId
      * @param productId
      * @return
@@ -596,7 +641,87 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         msgSender.send(context, new Random(10000).nextLong());// 第二个参数为分区键，如果不分区，传入0
         logger.info("send sucess...");
     }
-
+    
+    /**
+     * 拆分时创建表信息
+     * @param subOrderId
+     * @param parentOrdOrder
+     * @param parentOrdOdProd
+     * @param routeId
+     * @param parentProdDetalId
+     *  @author caofz
+     */
+    private OrdOdProd createTableInfo(long subOrderId,OrdOrder parentOrdOrder,OrdOdProd parentOrdOdProd,
+    		String routeId,Long parentProdDetalId) {
+    	OrdOdProd ordOdProd=null;
+    	long prodDetailId = SequenceUtil.createProdDetailId();
+    	if(OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(
+    			parentOrdOrder.getOrderType())) {
+    		/* 创建子订单-商品明细信息 */
+    		ordOdProd = new OrdOdProd();
+    		BeanUtils.copyProperties(ordOdProd, parentOrdOdProd);
+    		ordOdProd.setProdDetalId(prodDetailId);
+    		ordOdProd.setOrderId(subOrderId);
+    		ordOdProd.setRouteId(routeId);
+    		ordOdProdAtomSV.insertSelective(ordOdProd);
+    		//TODO
+    		/*根据商品来判断是否能创建发票信息*/
+    		//TODO
+    		/* 创建子订单-发票信息*/
+    /*		OrdOdInvoiceCriteria example=new OrdOdInvoiceCriteria();
+    		OrdOdInvoiceCriteria.Criteria criteria = example.createCriteria();
+    		criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
+    		List<OrdOdInvoice> OrdOdInvoices = ordOdInvoiceAtomSV.selectByExample(example);
+    		if(CollectionUtil.isEmpty(OrdOdInvoices)) {
+    			throw new BusinessException("", "订单发票信息为空[订单id:"+parentOrdOrder.getOrderId()+"]");
+    		}
+    		OrdOdInvoice ordOdInvoice = OrdOdInvoices.get(0);
+    		OrdOdInvoice invoice=new OrdOdInvoice();
+    		BeanUtils.copyProperties(invoice, ordOdInvoice);
+    		invoice.setOrderId(subOrderId);
+    		ordOdInvoiceAtomSV.insertSelective(invoice);*/
+    	}else {
+            OrdOdProdCriteria example = new OrdOdProdCriteria();
+            OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+            criteria.andTenantIdEqualTo(parentOrdOrder.getTenantId());
+            if (parentOrdOrder.getOrderId() != 0) {
+                criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
+            }
+            if (parentProdDetalId != 0) {
+                criteria.andProdDetalIdEqualTo(parentProdDetalId);
+            }
+            List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
+            if (CollectionUtil.isEmpty(ordOdProdList)) {
+                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+                		"商品明细信息不存在[orderId:"+parentOrdOrder.getOrderId()+"prodDetalId:"+parentProdDetalId+"]");
+            }
+            OrdOdProd parentOd = ordOdProdList.get(0);
+            ordOdProd = new OrdOdProd();
+            BeanUtils.copyProperties(ordOdProd, parentOd);
+            ordOdProd.setProdDetalId(prodDetailId);
+            ordOdProd.setOrderId(subOrderId);
+            ordOdProdAtomSV.insertSelective(ordOdProd);
+    	}
+		/* 创建子订单-费用汇总表*/
+		OrdOdFeeTotal parentOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(parentOrdOrder.getTenantId(), 
+				parentOrdOrder.getOrderId());
+		if(parentOrdOdFeeTotal==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"订单费用总表[orderId:"+parentOrdOrder.getOrderId()+"]");
+		}
+		OrdOdFeeTotal ordOdFeeTotal=new OrdOdFeeTotal();
+		BeanUtils.copyProperties(ordOdFeeTotal, parentOrdOdFeeTotal);
+		ordOdFeeTotal.setOrderId(subOrderId);
+		ordOdFeeTotal.setTotalFee(ordOdProd.getTotalFee());
+		ordOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
+		long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
+		ordOdFeeTotal.setAdjustFee(apaidFee);
+		ordOdFeeTotal.setPaidFee(apaidFee);
+		ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
+		ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
+		return ordOdProd;
+    }
+    
     /**
      * 归档
      * 

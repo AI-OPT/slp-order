@@ -2,9 +2,11 @@ package com.ai.slp.order.service.business.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,32 +80,64 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
+    	LOG.info("商品下单处理......");
         OrderTradeCenterResponse response = new OrderTradeCenterResponse();
         IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
-        /* 1.生成订单号 */
-        long orderId = SequenceUtil.createOrderId();
-        LOG.debug("开始处理-订单号[" + orderId + "]订单提交..");
+        long orderId =0;
+        List<OrdProductResInfo> ordProductResList =null;
+        OrdFeeInfo ordFeeInfo =null;
         Timestamp sysDate = DateUtil.getSysDate();
-        /* 2.创建业务订单信息 */
-        this.createOrder(request, sysDate, orderId);
-        /* 3.创建商品明细信息 */
-        List<OrdProductResInfo> ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
-        /* 4.费用信息处理 */
-        OrdFeeInfo ordFeeInfo = this.createFeeInfo(request, sysDate, orderId);
-        /* 5.创建发票信息 */
-        this.createOrderFeeInvoice(request, sysDate, orderId);
-        /* 6. 处理配送信息，存在则写入 */
-        this.createOrderLogistics(request, sysDate, orderId);
-        /* 7. 记录一条订单创建轨迹记录 */
-        this.writeOrderCreateStateChg(request, sysDate, orderId);
-        /* 8. 更新订单状态 */
-        this.updateOrderState(request.getTenantId(), sysDate, orderId);
-        /* 9. 封装返回参数 */
+    	List<OrdProductInfo> productInfoList = request.getOrdProductInfoList();
+    	/* 商品个数为1的时候,即销售商Id为一个的情况下*/
+    	if(productInfoList.size()==1) {  
+    		/* 创建业务订单,并返回订单Id*/
+    		orderId = this.createOrder(request, sysDate);
+    		/* 创建商品明细信息 */
+            ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
+            /* 创建其它信息*/
+            ordFeeInfo = this.createOrderRelatedInfo(request, sysDate, orderId);
+    	}else { 
+    		/* 销售商Id为多个的情况下*/
+    		Map<Long, Long> orderMap=new HashMap<Long,Long>();
+    		for (OrdProductInfo ordProductInfo : productInfoList) {
+    			if(!orderMap.containsKey(ordProductInfo.getSupplierId())) {
+    				/* 创建业务订单,并返回订单Id*/
+    				orderId = this.createOrder(request, sysDate);
+    				/* 不包含的话,销售商Id和订单Id存入orderMap集合中*/
+    				orderMap.put(ordProductInfo.getSupplierId(), orderId);
+    				/* 创建商品明细信息 */
+    		        ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
+    		        /* 创建其它信息*/
+    		        ordFeeInfo=this.createOrderRelatedInfo(request, sysDate, orderId);
+    			}else {
+    				/* orderMap集合中包含的话,取出订单Id*/
+    				orderId = orderMap.get(ordProductInfo.getSupplierId());
+    		        ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
+    		        ordFeeInfo=this.createOrderRelatedInfo(request, sysDate, orderId);
+    			}
+			}
+    	}
+        /* 封装返回参数 */
         response.setOrderId(orderId);
         response.setOrdFeeInfo(ordFeeInfo);
         response.setOrdProductResList(ordProductResList);
         return response;
     }
+    
+    
+    private OrdFeeInfo createOrderRelatedInfo(OrderTradeCenterRequest request, Timestamp sysDate,long orderId) {
+    	/* 1.费用信息处理 */
+    	OrdFeeInfo ordFeeInfo = this.createFeeInfo(request, sysDate, orderId);
+    	/* 2.创建发票信息 */
+    	this.createOrderFeeInvoice(request, sysDate, orderId);
+    	/* 3. 处理配送信息，存在则写入 */
+    	this.createOrderLogistics(request, sysDate, orderId);
+    	/* 4. 记录一条订单创建轨迹记录 */
+    	this.writeOrderCreateStateChg(request, sysDate, orderId);
+    	/* 5. 更新订单状态 */
+    	this.updateOrderState(request.getTenantId(), sysDate, orderId);
+        return ordFeeInfo;
+    } 
 
     /**
      * 创建订单信息
@@ -114,8 +148,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void createOrder(OrderTradeCenterRequest request, Timestamp sysDate, long orderId) {
-        LOG.debug("开始处理订单主表[" + orderId + "]资料信息..");
+    private long createOrder(OrderTradeCenterRequest request, Timestamp sysDate) {
+        //LOG.debug("开始处理订单主表[" + orderId + "]资料信息..");
         OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
         if (StringUtil.isBlank(ordBaseInfo.getOrderType())) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单类型为空");
@@ -127,6 +161,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户类型为空");
         }
         OrdOrder ordOrder = new OrdOrder();
+        long orderId = SequenceUtil.createOrderId();
         ordOrder.setOrderId(orderId);
         ordOrder.setTenantId(request.getTenantId());
         ordOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
@@ -134,6 +169,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
         ordOrder.setUserId(ordBaseInfo.getUserId());
         ordOrder.setUserType(ordBaseInfo.getUserType());
+        ordOrder.setIpAddress(ordBaseInfo.getIpAddress());
         ordOrder.setProvinceCode(ordBaseInfo.getProvinceCode());
         ordOrder.setCityCode(ordBaseInfo.getCityCode());
         ordOrder.setState(OrdersConstants.OrdOrder.State.NEW);
@@ -146,6 +182,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setKeywords(ordBaseInfo.getKeywords());
         ordOrder.setRemark(ordBaseInfo.getRemark());
         ordOrderAtomSV.insertSelective(ordOrder);
+        return orderId;
     }
 
     /**
@@ -283,21 +320,30 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     private void createOrderFeeInvoice(OrderTradeCenterRequest request, Timestamp sysDate,
             long orderId) {
     	LOG.debug("开始处理订单发票[" + orderId + "]信息..");
-    	OrdInvoiceInfo ordInvoiceInfo = request.getOrdInvoiceInfo();
-    	/* 1.判断是否需要发票*/
-    	if(ordInvoiceInfo==null) {
-    		return;
-    	}
-    	OrdOdInvoice ordInvoice=new OrdOdInvoice();
-    	ordInvoice.setOrderId(orderId);
-    	ordInvoice.setTenantId(request.getTenantId());
-    	ordInvoice.setInvoiceTitle(ordInvoiceInfo.getInvoiceTitle());
-    	ordInvoice.setInvoiceType(ordInvoiceInfo.getInvoiceType());
-    	//TODO
-    	//登记打印内容? 多个商品具体哪些需要打印发票
-    	
-    	
-    	ordOdInvoiceAtomSV.insertSelective(ordInvoice);
+		/* 1.判断商品是否允许发票*/
+		OrdInvoiceInfo ordInvoiceInfo = request.getOrdInvoiceInfo();
+		/* 2.判断是否选择打印发票*/
+		if(ordInvoiceInfo==null) {
+			return;
+		}else {
+			/* 3.参数校验*/
+			if(StringUtil.isBlank(ordInvoiceInfo.getInvoiceType())) {
+				throw new BusinessException("", "在打印发票的情况下,发票类型不能为空");
+			}
+			if(StringUtil.isBlank(ordInvoiceInfo.getInvoiceTitle())) {
+				throw new BusinessException("", "在打印发票的情况下,发票抬头不能为空");
+			}
+			if(StringUtil.isBlank(ordInvoiceInfo.getInvoiceContent())) {
+				throw new BusinessException("", "在打印发票的情况下,发票内容不能为空");
+			}
+		}
+		OrdOdInvoice ordInvoice=new OrdOdInvoice();
+		ordInvoice.setOrderId(orderId);
+		ordInvoice.setTenantId(request.getTenantId());
+		ordInvoice.setInvoiceTitle(ordInvoiceInfo.getInvoiceTitle());
+		ordInvoice.setInvoiceType(ordInvoiceInfo.getInvoiceType());
+		ordInvoice.setInvoiceContent(ordInvoiceInfo.getInvoiceContent());
+		ordOdInvoiceAtomSV.insertSelective(ordInvoice);
     }
 
     /**
@@ -327,7 +373,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	logistics.setContactTel(ordLogisticsInfo.getContactTel());
     	logistics.setContactEmail(ordLogisticsInfo.getContactEmail());
     	//TODO
-    	//直接存入编码
+    	//直接存入编码 ?
     	logistics.setProvinceCode(ordLogisticsInfo.getProvinceCode());
     	logistics.setCityCode(ordLogisticsInfo.getCityCode());
     	logistics.setCountyCode(ordLogisticsInfo.getCountyCode());
@@ -482,4 +528,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流公司ID不能为空");
     	}
     }
+    
+    public static void main(String[] args) {
+		String str=null;
+		//System.out.println(str.length());
+		System.out.println(StringUtils.isBlank(str));
+	}
 }

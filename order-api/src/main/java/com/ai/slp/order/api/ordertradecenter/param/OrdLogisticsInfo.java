@@ -14,6 +14,11 @@ public class OrdLogisticsInfo implements Serializable {
     private String logisticsType;
     
     /**
+     * 物流单号
+     */
+    private String expressOddNumber;
+    
+    /**
      * 到件方公司
      */
     private String contactCompany;
@@ -203,4 +208,11 @@ public class OrdLogisticsInfo implements Serializable {
 		this.remark = remark;
 	}
 
+	public String getExpressOddNumber() {
+		return expressOddNumber;
+	}
+
+	public void setExpressOddNumber(String expressOddNumber) {
+		this.expressOddNumber = expressOddNumber;
+	}
 }

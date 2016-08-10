@@ -5,6 +5,7 @@
     <id column="PROD_DETAL_ID" property="prodDetalId" jdbcType="BIGINT" />
     <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
     <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_ID" property="supplierId" jdbcType="VARCHAR" />
     <result column="SKU_ID" property="skuId" jdbcType="VARCHAR" />
     <result column="BUY_SUM" property="buySum" jdbcType="BIGINT" />
     <result column="INSERT_TIME" property="insertTime" jdbcType="TIMESTAMP" />
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    PROD_DETAL_ID, USER_ID, TENANT_ID, SKU_ID, BUY_SUM, INSERT_TIME
+    PROD_DETAL_ID, USER_ID, TENANT_ID, SUPPLIER_ID, SKU_ID, BUY_SUM, INSERT_TIME
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdCartProdCriteria" >
     select
@@ -106,11 +107,11 @@
   </delete>
   <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdCartProd" >
     insert into ord_od_cart_prod (PROD_DETAL_ID, USER_ID, TENANT_ID, 
-      SKU_ID, BUY_SUM, INSERT_TIME
-      )
+      SUPPLIER_ID, SKU_ID, BUY_SUM, 
+      INSERT_TIME)
     values (#{prodDetalId,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR}, 
-      #{skuId,jdbcType=VARCHAR}, #{buySum,jdbcType=BIGINT}, #{insertTime,jdbcType=TIMESTAMP}
-      )
+      #{supplierId,jdbcType=VARCHAR}, #{skuId,jdbcType=VARCHAR}, #{buySum,jdbcType=BIGINT}, 
+      #{insertTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdCartProd" >
     insert into ord_od_cart_prod
@@ -123,6 +124,9 @@
       </if>
       <if test="tenantId != null" >
         TENANT_ID,
+      </if>
+      <if test="supplierId != null" >
+        SUPPLIER_ID,
       </if>
       <if test="skuId != null" >
         SKU_ID,
@@ -143,6 +147,9 @@
       </if>
       <if test="tenantId != null" >
         #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
       </if>
       <if test="skuId != null" >
         #{skuId,jdbcType=VARCHAR},
@@ -173,6 +180,9 @@
       <if test="record.tenantId != null" >
         TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
       </if>
+      <if test="record.supplierId != null" >
+        SUPPLIER_ID = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
       <if test="record.skuId != null" >
         SKU_ID = #{record.skuId,jdbcType=VARCHAR},
       </if>
@@ -192,6 +202,7 @@
     set PROD_DETAL_ID = #{record.prodDetalId,jdbcType=BIGINT},
       USER_ID = #{record.userId,jdbcType=VARCHAR},
       TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      SUPPLIER_ID = #{record.supplierId,jdbcType=VARCHAR},
       SKU_ID = #{record.skuId,jdbcType=VARCHAR},
       BUY_SUM = #{record.buySum,jdbcType=BIGINT},
       INSERT_TIME = #{record.insertTime,jdbcType=TIMESTAMP}
@@ -207,6 +218,9 @@
       </if>
       <if test="tenantId != null" >
         TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        SUPPLIER_ID = #{supplierId,jdbcType=VARCHAR},
       </if>
       <if test="skuId != null" >
         SKU_ID = #{skuId,jdbcType=VARCHAR},
@@ -224,6 +238,7 @@
     update ord_od_cart_prod
     set USER_ID = #{userId,jdbcType=VARCHAR},
       TENANT_ID = #{tenantId,jdbcType=VARCHAR},
+      SUPPLIER_ID = #{supplierId,jdbcType=VARCHAR},
       SKU_ID = #{skuId,jdbcType=VARCHAR},
       BUY_SUM = #{buySum,jdbcType=BIGINT},
       INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP}

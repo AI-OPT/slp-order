@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdRuleMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdRule" >
+    <id column="order_rule_id" property="orderRuleId" jdbcType="VARCHAR" />
+    <result column="monitor_time" property="monitorTime" jdbcType="INTEGER" />
+    <result column="time_type" property="timeType" jdbcType="VARCHAR" />
+    <result column="order_sum" property="orderSum" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    order_rule_id, monitor_time, time_type, order_sum, create_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdRuleCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ord_rule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ord_rule
+    where order_rule_id = #{orderRuleId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from ord_rule
+    where order_rule_id = #{orderRuleId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdRuleCriteria" >
+    delete from ord_rule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdRule" >
+    insert into ord_rule (order_rule_id, monitor_time, time_type, 
+      order_sum, create_time)
+    values (#{orderRuleId,jdbcType=VARCHAR}, #{monitorTime,jdbcType=INTEGER}, #{timeType,jdbcType=VARCHAR}, 
+      #{orderSum,jdbcType=INTEGER}, #{createTime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdRule" >
+    insert into ord_rule
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderRuleId != null" >
+        order_rule_id,
+      </if>
+      <if test="monitorTime != null" >
+        monitor_time,
+      </if>
+      <if test="timeType != null" >
+        time_type,
+      </if>
+      <if test="orderSum != null" >
+        order_sum,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderRuleId != null" >
+        #{orderRuleId,jdbcType=VARCHAR},
+      </if>
+      <if test="monitorTime != null" >
+        #{monitorTime,jdbcType=INTEGER},
+      </if>
+      <if test="timeType != null" >
+        #{timeType,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSum != null" >
+        #{orderSum,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdRuleCriteria" resultType="java.lang.Integer" >
+    select count(*) from ord_rule
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ord_rule
+    <set >
+      <if test="record.orderRuleId != null" >
+        order_rule_id = #{record.orderRuleId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.monitorTime != null" >
+        monitor_time = #{record.monitorTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.timeType != null" >
+        time_type = #{record.timeType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderSum != null" >
+        order_sum = #{record.orderSum,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=DATE},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ord_rule
+    set order_rule_id = #{record.orderRuleId,jdbcType=VARCHAR},
+      monitor_time = #{record.monitorTime,jdbcType=INTEGER},
+      time_type = #{record.timeType,jdbcType=VARCHAR},
+      order_sum = #{record.orderSum,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=DATE}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdRule" >
+    update ord_rule
+    <set >
+      <if test="monitorTime != null" >
+        monitor_time = #{monitorTime,jdbcType=INTEGER},
+      </if>
+      <if test="timeType != null" >
+        time_type = #{timeType,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSum != null" >
+        order_sum = #{orderSum,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=DATE},
+      </if>
+    </set>
+    where order_rule_id = #{orderRuleId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdRule" >
+    update ord_rule
+    set monitor_time = #{monitorTime,jdbcType=INTEGER},
+      time_type = #{timeType,jdbcType=VARCHAR},
+      order_sum = #{orderSum,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=DATE}
+    where order_rule_id = #{orderRuleId,jdbcType=VARCHAR}
+  </update>
+</mapper>

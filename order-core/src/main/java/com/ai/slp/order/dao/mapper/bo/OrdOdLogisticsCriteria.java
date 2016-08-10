@@ -384,6 +384,76 @@ public class OrdOdLogisticsCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andExpressOddNumberIsNull() {
+            addCriterion("EXPRESS_ODD_NUMBER is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberIsNotNull() {
+            addCriterion("EXPRESS_ODD_NUMBER is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberEqualTo(String value) {
+            addCriterion("EXPRESS_ODD_NUMBER =", value, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberNotEqualTo(String value) {
+            addCriterion("EXPRESS_ODD_NUMBER <>", value, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberGreaterThan(String value) {
+            addCriterion("EXPRESS_ODD_NUMBER >", value, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberGreaterThanOrEqualTo(String value) {
+            addCriterion("EXPRESS_ODD_NUMBER >=", value, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberLessThan(String value) {
+            addCriterion("EXPRESS_ODD_NUMBER <", value, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberLessThanOrEqualTo(String value) {
+            addCriterion("EXPRESS_ODD_NUMBER <=", value, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberLike(String value) {
+            addCriterion("EXPRESS_ODD_NUMBER like", value, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberNotLike(String value) {
+            addCriterion("EXPRESS_ODD_NUMBER not like", value, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberIn(List<String> values) {
+            addCriterion("EXPRESS_ODD_NUMBER in", values, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberNotIn(List<String> values) {
+            addCriterion("EXPRESS_ODD_NUMBER not in", values, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberBetween(String value1, String value2) {
+            addCriterion("EXPRESS_ODD_NUMBER between", value1, value2, "expressOddNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpressOddNumberNotBetween(String value1, String value2) {
+            addCriterion("EXPRESS_ODD_NUMBER not between", value1, value2, "expressOddNumber");
+            return (Criteria) this;
+        }
+
         public Criteria andContactCompanyIsNull() {
             addCriterion("CONTACT_COMPANY is null");
             return (Criteria) this;

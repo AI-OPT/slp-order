@@ -30,6 +30,10 @@ public final class SequenceUtil {
     
     private static final String ORD_OD_LOGISTICS$LOGISTICS_ID$SEQ="ORD_OD_LOGISTICS$LOGISTICS_ID$SEQ";
     
+    private static final String FREIGHT_TEMPLATE$TEMPLATE_ID$SEQ="FREIGHT_TEMPLATE$TEMPLATE_ID$SEQ";
+    
+    private static final String FREIGHT_TEMPLATE_PROD$REGION_ID$SEQ="FREIGHT_TEMPLATE_PROD$REGION_ID$SEQ";
+    
     public static Long createOrderId() {
         String seq = SeqUtil.getNewId(ORD_ORDER$ORDER_ID$SEQ, 10);
         int rannum = (int) (new Random().nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
@@ -73,5 +77,16 @@ public final class SequenceUtil {
         int rannum = (int) (new Random().nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
         String result = rannum + dateString;
         return result;
+    }
+    
+    public static String createTemplateId() {
+        String seq = SeqUtil.getNewId(FREIGHT_TEMPLATE$TEMPLATE_ID$SEQ, 10);
+        int rannum = (int) (new Random().nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
+        String templateId = "2" + seq + rannum;
+        return templateId;
+    }
+    
+    public static Long createRegionId() {
+        return SeqUtil.getNewId(FREIGHT_TEMPLATE_PROD$REGION_ID$SEQ);
     }
 }

@@ -20,6 +20,7 @@ import com.ai.slp.order.dao.mapper.interfaces.OrdOdProdExtendMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdProdMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdStateChgMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdRuleMapper;
 
 @Component
 public class MapperFactory {
@@ -91,8 +92,13 @@ public class MapperFactory {
     public static FreightTemplateMapper getFreightTemplateMapper() {
     	return sqlSessionTemplate.getMapper(FreightTemplateMapper.class);
     }
+    
     public static FreightTemplateProdMapper getFreightTemplateProdMapper() {
     	return sqlSessionTemplate.getMapper(FreightTemplateProdMapper.class);
     }
-
+    
+    public static OrdRuleMapper getOrdRuleMapper() {
+        return sqlSessionTemplate.getMapper(OrdRuleMapper.class);
+    }
 }
+
