@@ -1,14 +1,15 @@
 package com.ai.slp.order.api.deliveryorderprint.interfaces;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
+import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 
 /**
  * 提货单打印服务
@@ -20,6 +21,32 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
 public interface IDeliveryOrderPrintSV {
 	
-	public BaseResponse print(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
-
+	/**
+	 * 合并打印
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode 
+	 * @RestRelativeURL /deliveryorder/print
+	 */
+	@POST
+	@Path("/print")
+	public DeliveryOrderPrintResponse print(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
+	
+	/**
+	 * 不合并打印
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode 
+	 * @RestRelativeURL /deliveryorder/noMergePrint
+	 */
+	@POST
+	@Path("/noMergePrint")
+	public DeliveryOrderPrintResponse noMergePrint(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
 }
