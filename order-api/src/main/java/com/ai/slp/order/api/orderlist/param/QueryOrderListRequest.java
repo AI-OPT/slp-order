@@ -36,6 +36,11 @@ public class QueryOrderListRequest extends BaseInfo {
      * 订单状态
      */
     private List<String> stateList;
+    
+    /**
+     * 商品名称
+     */
+    private String prodName;
 
     /**
      * 支付方式
