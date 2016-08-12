@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.FreightTemplateMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.FreightTemplate" >
+    <id column="TEMPLATE_ID" property="templateId" jdbcType="VARCHAR" />
+    <result column="TEMPLATE_NAME" property="templateName" jdbcType="VARCHAR" />
+    <result column="TEMPLATE_TYPE" property="templateType" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_ID" property="supplierId" jdbcType="VARCHAR" />
+    <result column="LOGISTICS_COMPANY_ID" property="logisticsCompanyId" jdbcType="VARCHAR" />
+    <result column="IS_FREE" property="isFree" jdbcType="VARCHAR" />
+    <result column="IS_TERM_FREE" property="isTermFree" jdbcType="VARCHAR" />
+    <result column="VALUATION_TYPE" property="valuationType" jdbcType="VARCHAR" />
+    <result column="TIME" property="time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    TEMPLATE_ID, TEMPLATE_NAME, TEMPLATE_TYPE, SUPPLIER_ID, LOGISTICS_COMPANY_ID, IS_FREE, 
+    IS_TERM_FREE, VALUATION_TYPE, TIME
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from freight_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from freight_template
+    where TEMPLATE_ID = #{templateId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from freight_template
+    where TEMPLATE_ID = #{templateId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateCriteria" >
+    delete from freight_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplate" >
+    insert into freight_template (TEMPLATE_ID, TEMPLATE_NAME, TEMPLATE_TYPE, 
+      SUPPLIER_ID, LOGISTICS_COMPANY_ID, IS_FREE, 
+      IS_TERM_FREE, VALUATION_TYPE, TIME
+      )
+    values (#{templateId,jdbcType=VARCHAR}, #{templateName,jdbcType=VARCHAR}, #{templateType,jdbcType=VARCHAR}, 
+      #{supplierId,jdbcType=VARCHAR}, #{logisticsCompanyId,jdbcType=VARCHAR}, #{isFree,jdbcType=VARCHAR}, 
+      #{isTermFree,jdbcType=VARCHAR}, #{valuationType,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplate" >
+    insert into freight_template
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="templateId != null" >
+        TEMPLATE_ID,
+      </if>
+      <if test="templateName != null" >
+        TEMPLATE_NAME,
+      </if>
+      <if test="templateType != null" >
+        TEMPLATE_TYPE,
+      </if>
+      <if test="supplierId != null" >
+        SUPPLIER_ID,
+      </if>
+      <if test="logisticsCompanyId != null" >
+        LOGISTICS_COMPANY_ID,
+      </if>
+      <if test="isFree != null" >
+        IS_FREE,
+      </if>
+      <if test="isTermFree != null" >
+        IS_TERM_FREE,
+      </if>
+      <if test="valuationType != null" >
+        VALUATION_TYPE,
+      </if>
+      <if test="time != null" >
+        TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateName != null" >
+        #{templateName,jdbcType=VARCHAR},
+      </if>
+      <if test="templateType != null" >
+        #{templateType,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsCompanyId != null" >
+        #{logisticsCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="isFree != null" >
+        #{isFree,jdbcType=VARCHAR},
+      </if>
+      <if test="isTermFree != null" >
+        #{isTermFree,jdbcType=VARCHAR},
+      </if>
+      <if test="valuationType != null" >
+        #{valuationType,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateCriteria" resultType="java.lang.Integer" >
+    select count(*) from freight_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update freight_template
+    <set >
+      <if test="record.templateId != null" >
+        TEMPLATE_ID = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateName != null" >
+        TEMPLATE_NAME = #{record.templateName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateType != null" >
+        TEMPLATE_TYPE = #{record.templateType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierId != null" >
+        SUPPLIER_ID = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logisticsCompanyId != null" >
+        LOGISTICS_COMPANY_ID = #{record.logisticsCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isFree != null" >
+        IS_FREE = #{record.isFree,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isTermFree != null" >
+        IS_TERM_FREE = #{record.isTermFree,jdbcType=VARCHAR},
+      </if>
+      <if test="record.valuationType != null" >
+        VALUATION_TYPE = #{record.valuationType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.time != null" >
+        TIME = #{record.time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update freight_template
+    set TEMPLATE_ID = #{record.templateId,jdbcType=VARCHAR},
+      TEMPLATE_NAME = #{record.templateName,jdbcType=VARCHAR},
+      TEMPLATE_TYPE = #{record.templateType,jdbcType=VARCHAR},
+      SUPPLIER_ID = #{record.supplierId,jdbcType=VARCHAR},
+      LOGISTICS_COMPANY_ID = #{record.logisticsCompanyId,jdbcType=VARCHAR},
+      IS_FREE = #{record.isFree,jdbcType=VARCHAR},
+      IS_TERM_FREE = #{record.isTermFree,jdbcType=VARCHAR},
+      VALUATION_TYPE = #{record.valuationType,jdbcType=VARCHAR},
+      TIME = #{record.time,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplate" >
+    update freight_template
+    <set >
+      <if test="templateName != null" >
+        TEMPLATE_NAME = #{templateName,jdbcType=VARCHAR},
+      </if>
+      <if test="templateType != null" >
+        TEMPLATE_TYPE = #{templateType,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        SUPPLIER_ID = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsCompanyId != null" >
+        LOGISTICS_COMPANY_ID = #{logisticsCompanyId,jdbcType=VARCHAR},
+      </if>
+      <if test="isFree != null" >
+        IS_FREE = #{isFree,jdbcType=VARCHAR},
+      </if>
+      <if test="isTermFree != null" >
+        IS_TERM_FREE = #{isTermFree,jdbcType=VARCHAR},
+      </if>
+      <if test="valuationType != null" >
+        VALUATION_TYPE = #{valuationType,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        TIME = #{time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where TEMPLATE_ID = #{templateId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplate" >
+    update freight_template
+    set TEMPLATE_NAME = #{templateName,jdbcType=VARCHAR},
+      TEMPLATE_TYPE = #{templateType,jdbcType=VARCHAR},
+      SUPPLIER_ID = #{supplierId,jdbcType=VARCHAR},
+      LOGISTICS_COMPANY_ID = #{logisticsCompanyId,jdbcType=VARCHAR},
+      IS_FREE = #{isFree,jdbcType=VARCHAR},
+      IS_TERM_FREE = #{isTermFree,jdbcType=VARCHAR},
+      VALUATION_TYPE = #{valuationType,jdbcType=VARCHAR},
+      TIME = #{time,jdbcType=TIMESTAMP}
+    where TEMPLATE_ID = #{templateId,jdbcType=VARCHAR}
+  </update>
+</mapper>
