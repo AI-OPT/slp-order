@@ -84,7 +84,12 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
 			orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
 			          newState, chgDesc, null, null, null, sysDate);
 			/* 如果订单状态为充值失败,则调用退款服务 */
-	        orderReturnGoodBusiSV.orderReturnGoods(ordOrder, sysDate);
+	        try {
+				orderReturnGoodBusiSV.orderReturnGoods(ordOrder, sysDate);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("调用退款服务失败......");
+			}
 			/*更新父订单状态*/
 			OrdOrder parentOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), ordOrder.getParentOrderId());
 			String parentOrgState=parentOrdOrder.getState();
