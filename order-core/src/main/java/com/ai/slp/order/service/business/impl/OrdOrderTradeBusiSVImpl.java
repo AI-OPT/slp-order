@@ -109,7 +109,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     		        ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
     		        /* 创建其它信息*/
     		        ordFeeInfo=this.createOrderRelatedInfo(request, sysDate, orderId);
-    			}else {
+    			}else if(ordProductInfo.getSupplierId()!=null && orderMap.containsKey(ordProductInfo.getSupplierId())){
     				/* orderMap集合中包含的话,取出订单Id*/
     				orderId = orderMap.get(ordProductInfo.getSupplierId());
     		        ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
