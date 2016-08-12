@@ -1,5 +1,6 @@
 package com.ai.slp.order.mds.orderpay;
 
+import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
@@ -13,7 +14,6 @@ import com.ai.slp.order.service.business.interfaces.IOrderReturnGoodBusiSV;
 import com.ai.slp.order.vo.RouteServResVo;
 import com.ai.slp.route.api.server.interfaces.IRouteServer;
 import com.ai.slp.route.api.server.params.IRouteServerRequest;
-import com.ai.slp.route.api.server.params.RouteServerResponse;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -60,17 +60,9 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         if (request == null)
             return;
         logger.info("调用充值服务.........");
-        String responseData;
-        RouteServerResponse response=null;
-		try {
-			 response = iRouteServer.callServerByRouteId(request);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			logger.error("调用充值服务失败......");
-		}
-		responseData = response.getResponseData();
+        BaseResponse response = iRouteServer.callServerByRouteId(request);
         Timestamp sysDate = DateUtil.getSysDate();
-        if (StringUtil.isBlank(responseData)) {
+        if (response.getResponseHeader().getIsSuccess()) {
         	/*充值出现错误后则为充值失败*/
             logger.info("error...");
             String requestData = request.getRequestData();
@@ -112,7 +104,7 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         }
         
         logger.info("更新订单表.........");
-        RouteServResVo routeServResVo = JSON.parseObject(responseData, RouteServResVo.class);
+        RouteServResVo routeServResVo = JSON.parseObject(response.getResponseHeader().getResultMessage(), RouteServResVo.class);
         String orderId = routeServResVo.getOrderId();
         OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
         ordOrder.setExternalOrderId(routeServResVo.getCoopOrderId());
