@@ -311,11 +311,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private void createOrderLogistics(OrderTradeCenterRequest request, Timestamp sysDate,
             long orderId) {
-    	LOG.debug("开始处理订单配送[" + orderId + "]信息..");
+    	/*LOG.debug("开始处理订单配送[" + orderId + "]信息..");
     	OrdLogisticsInfo ordLogisticsInfo = request.getOrdLogisticsInfo();
-    	/* 1.参数检验*/
+    	 1.参数检验
     	this.checkLogisticsInfo(ordLogisticsInfo);
-    	/* 2.创建配送信息*/
+    	 2.创建配送信息
     	OrdOdLogistics logistics=new OrdOdLogistics();
     	long logisticsId=SequenceUtil.genLogisticsId();
     	logistics.setLogisticsId(logisticsId);
@@ -338,7 +338,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	logistics.setExpressSelfId(ordLogisticsInfo.getExpressSelfId());
     	logistics.setLogisticsTimeId(ordLogisticsInfo.getLogisticsTime());
     	logistics.setRemark(ordLogisticsInfo.getRemark());
-    	ordOdLogisticsAtomSV.insertSelective(logistics);
+    	ordOdLogisticsAtomSV.insertSelective(logistics);*/
     }
 
     /**
@@ -451,7 +451,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * 配送信息校验
      */
     private void checkLogisticsInfo(OrdLogisticsInfo ordLogisticsInfo) {
-    	if(ordLogisticsInfo==null) {
+    	/*if(ordLogisticsInfo==null) {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
     	}
     	if(StringUtil.isBlank(ordLogisticsInfo.getLogisticsType())) {
@@ -480,6 +480,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	}
     	if(StringUtil.isBlank(ordLogisticsInfo.getExpressId())) {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流公司ID不能为空");
-    	}
+    	}*/
     }
 }
