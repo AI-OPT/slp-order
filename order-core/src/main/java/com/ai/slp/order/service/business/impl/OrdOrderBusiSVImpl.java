@@ -113,10 +113,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             states = sb.toString();
             states = states.substring(0, sb.length() - 1);
         }
-        /* 多表查询订单个数 */
+        /* 2.多表查询订单个数 */
         int count = ordOrderAttachAtomSV.queryCount(OrdersConstants.OrdOrder.SubFlag.NO,
                 orderListRequest, states);
-        /* 多表查询订单信息 */
+        /* 3.多表查询订单信息 */
         List<OrdOrderAttach> list = ordOrderAttachAtomSV.queryOrderBySearch(
                 OrdersConstants.OrdOrder.SubFlag.NO, orderListRequest, states);
         List<OrdOrderVo> ordOrderList = new ArrayList<OrdOrderVo>();
@@ -145,11 +145,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             int phoneCount = this.getProdExtendInfo(orderListRequest.getTenantId(),
                     orderAttach.getOrderId());
             ordOrderVo.setPhoneCount(phoneCount);
-            /* 3.订单费用明细查询 */
+            /* 4.订单费用明细查询 */
             List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
                     orderAttach.getOrderId());
             ordOrderVo.setPayDataList(orderFeeProdList);
-            /* 4.订单商品明细查询 */
+            /* 5.订单商品明细查询 */
             List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,
                     orderAttach.getTenantId(), orderAttach.getOrderId());
             ordOrderVo.setProductList(productList);
