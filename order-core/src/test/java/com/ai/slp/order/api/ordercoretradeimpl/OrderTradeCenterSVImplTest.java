@@ -31,7 +31,6 @@ public class OrderTradeCenterSVImplTest {
     @Test
     public void orderTradeTest() {
         OrderTradeCenterRequest request = new OrderTradeCenterRequest();
-       // OrdBaseInfo ordBaseInfo = null;
         OrdBaseInfo ordBaseInfo = new OrdBaseInfo();
         ordBaseInfo.setUserId("123");
         ordBaseInfo.setOrderType("100010");
@@ -43,7 +42,7 @@ public class OrderTradeCenterSVImplTest {
         ordProductInfo.setBuySum(4);
         ordProductInfo.setChargeFee("40");
         ordProductInfo.setSkuId("1000000000002519");
-        ordProductInfo.setSupplierId(12l);
+      //  ordProductInfo.setSupplierId(12l);
         ordProductInfoList.add(ordProductInfo);
         
         OrdProductInfo ordProductInfo1 = new OrdProductInfo();
@@ -52,7 +51,7 @@ public class OrderTradeCenterSVImplTest {
         ordProductInfo1.setChargeFee("50");
         ordProductInfo1.setSkuId("1000000000002459");
         ordProductInfoList.add(ordProductInfo1);
-        ordProductInfo.setSupplierId(12l);
+    //    ordProductInfo.setSupplierId(12l);
         List<ProdExtendInfoVo> prodExtendInfoVoList = new ArrayList<ProdExtendInfoVo>();
 
         ProdExtendInfoVo prodExtendInfoVo = new ProdExtendInfoVo();
