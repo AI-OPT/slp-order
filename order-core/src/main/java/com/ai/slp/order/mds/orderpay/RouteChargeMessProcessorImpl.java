@@ -60,8 +60,15 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         if (request == null)
             return;
         logger.info("调用充值服务.........");
-        RouteServerResponse response = iRouteServer.callServerByRouteId(request);
-        String responseData = response.getResponseData();
+        String responseData;
+        RouteServerResponse response=null;
+		try {
+			 response = iRouteServer.callServerByRouteId(request);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			logger.error("调用充值服务失败......");
+		}
+		responseData = response.getResponseData();
         Timestamp sysDate = DateUtil.getSysDate();
         if (StringUtil.isBlank(responseData)) {
         	/*充值出现错误后则为充值失败*/
