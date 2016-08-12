@@ -62,7 +62,7 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         logger.info("调用充值服务.........");
         BaseResponse response = iRouteServer.callServerByRouteId(request);
         Timestamp sysDate = DateUtil.getSysDate();
-        if (response.getResponseHeader().getIsSuccess()) {
+        if (!response.getResponseHeader().getIsSuccess()) {
         	/*充值出现错误后则为充值失败*/
             logger.info("error...");
             String requestData = request.getRequestData();
