@@ -59,35 +59,35 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         if (request == null)
             return;
         logger.info("调用充值服务.........");
-       // BaseResponse response = iRouteServer.callServerByRouteId(request);
+//  	BaseResponse response = iRouteServer.callServerByRouteId(request);
         Timestamp sysDate = DateUtil.getSysDate();
-       // if (!response.getResponseHeader().getIsSuccess()) {
+// 		if (!response.getResponseHeader().getIsSuccess()) {
         	/*充值出现错误后则为充值失败*/
-           /* logger.info("error...");
-            String requestData = request.getRequestData();
-            logger.info("requestData:"+requestData);
-            JSONObject object = JSON.parseObject(requestData);
-			String orderId=object.getString("orderId");
-			logger.info("orderId:"+orderId);
-			OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
-			String orgState=ordOrder.getState();
-			String newState=OrdersConstants.OrdOrder.State.CHARGE_FAILED;
-			String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_CHARGE_FAILED;
-			ordOrder.setState(newState);
-			ordOrder.setStateChgTime(sysDate);
-			ordOrder.setFinishTime(sysDate);*/
+//          logger.info("error...");
+//          String requestData = request.getRequestData();
+//          logger.info("requestData:"+requestData);
+//          JSONObject object = JSON.parseObject(requestData);
+//			String orderId=object.getString("orderId");
+//			logger.info("orderId:"+orderId);
+//			OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
+//			String orgState=ordOrder.getState();
+//			String newState=OrdersConstants.OrdOrder.State.CHARGE_FAILED;
+//			String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_CHARGE_FAILED;
+//			ordOrder.setState(newState);
+//			ordOrder.setStateChgTime(sysDate);
+//			ordOrder.setFinishTime(sysDate);
 			/* 更新子订单状态*/
-		//	ordOrderAtomSV.updateById(ordOrder);
+//			ordOrderAtomSV.updateById(ordOrder);
 			/* 写入订单状态变化轨迹表 */
-		//	orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
-		//	          newState, chgDesc, null, null, null, sysDate);
+//			orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
+//			          newState, chgDesc, null, null, null, sysDate);
 			/* 如果订单状态为充值失败,则调用退款服务 */
-	       /* try {
-				orderReturnGoodBusiSV.orderReturnGoods(ordOrder, sysDate);
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("调用退款服务失败......");
-			}*/
+//	        try {
+//				orderReturnGoodBusiSV.orderReturnGoods(ordOrder, sysDate);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				logger.error("调用退款服务失败......");
+//			}
 			/*更新父订单状态*/
 //			OrdOrder parentOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), ordOrder.getParentOrderId());
 //			String parentOrgState=parentOrdOrder.getState();
@@ -100,41 +100,48 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
 //			orderFrameCoreSV.ordOdStateChg(parentOrdOrder.getOrderId(), parentOrdOrder.getTenantId(), parentOrgState,
 //					parentNewState, parentChgDesc, null, null, null, sysDate);
 //			return;
-//        }else {
+//        }
         
-        
-        	//TODO 暂时加上去的
-        	/*成功,状态修改*/
-        	String requestData = request.getRequestData();
-            logger.info("requestData:"+requestData);
-            JSONObject object = JSON.parseObject(requestData);
-  			String orderId=object.getString("orderId");
-  			logger.info("orderId:"+orderId);
-  			OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
-  			String orgState=ordOrder.getState();
-  			String newState=OrdersConstants.OrdOrder.State.FINISH_CHARGE;
-  			String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_CHARGED;
-  			ordOrder.setState(newState);
-  			ordOrder.setStateChgTime(sysDate);
-  			ordOrder.setFinishTime(sysDate);
-  			/* 更新子订单状态*/
-  			ordOrderAtomSV.updateById(ordOrder);
-  			/* 写入订单状态变化轨迹表 */
-  			orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
-  			          newState, chgDesc, null, null, null, sysDate);
-   //     }
-        
+    	//TODO 暂时加上去的
+    	/*成功,状态修改*/
+    	String requestData = request.getRequestData();
+        logger.info("requestData:"+requestData);
+        JSONObject object = JSON.parseObject(requestData);
+		String orderId=object.getString("orderId");
+		logger.info("orderId:"+orderId);
+		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
+		String orgState=ordOrder.getState();
+		String newState=OrdersConstants.OrdOrder.State.FINISH_CHARGE;
+		String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_CHARGED;
+		ordOrder.setState(newState);
+		ordOrder.setStateChgTime(sysDate);
+		ordOrder.setFinishTime(sysDate);
+		/* 更新子订单状态*/
+		ordOrderAtomSV.updateById(ordOrder);
+		/* 写入订单状态变化轨迹表 */
+		orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
+		          newState, chgDesc, null, null, null, sysDate);
+		/* 更新父订单状态*/
+		OrdOrder parentOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), ordOrder.getParentOrderId());
+		String parentOrgState=parentOrdOrder.getState();
+		String parentNewState=OrdersConstants.OrdOrder.State.COMPLETED;
+		String parentChgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_COMPLETED;
+		parentOrdOrder.setState(parentNewState);
+		parentOrdOrder.setStateChgTime(sysDate);
+		ordOrderAtomSV.updateById(parentOrdOrder);
+		/* 写入订单状态变化轨迹表 */
+		orderFrameCoreSV.ordOdStateChg(parentOrdOrder.getOrderId(), parentOrdOrder.getTenantId(), parentOrgState,
+				parentNewState, parentChgDesc, null, null, null, sysDate);
                
-        
-     /*   logger.info("更新订单表.........");
-        RouteServResVo routeServResVo = JSON.parseObject(response.getResponseHeader().getResultMessage(), RouteServResVo.class);
-        String orderId = routeServResVo.getOrderId();
-        OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
-        ordOrder.setExternalOrderId(routeServResVo.getCoopOrderId());
-        ordOrder.setExternalSupplyId(routeServResVo.getCoSysId());// 725版本实现该功能
-        ordOrder.setState(routeServResVo.getCoopOrderStatus());
-        ordOrder.setStateChgTime(sysDate);
-        ordOrderAtomSV.updateById(ordOrder);*/
+//        logger.info("更新订单表.........");
+//        RouteServResVo routeServResVo = JSON.parseObject(response.getResponseHeader().getResultMessage(), RouteServResVo.class);
+//        String orderId = routeServResVo.getOrderId();
+//        OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId("SLP", Long.valueOf(orderId));
+//        ordOrder.setExternalOrderId(routeServResVo.getCoopOrderId());
+//        ordOrder.setExternalSupplyId(routeServResVo.getCoSysId());// 725版本实现该功能
+//        ordOrder.setState(routeServResVo.getCoopOrderStatus());
+//        ordOrder.setStateChgTime(sysDate);
+//        ordOrderAtomSV.updateById(ordOrder);
         
     }
 }
