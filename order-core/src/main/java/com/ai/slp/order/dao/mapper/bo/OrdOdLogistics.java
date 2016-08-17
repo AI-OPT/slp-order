@@ -9,6 +9,8 @@ public class OrdOdLogistics {
 
     private String logisticsType;
 
+    private String expressOddNumber;
+
     private String contactCompany;
 
     private String contactName;
@@ -67,6 +69,14 @@ public class OrdOdLogistics {
 
     public void setLogisticsType(String logisticsType) {
         this.logisticsType = logisticsType == null ? null : logisticsType.trim();
+    }
+
+    public String getExpressOddNumber() {
+        return expressOddNumber;
+    }
+
+    public void setExpressOddNumber(String expressOddNumber) {
+        this.expressOddNumber = expressOddNumber == null ? null : expressOddNumber.trim();
     }
 
     public String getContactCompany() {

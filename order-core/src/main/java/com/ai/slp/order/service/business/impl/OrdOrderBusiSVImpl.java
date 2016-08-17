@@ -38,6 +38,9 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria;
+import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
+import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
+import com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
@@ -46,6 +49,8 @@ import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdExtendAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
@@ -84,6 +89,12 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     @Autowired
     private IOrdOrderAttachAtomSV ordOrderAttachAtomSV;
     
+    @Autowired
+    private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
+    
+    @Autowired
+    private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV; 
+    
     @Override
     public QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest)
             throws BusinessException, SystemException {
@@ -102,10 +113,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             states = sb.toString();
             states = states.substring(0, sb.length() - 1);
         }
-        /* 多表查询订单个数 */
+        /* 2.多表查询订单个数 */
         int count = ordOrderAttachAtomSV.queryCount(OrdersConstants.OrdOrder.SubFlag.NO,
                 orderListRequest, states);
-        /* 多表查询订单信息 */
+        /* 3.多表查询订单信息 */
         List<OrdOrderAttach> list = ordOrderAttachAtomSV.queryOrderBySearch(
                 OrdersConstants.OrdOrder.SubFlag.NO, orderListRequest, states);
         List<OrdOrderVo> ordOrderList = new ArrayList<OrdOrderVo>();
@@ -134,11 +145,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             int phoneCount = this.getProdExtendInfo(orderListRequest.getTenantId(),
                     orderAttach.getOrderId());
             ordOrderVo.setPhoneCount(phoneCount);
-            /* 3.订单费用明细查询 */
+            /* 4.订单费用明细查询 */
             List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
                     orderAttach.getOrderId());
             ordOrderVo.setPayDataList(orderFeeProdList);
-            /* 4.订单商品明细查询 */
+            /* 5.订单商品明细查询 */
             List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,
                     orderAttach.getTenantId(), orderAttach.getOrderId());
             ordOrderVo.setProductList(productList);
@@ -390,6 +401,29 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 int phoneCount = this.getProdExtendInfo(orderRequest.getTenantId(),
                         order.getOrderId());
                 ordOrderVo.setPhoneCount(phoneCount);
+                //TODO
+                /* 3.订单发票信息查询*/
+                OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
+                if(ordOdInvoice !=null) {
+                	ordOrderVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
+                	ordOrderVo.setInvoiceType(ordOdInvoice.getInvoiceType());
+                	ordOrderVo.setInvoiceContent(ordOrderVo.getInvoiceContent());
+                }
+                /* 订单配送信息查询*/
+                OrdOdLogistics ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getOrderId());
+                if(ordOdLogistics!=null) {
+                	ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
+                	ordOrderVo.setContactCompany(ordOdLogistics.getContactCompany());
+                	ordOrderVo.setContactName(ordOdLogistics.getContactName());
+                	ordOrderVo.setContactTel(ordOdLogistics.getContactTel());
+                	ordOrderVo.setProvinceCode(ordOdLogistics.getProvinceCode());
+                	ordOrderVo.setCityCode(ordOdLogistics.getCityCode());
+                	ordOrderVo.setCountyCode(ordOdLogistics.getCountyCode());
+                	ordOrderVo.setPostCode(ordOdLogistics.getPostcode());
+                	ordOrderVo.setAreaCode(ordOdLogistics.getAreaCode());
+                	ordOrderVo.setAddress(ordOdLogistics.getAddress());
+                	ordOrderVo.setExpressId(ordOdLogistics.getExpressId());
+                }
                 /* 3.订单费用明细查询 */
                 List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
                         order.getOrderId());
@@ -535,5 +569,19 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     	List<OrdOdProdExtend> ordOdProdExtendList = 
     			ordOdProdExtendAtomSV.selectByExample(example);
     	return ordOdProdExtendList;
+    }
+    
+    private OrdOdLogistics getOrdOdLogistics(String tenantId,
+    		long orderId) {
+    	OrdOdLogisticsCriteria example=new OrdOdLogisticsCriteria();
+    	OrdOdLogisticsCriteria.Criteria criteria = example.createCriteria();
+    	criteria.andTenantIdEqualTo(tenantId);
+    	criteria.andOrderIdEqualTo(orderId);
+    	List<OrdOdLogistics> list = ordOdLogisticsAtomSV.selectByExample(example);
+    	OrdOdLogistics ordOdLogistics=null;
+    	if(!CollectionUtil.isEmpty(list)) {
+    		 ordOdLogistics = list.get(0);
+    	}
+    	return ordOdLogistics;
     }
 }

@@ -6,6 +6,7 @@
     <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
     <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
     <result column="LOGISTICS_TYPE" property="logisticsType" jdbcType="VARCHAR" />
+    <result column="EXPRESS_ODD_NUMBER" property="expressOddNumber" jdbcType="VARCHAR" />
     <result column="CONTACT_COMPANY" property="contactCompany" jdbcType="VARCHAR" />
     <result column="CONTACT_NAME" property="contactName" jdbcType="VARCHAR" />
     <result column="CONTACT_TEL" property="contactTel" jdbcType="VARCHAR" />
@@ -80,9 +81,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    LOGISTICS_ID, TENANT_ID, ORDER_ID, LOGISTICS_TYPE, CONTACT_COMPANY, CONTACT_NAME, 
-    CONTACT_TEL, CONTACT_EMAIL, PROVINCE_CODE, CITY_CODE, COUNTY_CODE, POSTCODE, AREA_CODE, 
-    ADDRESS, EXPRESS_ID, EXPRESS_SELF_ID, LOGISTICS_TIME_ID, REMARK
+    LOGISTICS_ID, TENANT_ID, ORDER_ID, LOGISTICS_TYPE, EXPRESS_ODD_NUMBER, CONTACT_COMPANY, 
+    CONTACT_NAME, CONTACT_TEL, CONTACT_EMAIL, PROVINCE_CODE, CITY_CODE, COUNTY_CODE, 
+    POSTCODE, AREA_CODE, ADDRESS, EXPRESS_ID, EXPRESS_SELF_ID, LOGISTICS_TIME_ID, REMARK
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria" >
     select
@@ -120,19 +121,19 @@
   </delete>
   <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdLogistics" >
     insert into ord_od_logistics (LOGISTICS_ID, TENANT_ID, ORDER_ID, 
-      LOGISTICS_TYPE, CONTACT_COMPANY, CONTACT_NAME, 
-      CONTACT_TEL, CONTACT_EMAIL, PROVINCE_CODE, 
-      CITY_CODE, COUNTY_CODE, POSTCODE, 
-      AREA_CODE, ADDRESS, EXPRESS_ID, 
-      EXPRESS_SELF_ID, LOGISTICS_TIME_ID, REMARK
-      )
+      LOGISTICS_TYPE, EXPRESS_ODD_NUMBER, CONTACT_COMPANY, 
+      CONTACT_NAME, CONTACT_TEL, CONTACT_EMAIL, 
+      PROVINCE_CODE, CITY_CODE, COUNTY_CODE, 
+      POSTCODE, AREA_CODE, ADDRESS, 
+      EXPRESS_ID, EXPRESS_SELF_ID, LOGISTICS_TIME_ID, 
+      REMARK)
     values (#{logisticsId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{orderId,jdbcType=BIGINT}, 
-      #{logisticsType,jdbcType=VARCHAR}, #{contactCompany,jdbcType=VARCHAR}, #{contactName,jdbcType=VARCHAR}, 
-      #{contactTel,jdbcType=VARCHAR}, #{contactEmail,jdbcType=VARCHAR}, #{provinceCode,jdbcType=VARCHAR}, 
-      #{cityCode,jdbcType=VARCHAR}, #{countyCode,jdbcType=VARCHAR}, #{postcode,jdbcType=VARCHAR}, 
-      #{areaCode,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{expressId,jdbcType=VARCHAR}, 
-      #{expressSelfId,jdbcType=VARCHAR}, #{logisticsTimeId,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
-      )
+      #{logisticsType,jdbcType=VARCHAR}, #{expressOddNumber,jdbcType=VARCHAR}, #{contactCompany,jdbcType=VARCHAR}, 
+      #{contactName,jdbcType=VARCHAR}, #{contactTel,jdbcType=VARCHAR}, #{contactEmail,jdbcType=VARCHAR}, 
+      #{provinceCode,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, #{countyCode,jdbcType=VARCHAR}, 
+      #{postcode,jdbcType=VARCHAR}, #{areaCode,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{expressId,jdbcType=VARCHAR}, #{expressSelfId,jdbcType=VARCHAR}, #{logisticsTimeId,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdLogistics" >
     insert into ord_od_logistics
@@ -144,6 +145,9 @@
       ORDER_ID,
       <if test="logisticsType != null" >
         LOGISTICS_TYPE,
+      </if>
+      <if test="expressOddNumber != null" >
+        EXPRESS_ODD_NUMBER,
       </if>
       <if test="contactCompany != null" >
         CONTACT_COMPANY,
@@ -196,6 +200,9 @@
       #{orderId,jdbcType=BIGINT},
       <if test="logisticsType != null" >
         #{logisticsType,jdbcType=VARCHAR},
+      </if>
+      <if test="expressOddNumber != null" >
+        #{expressOddNumber,jdbcType=VARCHAR},
       </if>
       <if test="contactCompany != null" >
         #{contactCompany,jdbcType=VARCHAR},
@@ -262,6 +269,9 @@
       <if test="record.logisticsType != null" >
         LOGISTICS_TYPE = #{record.logisticsType,jdbcType=VARCHAR},
       </if>
+      <if test="record.expressOddNumber != null" >
+        EXPRESS_ODD_NUMBER = #{record.expressOddNumber,jdbcType=VARCHAR},
+      </if>
       <if test="record.contactCompany != null" >
         CONTACT_COMPANY = #{record.contactCompany,jdbcType=VARCHAR},
       </if>
@@ -315,6 +325,7 @@
       TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
       ORDER_ID = #{record.orderId,jdbcType=BIGINT},
       LOGISTICS_TYPE = #{record.logisticsType,jdbcType=VARCHAR},
+      EXPRESS_ODD_NUMBER = #{record.expressOddNumber,jdbcType=VARCHAR},
       CONTACT_COMPANY = #{record.contactCompany,jdbcType=VARCHAR},
       CONTACT_NAME = #{record.contactName,jdbcType=VARCHAR},
       CONTACT_TEL = #{record.contactTel,jdbcType=VARCHAR},
@@ -344,6 +355,9 @@
       </if>
       <if test="logisticsType != null" >
         LOGISTICS_TYPE = #{logisticsType,jdbcType=VARCHAR},
+      </if>
+      <if test="expressOddNumber != null" >
+        EXPRESS_ODD_NUMBER = #{expressOddNumber,jdbcType=VARCHAR},
       </if>
       <if test="contactCompany != null" >
         CONTACT_COMPANY = #{contactCompany,jdbcType=VARCHAR},
@@ -395,6 +409,7 @@
     set TENANT_ID = #{tenantId,jdbcType=VARCHAR},
       ORDER_ID = #{orderId,jdbcType=BIGINT},
       LOGISTICS_TYPE = #{logisticsType,jdbcType=VARCHAR},
+      EXPRESS_ODD_NUMBER = #{expressOddNumber,jdbcType=VARCHAR},
       CONTACT_COMPANY = #{contactCompany,jdbcType=VARCHAR},
       CONTACT_NAME = #{contactName,jdbcType=VARCHAR},
       CONTACT_TEL = #{contactTel,jdbcType=VARCHAR},

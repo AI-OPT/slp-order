@@ -67,6 +67,8 @@ public class OrdOdProd {
 
     private String skuStorageId;
 
+    private String isInvoice;
+
     public long getProdDetalId() {
         return prodDetalId;
     }
@@ -321,5 +323,13 @@ public class OrdOdProd {
 
     public void setSkuStorageId(String skuStorageId) {
         this.skuStorageId = skuStorageId == null ? null : skuStorageId.trim();
+    }
+
+    public String getIsInvoice() {
+        return isInvoice;
+    }
+
+    public void setIsInvoice(String isInvoice) {
+        this.isInvoice = isInvoice == null ? null : isInvoice.trim();
     }
 }

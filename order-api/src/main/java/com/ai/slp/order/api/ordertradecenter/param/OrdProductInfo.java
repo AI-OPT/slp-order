@@ -13,6 +13,12 @@ public class OrdProductInfo implements Serializable {
      */
     @NotBlank(message = "单品Id不能为空")
     private String skuId;
+    
+    /**
+     * 销售商id
+     */
+    @NotBlank(message="销售商id不能为空")
+    private Long supplierId;
 
     /**
      * 购买数量
@@ -114,4 +120,12 @@ public class OrdProductInfo implements Serializable {
         this.chargeFee = chargeFee;
     }
 
+	public Long getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(Long supplierId) {
+		this.supplierId = supplierId;
+	}
+    
 }

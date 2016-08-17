@@ -2584,6 +2584,146 @@ public class OrdOrderCriteria {
             addCriterion("DOWNSTREAM_ORDER_ID not between", value1, value2, "downstreamOrderId");
             return (Criteria) this;
         }
+
+        public Criteria andUserTypeIsNull() {
+            addCriterion("USER_TYPE is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeIsNotNull() {
+            addCriterion("USER_TYPE is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeEqualTo(String value) {
+            addCriterion("USER_TYPE =", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeNotEqualTo(String value) {
+            addCriterion("USER_TYPE <>", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeGreaterThan(String value) {
+            addCriterion("USER_TYPE >", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("USER_TYPE >=", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeLessThan(String value) {
+            addCriterion("USER_TYPE <", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeLessThanOrEqualTo(String value) {
+            addCriterion("USER_TYPE <=", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeLike(String value) {
+            addCriterion("USER_TYPE like", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeNotLike(String value) {
+            addCriterion("USER_TYPE not like", value, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeIn(List<String> values) {
+            addCriterion("USER_TYPE in", values, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeNotIn(List<String> values) {
+            addCriterion("USER_TYPE not in", values, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeBetween(String value1, String value2) {
+            addCriterion("USER_TYPE between", value1, value2, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserTypeNotBetween(String value1, String value2) {
+            addCriterion("USER_TYPE not between", value1, value2, "userType");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressIsNull() {
+            addCriterion("IP_ADDRESS is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressIsNotNull() {
+            addCriterion("IP_ADDRESS is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressEqualTo(String value) {
+            addCriterion("IP_ADDRESS =", value, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressNotEqualTo(String value) {
+            addCriterion("IP_ADDRESS <>", value, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressGreaterThan(String value) {
+            addCriterion("IP_ADDRESS >", value, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressGreaterThanOrEqualTo(String value) {
+            addCriterion("IP_ADDRESS >=", value, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressLessThan(String value) {
+            addCriterion("IP_ADDRESS <", value, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressLessThanOrEqualTo(String value) {
+            addCriterion("IP_ADDRESS <=", value, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressLike(String value) {
+            addCriterion("IP_ADDRESS like", value, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressNotLike(String value) {
+            addCriterion("IP_ADDRESS not like", value, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressIn(List<String> values) {
+            addCriterion("IP_ADDRESS in", values, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressNotIn(List<String> values) {
+            addCriterion("IP_ADDRESS not in", values, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressBetween(String value1, String value2) {
+            addCriterion("IP_ADDRESS between", value1, value2, "ipAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andIpAddressNotBetween(String value1, String value2) {
+            addCriterion("IP_ADDRESS not between", value1, value2, "ipAddress");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

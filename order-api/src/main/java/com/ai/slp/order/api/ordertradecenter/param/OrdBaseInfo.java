@@ -44,6 +44,11 @@ public class OrdBaseInfo implements Serializable {
      * 地市
      */
     private String cityCode;
+    
+    /**
+     * ip地址
+     */
+    private String ipAddress;
 
     /**
      * 订单摘要信息
@@ -140,4 +145,12 @@ public class OrdBaseInfo implements Serializable {
         this.remark = remark;
     }
 
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+    
 }

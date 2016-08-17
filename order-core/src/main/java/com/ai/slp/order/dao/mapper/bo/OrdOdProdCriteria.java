@@ -2224,6 +2224,76 @@ public class OrdOdProdCriteria {
             addCriterion("SKU_STORAGE_ID not between", value1, value2, "skuStorageId");
             return (Criteria) this;
         }
+
+        public Criteria andIsInvoiceIsNull() {
+            addCriterion("IS_INVOICE is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceIsNotNull() {
+            addCriterion("IS_INVOICE is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceEqualTo(String value) {
+            addCriterion("IS_INVOICE =", value, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceNotEqualTo(String value) {
+            addCriterion("IS_INVOICE <>", value, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceGreaterThan(String value) {
+            addCriterion("IS_INVOICE >", value, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceGreaterThanOrEqualTo(String value) {
+            addCriterion("IS_INVOICE >=", value, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceLessThan(String value) {
+            addCriterion("IS_INVOICE <", value, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceLessThanOrEqualTo(String value) {
+            addCriterion("IS_INVOICE <=", value, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceLike(String value) {
+            addCriterion("IS_INVOICE like", value, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceNotLike(String value) {
+            addCriterion("IS_INVOICE not like", value, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceIn(List<String> values) {
+            addCriterion("IS_INVOICE in", values, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceNotIn(List<String> values) {
+            addCriterion("IS_INVOICE not in", values, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceBetween(String value1, String value2) {
+            addCriterion("IS_INVOICE between", value1, value2, "isInvoice");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsInvoiceNotBetween(String value1, String value2) {
+            addCriterion("IS_INVOICE not between", value1, value2, "isInvoice");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -10,6 +10,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
+import com.ai.slp.order.api.orderlist.param.QueryExceptionOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -53,5 +54,12 @@ public class OrderListSVImpl implements IOrderListSV {
         response.setResponseHeader(responseHeader);
         return response;
     }
+
+	@Override
+	public QueryOrderListResponse queryExceptionOrderList(QueryExceptionOrderRequest orderListRequest)
+			throws BusinessException, SystemException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

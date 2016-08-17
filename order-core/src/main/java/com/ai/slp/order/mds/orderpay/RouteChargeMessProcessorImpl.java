@@ -1,5 +1,6 @@
 package com.ai.slp.order.mds.orderpay;
 
+import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
@@ -60,10 +61,10 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         if (request == null)
             return;
         logger.info("调用充值服务.........");
-        RouteServerResponse response = iRouteServer.callServerByRouteId(request);
-        String responseData = response.getResponseData();
+        BaseResponse response = iRouteServer.callServerByRouteId(request);
+        String responseData = response.getResponseHeader().getResultMessage();
         Timestamp sysDate = DateUtil.getSysDate();
-        if (StringUtil.isBlank(responseData)) {
+        if (!response.getResponseHeader().getIsSuccess()) {
         	/*充值出现错误后则为充值失败*/
             logger.info("error...");
             String requestData = request.getRequestData();

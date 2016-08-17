@@ -30,7 +30,6 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
-
         OrderTradeCenterResponse response = ordOrderTradeBusiSV.apply(request);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
@@ -52,5 +51,4 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
 		}
         return response;
     }
-
 }

@@ -94,6 +94,76 @@ public class OrdOrderVo extends BaseInfo {
      * 总待收费用
      */
     private Long payFee;
+    
+    /**
+     * 发票类型
+     */
+    private String invoiceType;
+    
+    /**
+     * 发票抬头
+     */
+    private String invoiceTitle;
+    
+    /**
+     * 登记打印内容
+     */
+    private String invoiceContent;
+    
+    /**
+     * 物流单号
+     */
+    private String expressOddNumber;
+    
+    /**
+     * 到件方公司
+     */
+    private String contactCompany;
+    
+    /**
+     * 收件人姓名
+     */
+    private String contactName;
+    
+    /**
+     * 收件人电话
+     */
+    private String contactTel;
+    
+    /**
+     * 收件人省份
+     */
+    private String provinceCode;
+    
+    /**
+     * 收件人地市
+     */
+    private String cityCode;
+    
+    /**
+     * 收件人区县
+     */
+    private String countyCode;
+    
+    /**
+     * 收件人邮编
+     */
+    private String postCode;
+    
+    /**
+     * 收件人末级区域
+     */
+    private String areaCode;
+    
+    /**
+     * 详细地址(自提地址)
+     */
+    private String address;
+    
+    /**
+     * 物流公司ID
+     */
+    private String expressId;
 
     /**
      * 支付信息
@@ -249,4 +319,116 @@ public class OrdOrderVo extends BaseInfo {
         this.operDiscountFee = operDiscountFee;
     }
 
+	public String getInvoiceType() {
+		return invoiceType;
+	}
+
+	public void setInvoiceType(String invoiceType) {
+		this.invoiceType = invoiceType;
+	}
+
+	public String getInvoiceTitle() {
+		return invoiceTitle;
+	}
+
+	public void setInvoiceTitle(String invoiceTitle) {
+		this.invoiceTitle = invoiceTitle;
+	}
+
+	public String getInvoiceContent() {
+		return invoiceContent;
+	}
+
+	public void setInvoiceContent(String invoiceContent) {
+		this.invoiceContent = invoiceContent;
+	}
+
+	public String getExpressOddNumber() {
+		return expressOddNumber;
+	}
+
+	public void setExpressOddNumber(String expressOddNumber) {
+		this.expressOddNumber = expressOddNumber;
+	}
+
+	public String getContactCompany() {
+		return contactCompany;
+	}
+
+	public void setContactCompany(String contactCompany) {
+		this.contactCompany = contactCompany;
+	}
+
+	public String getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
+
+	public String getContactTel() {
+		return contactTel;
+	}
+
+	public void setContactTel(String contactTel) {
+		this.contactTel = contactTel;
+	}
+
+	public String getProvinceCode() {
+		return provinceCode;
+	}
+
+	public void setProvinceCode(String provinceCode) {
+		this.provinceCode = provinceCode;
+	}
+
+	public String getCityCode() {
+		return cityCode;
+	}
+
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
+	}
+
+	public String getCountyCode() {
+		return countyCode;
+	}
+
+	public void setCountyCode(String countyCode) {
+		this.countyCode = countyCode;
+	}
+
+	public String getPostCode() {
+		return postCode;
+	}
+
+	public void setPostCode(String postCode) {
+		this.postCode = postCode;
+	}
+
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getExpressId() {
+		return expressId;
+	}
+
+	public void setExpressId(String expressId) {
+		this.expressId = expressId;
+	}
+    
 }

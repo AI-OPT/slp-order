@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.FreightTemplateProdMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.FreightTemplateProd" >
+    <id column="REGION_ID" property="regionId" jdbcType="VARCHAR" />
+    <result column="TEMPLATE_ID" property="templateId" jdbcType="VARCHAR" />
+    <result column="TRANSPORT_ADDRESS" property="transportAddress" jdbcType="VARCHAR" />
+    <result column="FIRST_NUMBER" property="firstNumber" jdbcType="BIGINT" />
+    <result column="FIRST_NUM" property="firstNum" jdbcType="BIGINT" />
+    <result column="PIECE_NUMBER" property="pieceNumber" jdbcType="BIGINT" />
+    <result column="PIECE_NUM" property="pieceNum" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    REGION_ID, TEMPLATE_ID, TRANSPORT_ADDRESS, FIRST_NUMBER, FIRST_NUM, PIECE_NUMBER, 
+    PIECE_NUM
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateProdCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from freight_template_prod
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from freight_template_prod
+    where REGION_ID = #{regionId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from freight_template_prod
+    where REGION_ID = #{regionId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateProdCriteria" >
+    delete from freight_template_prod
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateProd" >
+    insert into freight_template_prod (REGION_ID, TEMPLATE_ID, TRANSPORT_ADDRESS, 
+      FIRST_NUMBER, FIRST_NUM, PIECE_NUMBER, 
+      PIECE_NUM)
+    values (#{regionId,jdbcType=VARCHAR}, #{templateId,jdbcType=VARCHAR}, #{transportAddress,jdbcType=VARCHAR}, 
+      #{firstNumber,jdbcType=BIGINT}, #{firstNum,jdbcType=BIGINT}, #{pieceNumber,jdbcType=BIGINT}, 
+      #{pieceNum,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateProd" >
+    insert into freight_template_prod
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="regionId != null" >
+        REGION_ID,
+      </if>
+      <if test="templateId != null" >
+        TEMPLATE_ID,
+      </if>
+      <if test="transportAddress != null" >
+        TRANSPORT_ADDRESS,
+      </if>
+      FIRST_NUMBER,
+      FIRST_NUM,
+      PIECE_NUMBER,
+      PIECE_NUM,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="regionId != null" >
+        #{regionId,jdbcType=VARCHAR},
+      </if>
+      <if test="templateId != null" >
+        #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="transportAddress != null" >
+        #{transportAddress,jdbcType=VARCHAR},
+      </if>
+      #{firstNumber,jdbcType=BIGINT},
+      #{firstNum,jdbcType=BIGINT},
+      #{pieceNumber,jdbcType=BIGINT},
+      #{pieceNum,jdbcType=BIGINT},
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateProdCriteria" resultType="java.lang.Integer" >
+    select count(*) from freight_template_prod
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update freight_template_prod
+    <set >
+      <if test="record.regionId != null" >
+        REGION_ID = #{record.regionId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateId != null" >
+        TEMPLATE_ID = #{record.templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.transportAddress != null" >
+        TRANSPORT_ADDRESS = #{record.transportAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstNumber != null" >
+        FIRST_NUMBER = #{record.firstNumber,jdbcType=BIGINT},
+      </if>
+      <if test="record.firstNum != null" >
+        FIRST_NUM = #{record.firstNum,jdbcType=BIGINT},
+      </if>
+      <if test="record.pieceNumber != null" >
+        PIECE_NUMBER = #{record.pieceNumber,jdbcType=BIGINT},
+      </if>
+      <if test="record.pieceNum != null" >
+        PIECE_NUM = #{record.pieceNum,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update freight_template_prod
+    set REGION_ID = #{record.regionId,jdbcType=VARCHAR},
+      TEMPLATE_ID = #{record.templateId,jdbcType=VARCHAR},
+      TRANSPORT_ADDRESS = #{record.transportAddress,jdbcType=VARCHAR},
+      FIRST_NUMBER = #{record.firstNumber,jdbcType=BIGINT},
+      FIRST_NUM = #{record.firstNum,jdbcType=BIGINT},
+      PIECE_NUMBER = #{record.pieceNumber,jdbcType=BIGINT},
+      PIECE_NUM = #{record.pieceNum,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateProd" >
+    update freight_template_prod
+    <set >
+      <if test="templateId != null" >
+        TEMPLATE_ID = #{templateId,jdbcType=VARCHAR},
+      </if>
+      <if test="transportAddress != null" >
+        TRANSPORT_ADDRESS = #{transportAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="firstNumber != null" >
+        FIRST_NUMBER = #{firstNumber,jdbcType=BIGINT},
+      </if>
+      <if test="firstNum != null" >
+        FIRST_NUM = #{firstNum,jdbcType=BIGINT},
+      </if>
+      <if test="pieceNumber != null" >
+        PIECE_NUMBER = #{pieceNumber,jdbcType=BIGINT},
+      </if>
+      <if test="pieceNum != null" >
+        PIECE_NUM = #{pieceNum,jdbcType=BIGINT},
+      </if>
+    </set>
+    where REGION_ID = #{regionId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.FreightTemplateProd" >
+    update freight_template_prod
+    set TEMPLATE_ID = #{templateId,jdbcType=VARCHAR},
+      TRANSPORT_ADDRESS = #{transportAddress,jdbcType=VARCHAR},
+      FIRST_NUMBER = #{firstNumber,jdbcType=BIGINT},
+      FIRST_NUM = #{firstNum,jdbcType=BIGINT},
+      PIECE_NUMBER = #{pieceNumber,jdbcType=BIGINT},
+      PIECE_NUM = #{pieceNum,jdbcType=BIGINT}
+    where REGION_ID = #{regionId,jdbcType=VARCHAR}
+  </update>
+</mapper>
