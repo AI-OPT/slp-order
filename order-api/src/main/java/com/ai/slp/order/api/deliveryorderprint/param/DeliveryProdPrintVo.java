@@ -4,13 +4,12 @@ import java.io.Serializable;
 
 public class DeliveryProdPrintVo implements Serializable{
 
-	
-    
 	private static final long serialVersionUID = 1L;
 	
 	 /**
      * 商户编号
      */
+	private String skuId;
 
 	/**
      * 商品名称
@@ -26,6 +25,14 @@ public class DeliveryProdPrintVo implements Serializable{
      * 数量
      */
     private long buySum;
+    
+	public String getSkuId() {
+		return skuId;
+	}
+
+	public void setSkuId(String skuId) {
+		this.skuId = skuId;
+	}
 
 	public String getProdName() {
 		return prodName;
