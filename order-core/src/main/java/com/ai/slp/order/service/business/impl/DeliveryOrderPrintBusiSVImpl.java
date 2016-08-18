@@ -73,6 +73,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	@Override
 	public DeliveryOrderPrintResponse print(DeliveryOrderPrintRequest request)
 			throws BusinessException, SystemException {
+		int i=10/0;
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
 		/* 参数校验*/
 		CommonCheckUtils.checkTenantId(request.getTenantId(), "");
