@@ -33,6 +33,8 @@ public final class SequenceUtil {
     private static final String FREIGHT_TEMPLATE$TEMPLATE_ID$SEQ="FREIGHT_TEMPLATE$TEMPLATE_ID$SEQ";
     
     private static final String FREIGHT_TEMPLATE_PROD$REGION_ID$SEQ="FREIGHT_TEMPLATE_PROD$REGION_ID$SEQ";
+
+    private static final String ORD_OD_DELIVER_INFO$REGION_ID$SEQ="ORD_OD_DELIVER_INFO$REGION_ID$SEQ";
     
     public static Long createOrderId() {
         String seq = SeqUtil.getNewId(ORD_ORDER$ORDER_ID$SEQ, 10);
@@ -88,5 +90,9 @@ public final class SequenceUtil {
     
     public static Long createRegionId() {
         return SeqUtil.getNewId(FREIGHT_TEMPLATE_PROD$REGION_ID$SEQ);
+    }
+    
+    public static Long createdeliverInfoId() {
+    	return SeqUtil.getNewId(ORD_OD_DELIVER_INFO$REGION_ID$SEQ);
     }
 }
