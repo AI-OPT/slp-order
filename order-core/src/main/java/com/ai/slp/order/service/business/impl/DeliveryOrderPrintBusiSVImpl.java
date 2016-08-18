@@ -79,6 +79,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		if(request.getOrderId()==0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
+		
 		/* 判断是否存在提货单打印信息*/
 		OrdOdDeliverInfoCriteria exampleDeliver=new OrdOdDeliverInfoCriteria();
 		OrdOdDeliverInfoCriteria.Criteria criteriaDeliver = exampleDeliver.createCriteria();
