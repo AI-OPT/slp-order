@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdOdDeliverInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo" >
+    <id column="DELIVER_INFO_ID" property="deliverInfoId" jdbcType="BIGINT" />
+    <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
+    <result column="HOR_ORDER_ID" property="horOrderId" jdbcType="BIGINT" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="PRINT_INFO" property="printInfo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    DELIVER_INFO_ID, ORDER_ID, HOR_ORDER_ID, UPDATE_TIME, PRINT_INFO
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfoCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from ord_od_deliver_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ord_od_deliver_info
+    where DELIVER_INFO_ID = #{deliverInfoId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="long" >
+    delete from ord_od_deliver_info
+    where DELIVER_INFO_ID = #{deliverInfoId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfoCriteria" >
+    delete from ord_od_deliver_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo" >
+    insert into ord_od_deliver_info (DELIVER_INFO_ID, ORDER_ID, HOR_ORDER_ID, 
+      UPDATE_TIME, PRINT_INFO)
+    values (#{deliverInfoId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{horOrderId,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{printInfo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo" >
+    insert into ord_od_deliver_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      DELIVER_INFO_ID,
+      ORDER_ID,
+      HOR_ORDER_ID,
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="printInfo != null" >
+        PRINT_INFO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{deliverInfoId,jdbcType=BIGINT},
+      #{orderId,jdbcType=BIGINT},
+      #{horOrderId,jdbcType=BIGINT},
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="printInfo != null" >
+        #{printInfo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfoCriteria" resultType="java.lang.Integer" >
+    select count(*) from ord_od_deliver_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ord_od_deliver_info
+    <set >
+      <if test="record.deliverInfoId != null" >
+        DELIVER_INFO_ID = #{record.deliverInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="record.orderId != null" >
+        ORDER_ID = #{record.orderId,jdbcType=BIGINT},
+      </if>
+      <if test="record.horOrderId != null" >
+        HOR_ORDER_ID = #{record.horOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null" >
+        UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.printInfo != null" >
+        PRINT_INFO = #{record.printInfo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ord_od_deliver_info
+    set DELIVER_INFO_ID = #{record.deliverInfoId,jdbcType=BIGINT},
+      ORDER_ID = #{record.orderId,jdbcType=BIGINT},
+      HOR_ORDER_ID = #{record.horOrderId,jdbcType=BIGINT},
+      UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      PRINT_INFO = #{record.printInfo,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo" >
+    update ord_od_deliver_info
+    <set >
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="horOrderId != null" >
+        HOR_ORDER_ID = #{horOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="printInfo != null" >
+        PRINT_INFO = #{printInfo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where DELIVER_INFO_ID = #{deliverInfoId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo" >
+    update ord_od_deliver_info
+    set ORDER_ID = #{orderId,jdbcType=BIGINT},
+      HOR_ORDER_ID = #{horOrderId,jdbcType=BIGINT},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      PRINT_INFO = #{printInfo,jdbcType=VARCHAR}
+    where DELIVER_INFO_ID = #{deliverInfoId,jdbcType=BIGINT}
+  </update>
+</mapper>

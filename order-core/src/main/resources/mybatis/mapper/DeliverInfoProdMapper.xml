@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.DeliverInfoProdMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.DeliverInfoProd" >
+    <result column="DELIVER_INFO_ID" property="deliverInfoId" jdbcType="BIGINT" />
+    <result column="SKU_ID" property="skuId" jdbcType="VARCHAR" />
+    <result column="PROD_NAME" property="prodName" jdbcType="VARCHAR" />
+    <result column="EXTEND_INFO" property="extendInfo" jdbcType="VARCHAR" />
+    <result column="BUY_SUM" property="buySum" jdbcType="BIGINT" />
+    <result column="SALE_PRICE" property="salePrice" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    DELIVER_INFO_ID, SKU_ID, PROD_NAME, EXTEND_INFO, BUY_SUM, SALE_PRICE
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.DeliverInfoProdCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from deliver_info_prod
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.DeliverInfoProdCriteria" >
+    delete from deliver_info_prod
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.DeliverInfoProd" >
+    insert into deliver_info_prod (DELIVER_INFO_ID, SKU_ID, PROD_NAME, 
+      EXTEND_INFO, BUY_SUM, SALE_PRICE
+      )
+    values (#{deliverInfoId,jdbcType=BIGINT}, #{skuId,jdbcType=VARCHAR}, #{prodName,jdbcType=VARCHAR}, 
+      #{extendInfo,jdbcType=VARCHAR}, #{buySum,jdbcType=BIGINT}, #{salePrice,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.DeliverInfoProd" >
+    insert into deliver_info_prod
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      DELIVER_INFO_ID,
+      <if test="skuId != null" >
+        SKU_ID,
+      </if>
+      <if test="prodName != null" >
+        PROD_NAME,
+      </if>
+      <if test="extendInfo != null" >
+        EXTEND_INFO,
+      </if>
+      BUY_SUM,
+      SALE_PRICE,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      #{deliverInfoId,jdbcType=BIGINT},
+      <if test="skuId != null" >
+        #{skuId,jdbcType=VARCHAR},
+      </if>
+      <if test="prodName != null" >
+        #{prodName,jdbcType=VARCHAR},
+      </if>
+      <if test="extendInfo != null" >
+        #{extendInfo,jdbcType=VARCHAR},
+      </if>
+      #{buySum,jdbcType=BIGINT},
+      #{salePrice,jdbcType=BIGINT},
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.DeliverInfoProdCriteria" resultType="java.lang.Integer" >
+    select count(*) from deliver_info_prod
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update deliver_info_prod
+    <set >
+      <if test="record.deliverInfoId != null" >
+        DELIVER_INFO_ID = #{record.deliverInfoId,jdbcType=BIGINT},
+      </if>
+      <if test="record.skuId != null" >
+        SKU_ID = #{record.skuId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.prodName != null" >
+        PROD_NAME = #{record.prodName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extendInfo != null" >
+        EXTEND_INFO = #{record.extendInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.buySum != null" >
+        BUY_SUM = #{record.buySum,jdbcType=BIGINT},
+      </if>
+      <if test="record.salePrice != null" >
+        SALE_PRICE = #{record.salePrice,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update deliver_info_prod
+    set DELIVER_INFO_ID = #{record.deliverInfoId,jdbcType=BIGINT},
+      SKU_ID = #{record.skuId,jdbcType=VARCHAR},
+      PROD_NAME = #{record.prodName,jdbcType=VARCHAR},
+      EXTEND_INFO = #{record.extendInfo,jdbcType=VARCHAR},
+      BUY_SUM = #{record.buySum,jdbcType=BIGINT},
+      SALE_PRICE = #{record.salePrice,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>
