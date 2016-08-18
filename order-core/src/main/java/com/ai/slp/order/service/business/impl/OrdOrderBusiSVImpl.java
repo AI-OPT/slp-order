@@ -27,6 +27,7 @@ import com.ai.slp.order.api.orderlist.param.OrderPayVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
+import com.ai.slp.order.api.orderlist.param.QueryExceptionOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -505,6 +506,16 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		response.setOrderApiVo(ordOrderApiVos);
 		return response;
      }
+    
+    
+    /**
+     * 异常订单的查询
+     */
+    @Override
+	public QueryOrderListResponse queryExceptionOrderList(QueryExceptionOrderRequest orderListRequest)
+			throws BusinessException, SystemException {
+		return null;
+	}
     
     /**
      * 商品集合API
