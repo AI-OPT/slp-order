@@ -6,10 +6,12 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ai.slp.order.dao.mapper.interfaces.DeliverInfoProdMapper;
 import com.ai.slp.order.dao.mapper.interfaces.FreightTemplateMapper;
 import com.ai.slp.order.dao.mapper.interfaces.FreightTemplateProdMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdBalacneIfMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdCartProdMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdDeliverInfoMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdExtendMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeOffsetMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdFeeProdMapper;
@@ -100,5 +102,13 @@ public class MapperFactory {
     public static OrdRuleMapper getOrdRuleMapper() {
         return sqlSessionTemplate.getMapper(OrdRuleMapper.class);
     }
+    public static OrdOdDeliverInfoMapper getOrdOdDeliverInfoMapper() {
+    	return sqlSessionTemplate.getMapper(OrdOdDeliverInfoMapper.class);
+    }
+    
+    public static DeliverInfoProdMapper getDeliverInfoProdMapper() {
+    	return sqlSessionTemplate.getMapper(DeliverInfoProdMapper.class);
+    }
+    
 }
 

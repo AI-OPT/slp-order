@@ -431,6 +431,11 @@ public final class OrdersConstants {
              * 订单进入待配货
              */
             public static final String ORDER_TO_WAIT_DISTRIBUTION = "您提交的订单进入待配货，请耐心等待";
+            
+            /**
+             * 提货单已经打印
+             */
+            public static final String ORDER_TO_PRINT = "您提交的订单提货单已经打印";
 
             /**
              * 订单已经配货
@@ -451,6 +456,11 @@ public final class OrdersConstants {
              * 订单业务已经开通
              */
             public static final String ORDER_SERVICE_START = "您提交的订单已经开通所有服务";
+            
+            /**
+             * 发货单已经打印
+             */
+            public static final String INVOICE_ORDER_TO_PRINT = "您提交的订单发货单已经打印";
 
             /**
              * 订单进入待出库状态
@@ -676,5 +686,25 @@ public final class OrdersConstants {
         }
 
     }
+    
+    
+    public static final class OrdOdDeliverInfo {
+
+        public static class printInfo {
+            /**
+             * 1：提货单打印
+             */
+            public static final String ONE = "1";
+
+            /**
+             * 2：发货单打印
+             */
+            public static final String TWO = "2";
+
+        }
+
+    }
+    
+    
 
 }
