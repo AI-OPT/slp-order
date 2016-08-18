@@ -20,10 +20,11 @@ public interface DeliveryOrderPrintAttachMapper {
     @Results({ @Result(id = true, property = "orderId", column = "order_id"),
             @Result(property = "tenantId", column = "tenant_id"),
             @Result(property = "prodName", column = "prod_name"),
-            @Result(property = "extendInfo", column = "extend_info"),
             @Result(property = "buySum", column = "buy_sum"),
+            @Result(property = "skuId", column = "sku_id"),
+            @Result(property = "extendInfo", column = "extend_info"),
             })
     public List<OrdOrderProdAttach> query(@Param("userId") String userId, @Param("tenantId") String tenantId,@Param("skuId") String skuId, 
-    		@Param("routeId") String routeId, @Param("state") String state,
+    		@Param("routeId") String routeId,@Param("orderId") long orderId, @Param("state") String state,
     		@Param("timeBefore") Timestamp timeBefore, @Param("timeAfter") Timestamp timeAfter);
 }
