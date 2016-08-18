@@ -4,6 +4,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
+import com.ai.slp.order.api.orderlist.param.QueryExceptionOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -19,4 +20,7 @@ public interface IOrdOrderBusiSV {
 
     public QueryApiOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest)
             throws BusinessException, SystemException;
+    
+    public QueryOrderListResponse queryExceptionOrderList(QueryExceptionOrderRequest orderListRequest)
+    		throws BusinessException, SystemException;
 }
