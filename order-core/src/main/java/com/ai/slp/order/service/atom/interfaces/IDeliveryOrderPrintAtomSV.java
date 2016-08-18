@@ -4,6 +4,10 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import com.ai.slp.order.dao.mapper.attach.OrdOrderProdAttach;
+import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
+import com.ai.slp.order.dao.mapper.bo.DeliverInfoProdCriteria;
+import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
+import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfoCriteria;
 
 public interface IDeliveryOrderPrintAtomSV {
 	
@@ -15,12 +19,17 @@ public interface IDeliveryOrderPrintAtomSV {
 	 * @param state
 	 * @return
 	 * @author caofz
-	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL
 	 */
 	public List<OrdOrderProdAttach> query(String userId,String tenantId, String skuId, String routeId, 
-			String state,Timestamp timeBefore,Timestamp timeAfter);
-	
+			long orderId,String state,Timestamp timeBefore,Timestamp timeAfter);
+	  
+	int insertSelective(OrdOdDeliverInfo record);
 
+	List<OrdOdDeliverInfo> selectByExample(OrdOdDeliverInfoCriteria example);
+
+	int insert(DeliverInfoProd record);
+
+	int insertSelective(DeliverInfoProd record);
+	
+	List<DeliverInfoProd> selectByExample(DeliverInfoProdCriteria example);
 }
