@@ -7,7 +7,7 @@ import java.util.List;
 import com.ai.opt.base.vo.BaseResponse;
 
 /**
- * 订单提货单展示的参数
+ * 订单发货单展示的参数
  * @date 2016年8月10日 
  * @author caofz
  */
@@ -33,6 +33,7 @@ public class InvoicePrintResponse extends BaseResponse{
     /**
      * 物流商
      */
+    private String expressOddNumber;
     
     /**
      * 收货人电话
@@ -148,4 +149,13 @@ public class InvoicePrintResponse extends BaseResponse{
 	public void setRouteId(String routeId) {
 		this.routeId = routeId;
 	}
+
+	public String getExpressOddNumber() {
+		return expressOddNumber;
+	}
+
+	public void setExpressOddNumber(String expressOddNumber) {
+		this.expressOddNumber = expressOddNumber;
+	}
+	
 }
