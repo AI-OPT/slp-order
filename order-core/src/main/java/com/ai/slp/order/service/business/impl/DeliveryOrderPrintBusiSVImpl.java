@@ -76,11 +76,9 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
 		/* 参数校验*/
 		CommonCheckUtils.checkTenantId(request.getTenantId(), "");
-		testException();
 		if(request.getOrderId()==0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		
 		/* 判断是否存在提货单打印信息*/
 		OrdOdDeliverInfoCriteria exampleDeliver=new OrdOdDeliverInfoCriteria();
 		OrdOdDeliverInfoCriteria.Criteria criteriaDeliver = exampleDeliver.createCriteria();
@@ -325,12 +323,5 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			    }
 		  }
 		return orderList;
-	  }
-	  
-	  
-	  private void testException() {
-		  if(true) {
-				int i=10/0;
-			} 
 	  }
 }
