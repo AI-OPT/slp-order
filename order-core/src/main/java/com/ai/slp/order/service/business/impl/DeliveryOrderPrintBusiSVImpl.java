@@ -330,7 +330,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	  
 	  private void testException() {
 		  if(true) {
-				throw new SystemException("12");
+				int i=10/0;
 			} 
 	  }
 }
