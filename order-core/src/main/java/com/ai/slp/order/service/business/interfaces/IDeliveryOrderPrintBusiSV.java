@@ -7,6 +7,8 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 
 public interface IDeliveryOrderPrintBusiSV {
 	
-	public DeliveryOrderPrintResponse print(DeliveryOrderPrintRequest request) throws BusinessException, SystemException;
+	public void print(DeliveryOrderPrintRequest request) throws BusinessException, SystemException;
+
+	public DeliveryOrderPrintResponse query(DeliveryOrderPrintRequest request);
 
 }
