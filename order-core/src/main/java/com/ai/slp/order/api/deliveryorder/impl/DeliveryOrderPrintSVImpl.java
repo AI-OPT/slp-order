@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.deliveryorderprint.interfaces.IDeliveryOrderPrintSV;
@@ -25,8 +26,8 @@ public class DeliveryOrderPrintSVImpl implements IDeliveryOrderPrintSV {
 	private IDeliveryOrderNoMergePrintBusiSV deliveryOrderNoMergePrintBusiSV;
 
 	@Override
-	public DeliveryOrderPrintResponse print(DeliveryOrderPrintRequest request) throws BusinessException, SystemException {
-		DeliveryOrderPrintResponse response = deliveryOrderPrintBusiSV.print(request);
+	public DeliveryOrderPrintResponse query(DeliveryOrderPrintRequest request) throws BusinessException, SystemException {
+		DeliveryOrderPrintResponse response = deliveryOrderPrintBusiSV.query(request);
 		ResponseHeader responseHeader = new ResponseHeader(true,
 	                ExceptCodeConstants.Special.SUCCESS, "成功");
 	    response.setResponseHeader(responseHeader);
@@ -36,6 +37,17 @@ public class DeliveryOrderPrintSVImpl implements IDeliveryOrderPrintSV {
 	@Override
 	public DeliveryOrderPrintResponse noMergePrint(DeliveryOrderPrintRequest request) throws BusinessException, SystemException {
 		DeliveryOrderPrintResponse response = deliveryOrderNoMergePrintBusiSV.noMergePrint(request);
+		ResponseHeader responseHeader = new ResponseHeader(true,
+	                ExceptCodeConstants.Special.SUCCESS, "成功");
+	    response.setResponseHeader(responseHeader);
+		return response;
+	}
+
+	@Override
+	public BaseResponse print(DeliveryOrderPrintRequest request)
+			throws BusinessException, SystemException {
+		BaseResponse response=new BaseResponse();
+		deliveryOrderPrintBusiSV.print(request);
 		ResponseHeader responseHeader = new ResponseHeader(true,
 	                ExceptCodeConstants.Special.SUCCESS, "成功");
 	    response.setResponseHeader(responseHeader);
