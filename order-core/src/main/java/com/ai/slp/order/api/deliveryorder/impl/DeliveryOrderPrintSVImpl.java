@@ -44,8 +44,7 @@ public class DeliveryOrderPrintSVImpl implements IDeliveryOrderPrintSV {
 	}
 
 	@Override
-	public BaseResponse print(DeliveryOrderPrintRequest request)
-			throws BusinessException, SystemException {
+	public BaseResponse print(DeliveryOrderPrintRequest request)throws BusinessException, SystemException {
 		BaseResponse response=new BaseResponse();
 		deliveryOrderPrintBusiSV.print(request);
 		ResponseHeader responseHeader = new ResponseHeader(true,
