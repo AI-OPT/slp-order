@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 
@@ -22,7 +23,7 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 public interface IDeliveryOrderPrintSV {
 	
 	/**
-	 * 合并打印
+	 * 提货单合并查询
 	 * @param request
 	 * @return
 	 * @throws BusinessException
@@ -33,8 +34,8 @@ public interface IDeliveryOrderPrintSV {
 	 * @RestRelativeURL /deliveryorder/print
 	 */
 	@POST
-	@Path("/print")
-	public DeliveryOrderPrintResponse print(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
+	@Path("/query")
+	public DeliveryOrderPrintResponse query(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
 	
 	/**
 	 * 不合并打印
@@ -49,4 +50,22 @@ public interface IDeliveryOrderPrintSV {
 	@POST
 	@Path("/noMergePrint")
 	public DeliveryOrderPrintResponse noMergePrint(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
+	
+	
+	
+	/**
+	 * 提货单合并打印
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode 
+	 * @RestRelativeURL
+	 */
+	@POST
+	@Path("/print")
+	public BaseResponse print(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
+	
 }
