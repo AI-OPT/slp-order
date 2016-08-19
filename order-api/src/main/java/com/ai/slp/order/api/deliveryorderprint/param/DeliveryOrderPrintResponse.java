@@ -25,6 +25,11 @@ public class DeliveryOrderPrintResponse extends BaseResponse{
     private String contactName;
     
     /**
+     * 总的数量
+     */
+    private long sum;
+    
+    /**
      * 打印的商品信息集合
      */
     private List<DeliveryProdPrintVo> deliveryProdPrintVos;
@@ -43,6 +48,14 @@ public class DeliveryOrderPrintResponse extends BaseResponse{
 
 	public void setContactName(String contactName) {
 		this.contactName = contactName;
+	}
+	
+	public long getSum() {
+		return sum;
+	}
+
+	public void setSum(long sum) {
+		this.sum = sum;
 	}
 
 	public List<DeliveryProdPrintVo> getDeliveryProdPrintVos() {
