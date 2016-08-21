@@ -1,6 +1,5 @@
 package com.ai.slp.order.service.business.impl;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,6 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryProdPrintVo;
 import com.ai.slp.order.constants.OrdersConstants;
-import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
@@ -33,7 +31,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliveryOrderNoMergePrintBusiSV;
-import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.SequenceUtil;
 
@@ -51,9 +48,6 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 	
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
-	
-	@Autowired
-	private IOrderFrameCoreSV orderFrameCoreSV;
 	
 	@Autowired
 	private IDeliveryOrderPrintAtomSV deliveryOrderPrintAtomSV;
@@ -93,7 +87,6 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 	        BeanUtils.copyProperties(dpVo, deliverInfoProd);
 	        list.add(dpVo);
 		}
-		this.updateOrderState(order, DateUtil.getSysDate());
 		/* 查询订单配送信息*/
 		List<OrdOdLogistics> logistics = getOrdOdLogistics(request.getOrderId(), request.getTenantId());
 		if(CollectionUtil.isEmpty(logistics)) {
@@ -150,26 +143,4 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 		  deliveryOrderPrintAtomSV.insertSelective(deliverInfoProd);
 		  return deliverInfoProd;
 	  }
-	 
-	 /**
-      * 更新订单状态
-      * 
-      */
-	  private void updateOrderState(OrdOrder ordOrder, Timestamp sysDate) {
-        String orgState = ordOrder.getState();
-        String state1 = OrdersConstants.OrdOrder.State.LADING_BILL_FINISH_PRINT;
-        String state2 = OrdersConstants.OrdOrder.State.FINISH_DISTRIBUTION;
-        String newState = OrdersConstants.OrdOrder.State.WAIT_DELIVERY;
-        ordOrder.setState(newState);
-        ordOrder.setStateChgTime(sysDate);
-        ordOrderAtomSV.updateById(ordOrder);
-        // 写入订单状态变化轨迹表
-        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, state1,
-                OrdOdStateChg.ChgDesc.ORDER_TO_PRINT, null, null, null, sysDate);
-        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state1, state2,
-                OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_DISTRIBUTION, null, null, null, sysDate);
-        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state2, newState,
-                OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DELIVERY, null, null, null, sysDate);
-	 }
-
 }
