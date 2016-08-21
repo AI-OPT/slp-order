@@ -48,7 +48,7 @@ public interface IDeliveryOrderPrintSV {
 	 * @author caofz
 	 * @ApiDocMethod
 	 * @ApiCode 
-	 * @RestRelativeURL /deliveryorder/print
+	 * @RestRelativeURL /deliveryorder/display
 	 */
 	@POST
 	@Path("/display")
