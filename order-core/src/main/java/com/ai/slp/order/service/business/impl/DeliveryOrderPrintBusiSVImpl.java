@@ -75,17 +75,6 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		DeliveryOrderQueryResponse response=new DeliveryOrderQueryResponse();
 		/* 参数校验及判断是否存在提货单打印信息*/
 		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(request);
-		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(ordOrder==null) {
-			logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-		} 
-		if(!ordOrder.getState().equals(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION)) {
-			logger.warn("提货单已经打印,不能重复打印"+ordOrder.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"提货单已经打印,不能重复打印"+ordOrder.getOrderId()+"]");
-		}
 		if(CollectionUtil.isEmpty(deliverInfos)) {
 			/* 没有提货单打印信息的话,则表示第一次打印*/
 			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
@@ -111,6 +100,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 					orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList);
 					if(!CollectionUtil.isEmpty(orderProdAttachs)) {
 						response.setFlag(true);
+						break;
 					}else {
 						response.setFlag(false);
 					}
@@ -220,6 +210,12 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	public void print(DeliveryOrderPrintRequest request) {
 		/* 参数检验及 查询提货单打印信息*/
 		List<OrdOdDeliverInfo> queryInfos = this.checkParamAndQueryInfos(request);
+		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+		if(ordOrder.getState().equals(OrdersConstants.OrdOrder.State.WAIT_DELIVERY)) {
+			logger.warn("提货单已经打印,不能重复打印[订单id:"+ordOrder.getOrderId()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"提货单已经打印,不能重复打印[订单id:"+ordOrder.getOrderId()+"]");
+		}
 		if(CollectionUtil.isEmpty(queryInfos)) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
 					"未能查询到相应的提货单打印信息[订单id:"+request.getOrderId()+"]");
@@ -237,14 +233,8 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			/* 更新合并订单状态并写入订单状态变化轨迹*/
 			this.updateOrderState(horOrder, DateUtil.getSysDate());
 		}
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(order==null) {
-			logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-		}
 		/* 更新原订单状态并写入订单状态变化轨迹*/
-		this.updateOrderState(order, DateUtil.getSysDate());
+		this.updateOrderState(ordOrder, DateUtil.getSysDate());
 	}
 	
 	/**
