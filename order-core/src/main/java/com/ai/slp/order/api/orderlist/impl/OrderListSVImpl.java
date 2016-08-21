@@ -58,7 +58,6 @@ public class OrderListSVImpl implements IOrderListSV {
 	@Override
 	public QueryOrderListResponse queryExceptionOrderList(QueryExceptionOrderRequest orderListRequest)
 			throws BusinessException, SystemException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
