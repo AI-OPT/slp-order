@@ -4,11 +4,14 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
+import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
 
 public interface IDeliveryOrderPrintBusiSV {
 	
-	public void print(DeliveryOrderPrintRequest request) throws BusinessException, SystemException;
+	public DeliveryOrderQueryResponse query(DeliveryOrderPrintRequest request);
 
-	public DeliveryOrderPrintResponse query(DeliveryOrderPrintRequest request);
+	public DeliveryOrderPrintResponse display(DeliveryOrderPrintRequest request);
+
+	public void print(DeliveryOrderPrintRequest request) throws BusinessException, SystemException;
 
 }
