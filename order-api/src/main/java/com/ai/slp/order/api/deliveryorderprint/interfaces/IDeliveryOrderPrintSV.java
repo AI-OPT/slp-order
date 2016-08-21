@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintInfosRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
@@ -83,6 +84,6 @@ public interface IDeliveryOrderPrintSV {
 	 */
 	@POST
 	@Path("/print")
-	public BaseResponse print(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
+	public BaseResponse print(DeliveryOrderPrintInfosRequest request) throws BusinessException,SystemException;
 	
 }
