@@ -26,6 +26,19 @@ public class DeliveryProdPrintVo implements Serializable{
      */
     private long buySum;
     
+    /**
+     * 合并id
+     */
+    private long horOrderId;
+    
+	public long getHorOrderId() {
+		return horOrderId;
+	}
+
+	public void setHorOrderId(long horOrderId) {
+		this.horOrderId = horOrderId;
+	}
+
 	public String getSkuId() {
 		return skuId;
 	}
