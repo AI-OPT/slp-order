@@ -20,7 +20,9 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryProdPrintVo;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
+import com.ai.slp.order.dao.mapper.bo.DeliverInfoProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
+import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfoCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
@@ -56,38 +58,51 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 	public DeliveryOrderPrintResponse noMergePrint(DeliveryOrderPrintRequest request)
 			throws BusinessException, SystemException {
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
-		/* 参数校验*/
-		CommonCheckUtils.checkTenantId(request.getTenantId(), "");
-		if(request.getOrderId()==0) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
-		}
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(order==null) {
-			logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-		}
-		OrdOdProdCriteria example=new OrdOdProdCriteria();
-		OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(request.getTenantId());
-		criteria.andOrderIdEqualTo(request.getOrderId());
-		/* 根据订单查询商品信息*/
-		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByExample(example);
-		if(CollectionUtil.isEmpty(ordOdProds)) {
-			logger.warn("未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
-		}
+		/* 参数校验及判断是否存在提货单打印信息*/
+		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(request);
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
-		/* 创建订单提货信息*/
-		Long deliverInfoId = this.createDeliveryOrderInfo(order.getOrderId(),null);
 		long sum = 0;
-		for (OrdOdProd ordOdProd : ordOdProds) {
-			sum+=ordOdProd.getBuySum();
-			DeliverInfoProd deliverInfoProd = this.createDeliverInfoProd(ordOdProd, deliverInfoId, ordOdProd.getBuySum());
-	        DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
-	        BeanUtils.copyProperties(dpVo, deliverInfoProd);
-	        list.add(dpVo);
+		if(CollectionUtil.isEmpty(deliverInfos)) { 
+			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+			if(order==null) {
+				logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+						"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
+			}
+			OrdOdProdCriteria example=new OrdOdProdCriteria();
+			OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+			criteria.andTenantIdEqualTo(request.getTenantId());
+			criteria.andOrderIdEqualTo(request.getOrderId());
+			/* 根据订单查询商品信息*/
+			List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByExample(example);
+			if(CollectionUtil.isEmpty(ordOdProds)) {
+				logger.warn("未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+						"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+			}
+			/* 创建订单提货信息*/
+			Long deliverInfoId = this.createDeliveryOrderInfo(order.getOrderId(),null);
+			for (OrdOdProd ordOdProd : ordOdProds) {
+				sum+=ordOdProd.getBuySum();
+				DeliverInfoProd deliverInfoProd = this.createDeliverInfoProd(ordOdProd, deliverInfoId, ordOdProd.getBuySum());
+				DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
+				BeanUtils.copyProperties(dpVo, deliverInfoProd);
+				list.add(dpVo);
+			}
+		}else {
+			/*表示提货单打印信息已存在*/
+			for (OrdOdDeliverInfo ordOdDeliverInfo : deliverInfos) {
+				DeliverInfoProdCriteria example=new DeliverInfoProdCriteria();
+				DeliverInfoProdCriteria.Criteria criteria = example.createCriteria();
+				criteria.andDeliverInfoIdEqualTo(ordOdDeliverInfo.getDeliverInfoId());
+				List<DeliverInfoProd> deliverInfoProds= deliveryOrderPrintAtomSV.selectByExample(example);
+				for (DeliverInfoProd deliverInfoProd : deliverInfoProds) {
+					sum+=deliverInfoProd.getBuySum();
+					DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
+					BeanUtils.copyProperties(dpVo, deliverInfoProd);
+					list.add(dpVo);
+				}
+			}
 		}
 		/* 查询订单配送信息*/
 		List<OrdOdLogistics> logistics = getOrdOdLogistics(request.getOrderId(), request.getTenantId());
@@ -145,5 +160,22 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 		  deliverInfoProd.setSkuId(ordOdProd.getSkuId());
 		  deliveryOrderPrintAtomSV.insertSelective(deliverInfoProd);
 		  return deliverInfoProd;
+	  }
+	  
+  	/**
+	 * 参数检验
+	 */
+	  private List<OrdOdDeliverInfo> checkParamAndQueryInfos(DeliveryOrderPrintRequest request) {
+			CommonCheckUtils.checkTenantId(request.getTenantId(), "");
+			if(request.getOrderId()==0) {
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
+			}
+			/* 判断是否存在提货单打印信息*/
+			OrdOdDeliverInfoCriteria exampleDeliver=new OrdOdDeliverInfoCriteria();
+			OrdOdDeliverInfoCriteria.Criteria criteriaDeliver = exampleDeliver.createCriteria();
+			criteriaDeliver.andOrderIdEqualTo(request.getOrderId());
+			criteriaDeliver.andPrintInfoEqualTo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
+			List<OrdOdDeliverInfo> deliverInfos = deliveryOrderPrintAtomSV.selectByExample(exampleDeliver);
+			return deliverInfos;
 	  }
 }
