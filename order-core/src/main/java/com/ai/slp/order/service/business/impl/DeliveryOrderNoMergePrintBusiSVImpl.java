@@ -81,7 +81,9 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
 		/* 创建订单提货信息*/
 		Long deliverInfoId = this.createDeliveryOrderInfo(order.getOrderId(),null);
+		long sum = 0;
 		for (OrdOdProd ordOdProd : ordOdProds) {
+			sum+=ordOdProd.getBuySum();
 			DeliverInfoProd deliverInfoProd = this.createDeliverInfoProd(ordOdProd, deliverInfoId, ordOdProd.getBuySum());
 	        DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
 	        BeanUtils.copyProperties(dpVo, deliverInfoProd);
@@ -98,6 +100,7 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 		response.setContactName(ordOdLogistics.getContactName());
 		response.setOrderId(request.getOrderId());
 		response.setDeliveryProdPrintVos(list);
+		response.setSum(sum);
 		return response;
 	}
 	
