@@ -14,7 +14,6 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
-import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryProdPrintVo;
@@ -34,7 +33,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliveryOrderNoMergePrintBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
-import com.ai.slp.order.util.SequenceUtil;
 
 @Service
 @Transactional
@@ -80,13 +78,10 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
 						"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
 			}
-			/* 创建订单提货信息*/
-			Long deliverInfoId = this.createDeliveryOrderInfo(order.getOrderId(),null);
+			/* 组装订单提货明细信息*/
 			for (OrdOdProd ordOdProd : ordOdProds) {
 				sum+=ordOdProd.getBuySum();
-				DeliverInfoProd deliverInfoProd = this.createDeliverInfoProd(ordOdProd, deliverInfoId, ordOdProd.getBuySum());
-				DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
-				BeanUtils.copyProperties(dpVo, deliverInfoProd);
+				DeliveryProdPrintVo dpVo = this.createDeliverInfoProd(ordOdProd, ordOdProd.getBuySum());
 				list.add(dpVo);
 			}
 		}else {
@@ -132,34 +127,17 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 		return logistics;
 	 }
 	 
-	  /**
-	   * 创建提货单打印信息
-	   */
-	  private Long createDeliveryOrderInfo(long orderId, OrdOrder ordOrder) {
-		  Long deliverInfoId = SequenceUtil.createdeliverInfoId();
-		  OrdOdDeliverInfo record=new OrdOdDeliverInfo();
-		  record.setOrderId(orderId);
-		  record.setDeliverInfoId(deliverInfoId);
-		  record.setHorOrderId(ordOrder==null?0:ordOrder.getOrderId());
-		  record.setPrintInfo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
-		  record.setUpdateTime(DateUtil.getSysDate());
-		  deliveryOrderPrintAtomSV.insertSelective(record);
-		  return deliverInfoId;
-	  }
-	  
 	  
 	  /**
-	   * 创建提货单信息明细
+	   * 组装提货单信息明细
 	   */
-	  private DeliverInfoProd createDeliverInfoProd(OrdOdProd ordOdProd,Long deliverInfoId,long buySum) {
-		  DeliverInfoProd deliverInfoProd=new DeliverInfoProd();
-		  deliverInfoProd.setDeliverInfoId(deliverInfoId);
-		  deliverInfoProd.setBuySum(buySum);
-		  deliverInfoProd.setExtendInfo(ordOdProd.getExtendInfo());
-		  deliverInfoProd.setProdName(ordOdProd.getProdName());
-		  deliverInfoProd.setSkuId(ordOdProd.getSkuId());
-		  deliveryOrderPrintAtomSV.insertSelective(deliverInfoProd);
-		  return deliverInfoProd;
+	  private DeliveryProdPrintVo createDeliverInfoProd(OrdOdProd ordOdProd,long buySum) {
+		  DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
+		  dpVo.setBuySum(buySum);
+		  dpVo.setExtendInfo(ordOdProd.getExtendInfo());
+		  dpVo.setProdName(ordOdProd.getProdName());
+		  dpVo.setSkuId(ordOdProd.getSkuId());
+		  return dpVo;
 	  }
 	  
   	/**
