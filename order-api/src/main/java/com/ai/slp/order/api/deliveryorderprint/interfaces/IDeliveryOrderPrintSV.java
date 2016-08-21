@@ -11,6 +11,7 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
+import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
 
 /**
  * 提货单打印服务
@@ -22,8 +23,24 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
 public interface IDeliveryOrderPrintSV {
 	
+	
 	/**
-	 * 提货单合并查询
+	 *  查询该提货单是否有合并的信息
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode 
+	 * @RestRelativeURL /deliveryorder/query
+	 */
+	@POST
+	@Path("/query")
+	public DeliveryOrderQueryResponse query(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
+	
+	/**
+	 * 提货单合并信息展示
 	 * @param request
 	 * @return
 	 * @throws BusinessException
@@ -34,8 +51,8 @@ public interface IDeliveryOrderPrintSV {
 	 * @RestRelativeURL /deliveryorder/print
 	 */
 	@POST
-	@Path("/query")
-	public DeliveryOrderPrintResponse query(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
+	@Path("/display")
+	public DeliveryOrderPrintResponse display(DeliveryOrderPrintRequest request) throws BusinessException,SystemException;
 	
 	/**
 	 * 不合并打印
