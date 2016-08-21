@@ -18,6 +18,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintInfosRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
@@ -74,7 +75,8 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	public DeliveryOrderQueryResponse query(DeliveryOrderPrintRequest request) {
 		DeliveryOrderQueryResponse response=new DeliveryOrderQueryResponse();
 		/* 参数校验及判断是否存在提货单打印信息*/
-		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(request);
+		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(
+				request.getOrderId(),request.getTenantId());
 		if(CollectionUtil.isEmpty(deliverInfos)) {
 			/* 没有提货单打印信息的话,则表示第一次打印*/
 			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
@@ -127,7 +129,8 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			throws BusinessException, SystemException {
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
 		/* 参数校验及判断是否存在提货单打印信息*/
-		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(request);
+		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(
+				request.getOrderId(),request.getTenantId());
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
 		long sum = 0;
 		if(CollectionUtil.isEmpty(deliverInfos)) {
@@ -148,7 +151,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			for (OrdOdProd ordOdProd : ordOdProds) {
 				long buySum=ordOdProd.getBuySum();
 				sum+=buySum;
-				Long deliverInfoId =null;
+				long horOrderId=0;
 				/* 多表多条件查询*/
 				List<OrdOrderProdAttach> orderProdAttachs = deliveryOrderPrintAtomSV.query(request.getUserId(),
 						request.getTenantId(),ordOdProd.getSkuId(),ordOdProd.getRouteId(),ordOdProd.getOrderId(),
@@ -160,20 +163,12 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 						for (OrdOrderProdAttach ordOrderProdAttach : orderProdAttachs) {
 							buySum+=ordOrderProdAttach.getBuySum();
 							sum+=ordOrderProdAttach.getBuySum();
-							OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(ordOrderProdAttach.getTenantId(), ordOrderProdAttach.getOrderId());
-							/* 创建订单提货信息*/
-							deliverInfoId = this.createDeliveryOrderInfo(ordOdProd,ordOrder);
+							horOrderId=ordOrderProdAttach.getOrderId();
 						}
-					}else {
-						deliverInfoId=this.createDeliveryOrderInfo(ordOdProd,null);
 					}
-				}else {
-					deliverInfoId=this.createDeliveryOrderInfo(ordOdProd,null);
 				}
-				/* 创建订单提货明细信息*/
-				DeliverInfoProd deliverInfoProd = this.createDeliverInfoProd(ordOdProd, deliverInfoId, buySum);
-				DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
-				BeanUtils.copyProperties(dpVo, deliverInfoProd);
+				/* 组装订单提货明细信息*/
+				DeliveryProdPrintVo dpVo = this.createDeliverInfoProd(ordOdProd,buySum,horOrderId);
 				list.add(dpVo);
 			}
 		}else {
@@ -186,6 +181,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 				DeliverInfoProd deliverInfoProd = deliverInfoProds.get(0);
 				sum+=deliverInfoProd.getBuySum();
 				DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
+				dpVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
 				BeanUtils.copyProperties(dpVo, deliverInfoProd);
 				list.add(dpVo);
 			}
@@ -207,48 +203,51 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	
 	
 	@Override
-	public void print(DeliveryOrderPrintRequest request) {
+	public void print(DeliveryOrderPrintInfosRequest request) {
 		/* 参数检验及 查询提货单打印信息*/
-		List<OrdOdDeliverInfo> queryInfos = this.checkParamAndQueryInfos(request);
-		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(ordOrder.getState().equals(OrdersConstants.OrdOrder.State.WAIT_DELIVERY)) {
-			logger.warn("提货单已经打印,不能重复打印[订单id:"+ordOrder.getOrderId()+"]");
+		List<OrdOdDeliverInfo> queryInfos = this.checkParamAndQueryInfos(
+			request.getOrderId(),request.getTenantId());
+		if(!CollectionUtil.isEmpty(queryInfos)) {
+			logger.warn("提货单已经打印,不能重复打印[订单id:"+request.getOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"提货单已经打印,不能重复打印[订单id:"+ordOrder.getOrderId()+"]");
+					"提货单已经打印,不能重复打印[订单id:"+request.getOrderId()+"]");
 		}
-		if(CollectionUtil.isEmpty(queryInfos)) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
-					"未能查询到相应的提货单打印信息[订单id:"+request.getOrderId()+"]");
-		}
-		for (OrdOdDeliverInfo ordOdDeliverInfo : queryInfos) {
-			if(ordOdDeliverInfo.getHorOrderId()==0) {
-				continue;
-			}
-			OrdOrder horOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), ordOdDeliverInfo.getHorOrderId());
-			if(horOrder==null) {
-				logger.warn("未能查询到指定的订单信息[订单id:"+ ordOdDeliverInfo.getHorOrderId()+"]");
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-						"未能查询到指定的订单信息[订单id:"+ ordOdDeliverInfo.getHorOrderId()+"]");
-			}
-			/* 更新合并订单状态并写入订单状态变化轨迹*/
-			this.updateOrderState(horOrder, DateUtil.getSysDate());
+		List<DeliveryProdPrintVo> deliveryProdPrintVos = request.getDeliveryProdPrintVos();
+		for (DeliveryProdPrintVo deliveryProdPrintVo : deliveryProdPrintVos) {
+			  Long deliverInfoId = SequenceUtil.createdeliverInfoId();
+			  OrdOdDeliverInfo record=new OrdOdDeliverInfo();
+			  record.setOrderId(request.getOrderId());
+			  record.setDeliverInfoId(deliverInfoId);
+			  record.setHorOrderId(deliveryProdPrintVo.getHorOrderId());
+			  record.setPrintInfo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
+			  record.setUpdateTime(DateUtil.getSysDate());
+			  deliveryOrderPrintAtomSV.insertSelective(record);
+			  DeliverInfoProd deliverInfoProd=new DeliverInfoProd();
+			  deliverInfoProd.setDeliverInfoId(deliverInfoId);
+			  deliverInfoProd.setBuySum(deliveryProdPrintVo.getBuySum());
+			  deliverInfoProd.setExtendInfo(deliveryProdPrintVo.getExtendInfo());
+			  deliverInfoProd.setProdName(deliveryProdPrintVo.getProdName());
+			  deliverInfoProd.setSkuId(deliveryProdPrintVo.getSkuId());
+			  deliveryOrderPrintAtomSV.insertSelective(deliverInfoProd);
+			  /* 更新合并订单状态并写入订单状态变化轨迹*/
+			  this.updateOrderState(deliveryProdPrintVo.getHorOrderId(),request.getTenantId(), DateUtil.getSysDate());
 		}
 		/* 更新原订单状态并写入订单状态变化轨迹*/
-		this.updateOrderState(ordOrder, DateUtil.getSysDate());
+		this.updateOrderState(request.getOrderId(),request.getTenantId(), DateUtil.getSysDate());
 	}
 	
 	/**
 	 * 参数检验
 	 */
-	private List<OrdOdDeliverInfo> checkParamAndQueryInfos(DeliveryOrderPrintRequest request) {
-		CommonCheckUtils.checkTenantId(request.getTenantId(), "");
-		if(request.getOrderId()==0) {
+	private List<OrdOdDeliverInfo> checkParamAndQueryInfos(long orderId,String tenantId) {
+		CommonCheckUtils.checkTenantId(tenantId, "");
+		if(orderId==0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
 		/* 判断是否存在提货单打印信息*/
 		OrdOdDeliverInfoCriteria exampleDeliver=new OrdOdDeliverInfoCriteria();
 		OrdOdDeliverInfoCriteria.Criteria criteriaDeliver = exampleDeliver.createCriteria();
-		criteriaDeliver.andOrderIdEqualTo(request.getOrderId());
+		criteriaDeliver.andOrderIdEqualTo(orderId);
 		criteriaDeliver.andPrintInfoEqualTo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
 		List<OrdOdDeliverInfo> deliverInfos = deliveryOrderPrintAtomSV.selectByExample(exampleDeliver);
 		return deliverInfos;
@@ -329,54 +328,49 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
       * 更新订单状态
       * 
       */
-	  private void updateOrderState(OrdOrder ordOrder, Timestamp sysDate) {
-        String orgState = ordOrder.getState();
-        if(OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(orgState)) {
-        	return;
-        }
-        String state1 = OrdersConstants.OrdOrder.State.LADING_BILL_FINISH_PRINT;
-        String state2 = OrdersConstants.OrdOrder.State.FINISH_DISTRIBUTION;
-        String newState = OrdersConstants.OrdOrder.State.WAIT_DELIVERY;
-        ordOrder.setState(newState);
-        ordOrder.setStateChgTime(sysDate);
-        ordOrderAtomSV.updateById(ordOrder);
-        // 写入订单状态变化轨迹表
-        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, state1,
-                OrdOdStateChg.ChgDesc.ORDER_TO_PRINT, null, null, null, sysDate);
-        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state1, state2,
-                OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_DISTRIBUTION, null, null, null, sysDate);
-        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state2, newState,
-                OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DELIVERY, null, null, null, sysDate);
+	  private void updateOrderState(long orderId,String tenantId, Timestamp sysDate) {
+		if(orderId==0) {
+			return;
+		}else {
+			OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+			if(ordOrder==null) {
+				logger.warn("未能查询到指定的订单信息[订单id:"+ orderId+"]");
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+						"未能查询到指定的订单信息[订单id:"+ orderId+"]");
+			}
+			String orgState = ordOrder.getState();
+			if(OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(orgState)) {
+				return;
+			}
+			String state1 = OrdersConstants.OrdOrder.State.LADING_BILL_FINISH_PRINT;
+			String state2 = OrdersConstants.OrdOrder.State.FINISH_DISTRIBUTION;
+			String newState = OrdersConstants.OrdOrder.State.WAIT_DELIVERY;
+			ordOrder.setState(newState);
+			ordOrder.setStateChgTime(sysDate);
+			ordOrderAtomSV.updateById(ordOrder);
+			// 写入订单状态变化轨迹表
+			orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, state1,
+					OrdOdStateChg.ChgDesc.ORDER_TO_PRINT, null, null, null, sysDate);
+			orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state1, state2,
+					OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_DISTRIBUTION, null, null, null, sysDate);
+			orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state2, newState,
+					OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DELIVERY, null, null, null, sysDate);
+		}
 	 }
 	  
-	  
 	  /**
-	   * 创建提货单打印信息
+	   * 组装提货单信息明细
+	 * @param horOrderId 
 	   */
-	  private Long createDeliveryOrderInfo(OrdOdProd ordOdProd, OrdOrder ordOrder) {
-		  Long deliverInfoId = SequenceUtil.createdeliverInfoId();
-		  OrdOdDeliverInfo record=new OrdOdDeliverInfo();
-		  record.setOrderId(ordOdProd.getOrderId());
-		  record.setDeliverInfoId(deliverInfoId);
-		  record.setHorOrderId(ordOrder==null?0:ordOrder.getOrderId());
-		  record.setPrintInfo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
-		  record.setUpdateTime(DateUtil.getSysDate());
-		  deliveryOrderPrintAtomSV.insertSelective(record);
-		  return deliverInfoId;
-	  }
-	  
-	  /**
-	   * 创建提货单信息明细
-	   */
-	  private DeliverInfoProd createDeliverInfoProd(OrdOdProd ordOdProd,Long deliverInfoId,long buySum) {
-		  DeliverInfoProd deliverInfoProd=new DeliverInfoProd();
-		  deliverInfoProd.setDeliverInfoId(deliverInfoId);
-		  deliverInfoProd.setBuySum(buySum);
-		  deliverInfoProd.setExtendInfo(ordOdProd.getExtendInfo());
-		  deliverInfoProd.setProdName(ordOdProd.getProdName());
-		  deliverInfoProd.setSkuId(ordOdProd.getSkuId());
-		  deliveryOrderPrintAtomSV.insertSelective(deliverInfoProd);
-		  return deliverInfoProd;
+	  private DeliveryProdPrintVo createDeliverInfoProd(OrdOdProd ordOdProd,
+			  long buySum, long horOrderId) {
+		  DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
+		  dpVo.setBuySum(buySum);
+		  dpVo.setHorOrderId(horOrderId);
+		  dpVo.setExtendInfo(ordOdProd.getExtendInfo());
+		  dpVo.setProdName(ordOdProd.getProdName());
+		  dpVo.setSkuId(ordOdProd.getSkuId());
+		  return dpVo;
 	  }
 	  
 	  
@@ -422,5 +416,4 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		  }
 		return orderList;
 	  }
-	
 }
