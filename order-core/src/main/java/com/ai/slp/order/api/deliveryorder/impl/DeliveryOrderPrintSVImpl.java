@@ -9,6 +9,7 @@ import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.deliveryorderprint.interfaces.IDeliveryOrderPrintSV;
+import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintInfosRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
@@ -55,7 +56,7 @@ public class DeliveryOrderPrintSVImpl implements IDeliveryOrderPrintSV {
 	}
 
 	@Override
-	public BaseResponse print(DeliveryOrderPrintRequest request)throws BusinessException, SystemException {
+	public BaseResponse print(DeliveryOrderPrintInfosRequest request)throws BusinessException, SystemException {
 		BaseResponse response=new BaseResponse();
 		deliveryOrderPrintBusiSV.print(request);
 		ResponseHeader responseHeader = new ResponseHeader(true,
