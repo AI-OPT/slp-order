@@ -8,6 +8,8 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.base.vo.BaseResponse;
+import com.ai.slp.order.api.invoiceprint.param.InvoicePrintInfosRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintResponse;
 
@@ -23,7 +25,23 @@ public interface IInvoicePrintSV {
 	
 
 	/**
-	 * 打印
+	 * 发货打印查看
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode 
+	 * @RestRelativeURL /invoice/query
+	 */
+	@POST
+	@Path("/query")
+	public InvoicePrintResponse query(InvoicePrintRequest request) throws BusinessException,SystemException;
+	
+	
+	/**
+	 * 发货打印
 	 * @param request
 	 * @return
 	 * @throws BusinessException
@@ -35,5 +53,5 @@ public interface IInvoicePrintSV {
 	 */
 	@POST
 	@Path("/print")
-	public InvoicePrintResponse print(InvoicePrintRequest request) throws BusinessException,SystemException;
+	public BaseResponse print(InvoicePrintInfosRequest request) throws BusinessException,SystemException;
 }
