@@ -7,8 +7,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 public class DubboStartTest {
-    @Test
-    public void testDubboStart(){
+    
+    public static void main(String args[]){
         DubboServiceStart.main(null);
     }
 }
