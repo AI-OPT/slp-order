@@ -3,9 +3,7 @@ package com.ai.slp.order.api.invoiceprint.param;
 import java.io.Serializable;
 
 public class InvoicePrintVo implements Serializable{
-
 	
-    
 	private static final long serialVersionUID = 1L;
 	
 	 /**
@@ -32,6 +30,11 @@ public class InvoicePrintVo implements Serializable{
      * 数量
      */
     private long buySum;
+    
+    /**
+     * 合并id
+     */
+    private long horOrderId;
     
 	public String getSkuId() {
 		return skuId;
@@ -72,5 +75,13 @@ public class InvoicePrintVo implements Serializable{
 	public void setSalePrice(long salePrice) {
 		this.salePrice = salePrice;
 	}
-    
+
+	public long getHorOrderId() {
+		return horOrderId;
+	}
+
+	public void setHorOrderId(long horOrderId) {
+		this.horOrderId = horOrderId;
+	}
+	
 }
