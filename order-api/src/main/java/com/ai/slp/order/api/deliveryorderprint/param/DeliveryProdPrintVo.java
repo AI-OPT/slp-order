@@ -31,6 +31,19 @@ public class DeliveryProdPrintVo implements Serializable{
      */
     private long horOrderId;
     
+    /**
+     * 销售单价
+     */
+    private long salePrice;
+    
+	public long getSalePrice() {
+		return salePrice;
+	}
+
+	public void setSalePrice(long salePrice) {
+		this.salePrice = salePrice;
+	}
+
 	public long getHorOrderId() {
 		return horOrderId;
 	}
