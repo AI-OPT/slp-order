@@ -66,6 +66,11 @@ public class InvoicePrintResponse extends BaseResponse{
     private String routeId;
     
     /**
+     * 总数
+     */
+    private long sum;
+    
+    /**
      * 打印的商品信息集合
      */
     private List<InvoicePrintVo> invoicePrintVos;
@@ -156,6 +161,14 @@ public class InvoicePrintResponse extends BaseResponse{
 
 	public void setExpressOddNumber(String expressOddNumber) {
 		this.expressOddNumber = expressOddNumber;
+	}
+
+	public long getSum() {
+		return sum;
+	}
+
+	public void setSum(long sum) {
+		this.sum = sum;
 	}
 	
 }
