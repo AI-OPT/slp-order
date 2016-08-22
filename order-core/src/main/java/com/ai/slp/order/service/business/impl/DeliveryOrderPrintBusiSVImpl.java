@@ -181,8 +181,8 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 				DeliverInfoProd deliverInfoProd = deliverInfoProds.get(0);
 				sum+=deliverInfoProd.getBuySum();
 				DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
-				dpVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
 				BeanUtils.copyProperties(dpVo, deliverInfoProd);
+				dpVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
 				list.add(dpVo);
 			}
 		}
@@ -228,6 +228,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			  deliverInfoProd.setExtendInfo(deliveryProdPrintVo.getExtendInfo());
 			  deliverInfoProd.setProdName(deliveryProdPrintVo.getProdName());
 			  deliverInfoProd.setSkuId(deliveryProdPrintVo.getSkuId());
+			  deliverInfoProd.setSalePrice(deliveryProdPrintVo.getSalePrice());
 			  deliveryOrderPrintAtomSV.insertSelective(deliverInfoProd);
 			  /* 更新合并订单状态并写入订单状态变化轨迹*/
 			  this.updateOrderState(deliveryProdPrintVo.getHorOrderId(),request.getTenantId(), DateUtil.getSysDate());
@@ -370,6 +371,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		  dpVo.setExtendInfo(ordOdProd.getExtendInfo());
 		  dpVo.setProdName(ordOdProd.getProdName());
 		  dpVo.setSkuId(ordOdProd.getSkuId());
+		  dpVo.setSalePrice(ordOdProd.getSalePrice());
 		  return dpVo;
 	  }
 	  
