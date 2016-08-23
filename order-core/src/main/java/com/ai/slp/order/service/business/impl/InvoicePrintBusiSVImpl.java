@@ -88,6 +88,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 				invoicePrintVo.setExtendInfo(deliverInfoProd.getExtendInfo());
 				invoicePrintVo.setBuySum(deliverInfoProd.getBuySum());
 				invoicePrintVo.setSalePrice(deliverInfoProd.getSalePrice());
+				invoicePrintVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
 				sum+=deliverInfoProd.getBuySum();
 				list.add(invoicePrintVo);
 			}
@@ -129,7 +130,6 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 			invoiceInfo.setHorOrderId(invoicePrintVo.getHorOrderId());
 			invoiceInfo.setOrderId(request.getOrderId());
 			invoiceInfo.setPrintInfo(OrdersConstants.OrdOdDeliverInfo.printInfo.TWO);
-			//TODO ??
 			invoiceInfo.setUpdateTime(DateUtil.getSysDate());
 			deliveryOrderPrintAtomSV.insertSelective(invoiceInfo);
 			DeliverInfoProd deliverInfoProd=new DeliverInfoProd();
