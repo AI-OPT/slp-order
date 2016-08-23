@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.PageInfo;
+import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
@@ -35,6 +36,9 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.constants.ErrorCodeConstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.attach.OrdOrderAttach;
+import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
+import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria;
+import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria.Criteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -48,6 +52,7 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtendCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
+import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
@@ -95,6 +100,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     
     @Autowired
     private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV; 
+    
+    @Autowired
+    private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
     
     @Override
     public QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest)
@@ -239,6 +247,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 OrdProductVo ordProductVo = new OrdProductVo();
                 ordProductVo.setOrderId(orderId);
                 ordProductVo.setSkuId(ordOdProd.getSkuId());
+                //TODO ?????  库存名称
                 ordProductVo.setProdName(ordOdProd.getProdName());
                 ordProductVo.setSalePrice(ordOdProd.getSalePrice());
                 ordProductVo.setBuySum(ordOdProd.getBuySum());
@@ -365,28 +374,37 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(orderRequest.getTenantId());
-        if (orderRequest.getOrderId() != 0) {
-            criteria.andOrderIdEqualTo(orderRequest.getOrderId());
+        if (orderRequest.getOrderId() == 0) {
+        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
         }
+        criteria.andOrderIdEqualTo(orderRequest.getOrderId());
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         OrdOrderVo ordOrderVo = null;
         if (!CollectionUtil.isEmpty(list)) {
             OrdOrder order = list.get(0);
+            ordOrderVo = new OrdOrderVo();
+            ordOrderVo.setOrderId(order.getOrderId());
+            ordOrderVo.setOrderType(order.getOrderType());
+            ordOrderVo.setBusiCode(order.getBusiCode());
+            ordOrderVo.setState(order.getState());
+            ordOrderVo.setChlId(order.getChlId()); //订单来源
+            ordOrderVo.setRouteId(order.getRouteId());//仓库ID
+            //TODO ??? 仓库信息
+            ordOrderVo.setParentOrderId(order.getParentOrderId());//父订单id
+            ordOrderVo.setUserId(order.getUserId());//买家帐号(用户号)
+            ordOrderVo.setRemark(order.getRemark());//买家留言(订单备注)
+            //支付流水号
+            
+            SysParamSingleCond sysParamSingleCond = new SysParamSingleCond("SLP", "ORD_ORDER",
+            		"STATE", order.getState());
+            SysParam sysParamState = iCacheSV.getSysParamSingle(sysParamSingleCond);
+            ordOrderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
+            ordOrderVo.setOrderTime(order.getOrderTime());
             /* 2.订单费用信息查询 */
             List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(order.getTenantId(),
                     order.getOrderId(), "");
             if (!CollectionUtil.isEmpty(orderFeeTotalList)) {
                 OrdOdFeeTotal ordOdFeeTotal = orderFeeTotalList.get(0);
-                ordOrderVo = new OrdOrderVo();
-                ordOrderVo.setOrderId(order.getOrderId());
-                ordOrderVo.setOrderType(order.getOrderType());
-                ordOrderVo.setBusiCode(order.getBusiCode());
-                ordOrderVo.setState(order.getState());
-                SysParamSingleCond sysParamSingleCond = new SysParamSingleCond("SLP", "ORD_ORDER",
-                        "STATE", order.getState());
-                SysParam sysParamState = iCacheSV.getSysParamSingle(sysParamSingleCond);
-                ordOrderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
-                ordOrderVo.setOrderTime(order.getOrderTime());
                 ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
                 ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
                 ordOrderVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
@@ -429,15 +447,24 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
                         order.getOrderId());
                 ordOrderVo.setPayDataList(orderFeeProdList);
-                /* 4.订单费用明细查询 */
+                /* 4.订单商品明细查询 */
                 List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,
                         order.getTenantId(), order.getOrderId());
                 ordOrderVo.setProductList(productList);
+                /* 5.订单支付机构查询*/
+                OrdBalacneIfCriteria exampleBalance=new OrdBalacneIfCriteria();
+                Criteria criteriaBalance = exampleBalance.createCriteria();
+                criteriaBalance.andTenantIdEqualTo(order.getTenantId());
+                criteriaBalance.andOrderIdEqualTo(order.getOrderId());
+                List<OrdBalacneIf> ordBalacneIfs = ordBalacneIfAtomSV.selectByExample(exampleBalance);
+                if(!CollectionUtil.isEmpty(ordBalacneIfs)) {
+                	OrdBalacneIf ordBalacneIf = ordBalacneIfs.get(0);
+                	ordOrderVo.setBalacneIfId(ordBalacneIf.getBalacneIfId());
+                }
             }
         }
         response.setOrdOrderVo(ordOrderVo);
         return response;
-
     }
     
     @Override
@@ -507,7 +534,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		return response;
      }
     
-    
+    //TODO ????????
     /**
      * 异常订单的查询
      */
@@ -582,6 +609,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     	return ordOdProdExtendList;
     }
     
+    /**
+     * 获取配送信息
+     */
     private OrdOdLogistics getOrdOdLogistics(String tenantId,
     		long orderId) {
     	OrdOdLogisticsCriteria example=new OrdOdLogisticsCriteria();
