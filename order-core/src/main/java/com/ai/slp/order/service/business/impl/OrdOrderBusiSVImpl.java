@@ -248,6 +248,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setOrderId(orderId);
                 ordProductVo.setSkuId(ordOdProd.getSkuId());
                 //TODO ?????  库存名称
+                ordProductVo.setState(ordOdProd.getState());
                 ordProductVo.setProdName(ordOdProd.getProdName());
                 ordProductVo.setSalePrice(ordOdProd.getSalePrice());
                 ordProductVo.setBuySum(ordOdProd.getBuySum());
