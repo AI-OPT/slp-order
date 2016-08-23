@@ -11,6 +11,13 @@ public class OrdProductVo extends BaseInfo{
 
 	private static final long serialVersionUID = 1L;
 	
+	//TODO 
+	//??
+	/**
+	 * 库存名称
+	 */
+	
+	
 	/**
      * 业务订单ID
      */
@@ -25,6 +32,11 @@ public class OrdProductVo extends BaseInfo{
      * 商品名称
      */
     private String prodName;
+    
+    /**
+     * 商品状态
+     */
+    private String state;
     
     /**
      * 购买数量
@@ -230,5 +242,13 @@ public class OrdProductVo extends BaseInfo{
 
 	public void setProdExtendInfo(String prodExtendInfo) {
 		this.prodExtendInfo = prodExtendInfo;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 }
