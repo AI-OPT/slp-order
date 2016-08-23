@@ -14,11 +14,46 @@ import com.ai.opt.base.vo.BaseInfo;
 public class OrdOrderVo extends BaseInfo {
 
     private static final long serialVersionUID = 1L;
-
+    
+    /**
+     * 订单来源  受理渠道
+     */
+    private String chlId;
+    
+    /**
+     * 仓库ID
+     */
+    private String routeId;
+    
+    /**
+     * 仓库信息 ????
+     */
+    
+    /**
+     * 父订单id
+     */
+    private Long parentOrderId;
+    
+    /**
+     * 支付流水号
+     */
+    private Long balacneIfId;
+    
+    /**
+     * 买家帐号      userid
+     */
+    private String userId;
+    
+    /**
+     * 买家留言  订单备注
+     */
+    private String remark;
+    
     /**
      * 业务订单ID
      */
     private Long orderId;
+    
 
     /**
      * 业务类型
@@ -430,5 +465,53 @@ public class OrdOrderVo extends BaseInfo {
 	public void setExpressId(String expressId) {
 		this.expressId = expressId;
 	}
-    
+
+	public String getChlId() {
+		return chlId;
+	}
+
+	public void setChlId(String chlId) {
+		this.chlId = chlId;
+	}
+
+	public String getRouteId() {
+		return routeId;
+	}
+
+	public void setRouteId(String routeId) {
+		this.routeId = routeId;
+	}
+
+	public Long getParentOrderId() {
+		return parentOrderId;
+	}
+
+	public void setParentOrderId(Long parentOrderId) {
+		this.parentOrderId = parentOrderId;
+	}
+
+	public Long getBalacneIfId() {
+		return balacneIfId;
+	}
+
+	public void setBalacneIfId(Long balacneIfId) {
+		this.balacneIfId = balacneIfId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
 }
