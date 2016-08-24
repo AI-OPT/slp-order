@@ -216,12 +216,12 @@ public final class OrdersConstants {
             public static final String  AUDIT_FAILURE  = "212";
 
             /**
-             * 22待商家确认
+             * 22待商家确认/待买家退货
              */
             public static final String REVOKE_WAIT_CONFIRM = "22";
 
             /**
-             * 221已商家确认
+             * 221已商家确认/买家已退货
              */
             public static final String REVOKE_FINISH_CONFIRMED = "221";
             
@@ -691,6 +691,7 @@ public final class OrdersConstants {
     public static final class OrdOdDeliverInfo {
 
         public static class printInfo {
+        	
             /**
              * 1：提货单打印
              */
@@ -705,6 +706,22 @@ public final class OrdersConstants {
 
     }
     
-    
+    public static final class OrderCheck {
+
+        public static class result {
+        	
+            /**
+             * 审核同意
+             */
+            public static final String OK = "1";
+
+            /**
+             * 审核拒绝
+             */
+            public static final String NO = "0";
+
+        }
+
+    }
 
 }
