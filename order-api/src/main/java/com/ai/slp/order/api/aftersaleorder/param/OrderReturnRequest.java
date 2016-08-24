@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.aftersaleorder.param;
 
+import javax.validation.constraints.NotNull;
+
 import com.ai.opt.base.vo.BaseInfo;
 
 public class OrderReturnRequest extends BaseInfo{
@@ -9,11 +11,13 @@ public class OrderReturnRequest extends BaseInfo{
 	/**
 	 * 订单id
 	 */
+	@NotNull(message = "订单ID不能为空")
 	private long orderId;
 	
 	/**
 	 * 商品明细id
 	 */
+	@NotNull(message = "商品明细ID不能为空")
 	private long prodDetalId;
 
 	public long getOrderId() {
