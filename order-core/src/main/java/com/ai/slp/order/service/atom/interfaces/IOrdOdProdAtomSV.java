@@ -11,4 +11,6 @@ public interface IOrdOdProdAtomSV {
     List<OrdOdProd> selectByExample(OrdOdProdCriteria example);
 
     int updateById(OrdOdProd ordOdProd);
+    
+    OrdOdProd selectByPrimaryKey(long prodDetalId);
 }
