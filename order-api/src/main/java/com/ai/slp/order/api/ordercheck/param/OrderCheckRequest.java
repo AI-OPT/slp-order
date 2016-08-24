@@ -12,22 +12,16 @@ public class OrderCheckRequest extends BaseInfo{
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * 系统Id
-	 */
-	
-	/**
 	 * 订单Id
 	 */
 	private long orderId;
-	
-	/**
-	 * 外部流水号
-	 */
-	private Long balanceIfId;
-	
-	/**
-	 * 节点编码
-	 */
-	
+
+	public long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(long orderId) {
+		this.orderId = orderId;
+	}
 	
 }
