@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.ordercheck.param;
 
+import javax.validation.constraints.NotNull;
+
 import com.ai.opt.base.vo.BaseInfo;
 
 /**
@@ -14,6 +16,7 @@ public class OrderCheckRequest extends BaseInfo{
 	/**
 	 * 订单Id
 	 */
+	@NotNull(message = "订单ID不能为空")
 	private long orderId;
 
 	public long getOrderId() {
