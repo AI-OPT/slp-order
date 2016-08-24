@@ -81,6 +81,10 @@ public class OrdOrder {
 
     private String ipAddress;
 
+    private String ifWarning;
+
+    private String warningType;
+
     public long getOrderId() {
         return orderId;
     }
@@ -393,234 +397,19 @@ public class OrdOrder {
         this.ipAddress = ipAddress == null ? null : ipAddress.trim();
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (acctId ^ (acctId >>> 32));
-		result = prime * result + (int) (batchNo ^ (batchNo >>> 32));
-		result = prime * result + ((busiCode == null) ? 0 : busiCode.hashCode());
-		result = prime * result + ((chlId == null) ? 0 : chlId.hashCode());
-		result = prime * result + ((cityCode == null) ? 0 : cityCode.hashCode());
-		result = prime * result + ((deliveryFlag == null) ? 0 : deliveryFlag.hashCode());
-		result = prime * result + ((displayFlag == null) ? 0 : displayFlag.hashCode());
-		result = prime * result + ((displayFlagChgTime == null) ? 0 : displayFlagChgTime.hashCode());
-		result = prime * result + ((downstreamOrderId == null) ? 0 : downstreamOrderId.hashCode());
-		result = prime * result + ((externalOrderId == null) ? 0 : externalOrderId.hashCode());
-		result = prime * result + ((externalSupplyId == null) ? 0 : externalSupplyId.hashCode());
-		result = prime * result + ((finishTime == null) ? 0 : finishTime.hashCode());
-		result = prime * result + ((ipAddress == null) ? 0 : ipAddress.hashCode());
-		result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
-		result = prime * result + ((lockFlag == null) ? 0 : lockFlag.hashCode());
-		result = prime * result + ((lockTime == null) ? 0 : lockTime.hashCode());
-		result = prime * result + ((operId == null) ? 0 : operId.hashCode());
-		result = prime * result + ((orderDesc == null) ? 0 : orderDesc.hashCode());
-		result = prime * result + (int) (orderId ^ (orderId >>> 32));
-		result = prime * result + ((orderTime == null) ? 0 : orderTime.hashCode());
-		result = prime * result + ((orderType == null) ? 0 : orderType.hashCode());
-		result = prime * result + (int) (origOrderId ^ (origOrderId >>> 32));
-		result = prime * result + (int) (parentOrderId ^ (parentOrderId >>> 32));
-		result = prime * result + ((provinceCode == null) ? 0 : provinceCode.hashCode());
-		result = prime * result + ((reasonDesc == null) ? 0 : reasonDesc.hashCode());
-		result = prime * result + ((reasonType == null) ? 0 : reasonType.hashCode());
-		result = prime * result + ((remark == null) ? 0 : remark.hashCode());
-		result = prime * result + ((routeId == null) ? 0 : routeId.hashCode());
-		result = prime * result + (int) (sellerId ^ (sellerId >>> 32));
-		result = prime * result + ((state == null) ? 0 : state.hashCode());
-		result = prime * result + ((stateChgTime == null) ? 0 : stateChgTime.hashCode());
-		result = prime * result + ((storageId == null) ? 0 : storageId.hashCode());
-		result = prime * result + ((subFlag == null) ? 0 : subFlag.hashCode());
-		result = prime * result + (int) (subsId ^ (subsId >>> 32));
-		result = prime * result + (int) (supplierId ^ (supplierId >>> 32));
-		result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-		result = prime * result + ((userType == null) ? 0 : userType.hashCode());
-		result = prime * result + ((workflowId == null) ? 0 : workflowId.hashCode());
-		return result;
-	}
+    public String getIfWarning() {
+        return ifWarning;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OrdOrder other = (OrdOrder) obj;
-		if (acctId != other.acctId)
-			return false;
-		if (batchNo != other.batchNo)
-			return false;
-		if (busiCode == null) {
-			if (other.busiCode != null)
-				return false;
-		} else if (!busiCode.equals(other.busiCode))
-			return false;
-		if (chlId == null) {
-			if (other.chlId != null)
-				return false;
-		} else if (!chlId.equals(other.chlId))
-			return false;
-		if (cityCode == null) {
-			if (other.cityCode != null)
-				return false;
-		} else if (!cityCode.equals(other.cityCode))
-			return false;
-		if (deliveryFlag == null) {
-			if (other.deliveryFlag != null)
-				return false;
-		} else if (!deliveryFlag.equals(other.deliveryFlag))
-			return false;
-		if (displayFlag == null) {
-			if (other.displayFlag != null)
-				return false;
-		} else if (!displayFlag.equals(other.displayFlag))
-			return false;
-		if (displayFlagChgTime == null) {
-			if (other.displayFlagChgTime != null)
-				return false;
-		} else if (!displayFlagChgTime.equals(other.displayFlagChgTime))
-			return false;
-		if (downstreamOrderId == null) {
-			if (other.downstreamOrderId != null)
-				return false;
-		} else if (!downstreamOrderId.equals(other.downstreamOrderId))
-			return false;
-		if (externalOrderId == null) {
-			if (other.externalOrderId != null)
-				return false;
-		} else if (!externalOrderId.equals(other.externalOrderId))
-			return false;
-		if (externalSupplyId == null) {
-			if (other.externalSupplyId != null)
-				return false;
-		} else if (!externalSupplyId.equals(other.externalSupplyId))
-			return false;
-		if (finishTime == null) {
-			if (other.finishTime != null)
-				return false;
-		} else if (!finishTime.equals(other.finishTime))
-			return false;
-		if (ipAddress == null) {
-			if (other.ipAddress != null)
-				return false;
-		} else if (!ipAddress.equals(other.ipAddress))
-			return false;
-		if (keywords == null) {
-			if (other.keywords != null)
-				return false;
-		} else if (!keywords.equals(other.keywords))
-			return false;
-		if (lockFlag == null) {
-			if (other.lockFlag != null)
-				return false;
-		} else if (!lockFlag.equals(other.lockFlag))
-			return false;
-		if (lockTime == null) {
-			if (other.lockTime != null)
-				return false;
-		} else if (!lockTime.equals(other.lockTime))
-			return false;
-		if (operId == null) {
-			if (other.operId != null)
-				return false;
-		} else if (!operId.equals(other.operId))
-			return false;
-		if (orderDesc == null) {
-			if (other.orderDesc != null)
-				return false;
-		} else if (!orderDesc.equals(other.orderDesc))
-			return false;
-		if (orderId != other.orderId)
-			return false;
-		if (orderTime == null) {
-			if (other.orderTime != null)
-				return false;
-		} else if (!orderTime.equals(other.orderTime))
-			return false;
-		if (orderType == null) {
-			if (other.orderType != null)
-				return false;
-		} else if (!orderType.equals(other.orderType))
-			return false;
-		if (origOrderId != other.origOrderId)
-			return false;
-		if (parentOrderId != other.parentOrderId)
-			return false;
-		if (provinceCode == null) {
-			if (other.provinceCode != null)
-				return false;
-		} else if (!provinceCode.equals(other.provinceCode))
-			return false;
-		if (reasonDesc == null) {
-			if (other.reasonDesc != null)
-				return false;
-		} else if (!reasonDesc.equals(other.reasonDesc))
-			return false;
-		if (reasonType == null) {
-			if (other.reasonType != null)
-				return false;
-		} else if (!reasonType.equals(other.reasonType))
-			return false;
-		if (remark == null) {
-			if (other.remark != null)
-				return false;
-		} else if (!remark.equals(other.remark))
-			return false;
-		if (routeId == null) {
-			if (other.routeId != null)
-				return false;
-		} else if (!routeId.equals(other.routeId))
-			return false;
-		if (sellerId != other.sellerId)
-			return false;
-		if (state == null) {
-			if (other.state != null)
-				return false;
-		} else if (!state.equals(other.state))
-			return false;
-		if (stateChgTime == null) {
-			if (other.stateChgTime != null)
-				return false;
-		} else if (!stateChgTime.equals(other.stateChgTime))
-			return false;
-		if (storageId == null) {
-			if (other.storageId != null)
-				return false;
-		} else if (!storageId.equals(other.storageId))
-			return false;
-		if (subFlag == null) {
-			if (other.subFlag != null)
-				return false;
-		} else if (!subFlag.equals(other.subFlag))
-			return false;
-		if (subsId != other.subsId)
-			return false;
-		if (supplierId != other.supplierId)
-			return false;
-		if (tenantId == null) {
-			if (other.tenantId != null)
-				return false;
-		} else if (!tenantId.equals(other.tenantId))
-			return false;
-		if (userId == null) {
-			if (other.userId != null)
-				return false;
-		} else if (!userId.equals(other.userId))
-			return false;
-		if (userType == null) {
-			if (other.userType != null)
-				return false;
-		} else if (!userType.equals(other.userType))
-			return false;
-		if (workflowId == null) {
-			if (other.workflowId != null)
-				return false;
-		} else if (!workflowId.equals(other.workflowId))
-			return false;
-		return true;
-	}
-    
-    
+    public void setIfWarning(String ifWarning) {
+        this.ifWarning = ifWarning == null ? null : ifWarning.trim();
+    }
+
+    public String getWarningType() {
+        return warningType;
+    }
+
+    public void setWarningType(String warningType) {
+        this.warningType = warningType == null ? null : warningType.trim();
+    }
 }

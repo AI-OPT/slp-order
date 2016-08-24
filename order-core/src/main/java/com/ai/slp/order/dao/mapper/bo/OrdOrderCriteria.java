@@ -2724,6 +2724,146 @@ public class OrdOrderCriteria {
             addCriterion("IP_ADDRESS not between", value1, value2, "ipAddress");
             return (Criteria) this;
         }
+
+        public Criteria andIfWarningIsNull() {
+            addCriterion("IF_WARNING is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningIsNotNull() {
+            addCriterion("IF_WARNING is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningEqualTo(String value) {
+            addCriterion("IF_WARNING =", value, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningNotEqualTo(String value) {
+            addCriterion("IF_WARNING <>", value, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningGreaterThan(String value) {
+            addCriterion("IF_WARNING >", value, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningGreaterThanOrEqualTo(String value) {
+            addCriterion("IF_WARNING >=", value, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningLessThan(String value) {
+            addCriterion("IF_WARNING <", value, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningLessThanOrEqualTo(String value) {
+            addCriterion("IF_WARNING <=", value, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningLike(String value) {
+            addCriterion("IF_WARNING like", value, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningNotLike(String value) {
+            addCriterion("IF_WARNING not like", value, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningIn(List<String> values) {
+            addCriterion("IF_WARNING in", values, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningNotIn(List<String> values) {
+            addCriterion("IF_WARNING not in", values, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningBetween(String value1, String value2) {
+            addCriterion("IF_WARNING between", value1, value2, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andIfWarningNotBetween(String value1, String value2) {
+            addCriterion("IF_WARNING not between", value1, value2, "ifWarning");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeIsNull() {
+            addCriterion("WARNING_TYPE is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeIsNotNull() {
+            addCriterion("WARNING_TYPE is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeEqualTo(String value) {
+            addCriterion("WARNING_TYPE =", value, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeNotEqualTo(String value) {
+            addCriterion("WARNING_TYPE <>", value, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeGreaterThan(String value) {
+            addCriterion("WARNING_TYPE >", value, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("WARNING_TYPE >=", value, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeLessThan(String value) {
+            addCriterion("WARNING_TYPE <", value, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeLessThanOrEqualTo(String value) {
+            addCriterion("WARNING_TYPE <=", value, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeLike(String value) {
+            addCriterion("WARNING_TYPE like", value, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeNotLike(String value) {
+            addCriterion("WARNING_TYPE not like", value, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeIn(List<String> values) {
+            addCriterion("WARNING_TYPE in", values, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeNotIn(List<String> values) {
+            addCriterion("WARNING_TYPE not in", values, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeBetween(String value1, String value2) {
+            addCriterion("WARNING_TYPE between", value1, value2, "warningType");
+            return (Criteria) this;
+        }
+
+        public Criteria andWarningTypeNotBetween(String value1, String value2) {
+            addCriterion("WARNING_TYPE not between", value1, value2, "warningType");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
