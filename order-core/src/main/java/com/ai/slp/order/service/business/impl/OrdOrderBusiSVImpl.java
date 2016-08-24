@@ -256,7 +256,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setDiscountFee(ordOdProd.getDiscountFee());
                 ordProductVo.setAdjustFee(ordOdProd.getAdjustFee());
                 ordProductVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
-                String extendInfo = ordOdProd.getExtendInfo();
+          /*      String extendInfo = ordOdProd.getExtendInfo();
                 ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo, ProdAttrInfoVo.class);
                 ordProductVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
                 SysParamSingleCond sysParamBasicOrg = new SysParamSingleCond("SLP", "PRODUCT",
@@ -269,7 +269,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                     provinceName = iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode());
                 }
                 ordProductVo.setProvinceName(provinceName);
-                ordProductVo.setChargeFee(prodAttrInfoVo.getChargeFee());
+                ordProductVo.setChargeFee(prodAttrInfoVo.getChargeFee());*/
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 ordProductVo.setProductImage(productImage);
                 ordProductVo.setProdExtendInfo(this.getProdExtendInfo(tenantId, orderId,
@@ -421,7 +421,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 int phoneCount = this.getProdExtendInfo(orderRequest.getTenantId(),
                         order.getOrderId());
                 ordOrderVo.setPhoneCount(phoneCount);
-                //TODO
                 /* 3.订单发票信息查询*/
                 OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
                 if(ordOdInvoice !=null) {
