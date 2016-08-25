@@ -8,6 +8,8 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
+import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
 import com.ai.slp.order.api.orderlist.param.QueryExceptionOrderRequest;
@@ -88,5 +90,20 @@ public interface IOrderListSV {
 	@Path("/queryExceptionOrderList")
 	QueryOrderListResponse queryExceptionOrderList(QueryExceptionOrderRequest orderListRequest) throws BusinessException, SystemException;
     
+	
+	/**
+	 * 运营后台订单列表查询
+	 * @param orderRequest
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL orderlist/behindQueryOrderList
+	 */
+	@POST
+	@Path("/behindQueryOrderList")
+	BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest) throws BusinessException, SystemException;
 	
 }
