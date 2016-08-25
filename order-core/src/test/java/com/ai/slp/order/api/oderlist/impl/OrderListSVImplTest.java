@@ -10,10 +10,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
+import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
+import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.alibaba.fastjson.JSON;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -64,8 +66,23 @@ public class OrderListSVImplTest {
     @Test
     public void testQueryOrder() {
     	QueryOrderRequest request=new QueryOrderRequest();
-    	request.setOrderId(0);
+    	request.setOrderId(35913355l);
     	request.setTenantId("SLP");
-    	orderListSV.queryOrder(request);
+    	QueryOrderResponse response = orderListSV.queryOrder(request);
+    	String str = JSON.toJSONString(response);
+    	System.out.println(str);
+    }
+    
+    @Test
+    public void behindOrderListTest() {
+    	BehindQueryOrderListRequest request = new BehindQueryOrderListRequest();
+         request.setTenantId("SLP");
+      //   request.setOrderId(2000000978695921l);
+         request.setPageNo(1);
+         request.setPageSize(5);
+         request.setOrderTimeBegin("2016-05-01 00:00:00");
+         request.setOrderTimeEnd("2016-07-13 10:03:32");
+         System.out.println(orderListSV.behindQueryOrderList(request).getResponseHeader());
+         System.out.println(orderListSV.behindQueryOrderList(request).getPageInfo().getResult().size());
     }
 }
