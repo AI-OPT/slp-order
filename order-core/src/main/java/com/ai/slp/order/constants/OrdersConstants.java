@@ -718,7 +718,7 @@ public final class OrdersConstants {
             /**
              * 审核拒绝
              */
-            public static final String NO = "0";
+            public static final String NO = "2";
 
         }
 
