@@ -11,12 +11,6 @@ public class OrdProductVo extends BaseInfo{
 
 	private static final long serialVersionUID = 1L;
 	
-	//TODO 
-	//??
-	/**
-	 * 库存名称
-	 */
-	
 	
 	/**
      * 业务订单ID
@@ -107,6 +101,11 @@ public class OrdProductVo extends BaseInfo{
      * 拓展信息值
      */
     private String prodExtendInfo;
+    
+    /**
+     * 积分
+     */
+    private Long integral;
 
 	public Long getOrderId() {
 		return orderId;
@@ -250,5 +249,13 @@ public class OrdProductVo extends BaseInfo{
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public Long getIntegral() {
+		return integral;
+	}
+
+	public void setIntegral(Long integral) {
+		this.integral = integral;
 	}
 }
