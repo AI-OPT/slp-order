@@ -72,6 +72,11 @@ public class OrdOrderVo extends BaseInfo {
     private String busiCode;
     
     /**
+     * 业务类型展示名称
+     */
+    private String busiCodeName;
+    
+    /**
      * 订单类型
      */
     private String orderType;
@@ -145,6 +150,11 @@ public class OrdOrderVo extends BaseInfo {
      * 发票类型
      */
     private String invoiceType;
+    
+    /**
+     * 发票类型展示名称
+     */
+    private String InvoiceTypeName;
     
     /**
      * 发票抬头
@@ -547,5 +557,21 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setAcctId(Long acctId) {
 		this.acctId = acctId;
+	}
+
+	public String getBusiCodeName() {
+		return busiCodeName;
+	}
+
+	public void setBusiCodeName(String busiCodeName) {
+		this.busiCodeName = busiCodeName;
+	}
+
+	public String getInvoiceTypeName() {
+		return InvoiceTypeName;
+	}
+
+	public void setInvoiceTypeName(String invoiceTypeName) {
+		InvoiceTypeName = invoiceTypeName;
 	}
 }
