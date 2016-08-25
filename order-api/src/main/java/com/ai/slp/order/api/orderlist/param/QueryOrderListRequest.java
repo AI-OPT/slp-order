@@ -139,4 +139,12 @@ public class QueryOrderListRequest extends BaseInfo {
         this.stateList = stateList;
     }
 
+	public String getProdName() {
+		return prodName;
+	}
+
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
 }
