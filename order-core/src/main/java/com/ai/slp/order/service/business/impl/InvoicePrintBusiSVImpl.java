@@ -101,13 +101,14 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 					"未能查询到指定的订单配送信息[订单id:"+request.getOrderId()+"]");
 		}
 		OrdOdLogistics ordOdLogistics = logistics.get(0);
-		//ICacheSV cacheSv = DubboConsumerFactory.getService("iCacheSV");
+		ICacheSV iCacheSv = DubboConsumerFactory.getService("iCacheSV");
 		response.setRouteId(order.getRouteId());
 		response.setContactName(ordOdLogistics.getContactName());
 	    response.setContactTel(ordOdLogistics.getContactTel());
-	   // response.setProvinceCode(cacheSv.getAreaName(ordOdLogistics.getProvinceCode()));
-	   // response.setCityCode(cacheSv.getAreaName(ordOdLogistics.getCityCode()));
-	   // response.setCountyCode(cacheSv.getAreaName(ordOdLogistics.getCountyCode()));
+	    response.setProvinceCode(ordOdLogistics.getProvinceCode()==null?"":iCacheSv.getAreaName(ordOdLogistics.getProvinceCode()));
+	    response.setCityCode(ordOdLogistics.getCityCode()==null?"":iCacheSv.getAreaName(ordOdLogistics.getCityCode()));
+	    response.setCountyCode(ordOdLogistics.getCountyCode()==null?"":iCacheSv.getAreaName(ordOdLogistics.getCountyCode()));
+	    response.setAreaCode(ordOdLogistics.getAreaCode()==null?"":iCacheSv.getAreaName(ordOdLogistics.getAreaCode()));
 	    response.setAddress(ordOdLogistics.getAddress());
 		response.setOrderId(request.getOrderId());
 		response.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
@@ -180,9 +181,8 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 		                OrdOdStateChg.ChgDesc.INVOICE_ORDER_TO_PRINT, null, null, null, sysDate);
 		        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state1, state2,
 		                OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_LOGISTICS_DELIVERY, null, null, null, sysDate);
-		        //TODO  ??
 		        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state2, newState,
-		                OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DELIVERY, null, null, null, sysDate);
+		                OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_SEND, null, null, null, sysDate);
 			}
 		 }
 	 
