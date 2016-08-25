@@ -26,8 +26,9 @@ public class OrdOrderVo extends BaseInfo {
     private String routeId;
     
     /**
-     * 仓库信息 ????
+     * 仓库信息
      */
+    private String routeName;
     
     /**
      * 父订单id
@@ -45,6 +46,11 @@ public class OrdOrderVo extends BaseInfo {
     private String userId;
     
     /**
+     * 支付帐号
+     */
+    private Long acctId;
+    
+    /**
      * 买家留言  订单备注
      */
     private String remark;
@@ -54,12 +60,17 @@ public class OrdOrderVo extends BaseInfo {
      */
     private Long orderId;
     
+    /**
+     * 原始订单号
+     */
+    private Long origOrderId;
+    
 
     /**
      * 业务类型
      */
     private String busiCode;
-
+    
     /**
      * 订单类型
      */
@@ -513,5 +524,28 @@ public class OrdOrderVo extends BaseInfo {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	
+
+	public String getRouteName() {
+		return routeName;
+	}
+
+	public void setRouteName(String routeName) {
+		this.routeName = routeName;
+	}
+
+	public Long getOrigOrderId() {
+		return origOrderId;
+	}
+
+	public void setOrigOrderId(Long origOrderId) {
+		this.origOrderId = origOrderId;
+	}
+
+	public Long getAcctId() {
+		return acctId;
+	}
+
+	public void setAcctId(Long acctId) {
+		this.acctId = acctId;
+	}
 }
