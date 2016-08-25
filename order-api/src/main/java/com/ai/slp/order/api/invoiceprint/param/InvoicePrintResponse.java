@@ -56,6 +56,11 @@ public class InvoicePrintResponse extends BaseResponse{
     private String countyCode;
     
     /**
+     * 收件人末级区域
+     */
+    private String areaCode;
+    
+    /**
      * 详细地址(自提地址)
      */
     private String address;
@@ -170,5 +175,12 @@ public class InvoicePrintResponse extends BaseResponse{
 	public void setSum(long sum) {
 		this.sum = sum;
 	}
-	
+
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
+	}
 }
