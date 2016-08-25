@@ -32,29 +32,44 @@ public interface OrdOrderAttachMapper {
             @Result(property = "adjustFee", column = "adjust_fee"),
             @Result(property = "paidFee", column = "paid_fee"),
             @Result(property = "payFee", column = "pay_fee") })
-    public List<OrdOrderAttach> getOrdOrder(@Param("subFlag")
-    String subFlag, @Param("pageCount")
-    Integer pageCount, @Param("pageSize")
-    Integer pageSize, @Param("userId")
-    String userId, @Param("orderType")
-    String orderType, @Param("orderId")
-    Long orderId, @Param("payStyle")
-    String payStyle, @Param("tenantId")
-    String tenantId, @Param("states")
-    String states, @Param("orderTimeBegin")
-    String orderTimeBegin, @Param("orderTimeEnd")
-    String orderTimeEnd);
+    public List<OrdOrderAttach> getOrdOrder(@Param("subFlag") String subFlag, 
+    		@Param("pageCount") Integer pageCount, @Param("pageSize") Integer pageSize,
+    		@Param("userId") String userId, @Param("orderType") String orderType,
+    		@Param("orderId") Long orderId, @Param("payStyle") String payStyle, 
+    		@Param("tenantId") String tenantId, @Param("states") String states, 
+    		@Param("orderTimeBegin") String orderTimeBegin, 
+    		@Param("orderTimeEnd") String orderTimeEnd);
 
     @SelectProvider(type = OrdOrderSqlProvider.class, method = "count")
-    public int getCount(@Param("subFlag")
-    String subFlag, @Param("userId")
-    String userId, @Param("orderType")
-    String orderType, @Param("orderId")
-    Long orderId, @Param("payStyle")
-    String payStyle, @Param("tenantId")
-    String tenantId, @Param("states")
-    String states, @Param("orderTimeBegin")
-    String orderTimeBegin, @Param("orderTimeEnd")
-    String orderTimeEnd);
+    public int getCount(@Param("subFlag") String subFlag, @Param("userId") String userId,
+    		@Param("orderType") String orderType, @Param("orderId") Long orderId, 
+    		@Param("payStyle") String payStyle, @Param("tenantId") String tenantId, 
+    		@Param("states") String states, @Param("orderTimeBegin") String orderTimeBegin, 
+    		@Param("orderTimeEnd") String orderTimeEnd);
+    
+    
+    @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindCount")
+	public int getBehindCount(@Param("chlId") String chlId, @Param("deliveryFlag") String deliveryFlag,
+			@Param("orderId") Long orderId,@Param("tenantId") String tenantId, 
+			@Param("states") String states,@Param("orderTimeBegin") String orderTimeBegin, 
+			@Param("orderTimeEnd") String orderTimeEnd);
+    
+    
+    @Results({ @Result(id = true, property = "orderId", column = "order_id"),
+        @Result(property = "tenantId", column = "tenant_id"),
+        @Result(property = "chlId", column = "chl_id"),
+        @Result(property = "deliveryFlag", column = "delivery_flag"),
+        @Result(property = "parentOrderId", column = "parent_order_id"),
+        @Result(property = "userId", column = "user_id"),
+        @Result(property = "state", column = "state"),
+        @Result(property = "discountFee", column = "discount_fee"),
+        @Result(property = "paidFee", column = "paid_fee") })
+    @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindQueryOrdOrder")
+	public List<BehindOrdOrderAttach> getBehindOrdOrder(@Param("pageCount") Integer pageCount, 
+			@Param("pageSize") Integer pageSize, @Param("chlId") String chlId, 
+			@Param("deliveryFlag") String deliveryFlag,@Param("orderId") Long orderId, 
+			@Param("tenantId") String tenantId, @Param("states") String states, 
+			@Param("orderTimeBegin") String orderTimeBegin, @Param("orderTimeEnd") String orderTimeEnd);
 
+	
 }
