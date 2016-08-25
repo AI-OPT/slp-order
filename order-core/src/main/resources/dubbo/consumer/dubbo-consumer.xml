@@ -59,4 +59,9 @@
 		
 	<dubbo:reference id="iDepositSV"
 		interface="com.ai.slp.balance.api.deposit.interfaces.IDepositSV" />
+		
+	<!-- 仓库 -->	
+	<dubbo:reference id="iRouteManageSV"
+		interface="com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV" />
+	
 </beans>
