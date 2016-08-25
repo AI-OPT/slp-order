@@ -2,6 +2,8 @@ package com.ai.slp.order.api.ordercheck.param;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.ai.opt.base.vo.BaseInfo;
 
 /**
@@ -22,7 +24,8 @@ public class OrderCheckRequest extends BaseInfo{
 	/**
 	 * 审核结果
 	 */
-	private int checkResult; //1 同意,0 拒绝
+	@NotBlank(message = "审核结果不能为空")
+	private String checkResult; //1 同意,2 拒绝
 	
 	/**
 	 * 审核结果描述
@@ -30,8 +33,9 @@ public class OrderCheckRequest extends BaseInfo{
 	private String remark;
 	
 	/**
-	 * 审核人
+	 * 审核工号
 	 */
+	@NotBlank(message="审核工号不能为空")
 	private String operId;
 
 	public long getOrderId() {
@@ -42,11 +46,12 @@ public class OrderCheckRequest extends BaseInfo{
 		this.orderId = orderId;
 	}
 
-	public int getCheckResult() {
+
+	public String getCheckResult() {
 		return checkResult;
 	}
 
-	public void setCheckResult(int checkResult) {
+	public void setCheckResult(String checkResult) {
 		this.checkResult = checkResult;
 	}
 
