@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -528,10 +527,4 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流公司ID不能为空");
     	}
     }
-    
-    public static void main(String[] args) {
-		String str=null;
-		//System.out.println(str.length());
-		System.out.println(StringUtils.isBlank(str));
-	}
 }
