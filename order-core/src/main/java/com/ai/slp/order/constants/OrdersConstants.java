@@ -463,6 +463,11 @@ public final class OrdersConstants {
             public static final String INVOICE_ORDER_TO_PRINT = "您提交的订单发货单已经打印";
 
             /**
+             * 订单进入待发货状态
+             */
+            public static final String ORDER_TO_WAIT_SEND = "您提交的订单等待发货，请耐心等待";
+            
+            /**
              * 订单进入待出库状态
              */
             public static final String ORDER_TO_WAIT_DELIVERY = "您提交的订单等待出库，请耐心等待";
