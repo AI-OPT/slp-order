@@ -19,7 +19,6 @@ import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.*;
-import com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria.Criteria;
 import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
@@ -87,9 +86,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
-    
-    @Autowired
-    private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
     
     /**
      * 订单收费
