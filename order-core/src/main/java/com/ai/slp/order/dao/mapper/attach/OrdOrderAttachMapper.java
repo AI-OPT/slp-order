@@ -50,26 +50,26 @@ public interface OrdOrderAttachMapper {
     
     @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindCount")
 	public int getBehindCount(@Param("chlId") String chlId, @Param("deliveryFlag") String deliveryFlag,
-			@Param("orderId") Long orderId,@Param("tenantId") String tenantId, 
-			@Param("states") String states,@Param("orderTimeBegin") String orderTimeBegin, 
-			@Param("orderTimeEnd") String orderTimeEnd);
+			@Param("orderId") Long orderId,@Param("tenantId") String tenantId,
+			@Param("contactTel") String contactTel,@Param("states") String states,@Param("userId") String userId,
+			@Param("orderTimeBegin") String orderTimeBegin,@Param("orderTimeEnd") String orderTimeEnd);
     
     
     @Results({ @Result(id = true, property = "orderId", column = "order_id"),
-        @Result(property = "tenantId", column = "tenant_id"),
         @Result(property = "chlId", column = "chl_id"),
         @Result(property = "deliveryFlag", column = "delivery_flag"),
-        @Result(property = "parentOrderId", column = "parent_order_id"),
+        @Result(property = "contactTel", column = "contact_tel"),
         @Result(property = "userId", column = "user_id"),
-        @Result(property = "state", column = "state"),
         @Result(property = "discountFee", column = "discount_fee"),
-        @Result(property = "paidFee", column = "paid_fee") })
+        @Result(property = "adjustFee", column = "adjust_fee") })
     @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindQueryOrdOrder")
 	public List<BehindOrdOrderAttach> getBehindOrdOrder(@Param("pageCount") Integer pageCount, 
 			@Param("pageSize") Integer pageSize, @Param("chlId") String chlId, 
 			@Param("deliveryFlag") String deliveryFlag,@Param("orderId") Long orderId, 
-			@Param("tenantId") String tenantId, @Param("states") String states, 
-			@Param("orderTimeBegin") String orderTimeBegin, @Param("orderTimeEnd") String orderTimeEnd);
+			@Param("tenantId") String tenantId,@Param("contactTel") String contactTel, 
+			@Param("states") String states,@Param("userId") String userId,
+			@Param("orderTimeBegin") String orderTimeBegin, 
+			@Param("orderTimeEnd") String orderTimeEnd);
 
 	
 }
