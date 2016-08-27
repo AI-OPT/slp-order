@@ -662,6 +662,18 @@ public final class OrdersConstants {
         }
 
     }
+    
+    public static final class OrdOdFeeProd {
+
+        public static class PayStyle {
+            
+            /**
+             * 积分
+             */
+            public static final String JF = "5";
+
+        }
+    }
 
     public static final class OrdBalacneIf {
 
