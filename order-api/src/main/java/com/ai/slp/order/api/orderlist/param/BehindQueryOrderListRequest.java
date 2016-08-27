@@ -2,7 +2,6 @@ package com.ai.slp.order.api.orderlist.param;
 
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
 
 import com.ai.opt.base.vo.BaseInfo;
 
@@ -13,7 +12,6 @@ public class BehindQueryOrderListRequest extends BaseInfo{
 	 /**
      * 用户ID
      */
-    @NotNull(message = "用户ID不能为空")
     private String userId;
 
     /**
@@ -30,6 +28,16 @@ public class BehindQueryOrderListRequest extends BaseInfo{
      * 是否需要物流
      */
     private String deliveryFlag;
+    
+    /**
+     * 仓库
+     */
+    private String routeId;
+    
+    /**
+     * 收货人手机号
+     */
+    private String contactTel;
 
     /**
      * 订单状态
@@ -62,6 +70,22 @@ public class BehindQueryOrderListRequest extends BaseInfo{
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	
+	public String getRouteId() {
+		return routeId;
+	}
+
+	public void setRouteId(String routeId) {
+		this.routeId = routeId;
+	}
+
+	public String getContactTel() {
+		return contactTel;
+	}
+
+	public void setContactTel(String contactTel) {
+		this.contactTel = contactTel;
 	}
 
 	public Long getOrderId() {
