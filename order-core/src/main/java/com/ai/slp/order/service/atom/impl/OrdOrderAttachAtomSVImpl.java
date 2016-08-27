@@ -38,19 +38,21 @@ public class OrdOrderAttachAtomSVImpl implements IOrdOrderAttachAtomSV {
     }
 
 	@Override
-	public int behindQueryCount(BehindQueryOrderListRequest orderListRequest, String states) {
+	public int behindQueryCount(BehindQueryOrderListRequest orderListRequest, String states,Long orderId) {
 		 return ordOrderAttachMapper.getBehindCount( orderListRequest.getChlId(),
-				 orderListRequest.getDeliveryFlag(), orderListRequest.getOrderId(),
-	                orderListRequest.getTenantId(), states,
+				 orderListRequest.getDeliveryFlag(), orderId,
+	                orderListRequest.getTenantId(),orderListRequest.getContactTel(), 
+	                states,orderListRequest.getUserId(),
 	                orderListRequest.getOrderTimeBegin(), orderListRequest.getOrderTimeEnd());
 	}
 
 	@Override
-	public List<BehindOrdOrderAttach> behindQueryOrderBySearch(BehindQueryOrderListRequest orderListRequest, String states) {
+	public List<BehindOrdOrderAttach> behindQueryOrderBySearch(BehindQueryOrderListRequest orderListRequest, 
+			String states,Long orderId) {
 		return ordOrderAttachMapper.getBehindOrdOrder((orderListRequest.getPageNo() - 1)* orderListRequest.getPageSize(), 
 				orderListRequest.getPageSize(),
                 orderListRequest.getChlId(),orderListRequest.getDeliveryFlag(),
-                orderListRequest.getOrderId(),orderListRequest.getTenantId(), 
-                states, orderListRequest.getOrderTimeBegin(),orderListRequest.getOrderTimeEnd());
+                orderId,orderListRequest.getTenantId(), orderListRequest.getContactTel(),
+                states,orderListRequest.getUserId(), orderListRequest.getOrderTimeBegin(),orderListRequest.getOrderTimeEnd());
 	}
 }
