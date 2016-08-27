@@ -93,8 +93,8 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 				list.add(invoicePrintVo);
 			}
 		}
-		/* 查询订单配送信息*/
-		List<OrdOdLogistics> logistics = getOrdOdLogistics(request.getOrderId(), request.getTenantId());
+		/* 查询订单配送信息 父订单对应配送信息*/
+		List<OrdOdLogistics> logistics = getOrdOdLogistics(order.getParentOrderId(), request.getTenantId());
 		if(CollectionUtil.isEmpty(logistics)) {
 			logger.warn("未能查询到指定的订单配送信息[订单id:"+request.getOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
