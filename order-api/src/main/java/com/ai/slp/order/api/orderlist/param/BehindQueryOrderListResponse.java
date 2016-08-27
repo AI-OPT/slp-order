@@ -8,9 +8,9 @@ public class BehindQueryOrderListResponse extends BaseResponse{
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * 订单列表信息
+	 * 运营后台列表信息
 	 */
-	 private PageInfo<BehindOrdOrderVo> pageInfo;
+	private PageInfo<BehindOrdOrderVo> pageInfo;
 
 	public PageInfo<BehindOrdOrderVo> getPageInfo() {
 		return pageInfo;
