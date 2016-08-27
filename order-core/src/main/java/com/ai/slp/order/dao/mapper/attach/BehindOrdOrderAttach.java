@@ -13,11 +13,6 @@ public class BehindOrdOrderAttach extends BaseInfo{
     private Long orderId;
     
     /**
-     * 业务订单ID
-     */
-    private Long parentOrderId;
-    
-    /**
      * 订单来源
      */
     private String chlId;
@@ -33,20 +28,19 @@ public class BehindOrdOrderAttach extends BaseInfo{
     private String deliveryFlag;
 
     /**
-     * 订单状态(后厂)
-     */
-    private String state;
-
-    /**
      * 总优惠金额
      */
     private Long discountFee;
-
 
     /**
      * 总实收费用
      */
     private Long adjustFee;
+    
+    /**
+     * 收货人手机号
+     */
+    private String contactTel;
 
 	public Long getOrderId() {
 		return orderId;
@@ -72,12 +66,12 @@ public class BehindOrdOrderAttach extends BaseInfo{
 		this.deliveryFlag = deliveryFlag;
 	}
 
-	public String getState() {
-		return state;
+	public String getContactTel() {
+		return contactTel;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setContactTel(String contactTel) {
+		this.contactTel = contactTel;
 	}
 
 	public Long getDiscountFee() {
@@ -94,14 +88,6 @@ public class BehindOrdOrderAttach extends BaseInfo{
 
 	public void setAdjustFee(Long adjustFee) {
 		this.adjustFee = adjustFee;
-	}
-
-	public Long getParentOrderId() {
-		return parentOrderId;
-	}
-
-	public void setParentOrderId(Long parentOrderId) {
-		this.parentOrderId = parentOrderId;
 	}
 
 	public String getUserId() {
