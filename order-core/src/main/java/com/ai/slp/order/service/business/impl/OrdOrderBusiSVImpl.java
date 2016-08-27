@@ -67,6 +67,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdExtendAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAttachAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
+import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
@@ -265,7 +266,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
                 //积分设置
                 //ordProductVo.setIntegral(totalIntegral==null?null:totalIntegral/ordOdProdList.size());
-          /*      String extendInfo = ordOdProd.getExtendInfo();
+          /*    String extendInfo = ordOdProd.getExtendInfo();
                 ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo, ProdAttrInfoVo.class);
                 ordProductVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
                 SysParamSingleCond sysParamBasicOrg = new SysParamSingleCond("SLP", "PRODUCT",
@@ -435,7 +436,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                         order.getOrderId());
                 ordOrderVo.setPhoneCount(phoneCount);
                 /* 3.订单发票信息查询*/
-                OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
+                OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getParentOrderId());
                 if(ordOdInvoice !=null) {
                 	ordOrderVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
                 	ordOrderVo.setInvoiceType(ordOdInvoice.getInvoiceType());
@@ -446,7 +447,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 	ordOrderVo.setInvoiceContent(ordOrderVo.getInvoiceContent());
                 }
                 /* 4.订单配送信息查询*/
-                OrdOdLogistics ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getOrderId());
+                OrdOdLogistics ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getParentOrderId());
                 if(ordOdLogistics!=null) {
                 	ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
                 	ordOrderVo.setContactCompany(ordOdLogistics.getContactCompany());
@@ -462,7 +463,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 }
                 /* 5.订单费用明细查询 */
                 List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
-                        order.getOrderId());
+                        order.getParentOrderId());
                 ordOrderVo.setPayDataList(orderFeeProdList);
                 /* 6.订单商品明细查询 */
                 List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,
@@ -555,8 +556,12 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     @Override
     public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
             throws BusinessException, SystemException {
-        logger.debug("开始订单列表查询..");
-        /* 1.订单信息查询 */
+        logger.debug("开始运营后台订单列表查询..");
+        /* 参数校验*/
+        if(orderListRequest==null) {
+        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+        }
+        CommonCheckUtils.checkTenantId(orderListRequest.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
         ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
         BehindQueryOrderListResponse response = new BehindQueryOrderListResponse();
         PageInfo<BehindOrdOrderVo> pageInfo = new PageInfo<BehindOrdOrderVo>();
@@ -570,44 +575,35 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             states = sb.toString();
             states = states.substring(0, sb.length() - 1);
         }
-        /* 2.多表查询订单个数 */
-        int count = ordOrderAttachAtomSV.behindQueryCount(orderListRequest, states);
-        /* 3.多表查询订单信息 */
-        List<BehindOrdOrderAttach> list = ordOrderAttachAtomSV.
-        		behindQueryOrderBySearch(orderListRequest, states);
-        List<BehindOrdOrderVo> ordOrderList = new ArrayList<BehindOrdOrderVo>();
-        for (BehindOrdOrderAttach orderAttach : list) {
-            BehindOrdOrderVo ordOrderVo = new BehindOrdOrderVo();
-            ordOrderVo.setChlId(orderAttach.getChlId());
-            ordOrderVo.setParentOrderId(orderAttach.getParentOrderId());
-            ordOrderVo.setUserId(orderAttach.getUserId());
-            //TODO 绑定手机号   用户那边获取??
-            
-            ordOrderVo.setDeliveryFlag(orderAttach.getDeliveryFlag());
-            ordOrderVo.setOrderId(orderAttach.getOrderId());
-            ordOrderVo.setState(orderAttach.getState());
-            SysParamSingleCond sysParamSingleCond = new SysParamSingleCond(orderAttach.getTenantId(), "ORD_ORDER",
-                    "STATE", orderAttach.getState());
-            SysParam sysParamState = iCacheSV.getSysParamSingle(sysParamSingleCond);
-            ordOrderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
-            ordOrderVo.setDiscountFee(orderAttach.getDiscountFee());
-            ordOrderVo.setAdjustFee(orderAttach.getAdjustFee());
-            /* 4.订单费用明细查询 */
-            List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
-                    orderAttach.getOrderId());
-            ordOrderVo.setPayDataList(orderFeeProdList);
-            /* 5.订单商品明细查询 */
-            List<BehindOrdProductVo> productList = this.getBehindOrdProductList(iCacheSV,
-                    orderAttach.getTenantId(), orderAttach.getOrderId());
-            /* 6.获取配送信息*/
-            OrdOdLogistics ordOdLogistics = this.getOrdOdLogistics( orderAttach.getTenantId(), orderAttach.getOrderId());
-            ordOrderVo.setContactTel(ordOdLogistics.getContactTel());
-            ordOrderVo.setProductList(productList);
-            ordOrderList.add(ordOrderVo);
+        /* 判断订单id*/
+        Long orderId = orderListRequest.getOrderId();
+        List<BehindOrdOrderVo> OrderVoList=new ArrayList<BehindOrdOrderVo>();
+        int count=0;
+        if(orderId==null) {
+        	/* 多条件多表查询父订单个数*/
+        	count = ordOrderAttachAtomSV.behindQueryCount(orderListRequest, states,orderId);
+        	OrderVoList = this.getBehindOrdOrderVos(orderListRequest, states, iCacheSV,OrderVoList,orderId);
+        }else {
+        	/* 不为空的时候判断所属订单*/
+        	OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(orderListRequest.getTenantId(), orderId);
+        	if(ordOrder!=null) {
+        		if(ordOrder.getSubFlag().equals(OrdersConstants.OrdOrder.SubFlag.NO)) {
+        			/* 父订单*/
+        			/* 多条件多表查询父订单个数*/
+        			count = ordOrderAttachAtomSV.behindQueryCount(orderListRequest, states,ordOrder.getOrderId());
+        			OrderVoList = this.getBehindOrdOrderVos(orderListRequest, states, 
+        					iCacheSV,OrderVoList,ordOrder.getOrderId());
+        		}else {
+        			/* 子订单*/
+        			/* 多条件多表查询父订单个数*/
+        			count = ordOrderAttachAtomSV.behindQueryCount(orderListRequest, states,null);
+        			OrderVoList = this.getBehindOrdOrderVos(orderListRequest, states, iCacheSV,OrderVoList,null);
+        		}
+        	}
         }
         pageInfo.setPageNo(orderListRequest.getPageNo());
         pageInfo.setPageSize(orderListRequest.getPageSize());
-        pageInfo.setResult(ordOrderList);
+        pageInfo.setResult(OrderVoList);
         pageInfo.setCount(count);
         response.setPageInfo(pageInfo);
         return response;
@@ -624,28 +620,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		return null;
 	}
     
-    
-    /**
-     * 运营后台获取商品信息
-     */
-    private List<BehindOrdProductVo> getBehindOrdProductList(ICacheSV iCacheSV, String tenantId, Long orderId) {
-    	List<BehindOrdProductVo> productList = new ArrayList<BehindOrdProductVo>();
-        OrdOdProdCriteria example = new OrdOdProdCriteria();
-        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-        criteria.andTenantIdEqualTo(tenantId);
-        criteria.andOrderIdEqualTo(orderId);
-        List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
-        if (!CollectionUtil.isEmpty(ordOdProdList)) {
-            for (OrdOdProd ordOdProd : ordOdProdList) {
-            	BehindOrdProductVo ordProductVo = new BehindOrdProductVo();
-                ordProductVo.setProdName(ordOdProd.getProdName());
-                ordProductVo.setBuySum(ordOdProd.getBuySum());
-                productList.add(ordProductVo);
-            }
-        }
-        return productList;
-	}
-
     
     /**
      * 商品集合API
@@ -727,5 +701,77 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     		 ordOdLogistics = list.get(0);
     	}
     	return ordOdLogistics;
+    }
+    
+    
+    /**
+     * 运营后台列表信息
+     */
+    private List<BehindOrdOrderVo> getBehindOrdOrderVos(BehindQueryOrderListRequest orderListRequest,
+    		String states,ICacheSV iCacheSV,List<BehindOrdOrderVo> OrderVoList,Long orderId) {
+        /* 多条件多表查询父订单信息 */
+        List<BehindOrdOrderAttach> parentList = ordOrderAttachAtomSV.
+        		behindQueryOrderBySearch(orderListRequest, states,orderId);
+        /* 通过父订单信息获取子订单信息*/
+        if(!CollectionUtil.isEmpty(parentList)) {
+        	for (BehindOrdOrderAttach behindOrdOrderAttach : parentList) {
+        		BehindOrdOrderVo orderVo=new BehindOrdOrderVo();
+        	    List<BehindOrdProductVo> productList=new ArrayList<BehindOrdProductVo>();
+        	    orderVo.setChlId(behindOrdOrderAttach.getChlId());
+        	    orderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
+        	    orderVo.setContactTel(behindOrdOrderAttach.getContactTel());
+        	    orderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
+        	    orderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());
+        	    orderVo.setpOrderId(behindOrdOrderAttach.getOrderId());
+        	    orderVo.setUserId(behindOrdOrderAttach.getUserId());
+        	    //TODO 绑定手机号??
+				/* 获取其子订单信息*/
+        		OrdOrderCriteria example=new OrdOrderCriteria();
+        		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        		criteria.andTenantIdEqualTo(orderListRequest.getTenantId());
+        		criteria.andParentOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
+        		List<OrdOrder> orders = ordOrderAtomSV.selectByExample(example);
+        		/* 积分*/
+    			long points = 0;
+        		for (OrdOrder ordOrder : orders) {
+        			OrdOdProdCriteria exampleProd=new OrdOdProdCriteria();
+        			OrdOdProdCriteria.Criteria criteriaProd = exampleProd.createCriteria();
+        			if(!StringUtil.isBlank(orderListRequest.getRouteId())) {
+        				criteriaProd.andRouteIdEqualTo(orderListRequest.getRouteId());
+        			}
+        			criteriaProd.andTenantIdEqualTo(ordOrder.getTenantId());
+        			criteriaProd.andOrderIdEqualTo(ordOrder.getOrderId());
+        			List<OrdOdProd> ordProds = ordOdProdAtomSV.selectByExample(exampleProd);
+        			for (OrdOdProd ordOdProd : ordProds) {
+        				BehindOrdProductVo vo=new BehindOrdProductVo();
+        				vo.setOrderId(ordOdProd.getOrderId());
+        				vo.setBuySum(ordOdProd.getBuySum());
+        				vo.setProdName(ordOdProd.getProdName());
+        				vo.setState(ordOrder.getState());
+        				SysParamSingleCond sysParamSingleCond = new SysParamSingleCond(ordOrder.getTenantId(), "ORD_ORDER",
+        	                    "STATE", ordOrder.getState());
+        	            SysParam sysParamState = iCacheSV.getSysParamSingle(sysParamSingleCond);
+        	            vo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
+        	            productList.add(vo);
+					}
+        		orderVo.setProductList(productList);
+        	}
+    		//TODO ?? 父订单 子订单
+    		OrdOdFeeProdCriteria exampleFeeProd = new OrdOdFeeProdCriteria();
+    		OrdOdFeeProdCriteria.Criteria criteriaFeeProd = exampleFeeProd.createCriteria();
+    		criteriaFeeProd.andOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
+    		List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByExample(exampleFeeProd);
+    		if (!CollectionUtil.isEmpty(orderFeeProdList)) {
+    			for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) { 
+    				if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
+    					points+=ordOdFeeProd.getPaidFee();
+    				}
+    			}
+    		}
+    		orderVo.setPoints(points);
+    		OrderVoList.add(orderVo);
+         }
+       }
+       return OrderVoList;
     }
 }
