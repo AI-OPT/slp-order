@@ -10,4 +10,6 @@ public interface IOrdOdLogisticsAtomSV {
 	 int insertSelective(OrdOdLogistics record);
 	 
 	 List<OrdOdLogistics> selectByExample(OrdOdLogisticsCriteria example);
+	 
+	 OrdOdLogistics selectByOrd(String tenantId,long orderId);
 }
