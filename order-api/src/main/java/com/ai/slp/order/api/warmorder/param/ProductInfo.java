@@ -15,20 +15,20 @@ public class ProductInfo implements Serializable {
 	/**
 	 * 销售单价
 	 */
-	private long  salePrice;
+	private long salePrice;
 	/**
 	 * 总优惠费用
 	 */
-	private long   discountFee;
+	private long discountFee;
 	/**
 	 * 积分
 	 */
-	private long JF;
+	private long jf;
 	/**
 	 * 应收费用
 	 */
-	private long  adjustFee;
-	
+	private long adjustFee;
+
 	public long getSalePrice() {
 		return salePrice;
 	}
@@ -45,12 +45,12 @@ public class ProductInfo implements Serializable {
 		this.discountFee = discountFee;
 	}
 
-	public long getJF() {
-		return JF;
+	public long getJf() {
+		return jf;
 	}
 
-	public void setJF(long jF) {
-		JF = jF;
+	public void setJf(long jf) {
+		this.jf = jf;
 	}
 
 	public long getAdjustFee() {
@@ -76,7 +76,5 @@ public class ProductInfo implements Serializable {
 	public void setBuySum(long buySum) {
 		this.buySum = buySum;
 	}
-
-	
 
 }
