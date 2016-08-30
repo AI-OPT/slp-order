@@ -398,6 +398,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		childOrdOrder.setParentOrderId(parentOrdOrder.getOrderId());
     		childOrdOrder.setState(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION);
     		childOrdOrder.setStateChgTime(DateUtil.getSysDate());
+    		childOrdOrder.setRouteId(routeId); 
     		ordOrderAtomSV.insertSelective(childOrdOrder);
     		/* 2.1.1.实物的情况下,创建其它子信息表*/
     		ordOdProd = this.createTableInfo(subOrderId, parentOrdOrder, parentOrdOdProd, routeId,null);
@@ -664,7 +665,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		/*根据商品来判断是否能创建发票信息*/
     		//TODO
     		/* 创建子订单-发票信息*/
-    /*		OrdOdInvoiceCriteria example=new OrdOdInvoiceCriteria();
+    	/*	OrdOdInvoiceCriteria example=new OrdOdInvoiceCriteria();
     		OrdOdInvoiceCriteria.Criteria criteria = example.createCriteria();
     		criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
     		List<OrdOdInvoice> OrdOdInvoices = ordOdInvoiceAtomSV.selectByExample(example);
