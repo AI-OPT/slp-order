@@ -80,6 +80,11 @@ public class OrdOrderVo extends BaseInfo {
      * 订单类型
      */
     private String orderType;
+    
+    /**
+     * 订单类型展示名称
+     */
+    private String orderTypeName;
 
     /**
      * 订单状态(后厂)
@@ -573,5 +578,13 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setInvoiceTypeName(String invoiceTypeName) {
 		InvoiceTypeName = invoiceTypeName;
+	}
+
+	public String getOrderTypeName() {
+		return orderTypeName;
+	}
+
+	public void setOrderTypeName(String orderTypeName) {
+		this.orderTypeName = orderTypeName;
 	}
 }
