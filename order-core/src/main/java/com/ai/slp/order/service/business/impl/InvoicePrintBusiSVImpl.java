@@ -17,7 +17,7 @@ import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
-import com.ai.slp.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintInfosRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintResponse;
