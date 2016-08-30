@@ -171,6 +171,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setIpAddress(ordBaseInfo.getIpAddress());
         ordOrder.setProvinceCode(ordBaseInfo.getProvinceCode());
         ordOrder.setCityCode(ordBaseInfo.getCityCode());
+        if(StringUtil.isBlank(ordBaseInfo.getChlId())) {
+        	ordOrder.setChlId(OrdersConstants.OrdOrder.ChlId.SELFOPERATION); //自运营
+        }
         ordOrder.setState(OrdersConstants.OrdOrder.State.NEW);
         ordOrder.setStateChgTime(sysDate);
         ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
