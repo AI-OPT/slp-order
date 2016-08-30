@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.vo.PageInfo;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmVo;
+import com.ai.slp.order.api.warmorder.param.ProductImage;
 import com.ai.slp.order.api.warmorder.param.ProductInfo;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
@@ -22,6 +24,9 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdWarmAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdWarmBusiSV;
+import com.ai.slp.product.api.product.interfaces.IProductServerSV;
+import com.ai.slp.product.api.product.param.ProductSkuInfo;
+import com.ai.slp.product.api.product.param.SkuInfoQuery;
 @Service
 @Transactional
 public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
@@ -53,6 +58,9 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 						for(OrdOdProd prod:proList){
 							ProductInfo prodVo = new ProductInfo();
 							BeanUtils.copyProperties(prodVo, prod);
+							//获取图片信息
+							ProductImage productImage = this.getProductImage(prod.getTenantId(), prod.getSkuId());
+							prodVo.setProductImage(productImage);
 							prodinfoList.add(prodVo);
 						}
 					}
@@ -89,7 +97,10 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				for(OrdOdProd prod:proList){
 					ProductInfo prodVo = new ProductInfo();
 					BeanUtils.copyProperties(prodVo, prod);
-					prodinfoList.add(prodVo);
+					//获取图片信息
+					 ProductImage productImage = this.getProductImage(tenantId, prod.getSkuId());
+					 prodVo.setProductImage(productImage);
+					 prodinfoList.add(prodVo);
 				}
 			}
 				//获取费用信息
@@ -111,5 +122,15 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 		
 		return orderWarmVo;
 	}
-
+	private ProductImage getProductImage(String tenantId, String skuId) {
+        ProductImage productImage = new ProductImage();
+        SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
+        skuInfoQuery.setTenantId(tenantId);
+        skuInfoQuery.setSkuId(skuId);
+        IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
+        ProductSkuInfo productSkuInfo = iProductServerSV.queryProductSkuById(skuInfoQuery);
+        productImage.setVfsId(productSkuInfo.getVfsId());
+        productImage.setPicType(productSkuInfo.getPicType());
+        return productImage;
+    }
 }

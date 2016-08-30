@@ -85,6 +85,10 @@ public class OrderWarmVo extends BaseInfo {
 	 * 配送方式
 	 */
 	private String logisticsType;
+	/**
+	 * 收件人姓名
+	 */
+	private String  contactName;
 
 	public String getAddress() {
 		return address;
@@ -236,6 +240,14 @@ public class OrderWarmVo extends BaseInfo {
 
 	public void setLogisticsType(String logisticsType) {
 		this.logisticsType = logisticsType;
+	}
+
+	public String getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
 	}
 
 }

@@ -2,6 +2,7 @@ package com.ai.slp.order.api.warmorder.param;
 
 import java.io.Serializable;
 
+
 public class ProductInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	/**
@@ -28,6 +29,10 @@ public class ProductInfo implements Serializable {
 	 * 应收费用
 	 */
 	private long adjustFee;
+	/**
+	 * 图片信息
+	 */
+	private ProductImage productImage;
 
 	public long getSalePrice() {
 		return salePrice;
@@ -75,6 +80,14 @@ public class ProductInfo implements Serializable {
 
 	public void setBuySum(long buySum) {
 		this.buySum = buySum;
+	}
+
+	public ProductImage getProductImage() {
+		return productImage;
+	}
+
+	public void setProductImage(ProductImage productImage) {
+		this.productImage = productImage;
 	}
 
 }
