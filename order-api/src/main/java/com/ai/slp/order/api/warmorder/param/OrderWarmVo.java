@@ -28,10 +28,7 @@ public class OrderWarmVo extends BaseInfo {
 	 * 用户手机（长虹提供）
 	 */
 	private String userTel;
-	/**
-	 * 用户名称
-	 */
-	private String userName;
+
 	/**
 	 * 是否预警订单
 	 */
@@ -76,6 +73,18 @@ public class OrderWarmVo extends BaseInfo {
 	 * 收货地址
 	 */
 	private String address;
+	/**
+	 * 订单类型
+	 */
+	private String orderType;
+	/**
+	 * ip信息
+	 */
+	private String ipAddress;
+	/**
+	 * 配送方式
+	 */
+	private String logisticsType;
 
 	public String getAddress() {
 		return address;
@@ -205,12 +214,28 @@ public class OrderWarmVo extends BaseInfo {
 		this.userTel = userTel;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getOrderType() {
+		return orderType;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
+	}
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	public String getLogisticsType() {
+		return logisticsType;
+	}
+
+	public void setLogisticsType(String logisticsType) {
+		this.logisticsType = logisticsType;
 	}
 
 }
