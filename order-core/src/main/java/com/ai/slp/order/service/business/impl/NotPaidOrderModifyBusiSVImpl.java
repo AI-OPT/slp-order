@@ -47,7 +47,7 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 		if(request.getOrderId()==0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		if(request.getAdjustFee()>0) {
+		if(request.getAdjustFee()<=0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "未支付订单修改金额必须大于0");
 		}
 		CommonCheckUtils.checkTenantId(request.getTenantId(), "");
