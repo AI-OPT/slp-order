@@ -256,6 +256,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             for (OrdOdProd ordOdProd : ordOdProdList) {
                 OrdProductVo ordProductVo = new OrdProductVo();
                 ordProductVo.setOrderId(orderId);
+                ordProductVo.setProdDetalId(ordOdProd.getProdDetalId());
                 ordProductVo.setSkuId(ordOdProd.getSkuId());
                 ordProductVo.setState(ordOdProd.getState());
                 ordProductVo.setProdName(ordOdProd.getProdName());
@@ -397,6 +398,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo = new OrdOrderVo();
             ordOrderVo.setOrderId(order.getOrderId());
             ordOrderVo.setOrderType(order.getOrderType());
+            SysParamSingleCond sysParamOt= new SysParamSingleCond(order.getTenantId(), "ORD_ORDER",
+                    "ORDER_TYPE", order.getOrderType());
+            SysParam sysParamOrderType = iCacheSV.getSysParamSingle(sysParamOt);
+            ordOrderVo.setOrderTypeName(sysParamOrderType == null ? "" : sysParamOrderType.getColumnDesc());
             ordOrderVo.setBusiCode(order.getBusiCode());
             ordOrderVo.setState(order.getState());
             SysParamSingleCond sysParamSingleCond = new SysParamSingleCond(order.getTenantId(), "ORD_ORDER",
