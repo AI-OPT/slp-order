@@ -778,5 +778,22 @@ public final class OrdersConstants {
         }
 
     }
+    public static final class IfWarning {
+
+        public static class result {
+        	
+            /**
+             * 预警标志
+             */
+            public static final String WARING = "0";
+
+            /**
+             * 预警标志
+             */
+            public static final String NO_WARING = "1";
+
+        }
+
+    }
 
 }

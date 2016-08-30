@@ -13,4 +13,6 @@ public interface IOrdOdProdAtomSV {
     int updateById(OrdOdProd ordOdProd);
     
     OrdOdProd selectByPrimaryKey(long prodDetalId);
+    
+    List<OrdOdProd> selectByOrd(String tenantId,long orderId);
 }
