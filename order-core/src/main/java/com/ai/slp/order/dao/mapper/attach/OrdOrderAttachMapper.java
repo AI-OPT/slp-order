@@ -49,9 +49,10 @@ public interface OrdOrderAttachMapper {
     
     
     @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindCount")
-	public int getBehindCount(@Param("chlId") String chlId, @Param("deliveryFlag") String deliveryFlag,
-			@Param("orderId") Long orderId,@Param("tenantId") String tenantId,
-			@Param("contactTel") String contactTel,@Param("states") String states,@Param("userId") String userId,
+	public int getBehindCount(@Param("states") String states,@Param("orderId") Long orderId,
+			@Param("chlId") String chlId,@Param("routeId") String routeId,
+			@Param("userId") String userId, @Param("contactTel") String contactTel,
+			@Param("tenantId") String tenantId,@Param("deliveryFlag") String deliveryFlag,
 			@Param("orderTimeBegin") String orderTimeBegin,@Param("orderTimeEnd") String orderTimeEnd);
     
     
@@ -64,12 +65,11 @@ public interface OrdOrderAttachMapper {
         @Result(property = "adjustFee", column = "adjust_fee") })
     @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindQueryOrdOrder")
 	public List<BehindOrdOrderAttach> getBehindOrdOrder(@Param("pageCount") Integer pageCount, 
-			@Param("pageSize") Integer pageSize, @Param("chlId") String chlId, 
-			@Param("deliveryFlag") String deliveryFlag,@Param("orderId") Long orderId, 
-			@Param("tenantId") String tenantId,@Param("contactTel") String contactTel, 
-			@Param("states") String states,@Param("userId") String userId,
-			@Param("orderTimeBegin") String orderTimeBegin, 
-			@Param("orderTimeEnd") String orderTimeEnd);
-
+			@Param("pageSize") Integer pageSize,@Param("states") String states,@Param("orderId") Long orderId,
+			@Param("chlId") String chlId,@Param("routeId") String routeId,
+			@Param("userId") String userId, @Param("contactTel") String contactTel,
+			@Param("tenantId") String tenantId,@Param("deliveryFlag") String deliveryFlag,
+			@Param("orderTimeBegin") String orderTimeBegin,@Param("orderTimeEnd") String orderTimeEnd);
+    
 	
 }
