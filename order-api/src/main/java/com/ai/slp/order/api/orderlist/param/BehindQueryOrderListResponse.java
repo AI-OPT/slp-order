@@ -10,13 +10,13 @@ public class BehindQueryOrderListResponse extends BaseResponse{
 	/**
 	 * 运营后台列表信息
 	 */
-	private PageInfo<BehindOrdOrderVo> pageInfo;
+	private PageInfo<BehindParentOrdOrderVo> pageInfo;
 
-	public PageInfo<BehindOrdOrderVo> getPageInfo() {
+	public PageInfo<BehindParentOrdOrderVo> getPageInfo() {
 		return pageInfo;
 	}
 
-	public void setPageInfo(PageInfo<BehindOrdOrderVo> pageInfo) {
+	public void setPageInfo(PageInfo<BehindParentOrdOrderVo> pageInfo) {
 		this.pageInfo = pageInfo;
 	}
 
