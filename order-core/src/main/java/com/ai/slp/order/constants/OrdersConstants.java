@@ -29,6 +29,44 @@ public final class OrdersConstants {
              */
             public static final String SELF_PICKUP = "2";
         }
+        
+        
+        public static final class ChlId {
+        	
+            /**
+             * 9001:天猫
+             */
+            public static final String TMALL = "9001";
+
+            /**
+             * 9002：京东
+             */
+            public static final String JINGDONG = "9002";
+
+            /**
+             * 9003：国美
+             */
+            public static final String GOME = "9003";
+            
+            /**
+             * 9004：苏宁
+             */
+            public static final String SUNING = "9004";
+            
+            /**
+             * 9005：一号店
+             */
+            public static final String ONESTORE = "9005";
+            
+            /**
+             * 9006：自运营
+             */
+            public static final String  SELFOPERATION  = "9006";
+        }
+        
+        
+        
+        
 
         public static class OrderType {
 
