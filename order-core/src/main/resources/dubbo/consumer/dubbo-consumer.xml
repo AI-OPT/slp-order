@@ -43,7 +43,7 @@
 		interface="com.ai.slp.route.api.server.interfaces.IRouteServer" />
 	<!-- 缓存 -->
 	<dubbo:reference id="iCacheSV"
-		interface="com.ai.slp.common.api.cache.interfaces.ICacheSV" />
+		interface="com.ai.platform.common.api.cache.interfaces.ICacheSV" />
 
 	<dubbo:reference id="iOrderCancelSV"
 		interface="com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV" />
@@ -52,7 +52,7 @@
 		interface="com.ai.slp.balance.api.deduct.interfaces.IDeductSV" />
 
 	<dubbo:reference id="iServiceNumSV"
-		interface="com.ai.slp.common.api.servicenum.interfaces.IServiceNumSV" />
+		interface="com.ai.platform.common.api.servicenum.interfaces.IServiceNumSV" />
 		
 	<dubbo:reference id="iAccountQuerySV"
 		interface="com.ai.slp.balance.api.accountquery.interfaces.IAccountQuerySV" />
