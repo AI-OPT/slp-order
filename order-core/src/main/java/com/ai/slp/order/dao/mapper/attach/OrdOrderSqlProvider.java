@@ -3,6 +3,7 @@ package com.ai.slp.order.dao.mapper.attach;
 import java.util.Map;
 
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.slp.order.constants.OrdersConstants;
 
 public class OrdOrderSqlProvider {
 
@@ -73,7 +74,6 @@ public class OrdOrderSqlProvider {
     }
     
     
-    
     /**
      * 运营后台订单列表查询信息
      * 
@@ -83,62 +83,81 @@ public class OrdOrderSqlProvider {
      */
     public String behindQueryOrdOrder(Map<String, Object> param) {
         StringBuffer seqBuffer = new StringBuffer();
-        seqBuffer.append("select oo.order_id,oo.chl_id,oo.delivery_flag,"
-        		+ "contact_tel,oo.user_id,discount_fee,adjust_fee from ord_order oo,ord_od_logistics ol,ord_od_fee_total of where"
+        seqBuffer.append("select DISTINCT oo.order_id,oo.chl_id,oo.delivery_flag,contact_tel,oo.user_id,discount_fee,adjust_fee "
+        		+ "from ord_order oo,ord_order od,ord_od_logistics ol,ord_od_fee_total of where"
                 + " oo.tenant_id= '"+ param.get("tenantId") + "'");
+        String states = param.containsKey("states") ? (String) param.get("states") : null;
+        if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(states)) {  //待付款
+        	if (!StringUtil.isBlank(states))
+            	seqBuffer.append(" and oo.state in(" + states + ")");
+        }else {
+        	if (!StringUtil.isBlank(states))
+        		seqBuffer.append(" and od.state in(" + states + ")");
+        }
+        if (param.get("orderId") != null)
+        	seqBuffer.append(" and oo.order_id =" + param.get("orderId"));
         String chlId = param.containsKey("chlId") ? (String) param.get("chlId") : null;
         if (!StringUtil.isBlank(chlId))
             seqBuffer.append(" and oo.chl_id = " + chlId);
-        if (param.get("orderId") != null)
-            seqBuffer.append(" and oo.order_id =" +param.get("orderId"));
+        String routeId = param.containsKey("routeId") ? (String) param.get("routeId") : null;
+        if (!StringUtil.isBlank(routeId))
+            seqBuffer.append(" and oo.route_id = " + routeId);
         String userId = param.containsKey("userId") ? (String) param.get("userId") : null;
-        if (param.get("userId") != null)
-            seqBuffer.append(" and oo.user_id = " +userId);
-        String deliveryFlag = param.containsKey("deliveryFlag") ? (String) param.get("deliveryFlag") : null;
-        if (!StringUtil.isBlank(deliveryFlag))
-            seqBuffer.append(" and oo.delivery_flag=" + deliveryFlag);
+        if (!StringUtil.isBlank(userId))
+            seqBuffer.append(" and oo.user_id = " + userId);
         String contactTel = param.containsKey("contactTel") ? (String) param.get("contactTel") : null;
         if (!StringUtil.isBlank(contactTel))
         	seqBuffer.append(" and ol.contactTel like" + "%"+contactTel+"%");
-        String states = param.containsKey("states") ? (String) param.get("states") : null;
-        if (!StringUtil.isBlank(states))
-            seqBuffer.append(" and oo.state in(" + states + ")");
+        String deliveryFlag = param.containsKey("deliveryFlag") ? (String) param.get("deliveryFlag") : null;
+        if (!StringUtil.isBlank(deliveryFlag))
+            seqBuffer.append(" and oo.delivery_flag=" + deliveryFlag);
         if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") != null) {
             seqBuffer.append(" and oo.order_time between '" + param.get("orderTimeBegin")
                     + "' and '" + param.get("orderTimeEnd") + "'");
         }
-        seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id "
-        		+ "and of.order_id=ol.order_id order by order_time desc limit "
+        seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id"
+        		+ " order by oo.order_time desc limit "
                 + param.get("pageCount") + "," + param.get("pageSize"));
         return seqBuffer.toString();
     }
-
+    
     /**
      * 多表查询订单个数
      */
     public String behindCount(Map<String, Object> param) {
         StringBuffer seqBuffer = new StringBuffer();
-        seqBuffer.append("select count(*) from ord_order oo,ord_od_logistics ol,ord_od_fee_total of where"
+        seqBuffer.append("select count(DISTINCT oo.ORDER_ID) from ord_order oo,ord_order od,ord_od_logistics ol,ord_od_fee_total of where"
                 + " oo.tenant_id= '"+ param.get("tenantId") + "'");
+        String states = param.containsKey("states") ? (String) param.get("states") : null;
+        if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(states)) {  //待付款
+        	if (!StringUtil.isBlank(states))
+            	seqBuffer.append(" and oo.state in(" + states + ")");
+        }else {
+        	if (!StringUtil.isBlank(states))
+        		seqBuffer.append(" and od.state in(" + states + ")");
+        }
+        if (param.get("orderId") != null)
+        	seqBuffer.append(" and oo.order_id =" + param.get("orderId"));
         String chlId = param.containsKey("chlId") ? (String) param.get("chlId") : null;
         if (!StringUtil.isBlank(chlId))
             seqBuffer.append(" and oo.chl_id = " + chlId);
-        if (param.get("orderId") != null)
-        	seqBuffer.append(" and oo.order_id =" + param.get("orderId"));
-        String deliveryFlag = param.containsKey("deliveryFlag") ? (String) param.get("deliveryFlag") : null;
-        if (!StringUtil.isBlank(deliveryFlag))
-            seqBuffer.append(" and oo.delivery_flag=" + deliveryFlag);
+        String routeId = param.containsKey("routeId") ? (String) param.get("routeId") : null;
+        if (!StringUtil.isBlank(routeId))
+            seqBuffer.append(" and oo.route_id = " + routeId);
+        String userId = param.containsKey("userId") ? (String) param.get("userId") : null;
+        if (!StringUtil.isBlank(userId))
+            seqBuffer.append(" and oo.user_id = " + userId);
         String contactTel = param.containsKey("contactTel") ? (String) param.get("contactTel") : null;
         if (!StringUtil.isBlank(contactTel))
         	seqBuffer.append(" and ol.contactTel like" + "%"+contactTel+"%");
-        String states = param.containsKey("states") ? (String) param.get("states") : null;
-        if (!StringUtil.isBlank(states))
-            seqBuffer.append(" and oo.state in(" + states + ")");
+        String deliveryFlag = param.containsKey("deliveryFlag") ? (String) param.get("deliveryFlag") : null;
+        if (!StringUtil.isBlank(deliveryFlag))
+            seqBuffer.append(" and oo.delivery_flag=" + deliveryFlag);
         if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") != null) {
             seqBuffer.append(" and oo.order_time between '" + param.get("orderTimeBegin")
                     + "' and '" + param.get("orderTimeEnd") + "'");
         }
-        seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id and of.order_id=ol.order_id");
+        seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id");
         return seqBuffer.toString();
     }
 }
