@@ -1,5 +1,6 @@
 package com.ai.slp.order.api.warmorder.param;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import com.ai.opt.base.vo.BaseInfo;
@@ -27,6 +28,10 @@ public class OrderWarmVo extends BaseInfo {
 	 * 用户手机（长虹提供）
 	 */
 	private String userTel;
+	/**
+	 * 用户名称
+	 */
+	private String userName;
 	/**
 	 * 是否预警订单
 	 */
@@ -59,6 +64,42 @@ public class OrderWarmVo extends BaseInfo {
 	 * 业务订单ID
 	 */
 	private Long orderId;
+	/**
+	 * 订单类型
+	 */
+	private String ordertype;
+	/**
+	 * 下单时间
+	 */
+	private Timestamp orderTime;
+	/**
+	 * 收货地址
+	 */
+	private String address;
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getOrdertype() {
+		return ordertype;
+	}
+
+	public void setOrdertype(String ordertype) {
+		this.ordertype = ordertype;
+	}
+
+	public Timestamp getOrderTime() {
+		return orderTime;
+	}
+
+	public void setOrderTime(Timestamp orderTime) {
+		this.orderTime = orderTime;
+	}
 
 	public String getChlId() {
 		return chlId;
@@ -162,6 +203,14 @@ public class OrderWarmVo extends BaseInfo {
 
 	public void setUserTel(String userTel) {
 		this.userTel = userTel;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }

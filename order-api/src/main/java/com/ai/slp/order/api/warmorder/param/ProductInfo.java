@@ -11,7 +11,55 @@ public class ProductInfo implements Serializable {
 	/**
 	 * 购买数量
 	 */
-	private long bugSum;
+	private long buySum;
+	/**
+	 * 销售单价
+	 */
+	private long  salePrice;
+	/**
+	 * 总优惠费用
+	 */
+	private long   discountFee;
+	/**
+	 * 积分
+	 */
+	private long JF;
+	/**
+	 * 应收费用
+	 */
+	private long  adjustFee;
+	
+	public long getSalePrice() {
+		return salePrice;
+	}
+
+	public void setSalePrice(long salePrice) {
+		this.salePrice = salePrice;
+	}
+
+	public long getDiscountFee() {
+		return discountFee;
+	}
+
+	public void setDiscountFee(long discountFee) {
+		this.discountFee = discountFee;
+	}
+
+	public long getJF() {
+		return JF;
+	}
+
+	public void setJF(long jF) {
+		JF = jF;
+	}
+
+	public long getAdjustFee() {
+		return adjustFee;
+	}
+
+	public void setAdjustFee(long adjustFee) {
+		this.adjustFee = adjustFee;
+	}
 
 	public String getProdName() {
 		return prodName;
@@ -21,12 +69,14 @@ public class ProductInfo implements Serializable {
 		this.prodName = prodName;
 	}
 
-	public long getBugSum() {
-		return bugSum;
+	public long getBuySum() {
+		return buySum;
 	}
 
-	public void setBugSum(long bugSum) {
-		this.bugSum = bugSum;
+	public void setBuySum(long buySum) {
+		this.buySum = buySum;
 	}
+
+	
 
 }

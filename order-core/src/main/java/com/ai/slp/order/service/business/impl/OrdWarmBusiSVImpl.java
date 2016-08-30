@@ -77,5 +77,39 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 		}
 		return pageResult;
 	}
+	@Override
+	public OrderWarmVo selectWarmOrdDetail(String tenantId, long orderId) {
+		OrderWarmVo orderWarmVo = new OrderWarmVo();
+		List<ProductInfo> prodinfoList = new ArrayList<ProductInfo>();
+		OrdOrder orderInfo = iOrdWarmAtomSV.selectWarmOrde(tenantId, orderId);
+		if(orderInfo!=null){
+			BeanUtils.copyProperties(orderWarmVo, orderInfo);
+			List<OrdOdProd>  proList = iOrdOdProdAtomSV.selectByOrd(tenantId, orderId);
+			if(!CollectionUtil.isEmpty(proList)){
+				for(OrdOdProd prod:proList){
+					ProductInfo prodVo = new ProductInfo();
+					BeanUtils.copyProperties(prodVo, prod);
+					prodinfoList.add(prodVo);
+				}
+			}
+				//获取费用信息
+			OrdOdFeeTotal fee = iOrdOdFeeTotalAtomSV.selectByOrderId(tenantId, orderId);
+			if(fee!=null){
+				orderWarmVo.setDiscountFee(fee.getDiscountFee());
+				orderWarmVo.setPaidFee(fee.getPaidFee());
+			}
+			//获取收货人信息
+			OrdOdLogistics logistics = iOrdOdLogisticsAtomSV.selectByOrd(tenantId, orderId);
+			if(logistics!=null){
+				orderWarmVo.setContactTel(logistics.getContactTel());
+				orderWarmVo.setAddress(logistics.getAddress());
+			}
+			if(!CollectionUtil.isEmpty(prodinfoList)){
+				orderWarmVo.setProdInfo(prodinfoList);
+			}
+		}
+		
+		return orderWarmVo;
+	}
 
 }

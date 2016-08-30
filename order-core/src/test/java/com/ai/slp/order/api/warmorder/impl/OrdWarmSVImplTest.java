@@ -11,6 +11,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.slp.order.api.warmorder.interfaces.IOrderWarmSV;
+import com.ai.slp.order.api.warmorder.param.OrderWarmDetailRequest;
+import com.ai.slp.order.api.warmorder.param.OrderWarmDetailResponse;
 import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmResponse;
 import com.alibaba.fastjson.JSON;
@@ -21,7 +23,7 @@ public class OrdWarmSVImplTest {
 	@Autowired
     private IOrderWarmSV iOrderWarmSV;
 	@Test
-    public void testGetChlChannelInfoPop(){
+    public void testWarmOrder(){
 		OrderWarmRequest query=new OrderWarmRequest();
         query.setTenantId("SLP");
         query.setPageSize(1);
@@ -42,6 +44,15 @@ public class OrdWarmSVImplTest {
         e.printStackTrace();
         }
         OrderWarmResponse info=iOrderWarmSV.serchWarmOrder(query);
+        System.out.println("info="+JSON.toJSONString(info));
+        
+    }
+	@Test
+    public void testWarmOrderDetail(){
+		OrderWarmDetailRequest  query=new OrderWarmDetailRequest ();
+       // query.setTenantId("SLP");
+        query.setOrderId(2456229l);
+        OrderWarmDetailResponse info=iOrderWarmSV.searchWarmorderDetail(query);
         System.out.println("info="+JSON.toJSONString(info));
         
     }

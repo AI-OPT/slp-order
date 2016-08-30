@@ -1,10 +1,13 @@
 package com.ai.slp.order.service.atom.impl;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ai.opt.base.vo.PageInfo;
+import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -47,9 +50,21 @@ public class OrdWarmAtomSVImpl implements IOrdWarmAtomSV {
         warmPage.setPageNo(request.getPageNo());
         warmPage.setResult(ordOrderMapper.selectByExample(example));
         warmPage.setCount(count);
-        System.out.println("count"+count);
-
         return warmPage;
     }
+	@Override
+	public OrdOrder selectWarmOrde(String tenantId, long orderid) {
+		  OrdOrderCriteria example = new OrdOrderCriteria();
+		  OrdOrderCriteria.Criteria param = example.createCriteria();
+        if(!StringUtil.isBlank(tenantId)){
+        	param.andTenantIdEqualTo(tenantId);
+        }
+        param.andOrderIdEqualTo(orderid);
+        List<OrdOrder> list = ordOrderMapper.selectByExample(example);
+        if(!CollectionUtil.isEmpty(list)){
+        	return list.get(0);
+        }
+        return null;
+	}
 
 }

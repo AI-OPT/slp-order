@@ -8,6 +8,8 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.slp.order.api.warmorder.param.OrderWarmDetailRequest;
+import com.ai.slp.order.api.warmorder.param.OrderWarmDetailResponse;
 import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmResponse;
 
@@ -34,5 +36,16 @@ public interface IOrderWarmSV {
 	@POST
 	@Path("/search")
 	OrderWarmResponse serchWarmOrder(OrderWarmRequest request) throws BusinessException, SystemException;
-
+	/**
+	 * 预警订单详情查询
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author zhanglh
+	 * @ApiCode
+	 */
+	@POST
+	@Path("/detail")
+	OrderWarmDetailResponse searchWarmorderDetail(OrderWarmDetailRequest request)throws BusinessException, SystemException;
 }

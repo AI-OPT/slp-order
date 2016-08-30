@@ -5,6 +5,9 @@ import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmVo;
 
 public interface IOrdWarmBusiSV {
+	
 	public PageInfo<OrderWarmVo> selectWarmOrdPage(OrderWarmRequest request);
+	
+	public OrderWarmVo selectWarmOrdDetail(String tenantId,long orderId);
 
 }
