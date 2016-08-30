@@ -11,6 +11,11 @@ public class OrdProductVo extends BaseInfo{
 
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 *商品明细id 
+	 */
+	private Long prodDetalId;
+	
 	
 	/**
      * 业务订单ID
@@ -257,5 +262,13 @@ public class OrdProductVo extends BaseInfo{
 
 	public void setIntegral(Long integral) {
 		this.integral = integral;
+	}
+
+	public Long getProdDetalId() {
+		return prodDetalId;
+	}
+
+	public void setProdDetalId(Long prodDetalId) {
+		this.prodDetalId = prodDetalId;
 	}
 }
