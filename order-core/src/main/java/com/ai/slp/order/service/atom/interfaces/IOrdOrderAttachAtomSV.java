@@ -40,7 +40,7 @@ public interface IOrdOrderAttachAtomSV {
 	 * @param orderListRequest
 	 * @return
 	 */
-	public int behindQueryCount(BehindQueryOrderListRequest orderListRequest,String states,Long orderId);
+	public int behindQueryCount(BehindQueryOrderListRequest orderListRequest,String states);
 	
 	
 	/**
@@ -49,7 +49,5 @@ public interface IOrdOrderAttachAtomSV {
 	 * @return
 	 */
 	public List<BehindOrdOrderAttach> behindQueryOrderBySearch(BehindQueryOrderListRequest orderListRequest,
-			String states,Long orderId);
-	
-	
+			String states);
 }
