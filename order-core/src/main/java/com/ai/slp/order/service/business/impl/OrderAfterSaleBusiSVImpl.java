@@ -62,18 +62,13 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		/* 4.生成退货订单*/
 		OrdOrder backOrder=new OrdOrder();
 		BeanUtils.copyProperties(backOrder, order);
-		String orgState=order.getState();
 		long backOrderId=SequenceUtil.createOrderId();
 		Timestamp sysDate = DateUtil.getSysDate();
 		backOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER); //退货单
 		backOrder.setOrderId(backOrderId); //退货单id
 		backOrder.setOperId("");//TODO 受理工号 ??
-		backOrder.setState(OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT);
 		backOrder.setOrigOrderId(order.getOrderId());
-		ordOrderAtomSV.insertSelective(backOrder);
-		orderFrameCoreSV.ordOdStateChg(backOrder.getOrderId(), backOrder.getTenantId(), orgState, 
-				OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT,
-                OrdOdStateChg.ChgDesc.ORDER_TO_AUDIT, backOrder.getOperId(), null, null,sysDate);
+		this.insertOrderState(sysDate, backOrder);
 		/* 5.生成退货商品明细信息*/
 		OrdOdProd backOrdOdProd =new OrdOdProd();
 		BeanUtils.copyProperties(backOrdOdProd, ordOdProd);
@@ -101,17 +96,13 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		/* 4.生成换货订单*/
 		OrdOrder exOrder=new OrdOrder();
 		BeanUtils.copyProperties(exOrder, order);
-		String orgState=order.getState();
 		long exOrderId=SequenceUtil.createOrderId();
 		Timestamp sysDate = DateUtil.getSysDate();
 		exOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER); //换货单
 		exOrder.setOrderId(exOrderId); //换货单id
 		exOrder.setOperId("");//TODO 受理工号 ??
 		exOrder.setOrigOrderId(order.getOrderId());
-		ordOrderAtomSV.insertSelective(exOrder);
-		orderFrameCoreSV.ordOdStateChg(exOrder.getOrderId(), exOrder.getTenantId(), orgState, 
-				OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT,
-                OrdOdStateChg.ChgDesc.ORDER_TO_AUDIT, exOrder.getOperId(), null, null,sysDate);
+		this.insertOrderState(sysDate, exOrder);
 		/* 5.生成换货商品明细信息*/
 		OrdOdProd backOrdOdProd =new OrdOdProd();
 		BeanUtils.copyProperties(backOrdOdProd, ordOdProd);
@@ -139,17 +130,19 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		/* 4.生成退款订单信息*/
 		OrdOrder rdOrder=new OrdOrder();
 		BeanUtils.copyProperties(rdOrder, order);
-		String orgState=order.getState();
 		long rdOrderId=SequenceUtil.createOrderId();
 		Timestamp sysDate = DateUtil.getSysDate();
 		rdOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER); //退款单
 		rdOrder.setOrderId(rdOrderId); //退款单id
 		rdOrder.setOperId("");//TODO 受理工号 ??
 		rdOrder.setOrigOrderId(order.getOrderId());
+		this.insertOrderState(sysDate, rdOrder);
+		/*rdOrder.setState(newSate);
+		rdOrder.setStateChgTime(sysDate);
 		ordOrderAtomSV.insertSelective(rdOrder);
 		orderFrameCoreSV.ordOdStateChg(rdOrder.getOrderId(), rdOrder.getTenantId(), orgState, 
 				OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT,
-                OrdOdStateChg.ChgDesc.ORDER_TO_AUDIT, rdOrder.getOperId(), null, null,sysDate);
+                OrdOdStateChg.ChgDesc.ORDER_TO_AUDIT, rdOrder.getOperId(), null, null,sysDate);*/
 		/* 5.生成退款商品明细信息*/
 		OrdOdProd backOrdOdProd =new OrdOdProd();
 		BeanUtils.copyProperties(backOrdOdProd, ordOdProd);
@@ -216,5 +209,19 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		}
 		return ordOdProd;
 	}
+	
+
+    /**
+     * 保存订单及写入订单轨迹
+     */
+    private void insertOrderState(Timestamp sysDate,OrdOrder ordOrder) {
+    	String orgState = ordOrder.getState();
+    	String newState = OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT;
+    	ordOrder.setState(newState);
+    	ordOrder.setStateChgTime(sysDate);
+		ordOrderAtomSV.insertSelective(ordOrder);
+		orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, 
+				newState,OrdOdStateChg.ChgDesc.ORDER_TO_AUDIT, ordOrder.getOperId(), null, null,sysDate);
+    }
 	
 }
