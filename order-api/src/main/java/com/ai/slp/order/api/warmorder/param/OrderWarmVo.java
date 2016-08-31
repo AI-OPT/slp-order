@@ -61,10 +61,7 @@ public class OrderWarmVo extends BaseInfo {
 	 * 业务订单ID
 	 */
 	private Long orderId;
-	/**
-	 * 订单类型
-	 */
-	private String ordertype;
+
 	/**
 	 * 下单时间
 	 */
@@ -88,7 +85,7 @@ public class OrderWarmVo extends BaseInfo {
 	/**
 	 * 收件人姓名
 	 */
-	private String  contactName;
+	private String contactName;
 
 	public String getAddress() {
 		return address;
@@ -96,14 +93,6 @@ public class OrderWarmVo extends BaseInfo {
 
 	public void setAddress(String address) {
 		this.address = address;
-	}
-
-	public String getOrdertype() {
-		return ordertype;
-	}
-
-	public void setOrdertype(String ordertype) {
-		this.ordertype = ordertype;
 	}
 
 	public Timestamp getOrderTime() {
