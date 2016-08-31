@@ -33,6 +33,10 @@ public class ProductInfo implements Serializable {
 	 * 图片信息
 	 */
 	private ProductImage productImage;
+	/**
+	 * 图片路径
+	 */
+	private String imageUrl;
 
 	public long getSalePrice() {
 		return salePrice;
@@ -88,6 +92,14 @@ public class ProductInfo implements Serializable {
 
 	public void setProductImage(ProductImage productImage) {
 		this.productImage = productImage;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 }
