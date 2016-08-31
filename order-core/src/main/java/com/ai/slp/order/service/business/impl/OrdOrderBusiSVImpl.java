@@ -708,12 +708,12 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());
           	    //TODO 绑定手机号??
         		/* 判断查询条件是否为待付款 待付款的条件下不存在子订单信息*/
-        		if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(states)) {
+        		if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(behindOrdOrderAttach.getState())) {
         			BehindOrdOrderVo orderVo=new BehindOrdOrderVo();
         			/* 查询父订单下的商品信息*/
-        			List<BehindOrdProductVo> prodList = this.getProdList(orderListRequest, behindOrdOrderAttach,states,null);
+        			List<BehindOrdProductVo> prodList = this.getProdList(orderListRequest, behindOrdOrderAttach,behindOrdOrderAttach.getState(),null);
         			orderVo.setProductList(prodList);
-        			orderVo.setState(states);
+        			orderVo.setState(behindOrdOrderAttach.getState());
     				SysParamSingleCond sysParamSingleCond = new SysParamSingleCond(
     						orderListRequest.getTenantId(), "ORD_ORDER",
     						"STATE", states);
