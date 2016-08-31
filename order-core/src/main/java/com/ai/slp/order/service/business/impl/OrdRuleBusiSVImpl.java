@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.orderrule.param.OrderRuleDetailResponse;
