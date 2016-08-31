@@ -38,6 +38,11 @@ public class BehindOrdOrderAttach extends BaseInfo{
     private Long adjustFee;
     
     /**
+     * 订单状态
+     */
+    private String state;
+    
+    /**
      * 收货人手机号
      */
     private String contactTel;
@@ -60,6 +65,14 @@ public class BehindOrdOrderAttach extends BaseInfo{
 
 	public String getDeliveryFlag() {
 		return deliveryFlag;
+	}
+	
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public void setDeliveryFlag(String deliveryFlag) {
