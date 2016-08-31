@@ -74,6 +74,8 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 					OrdOdLogistics logistics = iOrdOdLogisticsAtomSV.selectByOrd(orderVo.getTenantId(), orderVo.getOrderId());
 					if(logistics!=null){
 						orderVo.setContactTel(logistics.getContactTel());
+						orderVo.setLogisticsType(logistics.getLogisticsType());
+						orderVo.setContactName(logistics.getContactName());
 					}
 				}
 				if(!CollectionUtil.isEmpty(prodinfoList)){
