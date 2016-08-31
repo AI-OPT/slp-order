@@ -74,6 +74,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 					OrdOdLogistics logistics = iOrdOdLogisticsAtomSV.selectByOrd(orderVo.getTenantId(), orderVo.getOrderId());
 					if(logistics!=null){
 						orderVo.setContactTel(logistics.getContactTel());
+						orderVo.setAddress(logistics.getAddress());
 						orderVo.setLogisticsType(logistics.getLogisticsType());
 						orderVo.setContactName(logistics.getContactName());
 					}
@@ -116,6 +117,8 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 			if(logistics!=null){
 				orderWarmVo.setContactTel(logistics.getContactTel());
 				orderWarmVo.setAddress(logistics.getAddress());
+				orderWarmVo.setLogisticsType(logistics.getLogisticsType());
+				orderWarmVo.setContactName(logistics.getContactName());
 			}
 			if(!CollectionUtil.isEmpty(prodinfoList)){
 				orderWarmVo.setProdInfo(prodinfoList);
