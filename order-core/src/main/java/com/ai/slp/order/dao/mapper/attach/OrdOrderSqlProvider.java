@@ -83,7 +83,7 @@ public class OrdOrderSqlProvider {
      */
     public String behindQueryOrdOrder(Map<String, Object> param) {
         StringBuffer seqBuffer = new StringBuffer();
-        seqBuffer.append("select DISTINCT oo.order_id,oo.state,oo.chl_id,oo.delivery_flag,contact_tel,oo.user_id,discount_fee,adjust_fee "
+        seqBuffer.append("select DISTINCT oo.order_id,oo.state,oo.tenant_id,oo.chl_id,oo.delivery_flag,contact_tel,oo.user_id,discount_fee,adjust_fee "
         		+ "from ord_order oo,ord_order od,ord_od_logistics ol,ord_od_fee_total of where"
                 + " oo.tenant_id= '"+ param.get("tenantId") + "'");
         if (param.get("orderId") != null)
@@ -113,7 +113,7 @@ public class OrdOrderSqlProvider {
         					+ " order by oo.order_time desc limit "
         					+ param.get("pageCount") + "," + param.get("pageSize"));
         		}else {
-        			seqBuffer.append(" and od.route_id = " + routeId);
+        			seqBuffer.append(" and od.route_id = '" + routeId+"'");
                 	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id"
                 			+ " order by oo.order_time desc limit "
                 			+ param.get("pageCount") + "," + param.get("pageSize"));
@@ -127,7 +127,7 @@ public class OrdOrderSqlProvider {
         			+ param.get("pageCount") + "," + param.get("pageSize"));
         }else {                                                          
         	if (!StringUtil.isBlank(routeId)) {
-        		seqBuffer.append(" and od.route_id = " + routeId);
+        		seqBuffer.append(" and od.route_id = '" + routeId+"'");
         	}
         	seqBuffer.append(" and od.state in(" + states + ")");
         	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id"
@@ -168,7 +168,7 @@ public class OrdOrderSqlProvider {
         		if(StringUtil.isBlank(routeId)) {
         			seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id");
         		}else {
-        			seqBuffer.append(" and od.route_id = " + routeId);
+        			seqBuffer.append(" and od.route_id = '" + routeId+"'");
                 	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id");
         		}
         }else if (!StringUtil.isBlank(states) && (OrdersConstants.OrdOrder.State.WAIT_PAY.equals(states)||
@@ -178,7 +178,7 @@ public class OrdOrderSqlProvider {
         	seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id");
         }else {                                                          
         	if (!StringUtil.isBlank(routeId)) {
-        		seqBuffer.append(" and od.route_id = " + routeId);
+        		seqBuffer.append(" and od.route_id = '" + routeId+"'");
         	}
         	seqBuffer.append(" and od.state in(" + states + ")");
         	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id");
