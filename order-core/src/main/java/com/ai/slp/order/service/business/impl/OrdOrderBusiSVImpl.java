@@ -708,6 +708,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			/* 查询父订单下的商品信息*/
         			List<BehindOrdProductVo> prodList = this.getProdList(orderListRequest, behindOrdOrderAttach,behindOrdOrderAttach.getState(),null);
         			orderVo.setProductList(prodList);
+        			orderVo.setProdSize(prodList.size());
         			orderVo.setState(behindOrdOrderAttach.getState());
         			SysParam sysParamState = this.translateInfo(orderListRequest.getTenantId(), "ORD_ORDER",
     						"STATE", behindOrdOrderAttach.getState(), iCacheSV);
@@ -722,13 +723,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			List<OrdOrder> orders= ordOrderAtomSV.selectByExample(exampleOrder);
         			for (OrdOrder ordOrder : orders) {
         				BehindOrdOrderVo orderVo=new BehindOrdOrderVo();
-        				//List<BehindOrdProductVo> productList=new ArrayList<BehindOrdProductVo>();
         				orderVo.setOrderId(ordOrder.getOrderId());
         				orderVo.setState(ordOrder.getState());
         				SysParam sysParamState = this.translateInfo(ordOrder.getTenantId(), "ORD_ORDER",
         						"STATE", ordOrder.getState(), iCacheSV);
         				orderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
         				List<BehindOrdProductVo> prodList = this.getProdList(orderListRequest, behindOrdOrderAttach,null,ordOrder.getOrderId());
+        				orderVo.setProdSize(prodList.size());
         				orderVo.setProductList(prodList);
         				orderList.add(orderVo);
         			}
