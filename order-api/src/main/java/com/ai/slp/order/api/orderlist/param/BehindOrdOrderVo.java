@@ -24,6 +24,11 @@ public class BehindOrdOrderVo extends BaseInfo{
      */
     private String stateName;
     
+    /**
+     * 商品SIZE
+     */
+    private int prodSize;
+    
     
     private List<BehindOrdProductVo> productList;
     
@@ -57,5 +62,13 @@ public class BehindOrdOrderVo extends BaseInfo{
 
 	public void setProductList(List<BehindOrdProductVo> productList) {
 		this.productList = productList;
+	}
+
+	public int getProdSize() {
+		return prodSize;
+	}
+
+	public void setProdSize(int prodSize) {
+		this.prodSize = prodSize;
 	}
 }
