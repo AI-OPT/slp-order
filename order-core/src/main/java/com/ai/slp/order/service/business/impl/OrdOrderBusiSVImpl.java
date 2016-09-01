@@ -693,12 +693,15 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		List<BehindOrdOrderVo> orderList=new ArrayList<BehindOrdOrderVo>();
         		pOrderVo.setpOrderId(behindOrdOrderAttach.getOrderId());
         		pOrderVo.setChlId(behindOrdOrderAttach.getChlId());
+        		SysParam sysParamChlId = this.translateInfo(behindOrdOrderAttach.getTenantId(), 
+        				"ORD_ORDER", "CHL_ID", behindOrdOrderAttach.getChlId(), iCacheSV);
+        		pOrderVo.setChlIdName(sysParamChlId==null?"":sysParamChlId.getColumnDesc());
         		pOrderVo.setContactTel(behindOrdOrderAttach.getContactTel());
         		pOrderVo.setUserId(behindOrdOrderAttach.getUserId());
         		pOrderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
-        		SysParam sysParamChlId = this.translateInfo(behindOrdOrderAttach.getTenantId(), 
-        				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getChlId(), iCacheSV);
-        		pOrderVo.setDeliveryFlagName(sysParamChlId==null?"":sysParamChlId.getColumnDesc());
+        		SysParam sysParamDf = this.translateInfo(behindOrdOrderAttach.getTenantId(), 
+        				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
+        		pOrderVo.setDeliveryFlagName(sysParamDf==null?"":sysParamDf.getColumnDesc());
         		pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
         		pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());
           	    //TODO 绑定手机号??
