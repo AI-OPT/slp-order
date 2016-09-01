@@ -1,6 +1,5 @@
 package com.ai.slp.order.api.ordermodify.param;
 
-import org.hibernate.validator.constraints.NotBlank;
 
 import com.ai.opt.base.vo.BaseInfo;
 
