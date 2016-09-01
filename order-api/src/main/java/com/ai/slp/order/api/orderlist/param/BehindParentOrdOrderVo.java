@@ -40,6 +40,12 @@ public class BehindParentOrdOrderVo extends BaseInfo {
     private String deliveryFlag;
     
     /**
+     * 是否需要物流展示名称
+     */
+    private String deliveryFlagName;
+    
+    
+    /**
      * 总优惠金额
      */
     private Long discountFee;
@@ -144,5 +150,13 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
 	public void setOrderList(List<BehindOrdOrderVo> orderList) {
 		this.orderList = orderList;
+	}
+
+	public String getDeliveryFlagName() {
+		return deliveryFlagName;
+	}
+
+	public void setDeliveryFlagName(String deliveryFlagName) {
+		this.deliveryFlagName = deliveryFlagName;
 	}
 }
