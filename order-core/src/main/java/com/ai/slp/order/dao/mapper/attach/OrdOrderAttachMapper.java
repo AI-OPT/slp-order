@@ -62,7 +62,8 @@ public interface OrdOrderAttachMapper {
         @Result(property = "contactTel", column = "contact_tel"),
         @Result(property = "userId", column = "user_id"),
         @Result(property = "discountFee", column = "discount_fee"),
-        @Result(property = "adjustFee", column = "adjust_fee") })
+        @Result(property = "adjustFee", column = "adjust_fee"),
+        @Result(property = "tenantId", column = "tenant_id")})
     @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindQueryOrdOrder")
 	public List<BehindOrdOrderAttach> getBehindOrdOrder(@Param("pageCount") Integer pageCount, 
 			@Param("pageSize") Integer pageSize,@Param("states") String states,@Param("orderId") Long orderId,
