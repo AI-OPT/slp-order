@@ -20,6 +20,11 @@ public class BehindParentOrdOrderVo extends BaseInfo {
     private String chlId;
     
     /**
+     * 订单来源展示名称
+     */
+    private String chlIdName;
+    
+    /**
      * 父订单id
      */
     private Long pOrderId;
@@ -78,6 +83,15 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
 	public void setChlId(String chlId) {
 		this.chlId = chlId;
+	}
+	
+	
+	public String getChlIdName() {
+		return chlIdName;
+	}
+
+	public void setChlIdName(String chlIdName) {
+		this.chlIdName = chlIdName;
 	}
 
 	public Long getpOrderId() {
