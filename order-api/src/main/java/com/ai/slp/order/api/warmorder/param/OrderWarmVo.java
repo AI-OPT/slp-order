@@ -86,6 +86,10 @@ public class OrderWarmVo extends BaseInfo {
 	 * 收件人姓名
 	 */
 	private String contactName;
+	/**
+	 * 买家留言
+	 */
+	private String remark;
 
 	public String getAddress() {
 		return address;
@@ -237,6 +241,14 @@ public class OrderWarmVo extends BaseInfo {
 
 	public void setContactName(String contactName) {
 		this.contactName = contactName;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 }
