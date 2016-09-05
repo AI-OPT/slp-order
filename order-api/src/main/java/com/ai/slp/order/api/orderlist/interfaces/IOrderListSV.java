@@ -12,7 +12,6 @@ import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
-import com.ai.slp.order.api.orderlist.param.QueryExceptionOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -74,21 +73,6 @@ public interface IOrderListSV {
     @POST
     @Path("/queryApiOrder")
     QueryApiOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest) throws BusinessException, SystemException;
-    
-    /**
-     * 异常订单查询
-     * @param orderListRequest
-     * @return
-     * @throws BusinessException
-     * @throws SystemException
-     * @author caofz
-     * @ApiDocMethod
-     * @ApiCode 
-     * @RestRelativeURL
-     */
-	@POST
-	@Path("/queryExceptionOrderList")
-	QueryOrderListResponse queryExceptionOrderList(QueryExceptionOrderRequest orderListRequest) throws BusinessException, SystemException;
     
 	
 	/**
