@@ -1,6 +1,7 @@
 package com.ai.slp.order.service.business.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +34,6 @@ import com.ai.slp.order.api.orderlist.param.OrderPayVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
-import com.ai.slp.order.api.orderlist.param.QueryExceptionOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -586,17 +586,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     }
     
     
-    //TODO ????????
-    /**
-     * 异常订单的查询
-     */
-    @Override
-	public QueryOrderListResponse queryExceptionOrderList(QueryExceptionOrderRequest orderListRequest)
-			throws BusinessException, SystemException {
-		return null;
-	}
-    
-    
     /**
      * 商品集合API
      */
@@ -702,8 +691,12 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		SysParam sysParamDf = this.translateInfo(behindOrdOrderAttach.getTenantId(), 
         				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
         		pOrderVo.setDeliveryFlagName(sysParamDf==null?"":sysParamDf.getColumnDesc());
-        		pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
-        		pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());
+        		String[] arr={"21","22","23","31","92","93","94"};  //售后状态
+        		boolean flag = Arrays.asList(arr).contains(behindOrdOrderAttach.getState());
+        		if(!flag) {
+        			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
+        			pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());
+        		}
           	    //TODO 绑定手机号??
         		/* 判断查询条件是否为待付款 待付款的条件下不存在子订单信息*/
         		if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(behindOrdOrderAttach.getState())) {
@@ -723,6 +716,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			OrdOrderCriteria.Criteria criteriaOrder = exampleOrder.createCriteria();
         			criteriaOrder.andParentOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
         			criteriaOrder.andTenantIdEqualTo(orderListRequest.getTenantId());
+        			if(!flag) {
+        				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO);
+        			}else {
+        				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.YES);  //售后订单
+        			}
         			List<OrdOrder> orders= ordOrderAtomSV.selectByExample(exampleOrder);
         			for (OrdOrder ordOrder : orders) {
         				BehindOrdOrderVo orderVo=new BehindOrdOrderVo();
@@ -738,19 +736,21 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			}
         			pOrderVo.setOrderList(orderList);
         		}
-	    		OrdOdFeeProdCriteria exampleFeeProd = new OrdOdFeeProdCriteria();
-	    		OrdOdFeeProdCriteria.Criteria criteriaFeeProd = exampleFeeProd.createCriteria();
-	    		criteriaFeeProd.andOrderIdEqualTo(behindOrdOrderAttach.getOrderId()); //父订单id
-	    		List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByExample(exampleFeeProd);
-	    		long points = 0; //积分
-	    		if (!CollectionUtil.isEmpty(orderFeeProdList)) {
-	    			for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) { 
-	    				if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
-	    					points+=ordOdFeeProd.getPaidFee();
-	    				}
-	    			}
-	    		}
-    		pOrderVo.setPoints(points);
+        		if(!flag) {
+        			OrdOdFeeProdCriteria exampleFeeProd = new OrdOdFeeProdCriteria();
+        			OrdOdFeeProdCriteria.Criteria criteriaFeeProd = exampleFeeProd.createCriteria();
+        			criteriaFeeProd.andOrderIdEqualTo(behindOrdOrderAttach.getOrderId()); //父订单id
+        			List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByExample(exampleFeeProd);
+        			long points = 0; //积分
+        			if (!CollectionUtil.isEmpty(orderFeeProdList)) {
+        				for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) { 
+        					if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
+        						points+=ordOdFeeProd.getPaidFee();
+        					}
+        				}
+        			}
+        			pOrderVo.setPoints(points);
+        		}
     		orderVoList.add(pOrderVo);
          }
        }
