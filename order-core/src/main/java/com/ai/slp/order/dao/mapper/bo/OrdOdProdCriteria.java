@@ -2294,6 +2294,126 @@ public class OrdOdProdCriteria {
             addCriterion("IS_INVOICE not between", value1, value2, "isInvoice");
             return (Criteria) this;
         }
+
+        public Criteria andCouponFeeIsNull() {
+            addCriterion("COUPON_FEE is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeIsNotNull() {
+            addCriterion("COUPON_FEE is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeEqualTo(long value) {
+            addCriterion("COUPON_FEE =", value, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeNotEqualTo(long value) {
+            addCriterion("COUPON_FEE <>", value, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeGreaterThan(long value) {
+            addCriterion("COUPON_FEE >", value, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeGreaterThanOrEqualTo(long value) {
+            addCriterion("COUPON_FEE >=", value, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeLessThan(long value) {
+            addCriterion("COUPON_FEE <", value, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeLessThanOrEqualTo(long value) {
+            addCriterion("COUPON_FEE <=", value, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeIn(List<Long> values) {
+            addCriterion("COUPON_FEE in", values, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeNotIn(List<Long> values) {
+            addCriterion("COUPON_FEE not in", values, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeBetween(long value1, long value2) {
+            addCriterion("COUPON_FEE between", value1, value2, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andCouponFeeNotBetween(long value1, long value2) {
+            addCriterion("COUPON_FEE not between", value1, value2, "couponFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeIsNull() {
+            addCriterion("JF_FEE is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeIsNotNull() {
+            addCriterion("JF_FEE is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeEqualTo(long value) {
+            addCriterion("JF_FEE =", value, "jfFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeNotEqualTo(long value) {
+            addCriterion("JF_FEE <>", value, "jfFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeGreaterThan(long value) {
+            addCriterion("JF_FEE >", value, "jfFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeGreaterThanOrEqualTo(long value) {
+            addCriterion("JF_FEE >=", value, "jfFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeLessThan(long value) {
+            addCriterion("JF_FEE <", value, "jfFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeLessThanOrEqualTo(long value) {
+            addCriterion("JF_FEE <=", value, "jfFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeIn(List<Long> values) {
+            addCriterion("JF_FEE in", values, "jfFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeNotIn(List<Long> values) {
+            addCriterion("JF_FEE not in", values, "jfFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeBetween(long value1, long value2) {
+            addCriterion("JF_FEE between", value1, value2, "jfFee");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfFeeNotBetween(long value1, long value2) {
+            addCriterion("JF_FEE not between", value1, value2, "jfFee");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
