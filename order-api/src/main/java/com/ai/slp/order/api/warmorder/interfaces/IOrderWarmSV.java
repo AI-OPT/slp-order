@@ -31,7 +31,8 @@ public interface IOrderWarmSV {
 	 * @throws BusinessException
 	 * @throws SystemException
 	 * @author zhanglh
-	 * @ApiCode
+	 * @ApiCode ORD_WARM_001
+	 * @RestRelativeURL orderwarm/search
 	 */
 	@POST
 	@Path("/search")
@@ -43,7 +44,8 @@ public interface IOrderWarmSV {
 	 * @throws BusinessException
 	 * @throws SystemException
 	 * @author zhanglh
-	 * @ApiCode
+	 * @ApiCode ORD_WARM_002
+	 * @RestRelativeURL orderwarm/detail
 	 */
 	@POST
 	@Path("/detail")

@@ -42,7 +42,6 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 	public PageInfo<OrderWarmVo> selectWarmOrdPage(OrderWarmRequest request) {
 		PageInfo<OrderWarmVo> pageResult=new PageInfo<OrderWarmVo>();
         PageInfo<OrdOrder> pageInfo = iOrdWarmAtomSV.selectWarmOrdPage(request);
-        List<ProductInfo> prodinfoList = new ArrayList<ProductInfo>();
         pageResult.setCount(pageInfo.getCount());
 		pageResult.setPageSize(pageInfo.getPageSize());
 		pageResult.setPageNo(pageInfo.getPageNo());
@@ -50,6 +49,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 		if(pageInfo.getResult()!=null&&!CollectionUtil.isEmpty(pageInfo.getResult())){
 			for(OrdOrder ord:pageInfo.getResult()){
 				OrderWarmVo orderVo = new OrderWarmVo();
+				List<ProductInfo> prodinfoList = new ArrayList<ProductInfo>();
 				BeanUtils.copyProperties(orderVo, ord);
 				//获取商品信息
 				if(orderVo.getOrderId()!=null){
