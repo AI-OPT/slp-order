@@ -110,7 +110,7 @@ public class OrdProductVo extends BaseInfo{
     /**
      * 积分
      */
-    private Long integral;
+    private long JF;
 
 	public Long getOrderId() {
 		return orderId;
@@ -256,12 +256,12 @@ public class OrdProductVo extends BaseInfo{
 		this.state = state;
 	}
 
-	public Long getIntegral() {
-		return integral;
+	public long getJF() {
+		return JF;
 	}
 
-	public void setIntegral(Long integral) {
-		this.integral = integral;
+	public void setJF(long jF) {
+		JF = jF;
 	}
 
 	public Long getProdDetalId() {
