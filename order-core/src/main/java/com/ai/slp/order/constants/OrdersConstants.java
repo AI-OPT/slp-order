@@ -12,7 +12,6 @@ public final class OrdersConstants {
 
     public static final class OrdOrder {
 
-
         public static final class DeliveryFlag {
             /**
              * 0:无
@@ -721,6 +720,11 @@ public final class OrdersConstants {
              * 积分
              */
             public static final String JF = "5";
+            
+            /**
+             * 优惠券
+             */
+            public static final String COUPON="8";
 
         }
     }
@@ -807,5 +811,13 @@ public final class OrdersConstants {
         }
 
     }
+    
+    public static final class JfTransf {
+		
+		/**
+		 * 积分转换率
+		 */
+		public static final int rate=100;
+	}
 
 }
