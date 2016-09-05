@@ -16,10 +16,8 @@ import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
-import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.INotPaidOrderModifyBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 
@@ -33,9 +31,6 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
 	
 	@Autowired
-	private IOrdOrderAtomSV ordOrderAtomSV;
-	
-	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	
 	@Override
@@ -47,10 +42,10 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 		if(request.getOrderId()==0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		if(request.getAdjustFee()<=0) {
+		if(request.getUpdateAmount()<=0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "未支付订单修改金额必须大于0");
 		}
-		CommonCheckUtils.checkTenantId(request.getTenantId(), "");
+		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
 		/* 2.修改金额和备注*/
 		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(odFeeTotal==null) {
@@ -67,27 +62,23 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 			logger.warn("未能查询到指定的订单商品明细表信息[订单id:"+request.getOrderId()+"]");
 			throw new BusinessException("","未能查询到指定的订单商品明细表信息[订单id:"+request.getOrderId()+"]");
 		}
-		long subValue=odFeeTotal.getAdjustFee()-request.getAdjustFee();
-		if(subValue>=0) { //降价
-			for (OrdOdProd ordOdProd : ordOdProdList) {
-				ordOdProd.setAdjustFee(ordOdProd.getAdjustFee()-subValue/ordOdProdList.size());
-				ordOdProdAtomSV.updateById(ordOdProd);
-			}
-		}else {  //涨价
-			for (OrdOdProd ordOdProd : ordOdProdList) {
-				ordOdProd.setAdjustFee(ordOdProd.getAdjustFee()+(-subValue)/ordOdProdList.size());
-				ordOdProdAtomSV.updateById(ordOdProd);
-			}
+		long updateAmount = request.getUpdateAmount();
+		//总减免费用 
+		long operDiscountFee=odFeeTotal.getAdjustFee()-updateAmount;
+		//单个商品减免费用
+		long prodOperDiscountFee=operDiscountFee/ordOdProdList.size();
+		for (OrdOdProd ordOdProd : ordOdProdList) {
+			ordOdProd.setAdjustFee(ordOdProd.getTotalFee()-ordOdProd.getDiscountFee()-
+					prodOperDiscountFee-ordOdProd.getOperDiscountFee());
+			ordOdProd.setOperDiscountFee(ordOdProd.getOperDiscountFee()+prodOperDiscountFee);
+			ordOdProd.setOperDiscountDesc(request.getUpdateRemark());
+			ordOdProdAtomSV.updateById(ordOdProd);
 		}
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(order==null) {
-			logger.warn("未能查询到指定的订单表信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException("","未能查询到指定的订单表信息[订单id:"+request.getOrderId()+"]");
-		}
-		odFeeTotal.setAdjustFee(request.getAdjustFee());
-		order.setRemark(request.getRemark());
+		odFeeTotal.setAdjustFee(updateAmount);
+		odFeeTotal.setOperDiscountFee(odFeeTotal.getOperDiscountFee()+operDiscountFee);
+		odFeeTotal.setOperDiscountDesc(request.getUpdateRemark());
+		odFeeTotal.setPayFee(updateAmount);
 		/* 3.修改金额和备注信息*/
 		ordOdFeeTotalAtomSV.updateByOrderId(odFeeTotal);
-		ordOrderAtomSV.updateById(order);
 	}
 }
