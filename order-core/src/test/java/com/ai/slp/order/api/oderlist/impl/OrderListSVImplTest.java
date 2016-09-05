@@ -1,6 +1,9 @@
 package com.ai.slp.order.api.oderlist.impl;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
+import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
@@ -67,7 +71,7 @@ public class OrderListSVImplTest {
     public void testQueryOrder() {
     	QueryOrderRequest request=new QueryOrderRequest();
     	request.setOrderId(35913355l);
-    	request.setTenantId("SLP");
+    	request.setTenantId("changhong");
     	QueryOrderResponse response = orderListSV.queryOrder(request);
     	String str = JSON.toJSONString(response);
     	System.out.println(str);
@@ -76,13 +80,21 @@ public class OrderListSVImplTest {
     @Test
     public void behindOrderListTest() {
     	BehindQueryOrderListRequest request = new BehindQueryOrderListRequest();
-         request.setTenantId("SLP");
-      //   request.setOrderId(2000000978695921l);
+         request.setTenantId("changhong");
+         List<String> stateList=new ArrayList<String>();
+       //  request.setContactTel("18210680992");
+     // stateList.add("11");
+        // stateList.add("91");
+      //  request.setOrderId(33457039827l);
          request.setPageNo(1);
          request.setPageSize(5);
-         request.setOrderTimeBegin("2016-05-01 00:00:00");
-         request.setOrderTimeEnd("2016-07-13 10:03:32");
-         System.out.println(orderListSV.behindQueryOrderList(request).getResponseHeader());
+      //request.setStateList(stateList);
+     // request.setRouteId("仓库1");
+       //  request.setOrderTimeBegin("2016-06-14 16:15:29");
+       //  request.setOrderTimeEnd("2016-06-15 16:16:29");
+         BehindQueryOrderListResponse response = orderListSV.behindQueryOrderList(request);
+         String str = JSON.toJSONString(response);
+         System.out.println(str);
          System.out.println(orderListSV.behindQueryOrderList(request).getPageInfo().getResult().size());
     }
 }
