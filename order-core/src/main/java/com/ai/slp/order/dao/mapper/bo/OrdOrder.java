@@ -85,6 +85,8 @@ public class OrdOrder {
 
     private String warningType;
 
+    private String cusServiceFlag;
+
     public long getOrderId() {
         return orderId;
     }
@@ -411,5 +413,13 @@ public class OrdOrder {
 
     public void setWarningType(String warningType) {
         this.warningType = warningType == null ? null : warningType.trim();
+    }
+
+    public String getCusServiceFlag() {
+        return cusServiceFlag;
+    }
+
+    public void setCusServiceFlag(String cusServiceFlag) {
+        this.cusServiceFlag = cusServiceFlag == null ? null : cusServiceFlag.trim();
     }
 }
