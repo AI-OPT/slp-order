@@ -108,9 +108,14 @@ public class OrdProductVo extends BaseInfo{
     private String prodExtendInfo;
     
     /**
-     * 积分
+     * 优惠扣减费用
      */
-    private long JF;
+    private long couponFee;
+    
+    /**
+     * 积分扣减费用
+     */
+    private long jfFee;
 
 	public Long getOrderId() {
 		return orderId;
@@ -256,12 +261,21 @@ public class OrdProductVo extends BaseInfo{
 		this.state = state;
 	}
 
-	public long getJF() {
-		return JF;
+	
+	public long getCouponFee() {
+		return couponFee;
 	}
 
-	public void setJF(long jF) {
-		JF = jF;
+	public void setCouponFee(long couponFee) {
+		this.couponFee = couponFee;
+	}
+
+	public long getJfFee() {
+		return jfFee;
+	}
+
+	public void setJfFee(long jfFee) {
+		this.jfFee = jfFee;
 	}
 
 	public Long getProdDetalId() {
