@@ -15,10 +15,13 @@ import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmVo;
 import com.ai.slp.order.api.warmorder.param.ProductImage;
 import com.ai.slp.order.api.warmorder.param.ProductInfo;
+import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
@@ -38,6 +41,8 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 	IOrdOdFeeTotalAtomSV iOrdOdFeeTotalAtomSV;
 	@Autowired
 	IOrdOdLogisticsAtomSV iOrdOdLogisticsAtomSV;
+	@Autowired
+	IOrdOdFeeProdAtomSV iOrdOdFeeProdAtomSV;
 	@Override
 	public PageInfo<OrderWarmVo> selectWarmOrdPage(OrderWarmRequest request) {
 		PageInfo<OrderWarmVo> pageResult=new PageInfo<OrderWarmVo>();
@@ -63,6 +68,15 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 							prodVo.setProductImage(productImage);
 							prodinfoList.add(prodVo);
 						}
+					}
+					//获取优惠信息
+					OrdOdFeeProd jfProd = iOrdOdFeeProdAtomSV.selectByOrdAndStyle(orderVo.getOrderId(), OrdersConstants.OrdOdFeeProd.PayStyle.JF);
+					OrdOdFeeProd couponProd = iOrdOdFeeProdAtomSV.selectByOrdAndStyle(orderVo.getOrderId(), OrdersConstants.OrdOdFeeProd.PayStyle.COUPON);
+					if(jfProd!=null){
+						orderVo.setJfDeduction(jfProd.getPaidFee());
+					}
+					if(couponProd!=null){
+						orderVo.setCouponFee(couponProd.getPaidFee());
 					}
 					//获取费用信息
 					OrdOdFeeTotal fee = iOrdOdFeeTotalAtomSV.selectByOrderId(orderVo.getTenantId(), orderVo.getOrderId());

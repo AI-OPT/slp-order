@@ -90,6 +90,14 @@ public class OrderWarmVo extends BaseInfo {
 	 * 买家留言
 	 */
 	private String remark;
+	/**
+	 * 优惠券抵扣
+	 */
+	private long couponFee;
+	/**
+	 * 积分抵扣
+	 */
+	private long jfDeduction;
 
 	public String getAddress() {
 		return address;
@@ -249,6 +257,22 @@ public class OrderWarmVo extends BaseInfo {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public long getCouponFee() {
+		return couponFee;
+	}
+
+	public void setCouponFee(long couponFee) {
+		this.couponFee = couponFee;
+	}
+
+	public long getJfDeduction() {
+		return jfDeduction;
+	}
+
+	public void setJfDeduction(long jfDeduction) {
+		this.jfDeduction = jfDeduction;
 	}
 
 }

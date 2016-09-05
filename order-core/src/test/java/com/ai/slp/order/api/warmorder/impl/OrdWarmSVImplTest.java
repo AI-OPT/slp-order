@@ -25,18 +25,18 @@ public class OrdWarmSVImplTest {
 	@Test
     public void testWarmOrder(){
 		OrderWarmRequest query=new OrderWarmRequest();
-        query.setTenantId("SLP");
-        query.setPageSize(1);
+        query.setTenantId("changhong");
+        query.setPageSize(10);
         query.setPageNo(1);
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         format.setLenient(false);
         //要转换字符串 str_test
-       // String str_test1 ="2016-06-14 16:17:29"; 
-        String str_test2 ="2016-06-14 16:16:29"; 
+        String str_test1 ="2016-06-12 16:17:29"; 
+        String str_test2 ="2017-06-14 16:16:29"; 
         try {
-        //Timestamp ts = new Timestamp(format.parse(str_test1).getTime());
+        Timestamp ts = new Timestamp(format.parse(str_test1).getTime());
         Timestamp ts2 = new Timestamp(format.parse(str_test2).getTime());
-        //query.setOrderTimeStart(ts);
+        query.setOrderTimeStart(ts);
         query.setOrderTimeEnd(ts2);
        // System.out.println(ts.toString());
         } catch (Exception e) {
@@ -50,8 +50,8 @@ public class OrdWarmSVImplTest {
 	@Test
     public void testWarmOrderDetail(){
 		OrderWarmDetailRequest  query=new OrderWarmDetailRequest ();
-        query.setTenantId("SLP");
-        query.setOrderId(334570392l);
+        query.setTenantId("changhong");
+        query.setOrderId(334570392L);
         OrderWarmDetailResponse info=iOrderWarmSV.searchWarmorderDetail(query);
         System.out.println("info="+JSON.toJSONString(info));
         
