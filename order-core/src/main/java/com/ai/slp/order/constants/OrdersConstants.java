@@ -29,6 +29,18 @@ public final class OrdersConstants {
              */
             public static final String SELF_PICKUP = "2";
         }
+        public static final class cusServiceFlag {
+        	/**
+        	 * 0:否 (售后订单标识)
+        	 */
+        	public static final String NO = "0";
+        	
+        	/**
+        	 * 1：是
+        	 */
+        	public static final String YES = "1";
+        	
+        }
         
         
         public static final class ChlId {
