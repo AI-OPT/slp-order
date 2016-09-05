@@ -43,6 +43,7 @@
     <result column="IP_ADDRESS" property="ipAddress" jdbcType="VARCHAR" />
     <result column="IF_WARNING" property="ifWarning" jdbcType="VARCHAR" />
     <result column="WARNING_TYPE" property="warningType" jdbcType="VARCHAR" />
+    <result column="CUS_SERVICE_FLAG" property="cusServiceFlag" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -108,7 +109,7 @@
     STATE, STATE_CHG_TIME, DISPLAY_FLAG, DISPLAY_FLAG_CHG_TIME, DELIVERY_FLAG, LOCK_FLAG, 
     LOCK_TIME, ORDER_TIME, SELLER_ID, CHL_ID, OPER_ID, WORKFLOW_ID, REASON_TYPE, REASON_DESC, 
     FINISH_TIME, ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID, 
-    DOWNSTREAM_ORDER_ID, USER_TYPE, IP_ADDRESS, IF_WARNING, WARNING_TYPE
+    DOWNSTREAM_ORDER_ID, USER_TYPE, IP_ADDRESS, IF_WARNING, WARNING_TYPE, CUS_SERVICE_FLAG
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" >
     select
@@ -158,7 +159,8 @@
       ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, 
       REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID, 
       DOWNSTREAM_ORDER_ID, USER_TYPE, IP_ADDRESS, 
-      IF_WARNING, WARNING_TYPE)
+      IF_WARNING, WARNING_TYPE, CUS_SERVICE_FLAG
+      )
     values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{busiCode,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{subFlag,jdbcType=VARCHAR}, #{parentOrderId,jdbcType=BIGINT}, 
       #{batchNo,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{acctId,jdbcType=BIGINT}, 
@@ -172,7 +174,8 @@
       #{origOrderId,jdbcType=BIGINT}, #{orderDesc,jdbcType=VARCHAR}, #{keywords,jdbcType=VARCHAR}, 
       #{remark,jdbcType=VARCHAR}, #{externalOrderId,jdbcType=VARCHAR}, #{externalSupplyId,jdbcType=VARCHAR}, 
       #{downstreamOrderId,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR}, 
-      #{ifWarning,jdbcType=VARCHAR}, #{warningType,jdbcType=VARCHAR})
+      #{ifWarning,jdbcType=VARCHAR}, #{warningType,jdbcType=VARCHAR}, #{cusServiceFlag,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
     insert into ord_order
@@ -284,6 +287,9 @@
       <if test="warningType != null" >
         WARNING_TYPE,
       </if>
+      <if test="cusServiceFlag != null" >
+        CUS_SERVICE_FLAG,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{orderId,jdbcType=BIGINT},
@@ -392,6 +398,9 @@
       </if>
       <if test="warningType != null" >
         #{warningType,jdbcType=VARCHAR},
+      </if>
+      <if test="cusServiceFlag != null" >
+        #{cusServiceFlag,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -527,6 +536,9 @@
       <if test="record.warningType != null" >
         WARNING_TYPE = #{record.warningType,jdbcType=VARCHAR},
       </if>
+      <if test="record.cusServiceFlag != null" >
+        CUS_SERVICE_FLAG = #{record.cusServiceFlag,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -574,7 +586,8 @@
       USER_TYPE = #{record.userType,jdbcType=VARCHAR},
       IP_ADDRESS = #{record.ipAddress,jdbcType=VARCHAR},
       IF_WARNING = #{record.ifWarning,jdbcType=VARCHAR},
-      WARNING_TYPE = #{record.warningType,jdbcType=VARCHAR}
+      WARNING_TYPE = #{record.warningType,jdbcType=VARCHAR},
+      CUS_SERVICE_FLAG = #{record.cusServiceFlag,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -702,6 +715,9 @@
       <if test="warningType != null" >
         WARNING_TYPE = #{warningType,jdbcType=VARCHAR},
       </if>
+      <if test="cusServiceFlag != null" >
+        CUS_SERVICE_FLAG = #{cusServiceFlag,jdbcType=VARCHAR},
+      </if>
     </set>
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
@@ -746,7 +762,8 @@
       USER_TYPE = #{userType,jdbcType=VARCHAR},
       IP_ADDRESS = #{ipAddress,jdbcType=VARCHAR},
       IF_WARNING = #{ifWarning,jdbcType=VARCHAR},
-      WARNING_TYPE = #{warningType,jdbcType=VARCHAR}
+      WARNING_TYPE = #{warningType,jdbcType=VARCHAR},
+      CUS_SERVICE_FLAG = #{cusServiceFlag,jdbcType=VARCHAR}
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>
