@@ -263,22 +263,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setDiscountFee(ordOdProd.getDiscountFee());
                 ordProductVo.setAdjustFee(ordOdProd.getAdjustFee());
                 ordProductVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
-                //积分设置
-                //ordProductVo.setIntegral(totalIntegral==null?null:totalIntegral/ordOdProdList.size());
-          /*    String extendInfo = ordOdProd.getExtendInfo();
-                ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo, ProdAttrInfoVo.class);
-                ordProductVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
-                SysParamSingleCond sysParamBasicOrg = new SysParamSingleCond("SLP", "PRODUCT",
-                        "BASIC_ORG_ID", prodAttrInfoVo.getBasicOrgId());
-                SysParam sysParam = iCacheSV.getSysParamSingle(sysParamBasicOrg);
-                ordProductVo.setBasicOrgName(sysParam == null ? "" : sysParam.getColumnDesc());
-                ordProductVo.setProvinceCode(prodAttrInfoVo.getProvinceCode());
-                String provinceName = "";
-                if (!StringUtil.isBlank(prodAttrInfoVo.getProvinceCode())) {
-                    provinceName = iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode());
-                }
-                ordProductVo.setProvinceName(provinceName);
-                ordProductVo.setChargeFee(prodAttrInfoVo.getChargeFee());*/
+                ordProductVo.setCouponFee(ordOdProd.getCouponFee()); //优惠费用
+                ordProductVo.setJfFee(ordOdProd.getJfFee()); //积分
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 ordProductVo.setProductImage(productImage);
                 ordProductVo.setProdExtendInfo(this.getProdExtendInfo(tenantId, orderId,
