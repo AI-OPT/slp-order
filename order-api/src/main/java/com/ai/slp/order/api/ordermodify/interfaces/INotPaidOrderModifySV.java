@@ -29,7 +29,7 @@ public interface INotPaidOrderModifySV {
 	  * @throws SystemException
 	  * @author caofz
 	  * @ApiDocMethod
-	  * @ApiCode 
+	  * @ApiCode ORDER_MODIFY_001
 	  * @RestRelativeURL
 	  */
 	 @POST
