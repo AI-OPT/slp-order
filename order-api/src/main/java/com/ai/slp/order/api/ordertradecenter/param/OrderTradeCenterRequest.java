@@ -42,6 +42,11 @@ public class OrderTradeCenterRequest extends BaseInfo {
      * 订单拓展信息
      */
     private OrdExtendInfo ordExtendInfo;
+    
+    /**
+     * 订单费用明细信息
+     */
+    private List<OrdFeeTotalProdInfo> ordFeeTotalProdInfo;
 
     public OrdBaseInfo getOrdBaseInfo() {
         return ordBaseInfo;
@@ -83,4 +88,11 @@ public class OrderTradeCenterRequest extends BaseInfo {
         this.ordExtendInfo = ordExtendInfo;
     }
 
+	public List<OrdFeeTotalProdInfo> getOrdFeeTotalProdInfo() {
+		return ordFeeTotalProdInfo;
+	}
+
+	public void setOrdFeeTotalProdInfo(List<OrdFeeTotalProdInfo> ordFeeTotalProdInfo) {
+		this.ordFeeTotalProdInfo = ordFeeTotalProdInfo;
+	}
 }
