@@ -12,7 +12,6 @@ import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
-import com.ai.slp.order.api.orderlist.param.QueryExceptionOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -66,12 +65,5 @@ public class OrderListSVImpl implements IOrderListSV {
                 ExceptCodeConstants.Special.SUCCESS, "成功");
         response.setResponseHeader(responseHeader);
         return response;
-	}
-
-	@Override
-	public QueryOrderListResponse queryExceptionOrderList(QueryExceptionOrderRequest orderListRequest)
-			throws BusinessException, SystemException {
-		
-		return null;
 	}
 }
