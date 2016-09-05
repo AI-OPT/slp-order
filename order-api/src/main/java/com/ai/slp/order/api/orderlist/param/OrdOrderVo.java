@@ -227,7 +227,7 @@ public class OrdOrderVo extends BaseInfo {
     private String expressId;
 
     /**
-     * 支付信息
+     * 支付信息(订单费用总表信息)
      */
     private List<OrderPayVo> payDataList;
 
