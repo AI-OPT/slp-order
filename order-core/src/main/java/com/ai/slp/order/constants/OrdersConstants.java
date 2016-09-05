@@ -720,19 +720,11 @@ public final class OrdersConstants {
              * 积分
              */
             public static final String JF = "5";
-<<<<<<< HEAD
-            
-            /**
-             * 优惠券
-             */
-            public static final String COUPON="8";
-=======
+
             /**
              * 优惠券
              */
             public static final String  COUPON = "8";
->>>>>>> branch 'master' of https://github.com/AI-OPT/slp-order
-
         }
     }
 
