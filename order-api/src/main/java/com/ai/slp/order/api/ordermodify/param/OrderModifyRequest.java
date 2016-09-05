@@ -18,14 +18,19 @@ public class OrderModifyRequest extends BaseInfo{
     private Long orderId;
     
     /**
-     * 订单金额
+     * 改动金额
      */
-    private Long adjustFee;
+    private Long updateAmount ;
     
     /**
-     * 订单备注
+     * 改动备注
      */
-    private String remark;
+    private String updateRemark;
+    
+    /**
+     * 受理工号
+     */
+    private String operId;
 
 	public Long getOrderId() {
 		return orderId;
@@ -35,20 +40,28 @@ public class OrderModifyRequest extends BaseInfo{
 		this.orderId = orderId;
 	}
 
-	public Long getAdjustFee() {
-		return adjustFee;
+	
+	public Long getUpdateAmount() {
+		return updateAmount;
 	}
 
-	public void setAdjustFee(Long adjustFee) {
-		this.adjustFee = adjustFee;
+	public void setUpdateAmount(Long updateAmount) {
+		this.updateAmount = updateAmount;
 	}
 
-	public String getRemark() {
-		return remark;
+	public String getUpdateRemark() {
+		return updateRemark;
 	}
 
-	public void setRemark(String remark) {
-		this.remark = remark;
+	public void setUpdateRemark(String updateRemark) {
+		this.updateRemark = updateRemark;
 	}
-    
+
+	public String getOperId() {
+		return operId;
+	}
+
+	public void setOperId(String operId) {
+		this.operId = operId;
+	}
 }
