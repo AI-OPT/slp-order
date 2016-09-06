@@ -429,7 +429,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 	SysParam sysParamInvoice = this.translateInfo(order.getTenantId(),
                             "ORD_OD_INVOICE", "INVOICE_TYPE", ordOdInvoice.getInvoiceType(), iCacheSV);
                 	ordOrderVo.setInvoiceTypeName(sysParamInvoice == null ? "" : sysParamInvoice.getColumnDesc());
-                	ordOrderVo.setInvoiceContent(ordOrderVo.getInvoiceContent());
+                	ordOrderVo.setInvoiceContent(ordOdInvoice.getInvoiceContent());
                 }
                 /* 4.订单配送信息查询*/
                 OrdOdLogistics ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getParentOrderId());
