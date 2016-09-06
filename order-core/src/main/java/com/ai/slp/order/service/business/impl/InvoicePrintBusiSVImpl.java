@@ -94,11 +94,11 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 			}
 		}
 		/* 查询订单配送信息 父订单对应配送信息*/
-		List<OrdOdLogistics> logistics = getOrdOdLogistics(order.getParentOrderId(), request.getTenantId());
+		List<OrdOdLogistics> logistics = getOrdOdLogistics(order.getParentOrderId(), order.getTenantId());
 		if(CollectionUtil.isEmpty(logistics)) {
-			logger.warn("未能查询到指定的订单配送信息[订单id:"+request.getOrderId()+"]");
+			logger.warn("未能查询到指定的订单配送信息[订单id:"+order.getParentOrderId()+",租户id:"+order.getTenantId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
-					"未能查询到指定的订单配送信息[订单id:"+request.getOrderId()+"]");
+					"未能查询到指定的订单配送信息[订单id:"+order.getParentOrderId()+",租户id:"+order.getTenantId()+"]");
 		}
 		OrdOdLogistics ordOdLogistics = logistics.get(0);
 		ICacheSV iCacheSv = DubboConsumerFactory.getService("iCacheSV");
