@@ -30,8 +30,8 @@ public interface IOrderAfterSaleSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL  /aftersaleorder/back
+	 * @ApiCode ORDER_BACK_001
+	 * @RestRelativeURL  aftersaleorder/back
 	 */
 	@POST
 	@Path("/back")
@@ -45,8 +45,8 @@ public interface IOrderAfterSaleSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL /aftersaleorder/exchange
+	 * @ApiCode ORDER_EXCHANGE_001
+	 * @RestRelativeURL aftersaleorder/exchange
 	 */
 	@POST
 	@Path("/exchange")
@@ -61,8 +61,8 @@ public interface IOrderAfterSaleSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL /aftersaleorder/refund
+	 * @ApiCode ORDER_REFUND_001
+	 * @RestRelativeURL aftersaleorder/refund
 	 */
 	@POST
 	@Path("/refund")
