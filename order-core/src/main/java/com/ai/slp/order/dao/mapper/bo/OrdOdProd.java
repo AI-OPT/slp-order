@@ -352,4 +352,194 @@ public class OrdOdProd {
     public void setJfFee(long jfFee) {
         this.jfFee = jfFee;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (adjustFee ^ (adjustFee >>> 32));
+		result = prime * result + (int) (buySum ^ (buySum >>> 32));
+		result = prime * result + (int) (costPrice ^ (costPrice >>> 32));
+		result = prime * result + (int) (couponFee ^ (couponFee >>> 32));
+		result = prime * result + (int) (discountFee ^ (discountFee >>> 32));
+		result = prime * result + ((extendInfo == null) ? 0 : extendInfo.hashCode());
+		result = prime * result + ((invalidTime == null) ? 0 : invalidTime.hashCode());
+		result = prime * result + ((isInvoice == null) ? 0 : isInvoice.hashCode());
+		result = prime * result + (int) (jf ^ (jf >>> 32));
+		result = prime * result + (int) (jfFee ^ (jfFee >>> 32));
+		result = prime * result + ((operDiscountDesc == null) ? 0 : operDiscountDesc.hashCode());
+		result = prime * result + (int) (operDiscountFee ^ (operDiscountFee >>> 32));
+		result = prime * result + (int) (orderId ^ (orderId >>> 32));
+		result = prime * result + ((prodDesc == null) ? 0 : prodDesc.hashCode());
+		result = prime * result + (int) (prodDetalId ^ (prodDetalId >>> 32));
+		result = prime * result + ((prodId == null) ? 0 : prodId.hashCode());
+		result = prime * result + ((prodName == null) ? 0 : prodName.hashCode());
+		result = prime * result + ((prodSn == null) ? 0 : prodSn.hashCode());
+		result = prime * result + ((prodType == null) ? 0 : prodType.hashCode());
+		result = prime * result + ((routeId == null) ? 0 : routeId.hashCode());
+		result = prime * result + (int) (salePrice ^ (salePrice >>> 32));
+		result = prime * result + ((sellerId == null) ? 0 : sellerId.hashCode());
+		result = prime * result + ((skuId == null) ? 0 : skuId.hashCode());
+		result = prime * result + ((skuStorageId == null) ? 0 : skuStorageId.hashCode());
+		result = prime * result + ((standardProdId == null) ? 0 : standardProdId.hashCode());
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((storageId == null) ? 0 : storageId.hashCode());
+		result = prime * result + (int) (supplierId ^ (supplierId >>> 32));
+		result = prime * result + ((supplyId == null) ? 0 : supplyId.hashCode());
+		result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
+		result = prime * result + (int) (totalFee ^ (totalFee >>> 32));
+		result = prime * result + ((updateChlId == null) ? 0 : updateChlId.hashCode());
+		result = prime * result + ((updateOperId == null) ? 0 : updateOperId.hashCode());
+		result = prime * result + ((updateTime == null) ? 0 : updateTime.hashCode());
+		result = prime * result + ((validTime == null) ? 0 : validTime.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OrdOdProd other = (OrdOdProd) obj;
+		if (adjustFee != other.adjustFee)
+			return false;
+		if (buySum != other.buySum)
+			return false;
+		if (costPrice != other.costPrice)
+			return false;
+		if (couponFee != other.couponFee)
+			return false;
+		if (discountFee != other.discountFee)
+			return false;
+		if (extendInfo == null) {
+			if (other.extendInfo != null)
+				return false;
+		} else if (!extendInfo.equals(other.extendInfo))
+			return false;
+		if (invalidTime == null) {
+			if (other.invalidTime != null)
+				return false;
+		} else if (!invalidTime.equals(other.invalidTime))
+			return false;
+		if (isInvoice == null) {
+			if (other.isInvoice != null)
+				return false;
+		} else if (!isInvoice.equals(other.isInvoice))
+			return false;
+		if (jf != other.jf)
+			return false;
+		if (jfFee != other.jfFee)
+			return false;
+		if (operDiscountDesc == null) {
+			if (other.operDiscountDesc != null)
+				return false;
+		} else if (!operDiscountDesc.equals(other.operDiscountDesc))
+			return false;
+		if (operDiscountFee != other.operDiscountFee)
+			return false;
+		if (orderId != other.orderId)
+			return false;
+		if (prodDesc == null) {
+			if (other.prodDesc != null)
+				return false;
+		} else if (!prodDesc.equals(other.prodDesc))
+			return false;
+		if (prodDetalId != other.prodDetalId)
+			return false;
+		if (prodId == null) {
+			if (other.prodId != null)
+				return false;
+		} else if (!prodId.equals(other.prodId))
+			return false;
+		if (prodName == null) {
+			if (other.prodName != null)
+				return false;
+		} else if (!prodName.equals(other.prodName))
+			return false;
+		if (prodSn == null) {
+			if (other.prodSn != null)
+				return false;
+		} else if (!prodSn.equals(other.prodSn))
+			return false;
+		if (prodType == null) {
+			if (other.prodType != null)
+				return false;
+		} else if (!prodType.equals(other.prodType))
+			return false;
+		if (routeId == null) {
+			if (other.routeId != null)
+				return false;
+		} else if (!routeId.equals(other.routeId))
+			return false;
+		if (salePrice != other.salePrice)
+			return false;
+		if (sellerId == null) {
+			if (other.sellerId != null)
+				return false;
+		} else if (!sellerId.equals(other.sellerId))
+			return false;
+		if (skuId == null) {
+			if (other.skuId != null)
+				return false;
+		} else if (!skuId.equals(other.skuId))
+			return false;
+		if (skuStorageId == null) {
+			if (other.skuStorageId != null)
+				return false;
+		} else if (!skuStorageId.equals(other.skuStorageId))
+			return false;
+		if (standardProdId == null) {
+			if (other.standardProdId != null)
+				return false;
+		} else if (!standardProdId.equals(other.standardProdId))
+			return false;
+		if (state == null) {
+			if (other.state != null)
+				return false;
+		} else if (!state.equals(other.state))
+			return false;
+		if (storageId == null) {
+			if (other.storageId != null)
+				return false;
+		} else if (!storageId.equals(other.storageId))
+			return false;
+		if (supplierId != other.supplierId)
+			return false;
+		if (supplyId == null) {
+			if (other.supplyId != null)
+				return false;
+		} else if (!supplyId.equals(other.supplyId))
+			return false;
+		if (tenantId == null) {
+			if (other.tenantId != null)
+				return false;
+		} else if (!tenantId.equals(other.tenantId))
+			return false;
+		if (totalFee != other.totalFee)
+			return false;
+		if (updateChlId == null) {
+			if (other.updateChlId != null)
+				return false;
+		} else if (!updateChlId.equals(other.updateChlId))
+			return false;
+		if (updateOperId == null) {
+			if (other.updateOperId != null)
+				return false;
+		} else if (!updateOperId.equals(other.updateOperId))
+			return false;
+		if (updateTime == null) {
+			if (other.updateTime != null)
+				return false;
+		} else if (!updateTime.equals(other.updateTime))
+			return false;
+		if (validTime == null) {
+			if (other.validTime != null)
+				return false;
+		} else if (!validTime.equals(other.validTime))
+			return false;
+		return true;
+	}
 }
