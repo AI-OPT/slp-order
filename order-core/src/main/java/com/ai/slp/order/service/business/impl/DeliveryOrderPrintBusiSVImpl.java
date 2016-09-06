@@ -131,16 +131,16 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		/* 参数校验及判断是否存在提货单打印信息*/
 		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(
 				request.getOrderId(),request.getTenantId());
+		/* 没有提货单打印信息的话,则表示第一次打印*/
+		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+		if(order==null) {
+			logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
+		} 
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
 		long sum = 0;
 		if(CollectionUtil.isEmpty(deliverInfos)) {
-			/* 没有提货单打印信息的话,则表示第一次打印*/
-			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-			if(order==null) {
-				logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-						"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-			} 
 			/* 获取订单下的商品信息*/
 			List<OrdOdProd> ordOdProds = getOrdOdProds(request);
 			/* 根据订单规则获取合并时间*/
@@ -187,11 +187,11 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			}
 		}
 		/* 查询订单配送信息*/
-		List<OrdOdLogistics> logistics = this.getOrdOdLogistics(request.getOrderId(), request.getTenantId());
+		List<OrdOdLogistics> logistics = this.getOrdOdLogistics(order.getParentOrderId(), order.getTenantId());
 		if(CollectionUtil.isEmpty(logistics)) {
-			logger.warn("未能查询到指定的订单配送信息[订单id:"+request.getOrderId()+"]");
+			logger.warn("未能查询到指定的订单配送信息[订单id:"+order.getParentOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
-					"未能查询到指定的订单配送信息[订单id:"+request.getOrderId()+"]");
+					"未能查询到指定的订单配送信息[订单id:"+order.getTenantId()+"]");
 		}
 		OrdOdLogistics ordOdLogistics = logistics.get(0);
 		response.setContactName(ordOdLogistics.getContactName());
