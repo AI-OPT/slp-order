@@ -30,7 +30,7 @@ public interface INotPaidOrderModifySV {
 	  * @author caofz
 	  * @ApiDocMethod
 	  * @ApiCode ORDER_MODIFY_001
-	  * @RestRelativeURL
+	  * @RestRelativeURL notpayorder/modify
 	  */
 	 @POST
 	 @Path("/modify")
