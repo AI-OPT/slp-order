@@ -38,10 +38,13 @@ public interface IOrderCancelSV {
    
     /**
      * 手动关闭订单
-     * @param request
      * @return
      * @throws BusinessException
      * @throws SystemException
+     * @author zhangxw
+     * @ApiDocMethod
+     * @ApiCode ORDERCANCEL_002
+     * @RestRelativeURL ordercancel/handCancelNoPayOrder
      */
     @POST
     @Path("/handCancelNoPayOrder")
