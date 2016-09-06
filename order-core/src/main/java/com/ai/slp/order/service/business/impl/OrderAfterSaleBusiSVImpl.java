@@ -92,6 +92,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(), 
 				request.getOrderId());
 		OrdOdFeeTotal rdOrdOdFeeTotal=new OrdOdFeeTotal();
+		BeanUtils.copyProperties(rdOrdOdFeeTotal, odFeeTotal);
 		rdOrdOdFeeTotal.setOrderId(backOrderId);
 		rdOrdOdFeeTotal.setTenantId(request.getTenantId());
 		rdOrdOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
@@ -102,15 +103,16 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		rdOrdOdFeeTotal.setTotalFee(totalFee);
 		rdOrdOdFeeTotal.setAdjustFee(ordOdProd.getAdjustFee());
 		rdOrdOdFeeTotal.setPayFee(ordOdProd.getAdjustFee());
-		rdOrdOdFeeTotal.setPayStyle(odFeeTotal.getPayStyle());
 		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 		/* 7.生成退款订单支付机构接口*/
-		Long balacneIfId = SequenceUtil.createBalacneIfId();
+		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
+				request.getTenantId(), request.getOrderId());
 		OrdBalacneIf balacneIf=new OrdBalacneIf();
+		BeanUtils.copyProperties(balacneIf, ordBalacneIf);
+		Long balacneIfId = SequenceUtil.createBalacneIfId();
 		balacneIf.setBalacneIfId(balacneIfId);
-		balacneIf.setTenantId(request.getTenantId());
-		balacneIf.setOrderId(request.getOrderId());
+		balacneIf.setOrderId(backOrderId);
 		balacneIf.setPayStyle(odFeeTotal.getPayStyle());
 		balacneIf.setCreateTime(DateUtil.getSysDate());
 		ordBalacneIfAtomSV.insertSelective(balacneIf);
@@ -186,6 +188,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(), 
 				request.getOrderId());
 		OrdOdFeeTotal rdOrdOdFeeTotal=new OrdOdFeeTotal();
+		BeanUtils.copyProperties(rdOrdOdFeeTotal, odFeeTotal);
 		rdOrdOdFeeTotal.setOrderId(rdOrderId);
 		rdOrdOdFeeTotal.setTenantId(request.getTenantId());
 		rdOrdOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
@@ -196,15 +199,16 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		rdOrdOdFeeTotal.setTotalFee(totalFee);
 		rdOrdOdFeeTotal.setAdjustFee(ordOdProd.getAdjustFee());
 		rdOrdOdFeeTotal.setPayFee(ordOdProd.getAdjustFee());
-		rdOrdOdFeeTotal.setPayStyle(odFeeTotal.getPayStyle());
 		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 		/* 7.生成退款订单支付机构接口*/
-		Long balacneIfId = SequenceUtil.createBalacneIfId();
+		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
+				request.getTenantId(), request.getOrderId());
 		OrdBalacneIf balacneIf=new OrdBalacneIf();
+		BeanUtils.copyProperties(balacneIf, ordBalacneIf);
+		Long balacneIfId = SequenceUtil.createBalacneIfId();
 		balacneIf.setBalacneIfId(balacneIfId);
-		balacneIf.setTenantId(request.getTenantId());
-		balacneIf.setOrderId(request.getOrderId());
+		balacneIf.setOrderId(rdOrderId);
 		balacneIf.setPayStyle(odFeeTotal.getPayStyle());
 		balacneIf.setCreateTime(DateUtil.getSysDate());
 		ordBalacneIfAtomSV.insertSelective(balacneIf);
