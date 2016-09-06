@@ -16,7 +16,16 @@ public class OrdBalacneIfAtomSVImpl implements IOrdBalacneIfAtomSV {
     }
     
     public List<OrdBalacneIf> selectByExample(OrdBalacneIfCriteria example) {
+    	OrdBalacneIfCriteria balanceExample=new OrdBalacneIfCriteria();
     	return MapperFactory.getOrdBalacneIfMapper().selectByExample(example);
     }
-
+    
+    @Override
+    public OrdBalacneIf selectByOrderId(String tenantId, long orderId) {
+    	OrdBalacneIfCriteria example = new OrdBalacneIfCriteria();
+        example.createCriteria().andTenantIdEqualTo(tenantId).andOrderIdEqualTo(orderId);
+        List<OrdBalacneIf> OrdBalacneIfs = MapperFactory.getOrdBalacneIfMapper()
+                .selectByExample(example);
+        return OrdBalacneIfs == null || OrdBalacneIfs.isEmpty() ? null : OrdBalacneIfs.get(0);
+    }
 }
