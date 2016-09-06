@@ -21,6 +21,18 @@ import com.ai.slp.order.api.letvstatusnotify.param.LetvStatusNotifyRequest;
 @Produces({MediaType.APPLICATION_JSON,MediaType.TEXT_XML})
 public interface ILetvStatusNotifySV {
 	
+	
+	/**
+	 * 发货打印查看
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode ORDER_LETV_001
+	 * @RestRelativeURL letvservice/statusnotify
+	 */
 	@POST
 	@Path("/statusnotify")
 	BaseResponse statusnotify(LetvStatusNotifyRequest request) throws SystemException,BusinessException;

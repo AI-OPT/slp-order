@@ -30,8 +30,8 @@ public interface IOrderCheckSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL /aftersaleorder/check
+	 * @ApiCode ORDER_CHECK_001
+	 * @RestRelativeURL aftersaleorder/check
 	 */
 	@POST
 	@Path("/check")

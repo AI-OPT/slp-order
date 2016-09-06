@@ -27,8 +27,8 @@ public interface IOrderRefundSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL  /aftersaleorder/fullRefund
+	 * @ApiCode ORDER_FULLREFUND_001
+	 * @RestRelativeURL  aftersaleorder/fullRefund
 	 */
 	@POST
 	@Path("/fullRefund")
@@ -42,8 +42,8 @@ public interface IOrderRefundSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL   /aftersaleorder/partRefund
+	 * @ApiCode ORDER_PARTREFUND_001
+	 * @RestRelativeURL   aftersaleorder/partRefund
 	 */
 	@POST
 	@Path("/partRefund")
@@ -59,8 +59,8 @@ public interface IOrderRefundSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL   /aftersaleorder/refuseRefund
+	 * @ApiCode ORDER_REFUSEREFUND_001
+	 * @RestRelativeURL   aftersaleorder/refuseRefund
 	 */
 	@POST
 	@Path("/refuseRefund")

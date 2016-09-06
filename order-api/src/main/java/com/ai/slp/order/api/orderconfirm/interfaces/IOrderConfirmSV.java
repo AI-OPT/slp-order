@@ -29,8 +29,8 @@ public interface IOrderConfirmSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL /order/confirm
+	 * @ApiCode ORDER_CONFIRM_001
+	 * @RestRelativeURL order/confirm
 	 */
 	@POST
 	@Path("/confirm")
