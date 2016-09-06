@@ -15,8 +15,6 @@ import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmVo;
 import com.ai.slp.order.api.warmorder.param.ProductImage;
 import com.ai.slp.order.api.warmorder.param.ProductInfo;
-import com.ai.slp.order.constants.OrdersConstants;
-import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
@@ -69,7 +67,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 							prodinfoList.add(prodVo);
 						}
 					}
-					//获取优惠信息
+					/*//获取优惠信息
 					OrdOdFeeProd jfProd = iOrdOdFeeProdAtomSV.selectByOrdAndStyle(orderVo.getOrderId(), OrdersConstants.OrdOdFeeProd.PayStyle.JF);
 					OrdOdFeeProd couponProd = iOrdOdFeeProdAtomSV.selectByOrdAndStyle(orderVo.getOrderId(), OrdersConstants.OrdOdFeeProd.PayStyle.COUPON);
 					if(jfProd!=null){
@@ -77,7 +75,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 					}
 					if(couponProd!=null){
 						orderVo.setCouponFee(couponProd.getPaidFee());
-					}
+					}*/
 					//获取费用信息
 					OrdOdFeeTotal fee = iOrdOdFeeTotalAtomSV.selectByOrderId(orderVo.getTenantId(), orderVo.getOrderId());
 					if(fee!=null){
