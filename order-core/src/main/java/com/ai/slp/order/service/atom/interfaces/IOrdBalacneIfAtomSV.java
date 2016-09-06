@@ -9,4 +9,6 @@ public interface IOrdBalacneIfAtomSV {
     int insertSelective(OrdBalacneIf record);
     
     List<OrdBalacneIf> selectByExample(OrdBalacneIfCriteria example);
+
+	OrdBalacneIf selectByOrderId(String tenantId, long orderId);
 }
