@@ -33,8 +33,8 @@ public interface IDeliveryOrderPrintSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL /deliveryorder/query
+	 * @ApiCode DELIVERYORDER_001
+	 * @RestRelativeURL deliveryorder/query
 	 */
 	@POST
 	@Path("/query")
@@ -48,8 +48,8 @@ public interface IDeliveryOrderPrintSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL /deliveryorder/display
+	 * @ApiCode DELIVERYORDER_002
+	 * @RestRelativeURL deliveryorder/display
 	 */
 	@POST
 	@Path("/display")
@@ -62,8 +62,8 @@ public interface IDeliveryOrderPrintSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL /deliveryorder/noMergePrint
+	 * @ApiCode DELIVERYORDER_003
+	 * @RestRelativeURL deliveryorder/noMergePrint
 	 */
 	@POST
 	@Path("/noMergePrint")
@@ -79,8 +79,8 @@ public interface IDeliveryOrderPrintSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL
+	 * @ApiCode DELIVERYORDER_004
+	 * @RestRelativeURL deliveryorder/print
 	 */
 	@POST
 	@Path("/print")
