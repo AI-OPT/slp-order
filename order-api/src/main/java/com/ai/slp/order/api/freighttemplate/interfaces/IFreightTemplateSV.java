@@ -33,7 +33,7 @@ public interface IFreightTemplateSV {
 	    * @throws SystemException
 	    * @author caofz
 	    * @ApiDocMethod
-	    * @ApiCode 
+	    * @ApiCode FREIGHTTEMPLATE_001
 	    * @RestRelativeURL freighttemplate/add
 	    */
 	   @POST
@@ -47,7 +47,7 @@ public interface IFreightTemplateSV {
 	    * @throws SystemException
 	    * @author caofz
 	    * @ApiDocMethod
-	    * @ApiCode 
+	    * @ApiCode FREIGHTTEMPLATE_002
 	    * @RestRelativeURL freighttemplate/query
 	    */
 	   @POST
@@ -61,7 +61,7 @@ public interface IFreightTemplateSV {
 	    * @throws SystemException
 	    * @author caofz
 	    * @ApiDocMethod
-	    * @ApiCode 
+	    * @ApiCode FREIGHTTEMPLATE_003
 	    * @RestRelativeURL freighttemplate/update
 	    */
 	   @POST
@@ -76,7 +76,7 @@ public interface IFreightTemplateSV {
 	    * @throws SystemException
 	    * @author caofz
 	    * @ApiDocMethod
-	    * @ApiCode 
+	    * @ApiCode FREIGHTTEMPLATE_004
 	    * @RestRelativeURL freighttemplate/delete
 	    */
 	   @POST
