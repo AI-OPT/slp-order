@@ -32,8 +32,8 @@ public interface IInvoicePrintSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL /invoice/query
+	 * @ApiCode ORDER_INVOICE_001
+	 * @RestRelativeURL invoice/query
 	 */
 	@POST
 	@Path("/query")
@@ -48,8 +48,8 @@ public interface IInvoicePrintSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL /invoice/print
+	 * @ApiCode ORDER_INVOICE_002
+	 * @RestRelativeURL invoice/print
 	 */
 	@POST
 	@Path("/print")
