@@ -152,6 +152,11 @@ public class OrdOrderVo extends BaseInfo {
     private Long payFee;
     
     /**
+     * 运费
+     */
+    private Long freight;
+    
+    /**
      * 发票类型
      */
     private String invoiceType;
@@ -190,6 +195,11 @@ public class OrdOrderVo extends BaseInfo {
      * 收件人电话
      */
     private String contactTel;
+    
+    /**
+     * 配送方式
+     */
+    private String logisticsType;
     
     /**
      * 收件人省份
@@ -586,5 +596,21 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setOrderTypeName(String orderTypeName) {
 		this.orderTypeName = orderTypeName;
+	}
+
+	public Long getFreight() {
+		return freight;
+	}
+
+	public void setFreight(Long freight) {
+		this.freight = freight;
+	}
+
+	public String getLogisticsType() {
+		return logisticsType;
+	}
+
+	public void setLogisticsType(String logisticsType) {
+		this.logisticsType = logisticsType;
 	}
 }
