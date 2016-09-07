@@ -13,6 +13,10 @@ public class BehindOrdOrderVo extends BaseInfo{
      */
     private Long orderId;
     
+    /**
+     * 父订单id
+     */
+    private Long parentOrderId;
 
     /**
      * 订单状态(后厂)
@@ -82,5 +86,13 @@ public class BehindOrdOrderVo extends BaseInfo{
 
 	public void setProdSize(int prodSize) {
 		this.prodSize = prodSize;
+	}
+
+	public Long getParentOrderId() {
+		return parentOrderId;
+	}
+
+	public void setParentOrderId(Long parentOrderId) {
+		this.parentOrderId = parentOrderId;
 	}
 }
