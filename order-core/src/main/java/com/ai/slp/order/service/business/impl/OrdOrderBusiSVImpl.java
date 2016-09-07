@@ -693,6 +693,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			orderVo.setProductList(prodList);
         			orderVo.setProdSize(prodList.size());
         			orderVo.setState(behindOrdOrderAttach.getState());
+        			orderVo.setParentOrderId(behindOrdOrderAttach.getOrderId());
         			SysParam sysParamState = this.translateInfo(orderListRequest.getTenantId(), "ORD_ORDER",
     						"STATE", behindOrdOrderAttach.getState(), iCacheSV);
     				orderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
