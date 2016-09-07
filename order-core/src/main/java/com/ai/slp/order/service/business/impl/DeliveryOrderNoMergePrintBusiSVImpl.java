@@ -58,15 +58,15 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
 		/* 参数校验及判断是否存在提货单打印信息*/
 		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(request);
+		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+		if(order==null) {
+			logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
+		}
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
 		long sum = 0;
 		if(CollectionUtil.isEmpty(deliverInfos)) { 
-			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-			if(order==null) {
-				logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-						"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-			}
 			OrdOdProdCriteria example=new OrdOdProdCriteria();
 			OrdOdProdCriteria.Criteria criteria = example.createCriteria();
 			criteria.andTenantIdEqualTo(request.getTenantId());
@@ -100,7 +100,7 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 			}
 		}
 		/* 查询订单配送信息*/
-		List<OrdOdLogistics> logistics = getOrdOdLogistics(request.getOrderId(), request.getTenantId());
+		List<OrdOdLogistics> logistics = getOrdOdLogistics(order.getParentOrderId(), order.getTenantId());
 		if(CollectionUtil.isEmpty(logistics)) {
 			logger.warn("未能查询到指定的订单配送信息[订单id:"+request.getOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
