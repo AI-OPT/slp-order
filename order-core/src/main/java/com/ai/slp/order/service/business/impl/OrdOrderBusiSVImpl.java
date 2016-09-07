@@ -418,6 +418,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setPayStyleName(sysParam == null ? "" : sysParam.getColumnDesc());
                 ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
                 ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());
+               // ordOrderVo.setFreight(ordOdFeeTotal.getF); 运费
                 int phoneCount = this.getProdExtendInfo(orderRequest.getTenantId(),
                         order.getOrderId());
                 ordOrderVo.setPhoneCount(phoneCount);
@@ -436,6 +437,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 if(ordOdLogistics!=null) {
                 	ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
                 	ordOrderVo.setContactCompany(ordOdLogistics.getContactCompany());
+                	ordOrderVo.setLogisticsType(ordOdLogistics.getLogisticsType());
                 	ordOrderVo.setContactName(ordOdLogistics.getContactName());
                 	ordOrderVo.setContactTel(ordOdLogistics.getContactTel());
                 	ordOrderVo.setProvinceCode(ordOdLogistics.getProvinceCode()==null?"":iCacheSV.getAreaName(ordOdLogistics.getProvinceCode()));
@@ -681,7 +683,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		boolean flag = Arrays.asList(arr).contains(behindOrdOrderAttach.getState());
         		if(!flag) {
         			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
-        			pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());
         		}
           	    //TODO 绑定手机号??
         		/* 判断查询条件是否为待付款 待付款的条件下不存在子订单信息*/
@@ -712,6 +713,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         				BehindOrdOrderVo orderVo=new BehindOrdOrderVo();
         				orderVo.setOrderId(ordOrder.getOrderId());
         				orderVo.setState(ordOrder.getState());
+        				orderVo.setBusiCode(ordOrder.getBusiCode());
         				SysParam sysParamState = this.translateInfo(ordOrder.getTenantId(), "ORD_ORDER",
         						"STATE", ordOrder.getState(), iCacheSV);
         				orderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
@@ -728,14 +730,19 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			criteriaFeeProd.andOrderIdEqualTo(behindOrdOrderAttach.getOrderId()); //父订单id
         			List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByExample(exampleFeeProd);
         			long points = 0; //积分
+        			long totalCouponFee=0;//优惠券
         			if (!CollectionUtil.isEmpty(orderFeeProdList)) {
         				for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) { 
         					if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
         						points+=ordOdFeeProd.getPaidFee();
         					}
+        					if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
+        						totalCouponFee+=ordOdFeeProd.getPaidFee();
+        					}
         				}
         			}
         			pOrderVo.setPoints(points);
+        			pOrderVo.setTotalCouponFee(totalCouponFee);
         		}
     		orderVoList.add(pOrderVo);
          }
