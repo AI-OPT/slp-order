@@ -68,15 +68,16 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 		//单个商品减免费用
 		long prodOperDiscountFee=operDiscountFee/ordOdProdList.size();
 		for (OrdOdProd ordOdProd : ordOdProdList) {
-			ordOdProd.setAdjustFee(ordOdProd.getTotalFee()-ordOdProd.getDiscountFee()-
-					prodOperDiscountFee-ordOdProd.getOperDiscountFee());
+			ordOdProd.setAdjustFee(ordOdProd.getAdjustFee()-prodOperDiscountFee);
 			ordOdProd.setOperDiscountFee(ordOdProd.getOperDiscountFee()+prodOperDiscountFee);
 			ordOdProd.setOperDiscountDesc(request.getUpdateRemark());
+			ordOdProd.setUpdateOperId(request.getOperId());
 			ordOdProdAtomSV.updateById(ordOdProd);
 		}
 		odFeeTotal.setAdjustFee(updateAmount);
 		odFeeTotal.setOperDiscountFee(odFeeTotal.getOperDiscountFee()+operDiscountFee);
 		odFeeTotal.setOperDiscountDesc(request.getUpdateRemark());
+		odFeeTotal.setUpdateOperId(request.getOperId());
 		odFeeTotal.setPayFee(updateAmount);
 		/* 3.修改金额和备注信息*/
 		ordOdFeeTotalAtomSV.updateByOrderId(odFeeTotal);
