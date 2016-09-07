@@ -101,6 +101,12 @@ public class OrdOrderSqlProvider {
         String deliveryFlag = param.containsKey("deliveryFlag") ? (String) param.get("deliveryFlag") : null;
         if (!StringUtil.isBlank(deliveryFlag))
             seqBuffer.append(" and oo.delivery_flag=" + deliveryFlag);
+        if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") == null) {
+            seqBuffer.append(" and oo.order_time >= '" + param.get("orderTimeBegin")+ "'");
+        }
+        if (param.get("orderTimeBegin") == null && param.get("orderTimeEnd") != null) {
+            seqBuffer.append(" and oo.order_time <= '" + param.get("orderTimeEnd") + "'");
+        }
         if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") != null) {
             seqBuffer.append(" and oo.order_time between '" + param.get("orderTimeBegin")
                     + "' and '" + param.get("orderTimeEnd") + "'");
@@ -158,6 +164,12 @@ public class OrdOrderSqlProvider {
         String deliveryFlag = param.containsKey("deliveryFlag") ? (String) param.get("deliveryFlag") : null;
         if (!StringUtil.isBlank(deliveryFlag))
             seqBuffer.append(" and oo.delivery_flag=" + deliveryFlag);
+        if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") == null) {
+            seqBuffer.append(" and oo.order_time >= '" + param.get("orderTimeBegin")+ "'");
+        }
+        if (param.get("orderTimeBegin") == null && param.get("orderTimeEnd") != null) {
+            seqBuffer.append(" and oo.order_time <= '" + param.get("orderTimeEnd") + "'");
+        }
         if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") != null) {
             seqBuffer.append(" and oo.order_time between '" + param.get("orderTimeBegin")
                     + "' and '" + param.get("orderTimeEnd") + "'");
