@@ -18,6 +18,11 @@ public class BehindOrdOrderVo extends BaseInfo{
      * 订单状态(后厂)
      */
     private String state;
+    
+    /**
+     * 业务类型
+     */
+    private String busiCode;
 
     /**
      * 订单状态展示
@@ -29,8 +34,15 @@ public class BehindOrdOrderVo extends BaseInfo{
      */
     private int prodSize;
     
-    
-    private List<BehindOrdProductVo> productList;
+    public String getBusiCode() {
+		return busiCode;
+	}
+
+	public void setBusiCode(String busiCode) {
+		this.busiCode = busiCode;
+	}
+
+	private List<BehindOrdProductVo> productList;
     
 	public Long getOrderId() {
 		return orderId;
