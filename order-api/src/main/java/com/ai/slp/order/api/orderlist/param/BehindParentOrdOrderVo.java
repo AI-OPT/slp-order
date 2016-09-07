@@ -73,6 +73,11 @@ public class BehindParentOrdOrderVo extends BaseInfo {
     private Long points;
     
     /**
+     * 优惠券
+     */
+    private Long totalCouponFee;
+    
+    /**
      * 订单及商品信息
      */
     private List<BehindOrdOrderVo> orderList;
@@ -172,5 +177,13 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
 	public void setDeliveryFlagName(String deliveryFlagName) {
 		this.deliveryFlagName = deliveryFlagName;
+	}
+
+	public Long getTotalCouponFee() {
+		return totalCouponFee;
+	}
+
+	public void setTotalCouponFee(Long totalCouponFee) {
+		this.totalCouponFee = totalCouponFee;
 	}
 }
