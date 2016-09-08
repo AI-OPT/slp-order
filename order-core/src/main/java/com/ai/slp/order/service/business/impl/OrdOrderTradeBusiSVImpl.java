@@ -308,7 +308,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         if (CollectionUtil.isEmpty(ordOdProds)) {
             throw new BusinessException("", "订单商品明细不存在[订单ID:" + orderId + "]");
         }
-        long discountFee = 0;
         long operDiscountFee = 0;
         OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
         String infoJson = ordExtendInfo.getInfoJson();
@@ -316,7 +315,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         long totalFee = (long) object.get("totalFee"); //传过来的总费用
         long adjustFee = (long) object.get("adjustFee"); //应收费用
         for (OrdOdProd ordOdProd : ordOdProds) {
-            discountFee = ordOdProd.getDiscountFee() + discountFee;
             operDiscountFee = ordOdProd.getOperDiscountFee() + operDiscountFee;
         }
         OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
@@ -324,7 +322,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOdFeeTotal.setTenantId(request.getTenantId());
         ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);
         ordOdFeeTotal.setTotalFee(totalFee);
-        ordOdFeeTotal.setDiscountFee(discountFee);
+        ordOdFeeTotal.setDiscountFee(totalFee-adjustFee);
         ordOdFeeTotal.setOperDiscountFee(operDiscountFee);
         ordOdFeeTotal.setOperDiscountDesc("");
         ordOdFeeTotal.setAdjustFee(adjustFee);
