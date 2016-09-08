@@ -264,6 +264,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setAdjustFee(ordOdProd.getAdjustFee());
                 ordProductVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
                 ordProductVo.setCouponFee(ordOdProd.getCouponFee()); //优惠费用
+                ordProductVo.setCusServiceFlag(ordOdProd.getCusServiceFlag());  //商品是否售后标识
                 ordProductVo.setJfFee(ordOdProd.getJfFee()); //积分
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 ordProductVo.setProductImage(productImage);
