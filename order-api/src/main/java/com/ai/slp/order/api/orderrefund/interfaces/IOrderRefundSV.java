@@ -9,8 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
-import com.ai.slp.order.api.orderrefund.param.OrderFullRefundRequest;
-import com.ai.slp.order.api.orderrefund.param.OrderPartRefundRequest;
+import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
 
 @Path("/aftersaleorder")
@@ -32,7 +31,7 @@ public interface IOrderRefundSV {
 	 */
 	@POST
 	@Path("/fullRefund")
-	public BaseResponse fullRefund(OrderFullRefundRequest request) throws BusinessException,SystemException;
+	public BaseResponse fullRefund(OrderRefundRequest request) throws BusinessException,SystemException;
 	
 	/**
 	 * 部分退款(金额修改)
@@ -47,7 +46,7 @@ public interface IOrderRefundSV {
 	 */
 	@POST
 	@Path("/partRefund")
-	public BaseResponse partRefund(OrderPartRefundRequest request) throws BusinessException,SystemException;
+	public BaseResponse partRefund(OrderRefundRequest request) throws BusinessException,SystemException;
 	
 	
 	
