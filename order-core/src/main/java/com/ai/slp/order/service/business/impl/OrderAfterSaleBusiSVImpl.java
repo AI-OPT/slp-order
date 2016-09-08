@@ -60,6 +60,11 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	public void back(OrderReturnRequest request) throws BusinessException, SystemException {
 		/* 1.参数校验及返回子订单下的商品信息*/
 		List<OrdOdProd> ordOdProds = this.checkParams(request);
+		//检验商品数量
+		long prodSum = request.getProdSum();
+		if(prodSum==0) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "退货商品数量不能为空");
+		}
 		/* 2.查询该商品的子订单*/
 		OrdOrder order = this.getOrdOrder(request);
 		/* 3.商品明细信息查询*/
@@ -69,6 +74,11 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 					"商品与订单内容不一致,[订单id:"+request.getOrderId()+""
 							+ ",商品明细id:"+request.getProdDetalId()+"]");
 		}
+		if(prodSum>ordOdProd.getBuySum()) {
+			logger.error("退货的商品数量不能大于所购买的商品数量");
+			throw new BusinessException("", 
+					"退货的商品数量不能大于所购买的商品数量");
+		}
 		/* 4.生成退货订单*/
 		OrdOrder backOrder=new OrdOrder();
 		BeanUtils.copyProperties(backOrder, order);
@@ -77,11 +87,19 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		backOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER); //退货单
 		backOrder.setOrderId(backOrderId); //退货单id
 		backOrder.setOperId("");//TODO 受理工号 ??
+		backOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//是否售后标识
 		backOrder.setOrigOrderId(order.getOrderId());
 		this.insertOrderState(sysDate, backOrder);
+		//更新商品为售后标识
+		ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
+		ordOdProdAtomSV.updateById(ordOdProd); 
 		/* 5.生成退货商品明细信息*/
 		OrdOdProd backOrdOdProd =new OrdOdProd();
 		BeanUtils.copyProperties(backOrdOdProd, ordOdProd);
+		long backTotalFee=backOrdOdProd.getSalePrice()*prodSum;
+		backOrdOdProd.setBuySum(prodSum);
+		backOrdOdProd.setTotalFee(backTotalFee);
+		backOrdOdProd.setAdjustFee(backTotalFee-backOrdOdProd.getDiscountFee());
 		backOrdOdProd.setState(OrdersConstants.OrdOdProd.State.RETURN);
 		backOrdOdProd.setUpdateTime(DateUtil.getSysDate());
 		backOrdOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
@@ -89,31 +107,31 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		backOrdOdProd.setUpdateOperId("");//TODO 变更工号 ?
 		ordOdProdAtomSV.insertSelective(backOrdOdProd);
 		/* 6.生成退款订单费用总表*/
-		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(), 
-				request.getOrderId());
+		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
+				order.getOrderId());
 		OrdOdFeeTotal rdOrdOdFeeTotal=new OrdOdFeeTotal();
 		BeanUtils.copyProperties(rdOrdOdFeeTotal, odFeeTotal);
 		rdOrdOdFeeTotal.setOrderId(backOrderId);
 		rdOrdOdFeeTotal.setTenantId(request.getTenantId());
 		rdOrdOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
-		 //积分与金额转换 100:1 金额再转化为厘
-        long jfMoney=(ordOdProd.getJfFee()/OrdersConstants.JfTransf.rate)*1000;
-		long totalFee=ordOdProd.getAdjustFee()+jfMoney+ordOdProd.getCouponFee()
-					 +ordOdProd.getDiscountFee()+ordOdProd.getOperDiscountFee();
-		rdOrdOdFeeTotal.setTotalFee(totalFee);
-		rdOrdOdFeeTotal.setAdjustFee(ordOdProd.getAdjustFee());
-		rdOrdOdFeeTotal.setPayFee(ordOdProd.getAdjustFee());
+		rdOrdOdFeeTotal.setTotalFee(backTotalFee);
+		rdOrdOdFeeTotal.setAdjustFee(backTotalFee-backOrdOdProd.getDiscountFee());
+		rdOrdOdFeeTotal.setPayFee(backTotalFee-backOrdOdProd.getDiscountFee());
+		rdOrdOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
+		rdOrdOdFeeTotal.setOperDiscountFee(ordOdProd.getOperDiscountFee());
+		rdOrdOdFeeTotal.setPaidFee(0);
 		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 		/* 7.生成退款订单支付机构接口*/
 		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
-				request.getTenantId(), request.getOrderId());
+				order.getTenantId(), order.getParentOrderId());
 		OrdBalacneIf balacneIf=new OrdBalacneIf();
 		BeanUtils.copyProperties(balacneIf, ordBalacneIf);
 		Long balacneIfId = SequenceUtil.createBalacneIfId();
 		balacneIf.setBalacneIfId(balacneIfId);
 		balacneIf.setOrderId(backOrderId);
 		balacneIf.setPayStyle(odFeeTotal.getPayStyle());
+		balacneIf.setPayFee(backTotalFee-backOrdOdProd.getDiscountFee());
 		balacneIf.setCreateTime(DateUtil.getSysDate());
 		ordBalacneIfAtomSV.insertSelective(balacneIf);
 	}
@@ -139,8 +157,12 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		exOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER); //换货单
 		exOrder.setOrderId(exOrderId); //换货单id
 		exOrder.setOperId("");//TODO 受理工号 ??
+		exOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//是否售后标识
 		exOrder.setOrigOrderId(order.getOrderId());
 		this.insertOrderState(sysDate, exOrder);
+		//更新商品为售后标识
+		ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
+		ordOdProdAtomSV.updateById(ordOdProd); 
 		/* 5.生成换货商品明细信息*/
 		OrdOdProd backOrdOdProd =new OrdOdProd();
 		BeanUtils.copyProperties(backOrdOdProd, ordOdProd);
@@ -171,10 +193,14 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		long rdOrderId=SequenceUtil.createOrderId();
 		Timestamp sysDate = DateUtil.getSysDate();
 		rdOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER); //退款单
+		rdOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//是否售后标识
 		rdOrder.setOrderId(rdOrderId); //退款单id
 		rdOrder.setOperId("");//TODO 受理工号 ??
 		rdOrder.setOrigOrderId(order.getOrderId());
 		this.insertOrderState(sysDate, rdOrder);
+		//更新商品为售后标识
+		ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
+		ordOdProdAtomSV.updateById(ordOdProd); 
 		/* 5.生成退款商品明细信息*/
 		OrdOdProd backOrdOdProd =new OrdOdProd();
 		BeanUtils.copyProperties(backOrdOdProd, ordOdProd);
@@ -185,31 +211,31 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		backOrdOdProd.setUpdateOperId("");//TODO 变更工号 ?
 		ordOdProdAtomSV.insertSelective(backOrdOdProd);
 		/* 6.生成退款订单费用总表*/
-		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(), 
-				request.getOrderId());
+		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
+				order.getOrderId());
 		OrdOdFeeTotal rdOrdOdFeeTotal=new OrdOdFeeTotal();
 		BeanUtils.copyProperties(rdOrdOdFeeTotal, odFeeTotal);
 		rdOrdOdFeeTotal.setOrderId(rdOrderId);
 		rdOrdOdFeeTotal.setTenantId(request.getTenantId());
 		rdOrdOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
-		 //积分与金额转换 100:1 金额再转化为厘
-        long jfMoney=(ordOdProd.getJfFee()/OrdersConstants.JfTransf.rate)*1000;
-		long totalFee=ordOdProd.getAdjustFee()+jfMoney+ordOdProd.getCouponFee()
-					 +ordOdProd.getDiscountFee()+ordOdProd.getOperDiscountFee();
-		rdOrdOdFeeTotal.setTotalFee(totalFee);
+		rdOrdOdFeeTotal.setTotalFee(ordOdProd.getTotalFee());
+		rdOrdOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
+		rdOrdOdFeeTotal.setOperDiscountFee(ordOdProd.getOperDiscountFee());
 		rdOrdOdFeeTotal.setAdjustFee(ordOdProd.getAdjustFee());
 		rdOrdOdFeeTotal.setPayFee(ordOdProd.getAdjustFee());
+		rdOrdOdFeeTotal.setPaidFee(0);
 		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 		/* 7.生成退款订单支付机构接口*/
 		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
-				request.getTenantId(), request.getOrderId());
+				order.getTenantId(), order.getParentOrderId());
 		OrdBalacneIf balacneIf=new OrdBalacneIf();
 		BeanUtils.copyProperties(balacneIf, ordBalacneIf);
 		Long balacneIfId = SequenceUtil.createBalacneIfId();
 		balacneIf.setBalacneIfId(balacneIfId);
 		balacneIf.setOrderId(rdOrderId);
 		balacneIf.setPayStyle(odFeeTotal.getPayStyle());
+		balacneIf.setPayFee(ordOdProd.getAdjustFee());
 		balacneIf.setCreateTime(DateUtil.getSysDate());
 		ordBalacneIfAtomSV.insertSelective(balacneIf);
 	}
