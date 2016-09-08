@@ -37,6 +37,7 @@
     <result column="IS_INVOICE" property="isInvoice" jdbcType="VARCHAR" />
     <result column="COUPON_FEE" property="couponFee" jdbcType="BIGINT" />
     <result column="JF_FEE" property="jfFee" jdbcType="BIGINT" />
+    <result column="CUS_SERVICE_FLAG" property="cusServiceFlag" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -101,7 +102,7 @@
     PROD_SN, SKU_ID, STANDARD_PROD_ID, SUPPLY_ID, STORAGE_ID, ROUTE_ID, VALID_TIME, INVALID_TIME, 
     STATE, BUY_SUM, SALE_PRICE, COST_PRICE, TOTAL_FEE, DISCOUNT_FEE, OPER_DISCOUNT_FEE, 
     OPER_DISCOUNT_DESC, ADJUST_FEE, JF, PROD_DESC, EXTEND_INFO, UPDATE_TIME, UPDATE_CHL_ID, 
-    UPDATE_OPER_ID, SKU_STORAGE_ID, IS_INVOICE, COUPON_FEE, JF_FEE
+    UPDATE_OPER_ID, SKU_STORAGE_ID, IS_INVOICE, COUPON_FEE, JF_FEE, CUS_SERVICE_FLAG
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria" >
     select
@@ -149,7 +150,8 @@
       ADJUST_FEE, JF, PROD_DESC, 
       EXTEND_INFO, UPDATE_TIME, UPDATE_CHL_ID, 
       UPDATE_OPER_ID, SKU_STORAGE_ID, IS_INVOICE, 
-      COUPON_FEE, JF_FEE)
+      COUPON_FEE, JF_FEE, CUS_SERVICE_FLAG
+      )
     values (#{prodDetalId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{orderId,jdbcType=BIGINT}, 
       #{prodType,jdbcType=VARCHAR}, #{supplierId,jdbcType=BIGINT}, #{sellerId,jdbcType=VARCHAR}, 
       #{prodId,jdbcType=VARCHAR}, #{prodName,jdbcType=VARCHAR}, #{prodSn,jdbcType=VARCHAR}, 
@@ -161,7 +163,8 @@
       #{adjustFee,jdbcType=BIGINT}, #{jf,jdbcType=BIGINT}, #{prodDesc,jdbcType=VARCHAR}, 
       #{extendInfo,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateChlId,jdbcType=VARCHAR}, 
       #{updateOperId,jdbcType=VARCHAR}, #{skuStorageId,jdbcType=VARCHAR}, #{isInvoice,jdbcType=VARCHAR}, 
-      #{couponFee,jdbcType=BIGINT}, #{jfFee,jdbcType=BIGINT})
+      #{couponFee,jdbcType=BIGINT}, #{jfFee,jdbcType=BIGINT}, #{cusServiceFlag,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProd" >
     insert into ord_od_prod
@@ -245,6 +248,9 @@
       </if>
       COUPON_FEE,
       JF_FEE,
+      <if test="cusServiceFlag != null" >
+        CUS_SERVICE_FLAG,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{prodDetalId,jdbcType=BIGINT},
@@ -326,6 +332,9 @@
       </if>
       #{couponFee,jdbcType=BIGINT},
       #{jfFee,jdbcType=BIGINT},
+      <if test="cusServiceFlag != null" >
+        #{cusServiceFlag,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria" resultType="java.lang.Integer" >
@@ -442,6 +451,9 @@
       <if test="record.jfFee != null" >
         JF_FEE = #{record.jfFee,jdbcType=BIGINT},
       </if>
+      <if test="record.cusServiceFlag != null" >
+        CUS_SERVICE_FLAG = #{record.cusServiceFlag,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -483,7 +495,8 @@
       SKU_STORAGE_ID = #{record.skuStorageId,jdbcType=VARCHAR},
       IS_INVOICE = #{record.isInvoice,jdbcType=VARCHAR},
       COUPON_FEE = #{record.couponFee,jdbcType=BIGINT},
-      JF_FEE = #{record.jfFee,jdbcType=BIGINT}
+      JF_FEE = #{record.jfFee,jdbcType=BIGINT},
+      CUS_SERVICE_FLAG = #{record.cusServiceFlag,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -593,6 +606,9 @@
       <if test="jfFee != null" >
         JF_FEE = #{jfFee,jdbcType=BIGINT},
       </if>
+      <if test="cusServiceFlag != null" >
+        CUS_SERVICE_FLAG = #{cusServiceFlag,jdbcType=VARCHAR},
+      </if>
     </set>
     where PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT}
   </update>
@@ -631,7 +647,8 @@
       SKU_STORAGE_ID = #{skuStorageId,jdbcType=VARCHAR},
       IS_INVOICE = #{isInvoice,jdbcType=VARCHAR},
       COUPON_FEE = #{couponFee,jdbcType=BIGINT},
-      JF_FEE = #{jfFee,jdbcType=BIGINT}
+      JF_FEE = #{jfFee,jdbcType=BIGINT},
+      CUS_SERVICE_FLAG = #{cusServiceFlag,jdbcType=VARCHAR}
     where PROD_DETAL_ID = #{prodDetalId,jdbcType=BIGINT}
   </update>
 </mapper>
