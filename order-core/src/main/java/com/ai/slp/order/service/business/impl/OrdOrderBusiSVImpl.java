@@ -418,7 +418,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setPayStyleName(sysParam == null ? "" : sysParam.getColumnDesc());
                 ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
                 ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());
-               // ordOrderVo.setFreight(ordOdFeeTotal.getF); 运费
+                ordOrderVo.setFreight(ordOdFeeTotal.getFreight()); //运费
                 int phoneCount = this.getProdExtendInfo(orderRequest.getTenantId(),
                         order.getOrderId());
                 ordOrderVo.setPhoneCount(phoneCount);
