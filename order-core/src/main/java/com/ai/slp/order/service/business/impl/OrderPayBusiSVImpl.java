@@ -313,6 +313,15 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         logger.debug("开始对订单[" + ordOrder.getOrderId() + "]进行拆分..");
         /* 购买实物类商品 */
         if(OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(ordOrder.getOrderType())) {
+        	/* 查询费用总表信息*/
+        	OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(tenantId, ordOrder.getOrderId());
+        	if(odFeeTotal==null) {
+        		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+        				"费用总表信息不存在[orderId:"+ordOrder.getOrderId()+"]");
+        	}
+        	//减免费用和总费用
+        	long operDiscountFee = odFeeTotal.getOperDiscountFee();
+        	long totalFee = odFeeTotal.getTotalFee();
         	/* 1.查询商品明细表*/
         	OrdOdProdCriteria example = new OrdOdProdCriteria();
         	OrdOdProdCriteria.Criteria criteria = example.createCriteria();
@@ -327,6 +336,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	}
         	Map<String, Long> map=new HashMap<String,Long>();
         	for (OrdOdProd ordOdProd : ordOdProdList) {
+        		//单个商品的总费用
+        		long buySum = ordOdProd.getBuySum();
+        		long prodTotal=ordOdProd.getSalePrice()*buySum;
+        		long prodOperDiscountFee=(prodTotal/totalFee)*operDiscountFee;
+        		ordOdProd.setOperDiscountFee(prodOperDiscountFee);
+        		ordOdProdAtomSV.updateById(ordOdProd);
         		/* 2.生成子订单*/
         		this.createEntitySubOrder(tenantId, ordOrder,ordOdProd,map);
         	}
