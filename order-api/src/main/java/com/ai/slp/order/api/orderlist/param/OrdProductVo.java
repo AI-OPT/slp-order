@@ -116,6 +116,11 @@ public class OrdProductVo extends BaseInfo{
      * 积分扣减费用
      */
     private long jfFee;
+    
+    /**
+     * 商品是否售后标识
+     */
+    private String cusServiceFlag;
 
 	public Long getOrderId() {
 		return orderId;
@@ -284,5 +289,13 @@ public class OrdProductVo extends BaseInfo{
 
 	public void setProdDetalId(Long prodDetalId) {
 		this.prodDetalId = prodDetalId;
+	}
+
+	public String getCusServiceFlag() {
+		return cusServiceFlag;
+	}
+
+	public void setCusServiceFlag(String cusServiceFlag) {
+		this.cusServiceFlag = cusServiceFlag;
 	}
 }
