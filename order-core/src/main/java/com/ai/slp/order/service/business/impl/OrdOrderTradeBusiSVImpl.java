@@ -190,6 +190,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setOrderDesc(ordBaseInfo.getOrderDesc());
         ordOrder.setKeywords(ordBaseInfo.getKeywords());
         ordOrder.setRemark(ordBaseInfo.getRemark());
+        ordOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
         ordOrderAtomSV.insertSelective(ordOrder);
         return orderId;
     }
@@ -261,13 +262,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setBuySum(ordProductInfo.getBuySum());
             ordOdProd.setSalePrice(storageNumRes.getSalePrice());
             ordOdProd.setTotalFee(storageNumRes.getSalePrice() * ordProductInfo.getBuySum());
-            ordOdProd.setDiscountFee(ordProductInfo.getDiscountFee());
-            ordOdProd.setOperDiscountFee(ordProductInfo.getOperDiscountFee());
-            ordOdProd.setOperDiscountDesc(ordProductInfo.getOperDiscountDesc());
-            //积分与金额转换 100:1 金额再转化为厘
-            long jfMoney=(jfFee/OrdersConstants.JfTransf.rate)*1000;
-            ordOdProd.setAdjustFee(ordOdProd.getTotalFee() - ordOdProd.getDiscountFee()
-                    - ordOdProd.getOperDiscountFee()-jfMoney-couponFee);
+            ordOdProd.setDiscountFee(0);
+            ordOdProd.setOperDiscountFee(0);
+            ordOdProd.setOperDiscountDesc("");
+            ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);;
+            ordOdProd.setAdjustFee(0);
             ProdAttrInfoVo vo = new ProdAttrInfoVo();
             vo.setBasicOrgId(ordProductInfo.getBasicOrgId());
             vo.setProvinceCode(ordProductInfo.getProvinceCode());
@@ -308,15 +307,13 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         if (CollectionUtil.isEmpty(ordOdProds)) {
             throw new BusinessException("", "订单商品明细不存在[订单ID:" + orderId + "]");
         }
-        long operDiscountFee = 0;
         OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
         String infoJson = ordExtendInfo.getInfoJson();
         JSONObject object = JSON.parseObject(infoJson);
         long totalFee = (long) object.get("totalFee"); //传过来的总费用
         long adjustFee = (long) object.get("adjustFee"); //应收费用
-        for (OrdOdProd ordOdProd : ordOdProds) {
-            operDiscountFee = ordOdProd.getOperDiscountFee() + operDiscountFee;
-        }
+        long operDiscountFee = (long) object.get("operDiscountFee"); //减免费用
+        String operDiscountDesc = (String) object.get("operDiscountDesc"); //减免费用原因
         OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
         ordOdFeeTotal.setOrderId(orderId);
         ordOdFeeTotal.setTenantId(request.getTenantId());
@@ -324,7 +321,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOdFeeTotal.setTotalFee(totalFee);
         ordOdFeeTotal.setDiscountFee(totalFee-adjustFee);
         ordOdFeeTotal.setOperDiscountFee(operDiscountFee);
-        ordOdFeeTotal.setOperDiscountDesc("");
+        ordOdFeeTotal.setOperDiscountDesc(operDiscountDesc);
         ordOdFeeTotal.setAdjustFee(adjustFee);
         ordOdFeeTotal.setPaidFee(0);
         ordOdFeeTotal.setPayFee(adjustFee);
