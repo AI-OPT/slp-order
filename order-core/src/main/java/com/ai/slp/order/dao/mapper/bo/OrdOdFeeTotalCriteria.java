@@ -1084,6 +1084,66 @@ public class OrdOdFeeTotalCriteria {
             addCriterion("TOTAL_JF not between", value1, value2, "totalJf");
             return (Criteria) this;
         }
+
+        public Criteria andFreightIsNull() {
+            addCriterion("FREIGHT is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightIsNotNull() {
+            addCriterion("FREIGHT is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightEqualTo(long value) {
+            addCriterion("FREIGHT =", value, "freight");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightNotEqualTo(long value) {
+            addCriterion("FREIGHT <>", value, "freight");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightGreaterThan(long value) {
+            addCriterion("FREIGHT >", value, "freight");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightGreaterThanOrEqualTo(long value) {
+            addCriterion("FREIGHT >=", value, "freight");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightLessThan(long value) {
+            addCriterion("FREIGHT <", value, "freight");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightLessThanOrEqualTo(long value) {
+            addCriterion("FREIGHT <=", value, "freight");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightIn(List<Long> values) {
+            addCriterion("FREIGHT in", values, "freight");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightNotIn(List<Long> values) {
+            addCriterion("FREIGHT not in", values, "freight");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightBetween(long value1, long value2) {
+            addCriterion("FREIGHT between", value1, value2, "freight");
+            return (Criteria) this;
+        }
+
+        public Criteria andFreightNotBetween(long value1, long value2) {
+            addCriterion("FREIGHT not between", value1, value2, "freight");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

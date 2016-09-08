@@ -33,6 +33,8 @@ public class OrdOdFeeTotal {
 
     private long totalJf;
 
+    private long freight;
+
     public long getOrderId() {
         return orderId;
     }
@@ -151,5 +153,13 @@ public class OrdOdFeeTotal {
 
     public void setTotalJf(long totalJf) {
         this.totalJf = totalJf;
+    }
+
+    public long getFreight() {
+        return freight;
+    }
+
+    public void setFreight(long freight) {
+        this.freight = freight;
     }
 }
