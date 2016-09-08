@@ -50,7 +50,7 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(odFeeTotal==null) {
 			logger.warn("未能查询到指定的订单费用总表信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException("","未能查询到指定的订单费用总表信息[订单id:"+request.getOrderId()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,"未能查询到指定的订单费用总表信息[订单id:"+request.getOrderId()+"]");
 		}
 		/* 3.查询订单商品明细信息*/
 		OrdOdProdCriteria example=new OrdOdProdCriteria();
@@ -60,23 +60,18 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 		List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
 		if(CollectionUtil.isEmpty(ordOdProdList)) {
 			logger.warn("未能查询到指定的订单商品明细表信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException("","未能查询到指定的订单商品明细表信息[订单id:"+request.getOrderId()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,"未能查询到指定的订单商品明细表信息[订单id:"+request.getOrderId()+"]");
 		}
 		long updateAmount = request.getUpdateAmount();
+		if(updateAmount>odFeeTotal.getAdjustFee()) {
+			throw new BusinessException("", "修改金额不能大于之前的金额");
+		}
 		//总减免费用 
 		long operDiscountFee=odFeeTotal.getAdjustFee()-updateAmount;
-		//单个商品减免费用
-		long prodOperDiscountFee=operDiscountFee/ordOdProdList.size();
-		for (OrdOdProd ordOdProd : ordOdProdList) {
-			ordOdProd.setAdjustFee(ordOdProd.getAdjustFee()-prodOperDiscountFee);
-			ordOdProd.setOperDiscountFee(ordOdProd.getOperDiscountFee()+prodOperDiscountFee);
-			ordOdProd.setOperDiscountDesc(request.getUpdateRemark());
-			ordOdProd.setUpdateOperId(request.getOperId());
-			ordOdProdAtomSV.updateById(ordOdProd);
-		}
 		odFeeTotal.setAdjustFee(updateAmount);
 		odFeeTotal.setOperDiscountFee(odFeeTotal.getOperDiscountFee()+operDiscountFee);
 		odFeeTotal.setOperDiscountDesc(request.getUpdateRemark());
+		odFeeTotal.setDiscountFee(odFeeTotal.getDiscountFee()+operDiscountFee); //总优惠金额
 		odFeeTotal.setUpdateOperId(request.getOperId());
 		odFeeTotal.setPayFee(updateAmount);
 		/* 3.修改金额和备注信息*/
