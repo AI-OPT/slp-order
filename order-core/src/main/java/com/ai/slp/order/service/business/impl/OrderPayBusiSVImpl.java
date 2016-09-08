@@ -336,11 +336,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	}
         	Map<String, Long> map=new HashMap<String,Long>();
         	for (OrdOdProd ordOdProd : ordOdProdList) {
-        		//单个商品的总费用
-        		long buySum = ordOdProd.getBuySum();
-        		long prodTotal=ordOdProd.getSalePrice()*buySum;
-        		long prodOperDiscountFee=(prodTotal/totalFee)*operDiscountFee;
-        		ordOdProd.setOperDiscountFee(prodOperDiscountFee);
+        		long prodOperDiscountFee=(ordOdProd.getTotalFee()/totalFee)*operDiscountFee;//商品的减免费用
+        		ordOdProd.setOperDiscountFee(prodOperDiscountFee); //减免费用
+        		ordOdProd.setDiscountFee(prodOperDiscountFee+ordOdProd.getJfFee()+ordOdProd.getCouponFee()); //优惠费用
+        		ordOdProd.setAdjustFee(ordOdProd.getTotalFee()-ordOdProd.getDiscountFee()); //应收费用
         		ordOdProdAtomSV.updateById(ordOdProd);
         		/* 2.生成子订单*/
         		this.createEntitySubOrder(tenantId, ordOrder,ordOdProd,map);
