@@ -2414,6 +2414,76 @@ public class OrdOdProdCriteria {
             addCriterion("JF_FEE not between", value1, value2, "jfFee");
             return (Criteria) this;
         }
+
+        public Criteria andCusServiceFlagIsNull() {
+            addCriterion("CUS_SERVICE_FLAG is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagIsNotNull() {
+            addCriterion("CUS_SERVICE_FLAG is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagEqualTo(String value) {
+            addCriterion("CUS_SERVICE_FLAG =", value, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagNotEqualTo(String value) {
+            addCriterion("CUS_SERVICE_FLAG <>", value, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagGreaterThan(String value) {
+            addCriterion("CUS_SERVICE_FLAG >", value, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagGreaterThanOrEqualTo(String value) {
+            addCriterion("CUS_SERVICE_FLAG >=", value, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagLessThan(String value) {
+            addCriterion("CUS_SERVICE_FLAG <", value, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagLessThanOrEqualTo(String value) {
+            addCriterion("CUS_SERVICE_FLAG <=", value, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagLike(String value) {
+            addCriterion("CUS_SERVICE_FLAG like", value, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagNotLike(String value) {
+            addCriterion("CUS_SERVICE_FLAG not like", value, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagIn(List<String> values) {
+            addCriterion("CUS_SERVICE_FLAG in", values, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagNotIn(List<String> values) {
+            addCriterion("CUS_SERVICE_FLAG not in", values, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagBetween(String value1, String value2) {
+            addCriterion("CUS_SERVICE_FLAG between", value1, value2, "cusServiceFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andCusServiceFlagNotBetween(String value1, String value2) {
+            addCriterion("CUS_SERVICE_FLAG not between", value1, value2, "cusServiceFlag");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

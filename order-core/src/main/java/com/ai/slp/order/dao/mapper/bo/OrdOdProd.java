@@ -73,6 +73,8 @@ public class OrdOdProd {
 
     private long jfFee;
 
+    private String cusServiceFlag;
+
     public long getProdDetalId() {
         return prodDetalId;
     }
@@ -353,6 +355,14 @@ public class OrdOdProd {
         this.jfFee = jfFee;
     }
 
+    public String getCusServiceFlag() {
+        return cusServiceFlag;
+    }
+
+    public void setCusServiceFlag(String cusServiceFlag) {
+        this.cusServiceFlag = cusServiceFlag == null ? null : cusServiceFlag.trim();
+    }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -361,6 +371,7 @@ public class OrdOdProd {
 		result = prime * result + (int) (buySum ^ (buySum >>> 32));
 		result = prime * result + (int) (costPrice ^ (costPrice >>> 32));
 		result = prime * result + (int) (couponFee ^ (couponFee >>> 32));
+		result = prime * result + ((cusServiceFlag == null) ? 0 : cusServiceFlag.hashCode());
 		result = prime * result + (int) (discountFee ^ (discountFee >>> 32));
 		result = prime * result + ((extendInfo == null) ? 0 : extendInfo.hashCode());
 		result = prime * result + ((invalidTime == null) ? 0 : invalidTime.hashCode());
@@ -411,6 +422,11 @@ public class OrdOdProd {
 		if (costPrice != other.costPrice)
 			return false;
 		if (couponFee != other.couponFee)
+			return false;
+		if (cusServiceFlag == null) {
+			if (other.cusServiceFlag != null)
+				return false;
+		} else if (!cusServiceFlag.equals(other.cusServiceFlag))
 			return false;
 		if (discountFee != other.discountFee)
 			return false;
@@ -542,4 +558,5 @@ public class OrdOdProd {
 			return false;
 		return true;
 	}
+    
 }
