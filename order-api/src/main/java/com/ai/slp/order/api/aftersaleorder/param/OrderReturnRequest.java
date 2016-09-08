@@ -23,6 +23,11 @@ public class OrderReturnRequest extends BaseInfo{
 	private long prodDetalId;
 	
 	/**
+	 * 商品数量
+	 */
+	private long prodSum;
+	
+	/**
 	 * 受理工号
 	 */
 	@NotBlank(message="受理工号不能为空")
@@ -51,5 +56,12 @@ public class OrderReturnRequest extends BaseInfo{
 	public void setOperId(String operId) {
 		this.operId = operId;
 	}
-	
+
+	public long getProdSum() {
+		return prodSum;
+	}
+
+	public void setProdSum(long prodSum) {
+		this.prodSum = prodSum;
+	}
 }
