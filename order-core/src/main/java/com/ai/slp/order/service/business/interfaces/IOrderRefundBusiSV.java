@@ -7,8 +7,6 @@ import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
 
 public interface IOrderRefundBusiSV {
 	
-	public void fullRefund(OrderRefundRequest request) throws BusinessException, SystemException;
-
 	public void partRefund(OrderRefundRequest request) throws BusinessException, SystemException;
 	
 	public void refuseRefund(OrderRefuseRefundRequest request) throws BusinessException, SystemException;
