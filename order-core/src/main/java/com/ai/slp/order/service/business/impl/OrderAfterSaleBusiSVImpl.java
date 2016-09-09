@@ -120,6 +120,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		rdOrdOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
 		rdOrdOdFeeTotal.setOperDiscountFee(ordOdProd.getOperDiscountFee());
 		rdOrdOdFeeTotal.setPaidFee(0);
+		rdOrdOdFeeTotal.setFreight(0);
 		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 		/* 7.生成退款订单支付机构接口*/
@@ -224,6 +225,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		rdOrdOdFeeTotal.setAdjustFee(ordOdProd.getAdjustFee());
 		rdOrdOdFeeTotal.setPayFee(ordOdProd.getAdjustFee());
 		rdOrdOdFeeTotal.setPaidFee(0);
+		rdOrdOdFeeTotal.setFreight(0);
 		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 		/* 7.生成退款订单支付机构接口*/
