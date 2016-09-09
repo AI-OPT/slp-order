@@ -54,36 +54,6 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	@Autowired
 	private IOrdOdFeeTotalAtomSV  ordOdFeeTotalAtomSV;
 	 
-	public void fullRefund(OrderRefundRequest request) throws BusinessException, SystemException {
-		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
-		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(ordOrder==null) {
-			logger.error("");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"订单信息不存在[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
-		}
-		/* 更新订单状态和写入订单轨迹*/
-		String newState = OrdersConstants.OrdOrder.State.FINISH_REPAY;
-		String chgDesc = OrdOdStateChg.ChgDesc.ORDER_REVOKE_FINISH_PAY;
-		this.updateOrderState(ordOrder, newState, request, chgDesc);
-		/* 根据业务类型判断是否退回库存*/
-		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode())) {
-			 /* 库存回退 */
-	        List<OrdOdProd> ordOdProds = this.getOrdOdProds(ordOrder.getOrderId());
-	        if (CollectionUtil.isEmpty(ordOdProds))
-	            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息["
-	                    + ordOrder.getOrderId() + "]");
-	        for (OrdOdProd ordOdProd : ordOdProds) {
-	            Map<String, Integer> storageNum = JSON.parseObject(ordOdProd.getSkuStorageId(),
-	                    new TypeReference<Map<String, Integer>>(){});
-	            this.backStorageNum(ordOdProd.getTenantId(), ordOdProd.getSkuId(), storageNum);
-	        }
-		}
-		//TODO
-		/*退款到指定的账户中 */
-		
-	}
-
 	public void partRefund(OrderRefundRequest request) throws BusinessException, SystemException {
 		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
@@ -100,15 +70,16 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 			logger.error("输入的费用不能大于实际应收的费用,实际应收费用为:"+ordOdFeeTotal.getAdjustFee());
 			throw new BusinessException("", "输入的费用不能大于实际应收的费用");
 		}
-		ordOdFeeTotal.setTotalFee(updateMoney);
-		ordOdFeeTotal.setAdjustFee(updateMoney);
-		ordOdFeeTotal.setDiscountFee(0);
-		ordOdFeeTotal.setOperDiscountFee(0);
-		ordOdFeeTotal.setOperDiscountDesc("");
-		ordOdFeeTotal.setPaidFee(0);
-		ordOdFeeTotal.setPayFee(updateMoney);
-		ordOdFeeTotal.setUpdateOperId(request.getOperId());
-		//TODO 运费???
+		if(updateMoney<ordOdFeeTotal.getAdjustFee()) {
+			ordOdFeeTotal.setTotalFee(updateMoney);
+			ordOdFeeTotal.setAdjustFee(updateMoney);
+			ordOdFeeTotal.setDiscountFee(0);
+			ordOdFeeTotal.setOperDiscountFee(0);
+			ordOdFeeTotal.setOperDiscountDesc("");
+			ordOdFeeTotal.setPaidFee(0);
+			ordOdFeeTotal.setPayFee(updateMoney);
+			ordOdFeeTotal.setUpdateOperId(request.getOperId());
+		}
 		ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
 		/* 更新订单状态和写入订单轨迹*/
 		String newState = OrdersConstants.OrdOrder.State.FINISH_REPAY;
