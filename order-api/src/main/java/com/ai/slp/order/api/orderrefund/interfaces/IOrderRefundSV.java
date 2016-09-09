@@ -17,24 +17,8 @@ import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
 public interface IOrderRefundSV {
 	
-	
 	/**
-	 * 全额退款
-	 * @param request
-	 * @return
-	 * @throws BusinessException
-	 * @throws SystemException
-	 * @author caofz
-	 * @ApiDocMethod
-	 * @ApiCode ORDER_FULLREFUND_001
-	 * @RestRelativeURL  aftersaleorder/fullRefund
-	 */
-	@POST
-	@Path("/fullRefund")
-	public BaseResponse fullRefund(OrderRefundRequest request) throws BusinessException,SystemException;
-	
-	/**
-	 * 部分退款(金额修改)
+	 * 退款(金额修改)
 	 * @param request
 	 * @return
 	 * @throws BusinessException
