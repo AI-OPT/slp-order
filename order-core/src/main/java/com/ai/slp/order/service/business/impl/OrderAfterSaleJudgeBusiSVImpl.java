@@ -5,12 +5,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
+import com.ai.slp.order.api.aftersaleorder.param.OrderAfterVo;
 import com.ai.slp.order.api.aftersaleorder.param.OrderJuageRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderJuageResponse;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
@@ -22,6 +25,8 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleJudgeBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 
+@Service
+@Transactional
 public class OrderAfterSaleJudgeBusiSVImpl implements IOrderAfterSaleJudgeBusiSV {
 	
 	private static final Logger logger=LoggerFactory.getLogger(OrderAfterSaleJudgeBusiSVImpl.class);
@@ -56,8 +61,10 @@ public class OrderAfterSaleJudgeBusiSVImpl implements IOrderAfterSaleJudgeBusiSV
 			List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
 			if(!CollectionUtil.isEmpty(prodList)) {
 				OrdOdProd ordOdProd = prodList.get(0);
-				BeanUtils.copyProperties(response, ordOdProd);
-				response.getAfterVo().setBusiCode(ordOrder.getBusiCode());
+				OrderAfterVo afterVo=new OrderAfterVo();
+				BeanUtils.copyProperties(afterVo, ordOdProd);
+				afterVo.setBusiCode(ordOrder.getBusiCode());
+				response.setAfterVo(afterVo);
 				return response;
 			}
 		}
