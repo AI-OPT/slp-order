@@ -14,30 +14,26 @@ public final class OrdersConstants {
 
         public static final class DeliveryFlag {
             /**
-             * 0:无
+             * N:不需要物流
              */
-            public static final String NONE = "0";
+            public static final String NONE = "N";
 
             /**
-             * 1：快递
+             * Y：需要物流
              */
-            public static final String EXPRESS = "1";
+            public static final String EXPRESS = "Y";
 
-            /**
-             * 2：自提
-             */
-            public static final String SELF_PICKUP = "2";
         }
         public static final class cusServiceFlag {
         	/**
-        	 * 0:否 (售后订单标识)
+        	 * N:否 (售后订单标识)
         	 */
-        	public static final String NO = "0";
+        	public static final String NO = "N";
         	
         	/**
-        	 * 1：是
+        	 * Y：是
         	 */
-        	public static final String YES = "1";
+        	public static final String YES = "Y";
         	
         }
         
@@ -345,10 +341,10 @@ public final class OrdersConstants {
         public static final class SubFlag {
 
             // 1 是
-            public static final String YES = "1";
+            public static final String YES = "Y";
 
             // 0 否
-            public static final String NO = "0";
+            public static final String NO = "N";
 
         }
 
@@ -746,12 +742,12 @@ public final class OrdersConstants {
             /**
              * 1 是
              */
-            public static final String YES = "1";
+            public static final String YES = "Y";
 
             /**
              * 0 否
              */
-            public static final String NO = "0";
+            public static final String NO = "N";
 
         }
 
@@ -800,12 +796,12 @@ public final class OrdersConstants {
             /**
              * 预警标志
              */
-            public static final String WARING = "0";
+            public static final String WARING = "N";
 
             /**
              * 预警标志
              */
-            public static final String NO_WARING = "1";
+            public static final String NO_WARING = "Y";
 
         }
 
