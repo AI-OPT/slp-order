@@ -2,7 +2,9 @@ package com.ai.slp.order.api.aftersaleorder.param;
 
 import java.io.Serializable;
 
-public class OrderAfterVo implements Serializable{
+import com.ai.opt.base.vo.BaseInfo;
+
+public class OrderAfterVo extends BaseInfo{
 
 	private static final long serialVersionUID = 1L;
 	
