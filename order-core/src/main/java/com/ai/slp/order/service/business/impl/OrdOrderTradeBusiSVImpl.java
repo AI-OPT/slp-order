@@ -313,6 +313,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         long totalFee = (long) object.get("totalFee"); //传过来的总费用
         long adjustFee = (long) object.get("adjustFee"); //应收费用
         long operDiscountFee = (long) object.get("operDiscountFee"); //减免费用
+        long freightFee = (long) object.get("freight"); //减免费用
         String operDiscountDesc = (String) object.get("operDiscountDesc"); //减免费用原因
         OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
         ordOdFeeTotal.setOrderId(orderId);
@@ -329,6 +330,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOdFeeTotal.setUpdateChlId("");
         ordOdFeeTotal.setUpdateOperId("");
         ordOdFeeTotal.setTotalJf(0l);
+        ordOdFeeTotal.setFreight(freightFee);
         ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
         /* 2. 封装返回参数 */
         OrdFeeInfo ordFeeInfo = new OrdFeeInfo();
