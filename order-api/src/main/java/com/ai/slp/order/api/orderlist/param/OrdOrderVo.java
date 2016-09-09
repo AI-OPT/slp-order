@@ -235,6 +235,11 @@ public class OrdOrderVo extends BaseInfo {
      * 物流公司ID
      */
     private String expressId;
+    
+    /**
+     * 受理工号
+     */
+    private String operId;
 
     /**
      * 支付信息(订单费用总表信息)
@@ -612,5 +617,13 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setLogisticsType(String logisticsType) {
 		this.logisticsType = logisticsType;
+	}
+
+	public String getOperId() {
+		return operId;
+	}
+
+	public void setOperId(String operId) {
+		this.operId = operId;
 	}
 }
