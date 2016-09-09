@@ -22,16 +22,6 @@ public class OrderRefundSVImpl implements IOrderRefundSV {
 	private IOrderRefundBusiSV orderRefundBusiSV;
 
 	@Override
-	public BaseResponse fullRefund(OrderRefundRequest request) throws BusinessException, SystemException {
-		BaseResponse response=new BaseResponse();
-		orderRefundBusiSV.fullRefund(request);
-	    ResponseHeader responseHeader = new ResponseHeader(true,
-                ExceptCodeConstants.Special.SUCCESS, "成功");
-        response.setResponseHeader(responseHeader);
-        return response;
-	}
-
-	@Override
 	public BaseResponse partRefund(OrderRefundRequest request) throws BusinessException, SystemException {
 		BaseResponse response=new BaseResponse();
 		orderRefundBusiSV.partRefund(request);
