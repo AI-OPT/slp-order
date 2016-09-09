@@ -401,6 +401,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo.setUserId(order.getUserId());//买家帐号(用户号)
             ordOrderVo.setRemark(order.getRemark());//买家留言(订单备注)
             ordOrderVo.setOrigOrderId(order.getOrigOrderId()); //原始订单号
+            ordOrderVo.setOperId(order.getOperId());
             ordOrderVo.setAcctId(order.getAcctId()); 
             ordOrderVo.setOrderTime(order.getOrderTime());
             /* 2.订单费用信息查询 */
