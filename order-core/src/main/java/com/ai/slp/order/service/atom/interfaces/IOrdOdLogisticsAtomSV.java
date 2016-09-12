@@ -12,4 +12,6 @@ public interface IOrdOdLogisticsAtomSV {
 	 List<OrdOdLogistics> selectByExample(OrdOdLogisticsCriteria example);
 	 
 	 OrdOdLogistics selectByOrd(String tenantId,long orderId);
+	 
+	 int updateByPrimaryKey(OrdOdLogistics record);
 }
