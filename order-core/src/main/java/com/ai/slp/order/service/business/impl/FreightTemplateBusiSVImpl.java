@@ -192,8 +192,8 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 				logger.error("未查询到指定的运费模版明细信息[对应区域id:"+ftProdInfo.getRegionId()+"]");
 				throw new BusinessException("", "未查询到指定的运费模版明细信息[对应区域id:"+ftProdInfo.getRegionId()+"]");
 			}else if (ftSource!=null&&!templateId.equals(ftSource.getTemplateId())) {
-				logger.error("对应区域id和模版id没对应上,[对应区域id:"+ftSource.getTemplateId()+",模版id:"+templateId+"]");
-				throw new BusinessException("", "对应区域id和模版id没对应上,[对应区域id:"+ftSource.getTemplateId()+",模版id:"+templateId+"]");
+				logger.error("模版明细中的模版id和参数模版id不同,[模版明细中模版id:"+ftSource.getTemplateId()+",入参模版id:"+templateId+"]");
+				throw new BusinessException("", "模版明细中的模版id和参数模版id不同,[模版明细中模版id:"+ftSource.getTemplateId()+",入参模版id:"+templateId+"]");
 			}
 			BeanUtils.copyProperties(ftSource,ftProdInfo);
 			freightTemplateProdAtomSV.updateByPrimaryKeySelective(ftSource);
