@@ -681,7 +681,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		SysParam sysParamDf = this.translateInfo(behindOrdOrderAttach.getTenantId(), 
         				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
         		pOrderVo.setDeliveryFlagName(sysParamDf==null?"":sysParamDf.getColumnDesc());
-        		String arr="21,22,23,31,92,93,94";  //售后状态
+        		String arr="21,212,22,23,31,92,93,94";  //售后状态
         		boolean flag=arr.equals(states);
         		if(!flag) {
         			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
