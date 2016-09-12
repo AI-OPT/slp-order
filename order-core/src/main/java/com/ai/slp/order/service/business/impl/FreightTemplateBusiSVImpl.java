@@ -161,9 +161,9 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 				ftProd.setTemplateId(templateId);
 				ftProd.setTransportAddress(ftProdInfo.getTransportAddress());
 				ftProd.setFirstNumber(ftProdInfo.getFirstNumber());
-				ftProd.setFirstNum(ftProdInfo.getFirstNum());
+				ftProd.setFirstNum(ftProdInfo.getFirstNum()*1000); //元转厘
 				ftProd.setPieceNumber(ftProdInfo.getPieceNumber());
-				ftProd.setPieceNum(ftProdInfo.getPieceNum());
+				ftProd.setPieceNum(ftProdInfo.getPieceNum()*1000);
 				/* 2.保存运费模版明细信息*/
 				freightTemplateProdAtomSV.insertSelective(ftProd);
 			}
@@ -177,7 +177,7 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 		String templateId = request.getTemplateId();
 		FreightTemplate freightTemplate = freightTemplateAtomSV.selectByPrimaryKey(templateId);
 		if(freightTemplate==null) {
-			logger.warn("未查询到指定的运费模版信息[模版id:"+templateId+"]");
+			logger.error("未查询到指定的运费模版信息[模版id:"+templateId+"]");
 			throw new BusinessException("", "未查询到指定的运费模版信息[模版id:"+templateId+"]");
 		}
 		FreightTemplateInfo freightTemplateInfo = request.getFreightTemplateInfo();
@@ -188,6 +188,13 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 		List<FreightTemplateProdInfo> ftProdInfos = request.getFreightTemplateProdInfos();
 		for (FreightTemplateProdInfo ftProdInfo : ftProdInfos) {
 			FreightTemplateProd ftSource = freightTemplateProdAtomSV.selectByPrimaryKey(ftProdInfo.getRegionId());
+			if(ftSource==null) {
+				logger.error("未查询到指定的运费模版明细信息[对应区域id:"+ftProdInfo.getRegionId()+"]");
+				throw new BusinessException("", "未查询到指定的运费模版明细信息[对应区域id:"+ftProdInfo.getRegionId()+"]");
+			}else if (ftSource!=null&&!templateId.equals(ftSource.getRegionId())) {
+				logger.error("对应区域id和模版id没对应上,[对应区域id:"+ftProdInfo.getRegionId()+",模版id:"+templateId+"]");
+				throw new BusinessException("", "未查询到指定的运费模版明细信息[对应区域id:"+ftProdInfo.getRegionId()+",模版id:"+templateId+"]");
+			}
 			BeanUtils.copyProperties(ftSource,ftProdInfo);
 			freightTemplateProdAtomSV.updateByPrimaryKeySelective(ftSource);
 		}
