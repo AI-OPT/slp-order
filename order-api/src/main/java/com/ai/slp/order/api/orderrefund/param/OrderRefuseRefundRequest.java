@@ -24,6 +24,7 @@ public class OrderRefuseRefundRequest extends BaseInfo {
 	/**
 	 * 拒绝理由
 	 */
+	@NotBlank(message="拒绝退款理由不能为空")
 	private String refuseReason;
 	
 	/**
