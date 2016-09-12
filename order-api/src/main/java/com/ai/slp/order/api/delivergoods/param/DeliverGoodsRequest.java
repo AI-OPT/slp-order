@@ -11,7 +11,7 @@ public class DeliverGoodsRequest extends BaseInfo{
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * 订单id (父订单)
+	 * 订单id 
 	 */
 	@NotNull(message="订单id不能为空")
 	private Long orderId;
@@ -27,6 +27,13 @@ public class DeliverGoodsRequest extends BaseInfo{
 	 */
 	@NotBlank(message="物流单号不能为空")
 	private String expressOddNumber;
+	
+	/**
+	 * 受理工号
+	 */
+	@NotBlank(message="受理工号不能为空")
+	private String operId;
+	
 
 	public Long getOrderId() {
 		return orderId;
@@ -50,5 +57,13 @@ public class DeliverGoodsRequest extends BaseInfo{
 
 	public void setExpressOddNumber(String expressOddNumber) {
 		this.expressOddNumber = expressOddNumber;
+	}
+
+	public String getOperId() {
+		return operId;
+	}
+
+	public void setOperId(String operId) {
+		this.operId = operId;
 	}
 }
