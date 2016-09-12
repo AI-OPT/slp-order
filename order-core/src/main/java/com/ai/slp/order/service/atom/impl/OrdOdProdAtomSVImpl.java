@@ -44,4 +44,15 @@ public class OrdOdProdAtomSVImpl implements IOrdOdProdAtomSV {
         return MapperFactory.getOrdOdProdMapper().selectByExample(example);
 	}
 
+	@Override
+	public List<OrdOdProd> selectByProdName(String tenantId, String prodName) {
+		OrdOdProdCriteria example = new OrdOdProdCriteria();
+		OrdOdProdCriteria.Criteria param = example.createCriteria();
+        if(!StringUtil.isBlank(tenantId)){
+        	param.andTenantIdEqualTo(tenantId);
+        }
+        param.andProdNameLike("%"+prodName+"%");
+        return MapperFactory.getOrdOdProdMapper().selectByExample(example);
+	}
+
 }

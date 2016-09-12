@@ -16,4 +16,6 @@ public interface IOrdOrderAtomSV {
     int insertSelective(OrdOrder record);
 
     int updateById(OrdOrder ordOrder);
+    
+    List<OrdOrder> selectChildOrder(String tenantId,long parentId);
 }

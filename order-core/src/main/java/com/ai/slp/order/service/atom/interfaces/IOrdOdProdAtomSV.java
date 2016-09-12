@@ -15,4 +15,8 @@ public interface IOrdOdProdAtomSV {
     OrdOdProd selectByPrimaryKey(long prodDetalId);
     
     List<OrdOdProd> selectByOrd(String tenantId,long orderId);
+    
+    List<OrdOdProd> selectByProdName(String tenantId,String prodName);
+    
+    
 }

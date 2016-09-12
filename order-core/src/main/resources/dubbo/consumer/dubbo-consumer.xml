@@ -24,8 +24,8 @@
 
 	<!-- <dubbo:consumer timeout="${dubbo.consoumer.timeout}" /> -->
 
-	<dubbo:reference id="iLoginSV"
-		interface="com.ai.slp.user.api.login.interfaces.ILoginSV" />
+	<!--  <dubbo:reference id="iLoginSV"
+		interface="com.ai.slp.user.api.login.interfaces.ILoginSV" />-->
 
 	<dubbo:reference id="iStorageNumSV"
 		interface="com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV" />

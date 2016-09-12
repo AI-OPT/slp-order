@@ -39,4 +39,11 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
     public int updateById(OrdOrder ordOrder) {
         return MapperFactory.getOrdOrderMapper().updateByPrimaryKey(ordOrder);
     }
+
+	@Override
+	public List<OrdOrder> selectChildOrder(String tenantId, long parentId) {
+		 OrdOrderCriteria example = new OrdOrderCriteria();
+	     example.createCriteria().andTenantIdEqualTo(tenantId).andParentOrderIdEqualTo(parentId);
+	     return MapperFactory.getOrdOrderMapper().selectByExample(example);
+	}
 }
