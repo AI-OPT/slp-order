@@ -25,6 +25,7 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria.Criteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
@@ -70,7 +71,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 			logger.error("输入的费用不能大于实际应收的费用,实际应收费用为:"+ordOdFeeTotal.getAdjustFee());
 			throw new BusinessException("", "输入的费用不能大于实际应收的费用");
 		}
-		if(updateMoney<ordOdFeeTotal.getAdjustFee()) {
+		if(updateMoney>0 && updateMoney<ordOdFeeTotal.getAdjustFee()) {
 			ordOdFeeTotal.setTotalFee(updateMoney);
 			ordOdFeeTotal.setAdjustFee(updateMoney);
 			ordOdFeeTotal.setDiscountFee(0);
@@ -81,10 +82,30 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 			ordOdFeeTotal.setUpdateOperId(request.getOperId());
 		}
 		ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
-		/* 更新订单状态和写入订单轨迹*/
-		String newState = OrdersConstants.OrdOrder.State.FINISH_REPAY;
-		String chgDesc = OrdOdStateChg.ChgDesc.ORDER_REVOKE_FINISH_PAY;
-		this.updateOrderState(ordOrder, newState, request, chgDesc);
+		String orgState = ordOrder.getState();
+		String newState;
+		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode())) {  //退货审核第二步
+			String transitionState= OrdersConstants.OrdOrder.State.RECEIPT_CONFIRMATION;
+			String transitionChgDesc=OrdOdStateChg.ChgDesc.ORDER_SELLER_CONFIRMED_WAIT_PAY;
+			newState=OrdersConstants.OrdOrder.State.WAIT_REPAY;
+			String chgDesc = OrdOdStateChg.ChgDesc.ORDER_REVOKE_WAIT_PAY;
+			this.updateOrderState(ordOrder, orgState, transitionState, transitionChgDesc, request.getOperId());
+			this.updateOrderState(ordOrder, transitionState, newState, chgDesc, request.getOperId());
+		}else {
+			/* 更新订单状态和写入订单轨迹*/
+			newState = OrdersConstants.OrdOrder.State.WAIT_REPAY; //待退费,等待支付中心真正退费
+			String transitionState=OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED;
+			String transitionChgDesc=OrdOdStateChg.ChgDesc.ORDER_AUDITED;
+			String chgDesc = OrdOdStateChg.ChgDesc.ORDER_AUDITED_WAIT_REPAY;
+			this.updateOrderState(ordOrder, orgState, transitionState, transitionChgDesc, request.getOperId());
+			this.updateOrderState(ordOrder, transitionState, newState, chgDesc, request.getOperId());
+		}
+		Timestamp sysDate=DateUtil.getSysDate();
+		ordOrder.setReasonDesc(request.getUpdateReason());
+		ordOrder.setState(newState);
+		ordOrder.setStateChgTime(sysDate);
+		ordOrder.setOperId(request.getOperId());
+		ordOrderAtomSV.updateById(ordOrder);
 		/* 根据业务类型判断是否退回库存*/
 		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode())) {
 			 /* 库存回退 */
@@ -112,40 +133,24 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"订单信息不存在[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
 		}
+		/* 拒绝  改变原始订单的商品售后标识状态*/
+		this.updateProdCusServiceFlag(ordOrder);
 		/* 更新订单状态和写入订单轨迹*/
-		String newState = OrdersConstants.OrdOrder.State.AUDIT_FAILURE;
-		String chgDesc = OrdOdStateChg.ChgDesc.ORDER_REVOKE_AUDIT_NOT_PASS;
+		String orgState = ordOrder.getState();
+		String newState=OrdersConstants.OrdOrder.State.AUDIT_FAILURE;
+		String chgDesc=OrdOdStateChg.ChgDesc.ORDER_AUDIT_NOT_PASS;
 		Timestamp sysDate=DateUtil.getSysDate();
-        String orgState = ordOrder.getState();
         ordOrder.setReasonDesc(request.getRefuseReason());
         ordOrder.setState(newState);
         ordOrder.setStateChgTime(sysDate);
         ordOrder.setOperId(request.getOperId());
         ordOrderAtomSV.updateById(ordOrder);
         // 写入订单状态变化轨迹表
-        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, newState,
-        		chgDesc, null, request.getOperId(), null, sysDate);
+        this.updateOrderState(ordOrder, orgState, newState, chgDesc, request.getOperId());
 	}
 	
 	
 	
-    /**
-     * 更新订单状态
-     */
-    private void updateOrderState(OrdOrder ordOrder,String newState,
-    		OrderRefundRequest request,String chgDesc) {
-    	Timestamp sysDate=DateUtil.getSysDate();
-        String orgState = ordOrder.getState();
-        ordOrder.setReasonDesc(request.getUpdateReason());
-        ordOrder.setState(newState);
-        ordOrder.setStateChgTime(sysDate);
-        ordOrder.setOperId(request.getOperId());
-        ordOrderAtomSV.updateById(ordOrder);
-        // 写入订单状态变化轨迹表
-        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, newState,
-        		chgDesc, null, request.getOperId(), null, sysDate);
-    }
-    
     /**
      * 获取商品明细
      */
@@ -170,5 +175,40 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
         String resultMessage = response.getResponseHeader().getResultMessage();
         if (!success)
             throw new BusinessException("", "调用回退库存异常:" + skuId + "错误信息如下:" + resultMessage + "]");
+    }
+    
+    /**
+     * 更新订单状态
+     */
+    private void updateOrderState(OrdOrder ordOrder,String 
+    		orgState,String newState,String chgDesc,String operId) {
+        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, newState,
+        		chgDesc, null, operId, null, DateUtil.getSysDate());
+    }
+    
+    /**
+     * 审核拒绝  改变原始订单的商品售后标识状态
+     * 
+     */
+    private void updateProdCusServiceFlag(OrdOrder ordOrder) {
+		List<OrdOdProd> prodList = ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
+		if(CollectionUtil.isEmpty(prodList)) {
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"未能查询到相关商品信息[订单id:"+ordOrder.getOrderId()+"]");
+		}
+		OrdOdProd ordOdProd = prodList.get(0);
+		OrdOdProdCriteria example=new OrdOdProdCriteria();
+		Criteria criteria = example.createCriteria();
+		criteria.andOrderIdEqualTo(ordOrder.getOrigOrderId());
+		criteria.andSkuIdEqualTo(ordOdProd.getSkuId());
+		criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
+		List<OrdOdProd> origProdList = ordOdProdAtomSV.selectByExample(example);
+		if(CollectionUtil.isEmpty(origProdList)) {
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"未能查询到相关商品信息[原始订单id:"+ordOrder.getOrigOrderId()+" ,skuId:"+ordOdProd.getSkuId()+"]");
+		}
+		OrdOdProd prod = origProdList.get(0);  //单个订单对应单个商品(售后)
+		prod.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
+		ordOdProdAtomSV.updateById(prod);
     }
 }
