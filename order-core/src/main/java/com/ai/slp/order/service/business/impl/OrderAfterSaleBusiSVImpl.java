@@ -86,7 +86,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		Timestamp sysDate = DateUtil.getSysDate();
 		backOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER); //退货单
 		backOrder.setOrderId(backOrderId); //退货单id
-		backOrder.setOperId("");//TODO 受理工号 ??
+		backOrder.setOperId(request.getOperId());//受理工号 
 		backOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//是否售后标识
 		backOrder.setOrigOrderId(order.getOrderId());
 		this.insertOrderState(sysDate, backOrder);
@@ -104,7 +104,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		backOrdOdProd.setUpdateTime(DateUtil.getSysDate());
 		backOrdOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		backOrdOdProd.setOrderId(backOrderId);
-		backOrdOdProd.setUpdateOperId("");//TODO 变更工号 ?
+		backOrdOdProd.setUpdateOperId(request.getOperId());//变更工号 
 		ordOdProdAtomSV.insertSelective(backOrdOdProd);
 		/* 6.生成退款订单费用总表*/
 		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
@@ -157,7 +157,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		Timestamp sysDate = DateUtil.getSysDate();
 		exOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER); //换货单
 		exOrder.setOrderId(exOrderId); //换货单id
-		exOrder.setOperId("");//TODO 受理工号 ??
+		exOrder.setOperId(request.getOperId());//受理工号 
 		exOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//是否售后标识
 		exOrder.setOrigOrderId(order.getOrderId());
 		this.insertOrderState(sysDate, exOrder);
@@ -171,7 +171,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		backOrdOdProd.setUpdateTime(DateUtil.getSysDate());
 		backOrdOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		backOrdOdProd.setOrderId(exOrderId);
-		backOrdOdProd.setUpdateOperId("");//TODO 变更工号 ?
+		backOrdOdProd.setUpdateOperId(request.getOperId());//变更工号
 		ordOdProdAtomSV.insertSelective(backOrdOdProd);
 	}
 
@@ -196,7 +196,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		rdOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER); //退款单
 		rdOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//是否售后标识
 		rdOrder.setOrderId(rdOrderId); //退款单id
-		rdOrder.setOperId("");//TODO 受理工号 ??
+		rdOrder.setOperId(request.getOperId());// 受理工号 
 		rdOrder.setOrigOrderId(order.getOrderId());
 		this.insertOrderState(sysDate, rdOrder);
 		//更新商品为售后标识
@@ -209,7 +209,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		backOrdOdProd.setUpdateTime(DateUtil.getSysDate());
 		backOrdOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		backOrdOdProd.setOrderId(rdOrderId);
-		backOrdOdProd.setUpdateOperId("");//TODO 变更工号 ?
+		backOrdOdProd.setUpdateOperId(request.getOperId());//变更工号 
 		ordOdProdAtomSV.insertSelective(backOrdOdProd);
 		/* 6.生成退款订单费用总表*/
 		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
