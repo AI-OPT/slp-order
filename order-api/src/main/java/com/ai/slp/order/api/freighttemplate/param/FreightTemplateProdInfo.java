@@ -2,6 +2,8 @@ package com.ai.slp.order.api.freighttemplate.param;
 
 import java.io.Serializable;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class FreightTemplateProdInfo implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -34,6 +36,7 @@ public class FreightTemplateProdInfo implements Serializable{
 	/**
 	 * 对应区域id
 	 */
+	@NotBlank(message="对应区域id不能为空")
 	private String regionId;
 	
 	public String getRegionId() {
