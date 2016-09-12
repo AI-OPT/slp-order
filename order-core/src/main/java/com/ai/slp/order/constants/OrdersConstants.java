@@ -591,9 +591,19 @@ public final class OrdersConstants {
              * 订单-审核未通过
              */
             public static final String ORDER_REVOKE_AUDIT_NOT_PASS = "您的撤销单申请审核未通过";
-
+            
+            /**
+             * 订单--待买家退货
+             */
+            public static final String ORDER_BUYERS_TO_RETURN  = "您的订单商品进入待买家退货处理";
+            
             /**
              * 订单-待退费
+             */
+            public static final String ORDER_SELLER_CONFIRMED_WAIT_PAY = "您的订单进入待退费处理";
+            
+            /**
+             * 订单-卖家已确认收货进入待退费
              */
             public static final String ORDER_REVOKE_WAIT_PAY = "您的订单进入待退费处理";
 
