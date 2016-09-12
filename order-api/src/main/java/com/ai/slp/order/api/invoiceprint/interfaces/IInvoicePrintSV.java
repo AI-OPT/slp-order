@@ -54,4 +54,5 @@ public interface IInvoicePrintSV {
 	@POST
 	@Path("/print")
 	public BaseResponse print(InvoicePrintInfosRequest request) throws BusinessException,SystemException;
+	
 }
