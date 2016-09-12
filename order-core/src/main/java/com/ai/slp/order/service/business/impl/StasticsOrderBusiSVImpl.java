@@ -17,8 +17,10 @@ import com.ai.slp.order.api.stasticsorder.param.StasticParentOrderVo;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.ai.slp.order.api.stasticsorder.param.StasticsProdVo;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IStasticsOrderAtomSV;
@@ -32,6 +34,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
     private IOrdOdProdAtomSV iOrdOdProdAtomSV;
     @Autowired
     private IOrdOrderAtomSV iOrdOrderAtomSV;
+    @Autowired
+	IOrdOdLogisticsAtomSV iOrdOdLogisticsAtomSV;
 	@Override
 	public PageInfo<StasticParentOrderVo> getStasticOrdPage(StasticsOrderRequest request) {
 		//获取父订单信息
@@ -68,6 +72,11 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				List<StasticOrderVo> childOrderList =new ArrayList<StasticOrderVo>();
 				StasticParentOrderVo parentOrderVo = new StasticParentOrderVo();
 				BeanUtils.copyProperties(parentOrderVo, order);
+				//获取收货人信息
+				OrdOdLogistics logistics = iOrdOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+				if(logistics!=null){
+					parentOrderVo.setContactTel(logistics.getContactTel());
+				}
 				//获取子订单
 				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
 				for(OrdOrder child:childList){

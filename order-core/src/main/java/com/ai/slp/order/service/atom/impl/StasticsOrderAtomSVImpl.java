@@ -1,5 +1,9 @@
 package com.ai.slp.order.service.atom.impl;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +45,15 @@ public class StasticsOrderAtomSVImpl implements IStasticsOrderAtomSV {
 		}
 		if (!StringUtil.isBlank(request.getState())) {
 			param.andStateEqualTo(request.getState());
+		}else{
+			//默认查询待付款 已付款 已完成 已关闭的订单
+			String states="11,90,111,91";
+	        String[] stateArray = states.split(",");
+			List<String> stateList = new LinkedList<String>();
+			for(String state : stateArray){
+				stateList.add(state);
+			}
+			param.andStateIn(stateList);
 		}
 		if(request.getSupplierId()!=null){
 			param.andSupplierIdEqualTo(request.getSupplierId());
