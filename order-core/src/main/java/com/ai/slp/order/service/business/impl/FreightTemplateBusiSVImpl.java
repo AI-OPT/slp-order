@@ -195,7 +195,11 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 				logger.error("模版明细中的模版id和参数模版id不同,[模版明细中模版id:"+ftSource.getTemplateId()+",入参模版id:"+templateId+"]");
 				throw new BusinessException("", "模版明细中的模版id和参数模版id不同,[模版明细中模版id:"+ftSource.getTemplateId()+",入参模版id:"+templateId+"]");
 			}
-			BeanUtils.copyProperties(ftSource,ftProdInfo);
+			ftSource.setFirstNumber(ftProdInfo.getFirstNumber());
+			ftSource.setFirstNum(ftProdInfo.getFirstNum()*1000);
+			ftSource.setPieceNum(ftProdInfo.getPieceNum()*1000);
+			ftSource.setPieceNumber(ftProdInfo.getPieceNumber());
+			ftSource.setTransportAddress(ftProdInfo.getTransportAddress());
 			freightTemplateProdAtomSV.updateByPrimaryKeySelective(ftSource);
 		}
 	}
