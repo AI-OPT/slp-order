@@ -1,6 +1,5 @@
 package com.ai.slp.order.service.atom.impl;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ai.opt.base.vo.PageInfo;
+import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -28,11 +28,12 @@ public class StasticsOrderAtomSVImpl implements IStasticsOrderAtomSV {
 		if (!StringUtil.isBlank(request.getTenantId())) {
 			param.andTenantIdEqualTo(request.getTenantId());
 		}
-		if (request.getParentOrderId() != null) {
-			param.andParentOrderIdEqualTo(request.getParentOrderId());
+		if (request.getOrderId() != null) {
+			param.andOrderIdEqualTo(request.getOrderId());
 		}
-		if (!StringUtil.isBlank(request.getUserId())) {
-			param.andUserIdEqualTo(request.getUserId());
+		if (!CollectionUtil.isEmpty(request.getUserIdList())) {
+			List<String> list = request.getUserIdList();
+			param.andUserIdIn(list);
 		}
 		if (request.getOrderTimeStart() != null && request.getOrderTimeEnd() != null) {
 			param.andOrderTimeBetween(request.getOrderTimeStart(), request.getOrderTimeEnd());
@@ -55,8 +56,9 @@ public class StasticsOrderAtomSVImpl implements IStasticsOrderAtomSV {
 			}
 			param.andStateIn(stateList);
 		}
-		if(request.getSupplierId()!=null){
-			param.andSupplierIdEqualTo(request.getSupplierId());
+		if(!CollectionUtil.isEmpty(request.getSupplierIdList())){
+			List<Long> list = request.getSupplierIdList();
+			param.andSupplierIdIn(list);
 		}
 		// 查询父订单
 		param.andSubFlagEqualTo(OrdersConstants.OrdOrder.SubFlag.NO);

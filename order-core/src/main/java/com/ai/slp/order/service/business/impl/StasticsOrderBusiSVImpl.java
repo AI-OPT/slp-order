@@ -53,12 +53,13 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 			if(!CollectionUtil.isEmpty(parentProList)){
 				for(OrdOdProd prod: parentProList){
 					OrdOrder order = iOrdOrderAtomSV.selectByOrderId(request.getTenantId(), prod.getOrderId());
-					if(!StringUtil.isBlank(order.getSubFlag())){
-						if(OrdersConstants.OrdOrder.SubFlag.NO.equals(order.getSubFlag())){
-							prodPOrderList.add(order);
+					if(order!=null){
+						if(!StringUtil.isBlank(order.getSubFlag())){
+							if(OrdersConstants.OrdOrder.SubFlag.NO.equals(order.getSubFlag())){
+								prodPOrderList.add(order);
+							}
 						}
 					}
-					
 				}
 			}
 			//如果商品查询出来的订单部位空空，那么取父订单集合与商品订单集合的余
@@ -90,6 +91,7 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 						BeanUtils.copyProperties(staticProdVo, prod);
 						prodOrderList.add(staticProdVo);
 					}
+					childOrderVo.setProList(prodOrderList);
 					childOrderList.add(childOrderVo);
 				}
 				parentOrderVo.setChildOrderList(childOrderList);
