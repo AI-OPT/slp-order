@@ -563,7 +563,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             states = sb.toString();
             states = states.substring(0, sb.length() - 1);
         }
-        int count=ordOrderAttachAtomSV.behindQueryCount(orderListRequest, states);;
+        int count=ordOrderAttachAtomSV.behindQueryCount(orderListRequest, states);
         List<BehindParentOrdOrderVo> orderVoList = 
         		this.getBehindOrdOrderVos(orderListRequest, states, iCacheSV);
         pageInfo.setPageNo(orderListRequest.getPageNo());
