@@ -6,13 +6,13 @@ public class DeliveryOrderQueryResponse extends BaseResponse{
 
 	private static final long serialVersionUID = 1L;
 	
-	private boolean flag;
+	private String mark; //标识  1.可合并  2.不可合并 3.不能打印
 
-	public boolean isFlag() {
-		return flag;
+	public String getMark() {
+		return mark;
 	}
 
-	public void setFlag(boolean flag) {
-		this.flag = flag;
+	public void setMark(String mark) {
+		this.mark = mark;
 	}
 }
