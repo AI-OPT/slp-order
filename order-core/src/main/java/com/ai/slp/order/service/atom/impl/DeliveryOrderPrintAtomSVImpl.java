@@ -26,7 +26,7 @@ public class DeliveryOrderPrintAtomSVImpl implements IDeliveryOrderPrintAtomSV {
 	public List<OrdOrderProdAttach> query(String userId,String tenantId, String skuId, String routeId, 
 			long orderId,String state,Timestamp timeBefore,Timestamp timeAfter,String cusServiceFlag) {
 		return deliveryOrderPrintAttachMapper.query(userId, tenantId,skuId,routeId,orderId,
-				state,timeBefore,timeAfter,OrdersConstants.OrdOrder.cusServiceFlag.YES);
+				state,timeBefore,timeAfter,OrdersConstants.OrdOrder.cusServiceFlag.NO);
 	}
 
 	@Override
