@@ -374,16 +374,21 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 					}
 					/* 2.商品包含筛选*/
 					for (OrdOdProd ordOdProd : ordOdProds) {
-						OrdOrderProdAttach oPAttach=new OrdOrderProdAttach();
-						oPAttach.setSkuId(ordOdProd.getSkuId());
-						oPAttach.setRouteId(ordOdProd.getRouteId());
-						if(!originalAttachs.contains(oPAttach)) {
-							if(CollectionUtil.isEmpty(orderList)) {
-								orderList=new ArrayList<Long>();
-							}
-							orderList.add(Long.valueOf(ordOrderProdAttach.getOrderId()));
+						if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
 							it.remove();
 							break;
+						}else {
+							OrdOrderProdAttach oPAttach=new OrdOrderProdAttach();
+							oPAttach.setSkuId(ordOdProd.getSkuId());
+							oPAttach.setRouteId(ordOdProd.getRouteId());
+							if(!originalAttachs.contains(oPAttach)) {
+								if(CollectionUtil.isEmpty(orderList)) {
+									orderList=new ArrayList<Long>();
+								}
+								orderList.add(Long.valueOf(ordOrderProdAttach.getOrderId()));
+								it.remove();
+								break;
+							}
 						}
 					}
 			    }
