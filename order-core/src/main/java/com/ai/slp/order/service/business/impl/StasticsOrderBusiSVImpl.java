@@ -64,8 +64,10 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 			}
 			//如果商品查询出来的订单部位空空，那么取父订单集合与商品订单集合的余
 			commonOrderList = (List<OrdOrder>)CollectionUtils.intersection(parentOrderList, prodPOrderList);
+			pageResult.setCount(commonOrderList.size());
 		}else{
 			commonOrderList = pageInfo.getResult();
+			pageResult.setCount(pageInfo.getCount());
 		}
 		if(!CollectionUtil.isEmpty(commonOrderList)){
 			for(OrdOrder order:commonOrderList){
@@ -97,11 +99,11 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				parentOrderVo.setChildOrderList(childOrderList);
 				staticParentOrderList.add(parentOrderVo);
 			}
-			pageResult.setCount(commonOrderList.size());
 		}
 		pageResult.setPageSize(request.getPageSize());
 		pageResult.setPageNo(request.getPageNo());
 		pageResult.setResult(staticParentOrderList);
+		System.out.println("==========="+pageResult.getCount());
 		return pageResult;
 	}
 }
