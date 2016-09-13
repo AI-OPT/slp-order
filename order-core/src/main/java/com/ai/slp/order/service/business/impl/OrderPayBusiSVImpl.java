@@ -416,12 +416,14 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		ordOrderAtomSV.insertSelective(childOrdOrder);
     		/* 2.1.1.实物的情况下,创建其它子信息表*/
     		ordOdProd = this.createTableInfo(subOrderId, parentOrdOrder, parentOrdOdProd, routeId,null);
+    		this.createFeeTotal(subOrderId, parentOrdOrder, ordOdProd);
     		/* 2.1.2.把routeId和子订单Id放入集合中*/
     		map.put(routeId, subOrderId);
     	}else {
     		/* 2.2.同一个routeId的情况下,订单合并*/
     		subOrderId = map.get(routeId);
     		ordOdProd = this.createTableInfo(subOrderId, parentOrdOrder, parentOrdOdProd, routeId,null);
+    		this.updateFeeTotal(subOrderId, parentOrdOrder, ordOdProd);
     	}
         /* 3.写入订单状态变化轨迹表 */
         String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DISTRIBUTION;
@@ -655,12 +657,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     
     /**
      * 拆分时创建表信息
-     * @param subOrderId
-     * @param parentOrdOrder
-     * @param parentOrdOdProd
-     * @param routeId
-     * @param parentProdDetalId
-     *  @author caofz
      */
     private OrdOdProd createTableInfo(long subOrderId,OrdOrder parentOrdOrder,OrdOdProd parentOrdOdProd,
     		String routeId,Long parentProdDetalId) {
@@ -675,63 +671,79 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		ordOdProd.setOrderId(subOrderId);
     		ordOdProd.setRouteId(routeId);
     		ordOdProdAtomSV.insertSelective(ordOdProd);
-    		//TODO
     		/*根据商品来判断是否能创建发票信息*/
     		//TODO
-    		/* 创建子订单-发票信息*/
-    	/*	OrdOdInvoiceCriteria example=new OrdOdInvoiceCriteria();
-    		OrdOdInvoiceCriteria.Criteria criteria = example.createCriteria();
-    		criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
-    		List<OrdOdInvoice> OrdOdInvoices = ordOdInvoiceAtomSV.selectByExample(example);
-    		if(CollectionUtil.isEmpty(OrdOdInvoices)) {
-    			throw new BusinessException("", "订单发票信息为空[订单id:"+parentOrdOrder.getOrderId()+"]");
-    		}
-    		OrdOdInvoice ordOdInvoice = OrdOdInvoices.get(0);
-    		OrdOdInvoice invoice=new OrdOdInvoice();
-    		BeanUtils.copyProperties(invoice, ordOdInvoice);
-    		invoice.setOrderId(subOrderId);
-    		ordOdInvoiceAtomSV.insertSelective(invoice);*/
     	}else {
-            OrdOdProdCriteria example = new OrdOdProdCriteria();
-            OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-            criteria.andTenantIdEqualTo(parentOrdOrder.getTenantId());
-            if (parentOrdOrder.getOrderId() != 0) {
-                criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
-            }
-            if (parentProdDetalId != 0) {
-                criteria.andProdDetalIdEqualTo(parentProdDetalId);
-            }
-            List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
-            if (CollectionUtil.isEmpty(ordOdProdList)) {
-                throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-                		"商品明细信息不存在[orderId:"+parentOrdOrder.getOrderId()+"prodDetalId:"+parentProdDetalId+"]");
-            }
-            OrdOdProd parentOd = ordOdProdList.get(0);
-            ordOdProd = new OrdOdProd();
-            BeanUtils.copyProperties(ordOdProd, parentOd);
-            ordOdProd.setProdDetalId(prodDetailId);
-            ordOdProd.setOrderId(subOrderId);
-            ordOdProdAtomSV.insertSelective(ordOdProd);
-    	}
-		/* 创建子订单-费用汇总表*/
-		OrdOdFeeTotal parentOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(parentOrdOrder.getTenantId(), 
-				parentOrdOrder.getOrderId());
-		if(parentOrdOdFeeTotal==null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"订单费用总表[orderId:"+parentOrdOrder.getOrderId()+"]");
-		}
-		OrdOdFeeTotal ordOdFeeTotal=new OrdOdFeeTotal();
-		BeanUtils.copyProperties(ordOdFeeTotal, parentOrdOdFeeTotal);
-		ordOdFeeTotal.setOrderId(subOrderId);
-		ordOdFeeTotal.setTotalFee(ordOdProd.getTotalFee());
-		ordOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
-		long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
-		ordOdFeeTotal.setAdjustFee(apaidFee);
-		ordOdFeeTotal.setPaidFee(apaidFee);
-		ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
-		ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
-		return ordOdProd;
+	        OrdOdProdCriteria example = new OrdOdProdCriteria();
+	        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+	        criteria.andTenantIdEqualTo(parentOrdOrder.getTenantId());
+	        if (parentOrdOrder.getOrderId() != 0) {
+	            criteria.andOrderIdEqualTo(parentOrdOrder.getOrderId());
+	        }
+	        if (parentProdDetalId != 0) {
+	            criteria.andProdDetalIdEqualTo(parentProdDetalId);
+	        }
+	        List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
+	        if (CollectionUtil.isEmpty(ordOdProdList)) {
+	            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+	            		"商品明细信息不存在[orderId:"+parentOrdOrder.getOrderId()+"prodDetalId:"+parentProdDetalId+"]");
+	        }
+	        OrdOdProd parentOd = ordOdProdList.get(0);
+	        ordOdProd = new OrdOdProd();
+	        BeanUtils.copyProperties(ordOdProd, parentOd);
+	        ordOdProd.setProdDetalId(prodDetailId);
+	        ordOdProd.setOrderId(subOrderId);
+	        ordOdProdAtomSV.insertSelective(ordOdProd);
+	    }
+        return ordOdProd;
     }
+    
+    
+    /**
+     * 创建费用总表信息
+     */
+    private void createFeeTotal(long subOrderId,OrdOrder parentOrdOrder,OrdOdProd ordOdProd) {
+    	/* 创建子订单-费用汇总表*/
+    	OrdOdFeeTotal parentOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(parentOrdOrder.getTenantId(), 
+    			parentOrdOrder.getOrderId());
+    	if(parentOrdOdFeeTotal==null) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+    				"订单费用总表[orderId:"+parentOrdOrder.getOrderId()+"]");
+    	}
+    	OrdOdFeeTotal ordOdFeeTotal=new OrdOdFeeTotal();
+    	BeanUtils.copyProperties(ordOdFeeTotal, parentOrdOdFeeTotal);
+    	ordOdFeeTotal.setOrderId(subOrderId);
+    	ordOdFeeTotal.setTotalFee(ordOdProd.getTotalFee());
+    	ordOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
+    	long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
+    	ordOdFeeTotal.setAdjustFee(apaidFee);
+    	ordOdFeeTotal.setPaidFee(apaidFee);
+    	ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
+    	ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
+    }
+    
+    /**
+     * 更新费用总表信息(同一个routeId的情况下,订单费用总表合并)
+     */
+    private void updateFeeTotal(long subOrderId,OrdOrder parentOrdOrder,OrdOdProd ordOdProd) {
+    	/* 创建子订单-费用汇总表*/
+    	OrdOdFeeTotal pOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(parentOrdOrder.getTenantId(), 
+    			subOrderId);
+    	if(pOrdOdFeeTotal==null) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+    				"订单费用总表[orderId:"+parentOrdOrder.getOrderId()+"]");
+    	}
+    	OrdOdFeeTotal ordOdFeeTotal=new OrdOdFeeTotal();
+    	BeanUtils.copyProperties(ordOdFeeTotal, pOrdOdFeeTotal);
+    	ordOdFeeTotal.setTotalFee(pOrdOdFeeTotal.getTotalFee()+ordOdProd.getTotalFee());
+    	ordOdFeeTotal.setDiscountFee(pOrdOdFeeTotal.getDiscountFee()+ordOdProd.getDiscountFee());
+    	long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
+    	ordOdFeeTotal.setAdjustFee(pOrdOdFeeTotal.getAdjustFee()+apaidFee);
+    	ordOdFeeTotal.setPaidFee(pOrdOdFeeTotal.getPaidFee()+apaidFee);
+    	ordOdFeeTotal.setTotalJf(pOrdOdFeeTotal.getTotalJf()+ordOdProd.getJf());
+    	ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
+    }
+    
     
     /**
      * 归档
