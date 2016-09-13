@@ -21,7 +21,7 @@ public interface IDeliveryOrderPrintAtomSV {
 	 * @author caofz
 	 */
 	public List<OrdOrderProdAttach> query(String userId,String tenantId, String skuId, String routeId, 
-			long orderId,String state,Timestamp timeBefore,Timestamp timeAfter);
+			long orderId,String state,Timestamp timeBefore,Timestamp timeAfter,String cusServiceFlag);
 	  
 	int insertSelective(OrdOdDeliverInfo record);
 
