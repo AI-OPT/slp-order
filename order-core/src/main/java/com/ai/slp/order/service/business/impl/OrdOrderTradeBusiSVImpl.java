@@ -261,10 +261,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
             ordOdProd.setBuySum(ordProductInfo.getBuySum());
             ordOdProd.setSalePrice(storageNumRes.getSalePrice());
-            ordOdProd.setTotalFee(storageNumRes.getSalePrice() * ordProductInfo.getBuySum());
-            ordOdProd.setDiscountFee(0);
-            ordOdProd.setOperDiscountFee(0);
-            ordOdProd.setOperDiscountDesc("");
+            long totalFee=storageNumRes.getSalePrice() * ordProductInfo.getBuySum();
+            ordOdProd.setTotalFee(totalFee);
+            ordOdProd.setDiscountFee(couponFee+jfFee);
+            ordOdProd.setOperDiscountFee(ordProductInfo.getOperDiscountFee());
+            ordOdProd.setOperDiscountDesc(ordProductInfo.getOperDiscountDesc());
             ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);;
             ordOdProd.setAdjustFee(0);
             ProdAttrInfoVo vo = new ProdAttrInfoVo();
@@ -312,17 +313,15 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         JSONObject object = JSON.parseObject(infoJson);
         long totalFee = (long) object.get("totalFee"); //传过来的总费用
         long adjustFee = (long) object.get("adjustFee"); //应收费用
-        long operDiscountFee = (long) object.get("operDiscountFee"); //减免费用
-        long freightFee = (long) object.get("freight"); //减免费用
-        String operDiscountDesc = (String) object.get("operDiscountDesc"); //减免费用原因
+        long freightFee = (long) object.get("freight"); //运费费用
         OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
         ordOdFeeTotal.setOrderId(orderId);
         ordOdFeeTotal.setTenantId(request.getTenantId());
         ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);
         ordOdFeeTotal.setTotalFee(totalFee);
         ordOdFeeTotal.setDiscountFee(totalFee-adjustFee);
-        ordOdFeeTotal.setOperDiscountFee(operDiscountFee);
-        ordOdFeeTotal.setOperDiscountDesc(operDiscountDesc);
+        ordOdFeeTotal.setOperDiscountFee(0);
+        ordOdFeeTotal.setOperDiscountDesc("");
         ordOdFeeTotal.setAdjustFee(adjustFee);
         ordOdFeeTotal.setPaidFee(0);
         ordOdFeeTotal.setPayFee(adjustFee);
@@ -335,8 +334,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         /* 2. 封装返回参数 */
         OrdFeeInfo ordFeeInfo = new OrdFeeInfo();
         ordFeeInfo.setTotalFee(totalFee);
-        ordFeeInfo.setDiscountFee(operDiscountFee);
-        ordFeeInfo.setOperDiscountFee(operDiscountFee);
+        ordFeeInfo.setDiscountFee(totalFee-adjustFee);
+        ordFeeInfo.setOperDiscountFee(0);
         return ordFeeInfo;
 
     }
