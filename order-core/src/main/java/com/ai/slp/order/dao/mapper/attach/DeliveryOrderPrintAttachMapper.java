@@ -26,5 +26,5 @@ public interface DeliveryOrderPrintAttachMapper {
             })
     public List<OrdOrderProdAttach> query(@Param("userId") String userId, @Param("tenantId") String tenantId,@Param("skuId") String skuId, 
     		@Param("routeId") String routeId,@Param("orderId") long orderId, @Param("state") String state,
-    		@Param("timeBefore") Timestamp timeBefore, @Param("timeAfter") Timestamp timeAfter);
+    		@Param("timeBefore") Timestamp timeBefore, @Param("timeAfter") Timestamp timeAfter,@Param("cusServiceFlag") String cusServiceFlag);
 }
