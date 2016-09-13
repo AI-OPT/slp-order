@@ -68,13 +68,17 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 		if(StringUtil.isBlank(request.getSupplierId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "销售商id为空");
 		}
+		if(request.getPageNo()!=null&&request.getPageNo()<=0) {
+			throw new BusinessException("", "pageNo必须大于0");
+		}
 		FreightTemplateCriteria example=new FreightTemplateCriteria();
 		FreightTemplateCriteria.Criteria criteria = example.createCriteria();
 		criteria.andSupplierIdEqualTo(request.getSupplierId());
 		/* 2.查询运费模版总的个数*/
 		int count=freightTemplateAtomSV.countByExample(example);
-		Integer pageSize = request.getPageSize();
-		example.setLimitStart((request.getPageNo()-1)*pageSize);
+		Integer pageNo=(null==request.getPageNo())?1:request.getPageNo();
+		Integer pageSize=(null==request.getPageSize())?5:request.getPageSize();
+		example.setLimitStart((pageNo-1)*pageSize);
 		example.setLimitEnd(pageSize);
 		example.setOrderByClause("TIME DESC");
 		/* 3.获取运费模版信息*/
