@@ -41,7 +41,7 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 	@Override
 	public void deliverGoods(DeliverGoodsRequest request) throws BusinessException, SystemException {
 		/* 参数校验*/
-		CommonCheckUtils.checkTenantId(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户id不能为空");
+		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(ordOrder==null) {
 			logger.error("未能查询到指定的订单主表信息[订单id:"+request.getOrderId()+" ,租户id:"+request.getTenantId()+"]");
