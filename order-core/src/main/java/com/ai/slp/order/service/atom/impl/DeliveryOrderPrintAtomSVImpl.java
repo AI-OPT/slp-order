@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.attach.DeliveryOrderPrintAttachMapper;
 import com.ai.slp.order.dao.mapper.attach.OrdOrderProdAttach;
 import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
@@ -23,8 +24,9 @@ public class DeliveryOrderPrintAtomSVImpl implements IDeliveryOrderPrintAtomSV {
 
 	@Override
 	public List<OrdOrderProdAttach> query(String userId,String tenantId, String skuId, String routeId, 
-			long orderId,String state,Timestamp timeBefore,Timestamp timeAfter) {
-		return deliveryOrderPrintAttachMapper.query(userId, tenantId,skuId,routeId,orderId,state,timeBefore,timeAfter);
+			long orderId,String state,Timestamp timeBefore,Timestamp timeAfter,String cusServiceFlag) {
+		return deliveryOrderPrintAttachMapper.query(userId, tenantId,skuId,routeId,orderId,
+				state,timeBefore,timeAfter,OrdersConstants.OrdOrder.cusServiceFlag.YES);
 	}
 
 	@Override
