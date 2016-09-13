@@ -10,6 +10,7 @@ import com.ai.slp.order.api.stasticsorder.interfaces.IStasticsOrderSV;
 import com.ai.slp.order.api.stasticsorder.param.StasticOrderResponse;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.alibaba.fastjson.JSON;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/context/core-context.xml" })
 public class StasticsOrderSVImplTest {
@@ -19,10 +20,11 @@ public class StasticsOrderSVImplTest {
     public void testStasticOrder(){
 		StasticsOrderRequest query=new StasticsOrderRequest();
         query.setTenantId("changhong");
-        query.setPageSize(10);
+        query.setPageSize(100);
         query.setPageNo(1);
         //query.setState("14");
-        query.setUserId("123");
+       // query.setUserId("123");
+        query.setOrderId(334570392323l);
         StasticOrderResponse info=iStasticsOrderSV.queryStasticOrdPage(query);
         System.out.println("info="+JSON.toJSONString(info.getPageInfo()));
         

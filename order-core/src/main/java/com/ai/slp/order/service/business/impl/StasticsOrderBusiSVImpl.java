@@ -90,6 +90,7 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 						BeanUtils.copyProperties(staticProdVo, prod);
 						prodOrderList.add(staticProdVo);
 					}
+					childOrderVo.setProList(prodOrderList);
 					childOrderList.add(childOrderVo);
 				}
 				parentOrderVo.setChildOrderList(childOrderList);

@@ -28,8 +28,8 @@ public class StasticsOrderAtomSVImpl implements IStasticsOrderAtomSV {
 		if (!StringUtil.isBlank(request.getTenantId())) {
 			param.andTenantIdEqualTo(request.getTenantId());
 		}
-		if (request.getParentOrderId() != null) {
-			param.andParentOrderIdEqualTo(request.getParentOrderId());
+		if (request.getOrderId() != null) {
+			param.andOrderIdEqualTo(request.getOrderId());
 		}
 		if (!StringUtil.isBlank(request.getUserId())) {
 			param.andUserIdEqualTo(request.getUserId());

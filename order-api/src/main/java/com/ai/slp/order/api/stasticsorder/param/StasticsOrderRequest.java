@@ -7,9 +7,9 @@ import com.ai.opt.base.vo.BaseInfo;
 public class StasticsOrderRequest extends BaseInfo {
 	private static final long serialVersionUID = 1L;
 	/**
-	 * 父订单号
+	 * 订单号
 	 */
-	private Long parentOrderId;
+	private Long orderId;
 	/**
 	 * 商品名称
 	 */
@@ -43,12 +43,12 @@ public class StasticsOrderRequest extends BaseInfo {
 	 */
 	private Integer pageSize;
 
-	public Long getParentOrderId() {
-		return parentOrderId;
+	public Long getOrderId() {
+		return orderId;
 	}
 
-	public void setParentOrderId(Long parentOrderId) {
-		this.parentOrderId = parentOrderId;
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
 	}
 
 	public String getProdName() {
