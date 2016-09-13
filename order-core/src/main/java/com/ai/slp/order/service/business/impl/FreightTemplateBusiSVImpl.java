@@ -20,13 +20,13 @@ import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateDeleteRequest;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateInfo;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateProdInfo;
+import com.ai.slp.order.api.freighttemplate.param.FreightTemplateProdRequest;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateProdVo;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateRequest;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateUpdateRequest;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateVo;
 import com.ai.slp.order.api.freighttemplate.param.QueryFreightTemplateRequest;
 import com.ai.slp.order.api.freighttemplate.param.QueryFreightTemplateResponse;
-import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.dao.mapper.bo.FreightTemplate;
 import com.ai.slp.order.dao.mapper.bo.FreightTemplateCriteria;
 import com.ai.slp.order.dao.mapper.bo.FreightTemplateProd;
@@ -203,6 +203,12 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 	@Override
 	public void delete(FreightTemplateDeleteRequest request) {
 		String templateId = request.getTemplateId();
+		FreightTemplate freightTemplate = freightTemplateAtomSV.selectByPrimaryKey(templateId);
+		if(freightTemplate==null) {
+			logger.error("没有查询到要删除的模版信息,[模版id:"+request.getTemplateId()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
+					"没有查询到要删除的模版信息,[模版id:"+request.getTemplateId()+"]");
+		}
 		/* 1.删除运费模版信息*/
 		freightTemplateAtomSV.deleteByPrimaryKey(templateId);
 		FreightTemplateProdCriteria example=new FreightTemplateProdCriteria();
@@ -213,5 +219,19 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 		for (FreightTemplateProd freightTemplateProd : ftProds) {
 			freightTemplateProdAtomSV.deleteByPrimaryKey(freightTemplateProd.getRegionId());
 		}
+	}
+
+	@Override
+	public void deleteFreightTemplateProd(FreightTemplateProdRequest request) {
+		String regionId = request.getRegionId();
+		/* 查询要删除的模版明细信息*/
+		FreightTemplateProd freightTemplateProd = freightTemplateProdAtomSV.selectByPrimaryKey(regionId);
+		if(freightTemplateProd==null) {
+			logger.error("没有查询到要删除的模版明细信息,[对应区域id:"+regionId+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
+					"没有查询到要删除的模版明细信息,[对应区域id:"+regionId+"]");
+		}
+		/* 删除运费模版明细信息*/
+		freightTemplateProdAtomSV.deleteByPrimaryKey(regionId);
 	}
 }
