@@ -10,6 +10,7 @@ import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.freighttemplate.interfaces.IFreightTemplateSV;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateDeleteRequest;
+import com.ai.slp.order.api.freighttemplate.param.FreightTemplateProdRequest;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateRequest;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateUpdateRequest;
 import com.ai.slp.order.api.freighttemplate.param.QueryFreightTemplateRequest;
@@ -57,6 +58,17 @@ public class FreightTemplateSVImpl implements IFreightTemplateSV{
 	public BaseResponse delete(FreightTemplateDeleteRequest request) throws BusinessException, SystemException {
 		BaseResponse response=new BaseResponse();
 		freightTemplateBusiSV.delete(request);
+		ResponseHeader responseHeader = new ResponseHeader(true,
+	                ExceptCodeConstants.Special.SUCCESS, "成功");
+		response.setResponseHeader(responseHeader);
+		return response;
+	}
+
+	@Override
+	public BaseResponse deleteFreightTemplateProd(FreightTemplateProdRequest request)
+			throws BusinessException, SystemException {
+		BaseResponse response=new BaseResponse();
+		freightTemplateBusiSV.deleteFreightTemplateProd(request);
 		ResponseHeader responseHeader = new ResponseHeader(true,
 	                ExceptCodeConstants.Special.SUCCESS, "成功");
 		response.setResponseHeader(responseHeader);
