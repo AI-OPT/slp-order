@@ -16,22 +16,22 @@ public class FreightTemplateProdInfo implements Serializable{
 	/**
 	 * 首次数量
 	 */
-	private Long firstNumber;
+	private long firstNumber;
 	
 	/**
 	 * 首次金额
 	 */
-	private Long firstNum;
+	private long firstNum;
 	
 	/**
 	 * 续数
 	 */
-	private Long pieceNumber;
+	private long pieceNumber;
 	
 	/**
 	 * 续费
 	 */
-	private Long pieceNum;
+	private long pieceNum;
 	
 	/**
 	 * 对应区域id
@@ -55,35 +55,35 @@ public class FreightTemplateProdInfo implements Serializable{
 		this.transportAddress = transportAddress;
 	}
 
-	public Long getFirstNumber() {
+	public long getFirstNumber() {
 		return firstNumber;
 	}
 
-	public void setFirstNumber(Long firstNumber) {
+	public void setFirstNumber(long firstNumber) {
 		this.firstNumber = firstNumber;
 	}
 
-	public Long getFirstNum() {
+	public long getFirstNum() {
 		return firstNum;
 	}
 
-	public void setFirstNum(Long firstNum) {
+	public void setFirstNum(long firstNum) {
 		this.firstNum = firstNum;
 	}
 
-	public Long getPieceNumber() {
+	public long getPieceNumber() {
 		return pieceNumber;
 	}
 
-	public void setPieceNumber(Long pieceNumber) {
+	public void setPieceNumber(long pieceNumber) {
 		this.pieceNumber = pieceNumber;
 	}
 
-	public Long getPieceNum() {
+	public long getPieceNum() {
 		return pieceNum;
 	}
 
-	public void setPieceNum(Long pieceNum) {
+	public void setPieceNum(long pieceNum) {
 		this.pieceNum = pieceNum;
 	}
 	
