@@ -10,6 +10,7 @@ public class DeliveryOrderPrintSqlProvider {
         		+ "where od.order_id=op.order_id and od.user_id="+param.get("userId")
         		+ " and op.sku_id="+param.get("skuId") +" and op.route_id="+param.get("routeId")
         		+" and op.order_id!="+param.get("orderId")
+        		+" and op.cus_service_flag="+param.get("cusServiceFlag")
         		+ " and od.state="+param.get("state") + " and od.tenant_id= '"
                 + param.get("tenantId") + "'"+" and od.order_time between '"+param.get("timeBefore")+"' and '"+param.get("timeAfter")+"'");
         return seqBuffer.toString();
