@@ -461,7 +461,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 OrdBalacneIfCriteria exampleBalance=new OrdBalacneIfCriteria();
                 Criteria criteriaBalance = exampleBalance.createCriteria();
                 criteriaBalance.andTenantIdEqualTo(order.getTenantId());
-                criteriaBalance.andOrderIdEqualTo(order.getOrderId());
+                criteriaBalance.andOrderIdEqualTo(order.getParentOrderId());
                 List<OrdBalacneIf> ordBalacneIfs = ordBalacneIfAtomSV.selectByExample(exampleBalance);
                 if(!CollectionUtil.isEmpty(ordBalacneIfs)) {
                 	OrdBalacneIf ordBalacneIf = ordBalacneIfs.get(0);
