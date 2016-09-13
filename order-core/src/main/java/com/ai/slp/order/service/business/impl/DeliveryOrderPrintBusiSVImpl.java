@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
-import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintInfosRequest;
@@ -28,7 +27,6 @@ import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.attach.OrdOrderProdAttach;
 import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
-import com.ai.slp.order.dao.mapper.bo.DeliverInfoProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfoCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
@@ -75,50 +73,38 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	public DeliveryOrderQueryResponse query(DeliveryOrderPrintRequest request) {
 		DeliveryOrderQueryResponse response=new DeliveryOrderQueryResponse();
 		/* 参数校验及判断是否存在提货单打印信息*/
-		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(
-				request.getOrderId(),request.getTenantId());
-		if(CollectionUtil.isEmpty(deliverInfos)) {
-			/* 没有提货单打印信息的话,则表示第一次打印*/
-			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-			if(order==null) {
-				logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-						"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-			} 
-			/* 获取订单下的商品信息*/
-			List<OrdOdProd> ordOdProds = getOrdOdProds(request);
-			/* 根据订单规则获取合并时间*/
-			Timestamp time = getOrderListInTime(OrdRuleConstants.MERGE_ORDER_SETTING_ID,order.getOrderTime());
-			/* 组装订单商品信息集合*/
-			List<OrdOrderProdAttach> originalAttachs = createOriginalAttachs(ordOdProds);
-			List<Long> orderList =null;
-			for (OrdOdProd ordOdProd : ordOdProds) {
-				/* 多表多条件查询*/
-				List<OrdOrderProdAttach> orderProdAttachs = deliveryOrderPrintAtomSV.query(request.getUserId(),
-						request.getTenantId(),ordOdProd.getSkuId(),ordOdProd.getRouteId(),ordOdProd.getOrderId(),
-						OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,time,order.getOrderTime());
-				if(!CollectionUtil.isEmpty(orderProdAttachs)) {
-					/* 筛选不符合合并规则的订单*/
-					orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList);
-					if(!CollectionUtil.isEmpty(orderProdAttachs)) {
-						response.setFlag(true);
-						break;
-					}else {
-						response.setFlag(false);
-					}
-				}else {
-					response.setFlag(false);
-				}
+		OrdOrder order = this.checkParamAndQueryOrder(request.getOrderId(),request.getTenantId());
+		/* 获取订单下的商品信息*/
+		List<OrdOdProd> ordOdProds = getOrdOdProds(request);
+		for (OrdOdProd ordOdProd : ordOdProds) {
+			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+				//该商品为售后标识 不可打印
+				response.setMark(OrdersConstants.printMark.NOT_PRINT);
+				return response;
 			}
-		}else {
-			/*表示提货单打印信息已存在*/
-			for(int i=0;i<deliverInfos.size();i++) {
-				if(deliverInfos.get(i).getHorOrderId()!=0) {
-					response.setFlag(true);
+		}
+		/* 根据订单规则获取合并时间*/
+		Timestamp time = getOrderListInTime(OrdRuleConstants.MERGE_ORDER_SETTING_ID,order.getOrderTime());
+		/* 组装订单商品信息集合*/
+		List<OrdOrderProdAttach> originalAttachs = createOriginalAttachs(ordOdProds);
+		List<Long> orderList =null;
+		for (OrdOdProd ordOdProd : ordOdProds) {
+			/* 多表多条件查询*/
+			List<OrdOrderProdAttach> orderProdAttachs = deliveryOrderPrintAtomSV.query(request.getUserId(),
+					request.getTenantId(),ordOdProd.getSkuId(),ordOdProd.getRouteId(),ordOdProd.getOrderId(),
+					OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,time,order.getOrderTime(),
+					OrdersConstants.OrdOrder.cusServiceFlag.NO);
+			if(!CollectionUtil.isEmpty(orderProdAttachs)) {
+				/* 筛选不符合合并规则的订单*/
+				orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList);
+				if(!CollectionUtil.isEmpty(orderProdAttachs)) {
+					response.setMark(OrdersConstants.printMark.CAN_MERGE);
 					break;
 				}else {
-					response.setFlag(false);
+					response.setMark(OrdersConstants.printMark.NOT_MERGE);
 				}
+			}else {
+				response.setMark(OrdersConstants.printMark.NOT_MERGE);
 			}
 		}
 		return response;
@@ -129,62 +115,39 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			throws BusinessException, SystemException {
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
 		/* 参数校验及判断是否存在提货单打印信息*/
-		List<OrdOdDeliverInfo> deliverInfos = this.checkParamAndQueryInfos(
-				request.getOrderId(),request.getTenantId());
-		/* 没有提货单打印信息的话,则表示第一次打印*/
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(order==null) {
-			logger.warn("未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单信息[订单id:"+request.getOrderId()+"]");
-		} 
+		OrdOrder order = this.checkParamAndQueryOrder(request.getOrderId(),request.getTenantId());
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
 		long sum = 0;
-		if(CollectionUtil.isEmpty(deliverInfos)) {
-			/* 获取订单下的商品信息*/
-			List<OrdOdProd> ordOdProds = getOrdOdProds(request);
-			/* 根据订单规则获取合并时间*/
-			Timestamp time = getOrderListInTime(OrdRuleConstants.MERGE_ORDER_SETTING_ID,order.getOrderTime());
-			/* 组装订单商品信息集合*/
-			List<OrdOrderProdAttach> originalAttachs = createOriginalAttachs(ordOdProds);
-			List<Long> orderList =null;
-			for (OrdOdProd ordOdProd : ordOdProds) {
-				long buySum=ordOdProd.getBuySum();
-				sum+=buySum;
-				long horOrderId=0;
-				/* 多表多条件查询*/
-				List<OrdOrderProdAttach> orderProdAttachs = deliveryOrderPrintAtomSV.query(request.getUserId(),
-						request.getTenantId(),ordOdProd.getSkuId(),ordOdProd.getRouteId(),ordOdProd.getOrderId(),
-						OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,time,order.getOrderTime());
+		/* 获取订单下的商品信息*/
+		List<OrdOdProd> ordOdProds = getOrdOdProds(request);
+		/* 根据订单规则获取合并时间*/
+		Timestamp time = getOrderListInTime(OrdRuleConstants.MERGE_ORDER_SETTING_ID,order.getOrderTime());
+		/* 组装订单商品信息集合*/
+		List<OrdOrderProdAttach> originalAttachs = createOriginalAttachs(ordOdProds);
+		List<Long> orderList =null;
+		for (OrdOdProd ordOdProd : ordOdProds) {
+			long buySum=ordOdProd.getBuySum();
+			sum+=buySum;
+			long horOrderId=0;
+			/* 多表多条件查询*/
+			List<OrdOrderProdAttach> orderProdAttachs = deliveryOrderPrintAtomSV.query(request.getUserId(),
+					request.getTenantId(),ordOdProd.getSkuId(),ordOdProd.getRouteId(),ordOdProd.getOrderId(),
+					OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,time,order.getOrderTime(),
+					OrdersConstants.OrdOrder.cusServiceFlag.NO);
+			if(!CollectionUtil.isEmpty(orderProdAttachs)) {
+				/* 筛选不符合合并规则的订单*/
+				orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList);
 				if(!CollectionUtil.isEmpty(orderProdAttachs)) {
-					/* 筛选不符合合并规则的订单*/
-					orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList);
-					if(!CollectionUtil.isEmpty(orderProdAttachs)) {
-						for (OrdOrderProdAttach ordOrderProdAttach : orderProdAttachs) {
-							buySum+=ordOrderProdAttach.getBuySum();
-							sum+=ordOrderProdAttach.getBuySum();
-							horOrderId=ordOrderProdAttach.getOrderId();
-						}
+					for (OrdOrderProdAttach ordOrderProdAttach : orderProdAttachs) {
+						buySum+=ordOrderProdAttach.getBuySum();
+						sum+=ordOrderProdAttach.getBuySum();
+						horOrderId=ordOrderProdAttach.getOrderId();
 					}
 				}
-				/* 组装订单提货明细信息*/
-				DeliveryProdPrintVo dpVo = this.createDeliverInfoProd(ordOdProd,buySum,horOrderId);
-				list.add(dpVo);
 			}
-		}else {
-			/*表示提货单打印信息已存在*/
-			for (OrdOdDeliverInfo ordOdDeliverInfo : deliverInfos) {
-				DeliverInfoProdCriteria example=new DeliverInfoProdCriteria();
-				DeliverInfoProdCriteria.Criteria criteria = example.createCriteria();
-				criteria.andDeliverInfoIdEqualTo(ordOdDeliverInfo.getDeliverInfoId());
-				List<DeliverInfoProd> deliverInfoProds= deliveryOrderPrintAtomSV.selectByExample(example);
-				DeliverInfoProd deliverInfoProd = deliverInfoProds.get(0);
-				sum+=deliverInfoProd.getBuySum();
-				DeliveryProdPrintVo dpVo=new DeliveryProdPrintVo();
-				BeanUtils.copyProperties(dpVo, deliverInfoProd);
-				dpVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
-				list.add(dpVo);
-			}
+			/* 组装订单提货明细信息*/
+			DeliveryProdPrintVo dpVo = this.createDeliverInfoProd(ordOdProd,buySum,horOrderId);
+			list.add(dpVo);
 		}
 		/* 查询订单配送信息*/
 		List<OrdOdLogistics> logistics = this.getOrdOdLogistics(order.getParentOrderId(), order.getTenantId());
@@ -205,8 +168,16 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	@Override
 	public void print(DeliveryOrderPrintInfosRequest request) {
 		/* 参数检验及 查询提货单打印信息*/
-		List<OrdOdDeliverInfo> queryInfos = this.checkParamAndQueryInfos(
-			request.getOrderId(),request.getTenantId());
+		CommonCheckUtils.checkTenantId(request.getTenantId(), "");
+		if(request.getOrderId()==0) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
+		}
+		/* 判断是否存在提货单打印信息*/
+		OrdOdDeliverInfoCriteria exampleDeliver=new OrdOdDeliverInfoCriteria();
+		OrdOdDeliverInfoCriteria.Criteria criteriaDeliver = exampleDeliver.createCriteria();
+		criteriaDeliver.andOrderIdEqualTo(request.getOrderId());
+		criteriaDeliver.andPrintInfoEqualTo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
+		List<OrdOdDeliverInfo> queryInfos = deliveryOrderPrintAtomSV.selectByExample(exampleDeliver);
 		if(!CollectionUtil.isEmpty(queryInfos)) {
 			logger.warn("提货单已经打印,不能重复打印[订单id:"+request.getOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
@@ -238,20 +209,21 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	}
 	
 	/**
-	 * 参数检验
+	 * 参数检验及获取订单信息
 	 */
-	private List<OrdOdDeliverInfo> checkParamAndQueryInfos(long orderId,String tenantId) {
+	private OrdOrder checkParamAndQueryOrder(long orderId,String tenantId) {
 		CommonCheckUtils.checkTenantId(tenantId, "");
 		if(orderId==0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		/* 判断是否存在提货单打印信息*/
-		OrdOdDeliverInfoCriteria exampleDeliver=new OrdOdDeliverInfoCriteria();
-		OrdOdDeliverInfoCriteria.Criteria criteriaDeliver = exampleDeliver.createCriteria();
-		criteriaDeliver.andOrderIdEqualTo(orderId);
-		criteriaDeliver.andPrintInfoEqualTo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
-		List<OrdOdDeliverInfo> deliverInfos = deliveryOrderPrintAtomSV.selectByExample(exampleDeliver);
-		return deliverInfos;
+		
+		OrdOrder order = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+		if(order==null) {
+			logger.warn("未能查询到指定的订单信息[订单id:"+orderId+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单信息[订单id:"+orderId+"]");
+		} 
+		return order;
 	}
 	
 	
