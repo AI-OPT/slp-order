@@ -10,6 +10,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateDeleteRequest;
+import com.ai.slp.order.api.freighttemplate.param.FreightTemplateProdRequest;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateRequest;
 import com.ai.slp.order.api.freighttemplate.param.FreightTemplateUpdateRequest;
 import com.ai.slp.order.api.freighttemplate.param.QueryFreightTemplateRequest;
@@ -82,5 +83,19 @@ public interface IFreightTemplateSV {
 	   @POST
 	   @Path("/delete")
 	   public BaseResponse delete(FreightTemplateDeleteRequest request) throws BusinessException,SystemException;
+	   
+	   /**
+	    * 运费模版明细的删除
+	    * @return
+	    * @throws BusinessException
+	    * @throws SystemException
+	    * @author caofz
+	    * @ApiDocMethod
+	    * @ApiCode FREIGHTTEMPLATE_005
+	    * @RestRelativeURL freighttemplate/deleteFreightTemplateProd
+	    */
+	   @POST
+	   @Path("/deleteFreightTemplateProd")
+	   public BaseResponse deleteFreightTemplateProd(FreightTemplateProdRequest request) throws BusinessException,SystemException;
 	   
 }
