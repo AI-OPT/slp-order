@@ -817,12 +817,22 @@ public final class OrdersConstants {
 
     }
     
-    public static final class JfTransf {
+    public static final class printMark {
 		
 		/**
-		 * 积分转换率
+		 * 可合并
 		 */
-		public static final int rate=100;
+		public static final String CAN_MERGE="1";
+		
+		/**
+		 * 不可合并
+		 */
+		public static final String NOT_MERGE ="2";
+		
+		/**
+		 * 不可打印
+		 */
+		public static final String NOT_PRINT ="3";
 	}
 
 }
