@@ -1,5 +1,8 @@
 package com.ai.slp.order.api.stasticsorder.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,15 @@ public class StasticsOrderSVImplTest {
         query.setPageNo(1);
         //query.setState("14");
        // query.setUserId("123");
-        query.setOrderId(334570392323l);
+        //query.setOrderId(334570392323l);
+        List<String> list = new ArrayList<String>();
+        //list.add("000000000000000945");
+        list.add("123");
+        query.setUserIdList(list);
+        List<Long> suList = new ArrayList<Long>();
+        suList.add(334570392323l);
+        query.setSupplierIdList(suList);
+       // query.setProdName("北京");
         StasticOrderResponse info=iStasticsOrderSV.queryStasticOrdPage(query);
         System.out.println("info="+JSON.toJSONString(info.getPageInfo()));
         
