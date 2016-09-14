@@ -1,6 +1,7 @@
 package com.ai.slp.order.service.business.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -706,7 +707,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			criteriaOrder.andParentOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
         			criteriaOrder.andTenantIdEqualTo(orderListRequest.getTenantId());
         			if(!StringUtil.isBlank(states)) {
-        				criteriaOrder.andStateIn(orderListRequest.getStateList());
+        				String[] strState = arr.split(",");
+                		List<String> asList = Arrays.asList(strState); 
+        				criteriaOrder.andStateIn(asList);
         			}
         			if(!flag) {
         				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO);
