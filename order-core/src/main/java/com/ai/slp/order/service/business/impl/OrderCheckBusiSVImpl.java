@@ -58,6 +58,9 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 					"未能查询到相对应的订单信息[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
 		}
 		String orgState = ordOrder.getState();
+		if(!OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT.equals(orgState)) {
+			throw new BusinessException("", "此订单不处于待审核状态");
+		}
 		if(OrdersConstants.OrderCheck.result.OK.equals(request.getCheckResult())) {//表示审核通过
 			String transitionState=OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED; //订单轨迹记录状态
 			String newState=OrdersConstants.OrdOrder.State.REVOKE_WAIT_CONFIRM;
