@@ -2,7 +2,9 @@ package com.ai.slp.order.service.business.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +32,13 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfoCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria;
+import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
+import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IDeliveryOrderPrintAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IInvoicePrintBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
@@ -57,6 +63,9 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 	@Autowired
 	private IDeliveryOrderPrintAtomSV deliveryOrderPrintAtomSV;
 	
+	@Autowired
+	private IOrdOdProdAtomSV ordOdProdAtomSV;
+	
 	@Override
 	public InvoicePrintResponse invoiceQuery(InvoicePrintRequest request) throws BusinessException, SystemException {
 		InvoicePrintResponse response=new InvoicePrintResponse();
@@ -68,9 +77,35 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
 					"未能查询到指定的订单信息[订单id:"+ request.getOrderId()+"]");
 		}
+		List<OrdOdProd> ordOdProds = this.getOrdOdProds(request);
+		for (OrdOdProd ordOdProd : ordOdProds) {
+			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+				//该商品为售后标识 不可打印
+				throw new BusinessException("", "此订单下商品处于售后状态,不可打印");
+			}
+		}
 		if(CollectionUtil.isEmpty(infos)) {
-			logger.warn("未查询到相应的信息,请查看是否打印了提货单信息.");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "未查询到相应的信息,请查看是否打印了提货单信息.");
+			logger.warn("未查询到相应的信息,请查看提货单信息是否已经打印.");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "未查询到相应的信息,请查看提货单信息是否已经打印.");
+		}
+		OrdOrderCriteria example=new OrdOrderCriteria();
+		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		criteria.andOrigOrderIdEqualTo(order.getOrderId());
+		criteria.andTenantIdEqualTo(order.getTenantId());
+		List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+		Map<String,Long> prodMap=new HashMap<String,Long>();
+		if(!CollectionUtil.isEmpty(ordOrderList)) {
+			for (OrdOrder ordOrder : ordOrderList) {
+				OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
+				OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
+				prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
+				prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId()); //售后商品明细表对应订单主表 一对一
+				List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
+				if(!CollectionUtil.isEmpty(prodList)) {
+					OrdOdProd ordOdProd = prodList.get(0);
+					prodMap.put(ordOdProd.getSkuId(), ordOdProd.getBuySum());
+				}
+			}
 		}
 		List<InvoicePrintVo> list=new ArrayList<InvoicePrintVo>();
 		long sum=0;
@@ -86,10 +121,11 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 				invoicePrintVo.setSkuId(deliverInfoProd.getSkuId());
 				invoicePrintVo.setProdName(deliverInfoProd.getProdName());
 				invoicePrintVo.setExtendInfo(deliverInfoProd.getExtendInfo());
-				invoicePrintVo.setBuySum(deliverInfoProd.getBuySum());
+				Long afterSaleBuySum = prodMap.get(deliverInfoProd.getSkuId());
+				invoicePrintVo.setBuySum(deliverInfoProd.getBuySum()-(afterSaleBuySum==null?0:afterSaleBuySum));
 				invoicePrintVo.setSalePrice(deliverInfoProd.getSalePrice());
 				invoicePrintVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
-				sum+=deliverInfoProd.getBuySum();
+				sum+=deliverInfoProd.getBuySum()-(afterSaleBuySum==null?0:afterSaleBuySum);
 				list.add(invoicePrintVo);
 			}
 		}
@@ -202,6 +238,24 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV {
 			criteriaDeliver.andPrintInfoEqualTo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
 			List<OrdOdDeliverInfo> deliverInfos = deliveryOrderPrintAtomSV.selectByExample(exampleDeliver);
 			return deliverInfos;
+		}
+		
+		
+	  /**
+	   * 获取订单下的商品信息
+	   */
+		private List<OrdOdProd> getOrdOdProds(InvoicePrintRequest request) {
+			OrdOdProdCriteria example=new OrdOdProdCriteria();
+			OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+			criteria.andTenantIdEqualTo(request.getTenantId());
+			criteria.andOrderIdEqualTo(request.getOrderId());
+			List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByExample(example);
+			if(CollectionUtil.isEmpty(ordOdProds)) {
+				logger.warn("未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+						"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+			}
+			return ordOdProds;
 		}
 
 }
