@@ -12,7 +12,7 @@
     <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
     <result column="ACCT_ID" property="acctId" jdbcType="BIGINT" />
     <result column="SUBS_ID" property="subsId" jdbcType="BIGINT" />
-    <result column="SUPPLIER_ID" property="supplierId" jdbcType="BIGINT" />
+    <result column="SUPPLIER_ID" property="supplierId" jdbcType="VARCHAR" />
     <result column="STORAGE_ID" property="storageId" jdbcType="VARCHAR" />
     <result column="ROUTE_ID" property="routeId" jdbcType="VARCHAR" />
     <result column="PROVINCE_CODE" property="provinceCode" jdbcType="VARCHAR" />
@@ -164,7 +164,7 @@
     values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{busiCode,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{subFlag,jdbcType=VARCHAR}, #{parentOrderId,jdbcType=BIGINT}, 
       #{batchNo,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{acctId,jdbcType=BIGINT}, 
-      #{subsId,jdbcType=BIGINT}, #{supplierId,jdbcType=BIGINT}, #{storageId,jdbcType=VARCHAR}, 
+      #{subsId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{storageId,jdbcType=VARCHAR}, 
       #{routeId,jdbcType=VARCHAR}, #{provinceCode,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, 
       #{state,jdbcType=VARCHAR}, #{stateChgTime,jdbcType=TIMESTAMP}, #{displayFlag,jdbcType=VARCHAR}, 
       #{displayFlagChgTime,jdbcType=TIMESTAMP}, #{deliveryFlag,jdbcType=VARCHAR}, #{lockFlag,jdbcType=VARCHAR}, 
@@ -200,7 +200,9 @@
       </if>
       ACCT_ID,
       SUBS_ID,
-      SUPPLIER_ID,
+      <if test="supplierId != null" >
+        SUPPLIER_ID,
+      </if>
       <if test="storageId != null" >
         STORAGE_ID,
       </if>
@@ -312,7 +314,9 @@
       </if>
       #{acctId,jdbcType=BIGINT},
       #{subsId,jdbcType=BIGINT},
-      #{supplierId,jdbcType=BIGINT},
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
       <if test="storageId != null" >
         #{storageId,jdbcType=VARCHAR},
       </if>
@@ -444,7 +448,7 @@
         SUBS_ID = #{record.subsId,jdbcType=BIGINT},
       </if>
       <if test="record.supplierId != null" >
-        SUPPLIER_ID = #{record.supplierId,jdbcType=BIGINT},
+        SUPPLIER_ID = #{record.supplierId,jdbcType=VARCHAR},
       </if>
       <if test="record.storageId != null" >
         STORAGE_ID = #{record.storageId,jdbcType=VARCHAR},
@@ -556,7 +560,7 @@
       USER_ID = #{record.userId,jdbcType=VARCHAR},
       ACCT_ID = #{record.acctId,jdbcType=BIGINT},
       SUBS_ID = #{record.subsId,jdbcType=BIGINT},
-      SUPPLIER_ID = #{record.supplierId,jdbcType=BIGINT},
+      SUPPLIER_ID = #{record.supplierId,jdbcType=VARCHAR},
       STORAGE_ID = #{record.storageId,jdbcType=VARCHAR},
       ROUTE_ID = #{record.routeId,jdbcType=VARCHAR},
       PROVINCE_CODE = #{record.provinceCode,jdbcType=VARCHAR},
@@ -623,7 +627,7 @@
         SUBS_ID = #{subsId,jdbcType=BIGINT},
       </if>
       <if test="supplierId != null" >
-        SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},
+        SUPPLIER_ID = #{supplierId,jdbcType=VARCHAR},
       </if>
       <if test="storageId != null" >
         STORAGE_ID = #{storageId,jdbcType=VARCHAR},
@@ -732,7 +736,7 @@
       USER_ID = #{userId,jdbcType=VARCHAR},
       ACCT_ID = #{acctId,jdbcType=BIGINT},
       SUBS_ID = #{subsId,jdbcType=BIGINT},
-      SUPPLIER_ID = #{supplierId,jdbcType=BIGINT},
+      SUPPLIER_ID = #{supplierId,jdbcType=VARCHAR},
       STORAGE_ID = #{storageId,jdbcType=VARCHAR},
       ROUTE_ID = #{routeId,jdbcType=VARCHAR},
       PROVINCE_CODE = #{provinceCode,jdbcType=VARCHAR},
