@@ -782,23 +782,6 @@ public final class OrdersConstants {
 
     }
     
-    public static final class OrderCheck {
-
-        public static class result {
-        	
-            /**
-             * 审核同意
-             */
-            public static final String OK = "1";
-
-            /**
-             * 审核拒绝
-             */
-            public static final String NO = "2";
-
-        }
-
-    }
     public static final class IfWarning {
 
         public static class result {
