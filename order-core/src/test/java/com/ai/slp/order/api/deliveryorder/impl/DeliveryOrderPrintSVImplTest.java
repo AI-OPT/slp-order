@@ -3,6 +3,7 @@ package com.ai.slp.order.api.deliveryorder.impl;
 import com.ai.slp.order.api.deliveryorderprint.interfaces.IDeliveryOrderPrintSV;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
+import com.alibaba.fastjson.JSON;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +22,9 @@ public class DeliveryOrderPrintSVImplTest {
 	@Test
 	public void testQuery() {
 		DeliveryOrderPrintRequest request=new DeliveryOrderPrintRequest();
-		request.setOrderId(35913355l);
+		request.setOrderId(334570391232l);
 		request.setUserId("000000000000000945");
-		request.setTenantId("SLP");
+		request.setTenantId("changhong");
 		DeliveryOrderQueryResponse response = deliveryOrderPrintSV.query(request);
 		System.out.println(response);
 	}
@@ -33,9 +34,9 @@ public class DeliveryOrderPrintSVImplTest {
 	public void testPrint() {
 		
 		DeliveryOrderPrintRequest request=new DeliveryOrderPrintRequest();
-		request.setOrderId(35913355l);
+		request.setOrderId(59612493l);
 		request.setUserId("000000000000000945");
-		request.setTenantId("SLP");
+		request.setTenantId("changhong");
 		
 		//BaseResponse response = deliveryOrderPrintSV.print(request);
 		//System.out.println(response);
@@ -44,9 +45,10 @@ public class DeliveryOrderPrintSVImplTest {
 	@Test
 	public void testDisplay() {
 		DeliveryOrderPrintRequest request=new DeliveryOrderPrintRequest();
-		request.setOrderId(35913355l);
+		request.setOrderId(334570391232l);
 		request.setUserId("000000000000000945");
-		request.setTenantId("SLP");
+		request.setTenantId("changhong");
+		System.out.println(JSON.toJSONString(request));
 		deliveryOrderPrintSV.display(request);
 		//System.out.println(response);
 	}

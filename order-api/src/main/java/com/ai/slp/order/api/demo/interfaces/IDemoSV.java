@@ -46,7 +46,7 @@ public interface IDemoSV {
 	@Path("/helloParam")
 	String helloParam(HelloParam param);
 	
-	@POST
-	@Path("/hellotest")
+//	@POST
+	//@Path("/hellotest")
 	String hellotest(String name,int age,String positon);
 }

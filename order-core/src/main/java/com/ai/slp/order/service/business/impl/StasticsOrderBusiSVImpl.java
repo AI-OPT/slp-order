@@ -9,9 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.vo.PageInfo;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
+import com.ai.platform.common.api.cache.param.SysParamSingleCond;
 import com.ai.slp.order.api.stasticsorder.param.StasticOrderVo;
 import com.ai.slp.order.api.stasticsorder.param.StasticParentOrderVo;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
@@ -80,6 +84,18 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				if(logistics!=null){
 					parentOrderVo.setContactTel(logistics.getContactTel());
 				}
+				//翻译订单状态
+				ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+				SysParamSingleCond param = new SysParamSingleCond();
+        		param = new SysParamSingleCond();
+        		param.setTenantId(OrdersConstants.Sate.TENANT_ID);
+        		param.setColumnValue(order.getState());
+        		param.setTypeCode(OrdersConstants.Sate.TYPE_CODE);
+        		param.setParamCode(OrdersConstants.Sate.ORD_STATE);
+        		SysParam stateOrder = iCacheSV.getSysParamSingle(param);
+        		if(stateOrder!=null){
+        			parentOrderVo.setStateName(stateOrder.getColumnDesc());
+        		}
 				//获取子订单
 				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
 				for(OrdOrder child:childList){
@@ -103,7 +119,6 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 		pageResult.setPageSize(request.getPageSize());
 		pageResult.setPageNo(request.getPageNo());
 		pageResult.setResult(staticParentOrderList);
-		System.out.println("==========="+pageResult.getCount());
 		return pageResult;
 	}
 }

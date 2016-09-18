@@ -817,5 +817,12 @@ public final class OrdersConstants {
 		 */
 		public static final String NOT_PRINT ="3";
 	}
+    public static final class Sate{
+		public static final String TENANT_ID = "changhong";
+		/** 订单typeCode */
+		public static final String TYPE_CODE = "ORD_ORDER";
+		/** 订单状态paramCode */
+		public static final String ORD_STATE = "ORD_STATE";
+	}
 
 }
