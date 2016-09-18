@@ -60,7 +60,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 		/* 审核结果STATE检验*/
 		String state = request.getState();
 		if(!OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED.equals(state)
-				||!OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(state)) {
+				&&!OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(state)) {
 			throw new BusinessException("", "订单审核结果入参有误");
 		}
 		String orgState = ordOrder.getState();
