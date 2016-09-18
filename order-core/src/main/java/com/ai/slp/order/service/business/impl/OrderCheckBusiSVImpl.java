@@ -61,7 +61,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 		if(!OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT.equals(orgState)) {
 			throw new BusinessException("", "此订单不处于待审核状态");
 		}
-		if(OrdersConstants.OrderCheck.result.OK.equals(request.getCheckResult())) {//表示审核通过
+		if(OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED.equals(request.getState())) {//表示审核通过
 			String transitionState=OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED; //订单轨迹记录状态
 			String newState=OrdersConstants.OrdOrder.State.REVOKE_WAIT_CONFIRM;
 			String transitionChgDesc=OrdOdStateChg.ChgDesc.ORDER_AUDITED;
