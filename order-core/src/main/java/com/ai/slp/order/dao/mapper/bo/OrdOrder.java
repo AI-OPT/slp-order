@@ -23,7 +23,7 @@ public class OrdOrder {
 
     private long subsId;
 
-    private long supplierId;
+    private String supplierId;
 
     private String storageId;
 
@@ -167,12 +167,12 @@ public class OrdOrder {
         this.subsId = subsId;
     }
 
-    public long getSupplierId() {
+    public String getSupplierId() {
         return supplierId;
     }
 
-    public void setSupplierId(long supplierId) {
-        this.supplierId = supplierId;
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId == null ? null : supplierId.trim();
     }
 
     public String getStorageId() {
