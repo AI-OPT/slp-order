@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ai.opt.base.vo.PageInfo;
-import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -31,9 +30,9 @@ public class StasticsOrderAtomSVImpl implements IStasticsOrderAtomSV {
 		if (request.getOrderId() != null) {
 			param.andOrderIdEqualTo(request.getOrderId());
 		}
-		if (!CollectionUtil.isEmpty(request.getUserIdList())) {
-			List<String> list = request.getUserIdList();
-			param.andUserIdIn(list);
+		//用户
+		if(!StringUtil.isBlank(request.getUserId())){
+			param.andUserIdEqualTo(request.getUserId());
 		}
 		if (request.getOrderTimeStart() != null && request.getOrderTimeEnd() != null) {
 			param.andOrderTimeBetween(request.getOrderTimeStart(), request.getOrderTimeEnd());

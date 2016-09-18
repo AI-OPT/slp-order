@@ -1,7 +1,6 @@
 package com.ai.slp.order.api.stasticsorder.param;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import com.ai.opt.base.vo.BaseInfo;
 
@@ -18,7 +17,7 @@ public class StasticsOrderRequest extends BaseInfo {
 	/**
 	 * 用户id
 	 */
-	private List<String> userIdList;
+	private String userId;
 	/**
 	 * 销售商ID
 	 */
@@ -60,12 +59,12 @@ public class StasticsOrderRequest extends BaseInfo {
 		this.prodName = prodName;
 	}
 
-	public List<String> getUserIdList() {
-		return userIdList;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setUserIdList(List<String> userIdList) {
-		this.userIdList = userIdList;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getSupplierId() {
