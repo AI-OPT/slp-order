@@ -25,7 +25,7 @@ public class OrderCheckRequest extends BaseInfo{
 	 * 审核结果
 	 */
 	@NotBlank(message = "审核结果不能为空")
-	private String checkResult; //1 同意,2 拒绝
+	private String state; //211 已审核(通过),212 审核失败(不通过)
 	
 	/**
 	 * 审核结果描述
@@ -46,13 +46,12 @@ public class OrderCheckRequest extends BaseInfo{
 		this.orderId = orderId;
 	}
 
-
-	public String getCheckResult() {
-		return checkResult;
+	public String getState() {
+		return state;
 	}
 
-	public void setCheckResult(String checkResult) {
-		this.checkResult = checkResult;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public String getRemark() {
