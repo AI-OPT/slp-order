@@ -144,6 +144,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo.setOrderId(orderAttach.getOrderId());
             ordOrderVo.setOrderType(orderAttach.getOrderType());
             ordOrderVo.setBusiCode(orderAttach.getBusiCode());
+            SysParam sysParamBusiCode = this.translateInfo(orderAttach.getTenantId(), "ORD_ORDER", "BUSI_CODE", 
+            		orderAttach.getState(), iCacheSV);
+            ordOrderVo.setBusiCodeName(sysParamBusiCode == null ? "" : sysParamBusiCode.getColumnDesc());
             ordOrderVo.setState(orderAttach.getState());
             SysParam sysParamState = this.translateInfo(orderAttach.getTenantId(), "ORD_ORDER", "STATE", 
             		orderAttach.getState(), iCacheSV);
