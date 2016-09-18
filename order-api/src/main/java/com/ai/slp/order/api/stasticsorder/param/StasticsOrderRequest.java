@@ -22,7 +22,7 @@ public class StasticsOrderRequest extends BaseInfo {
 	/**
 	 * 销售商ID
 	 */
-	private List<Long> supplierIdList;
+	private String supplierId;
 	/**
 	 * 状态
 	 */
@@ -68,12 +68,12 @@ public class StasticsOrderRequest extends BaseInfo {
 		this.userIdList = userIdList;
 	}
 
-	public List<Long> getSupplierIdList() {
-		return supplierIdList;
+	public String getSupplierId() {
+		return supplierId;
 	}
 
-	public void setSupplierIdList(List<Long> supplierIdList) {
-		this.supplierIdList = supplierIdList;
+	public void setSupplierId(String supplierId) {
+		this.supplierId = supplierId;
 	}
 
 	public String getState() {

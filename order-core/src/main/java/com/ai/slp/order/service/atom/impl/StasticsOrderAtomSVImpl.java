@@ -56,9 +56,9 @@ public class StasticsOrderAtomSVImpl implements IStasticsOrderAtomSV {
 			}
 			param.andStateIn(stateList);
 		}
-		if(!CollectionUtil.isEmpty(request.getSupplierIdList())){
-			List<Long> list = request.getSupplierIdList();
-			param.andSupplierIdIn(list);
+		//销售商
+		if(!StringUtil.isBlank(request.getSupplierId())){
+			param.andSupplierIdEqualTo(request.getSupplierId());
 		}
 		// 查询父订单
 		param.andSubFlagEqualTo(OrdersConstants.OrdOrder.SubFlag.NO);

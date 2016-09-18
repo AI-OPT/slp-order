@@ -17,7 +17,7 @@ public class StasticParentOrderVo extends BaseInfo {
 	/**
 	 * 商户ID
 	 */
-	private Long supplierId;
+	private String supplierId;
 	/**
 	 * 商户名称
 	 */
@@ -95,11 +95,11 @@ public class StasticParentOrderVo extends BaseInfo {
 		this.state = state;
 	}
 
-	public Long getSupplierId() {
+	public String getSupplierId() {
 		return supplierId;
 	}
 
-	public void setSupplierId(Long supplierId) {
+	public void setSupplierId(String supplierId) {
 		this.supplierId = supplierId;
 	}
 

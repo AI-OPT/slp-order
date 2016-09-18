@@ -36,7 +36,7 @@ public class StasticsOrderSVImplTest {
         //suList.add(334570392323l);
        // query.setSupplierIdList(suList);
        // query.setState("90");
-        query.setProdName("北京");
+       // query.setProdName("北京");
         StasticOrderResponse info=iStasticsOrderSV.queryStasticOrdPage(query);
         System.out.println("info="+JSON.toJSONString(info.getPageInfo()));
         
