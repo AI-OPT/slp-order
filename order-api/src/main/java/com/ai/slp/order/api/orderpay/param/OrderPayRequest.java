@@ -33,7 +33,7 @@ public class OrderPayRequest extends BaseInfo {
     /**
      * 外部流水号
      */
-    @NotBlank(message = "收费金额不能为空")
+    @NotBlank(message = "外部流水号不能为空")
     private String externalId;
 
     /**
