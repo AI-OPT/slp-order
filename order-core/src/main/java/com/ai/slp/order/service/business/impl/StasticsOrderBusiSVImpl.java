@@ -29,6 +29,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IStasticsOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IStasticsOrderBusiSV;
+import com.ai.slp.order.util.ChUserUtil;
 @Service
 @Transactional
 public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
@@ -84,6 +85,9 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				if(logistics!=null){
 					parentOrderVo.setContactTel(logistics.getContactTel());
 				}
+				//获取绑定手机号
+				String phone = ChUserUtil.getPhone(parentOrderVo.getUserId());
+				parentOrderVo.setUserTel(phone);
 				//翻译订单状态
 				ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 				SysParamSingleCond param = new SysParamSingleCond();

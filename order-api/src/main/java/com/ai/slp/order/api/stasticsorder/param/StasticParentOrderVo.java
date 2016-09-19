@@ -43,6 +43,10 @@ public class StasticParentOrderVo extends BaseInfo {
 	 */
 	private String stateName;
 	/**
+	 * 绑定手机号
+	 */
+	private String userTel;
+	/**
 	 * 子订单信息
 	 */
 	private List<StasticOrderVo> childOrderList;
@@ -125,6 +129,14 @@ public class StasticParentOrderVo extends BaseInfo {
 
 	public void setStateName(String stateName) {
 		this.stateName = stateName;
+	}
+
+	public String getUserTel() {
+		return userTel;
+	}
+
+	public void setUserTel(String userTel) {
+		this.userTel = userTel;
 	}
 
 }
