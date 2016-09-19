@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,10 @@ import com.ai.slp.order.api.ordertradecenter.param.OrdFeeInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdFeeTotalProdInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
+import com.ai.slp.order.api.ordertradecenter.param.OrdProductDetailInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductResInfo;
+import com.ai.slp.order.api.ordertradecenter.param.OrderResInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -88,62 +91,42 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             throws BusinessException, SystemException {
     	LOG.info("商品下单处理......");
         OrderTradeCenterResponse response = new OrderTradeCenterResponse();
-        IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
-        long orderId =0;
+       // IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
+        IDSSClient client =null;
+        List<OrderResInfo> orderResInfos=new ArrayList<OrderResInfo>();
         List<OrdProductResInfo> ordProductResList =null;
         OrdFeeInfo ordFeeInfo =null;
         Timestamp sysDate = DateUtil.getSysDate();
-    	List<OrdProductInfo> productInfoList = request.getOrdProductInfoList();
-    	/* 商品个数为1的时候,即销售商Id为一个的情况下*/
-    	if(productInfoList.size()==1) {  
-    		/* 创建业务订单,并返回订单Id*/
-    		orderId = this.createOrder(request, sysDate);
-    		/* 创建商品明细信息 */
-            ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
-            /* 创建其它信息*/
-            ordFeeInfo = this.createOrderRelatedInfo(request, sysDate, orderId);
-    	}else { 
-    		/* 销售商Id为多个的情况下*/
-    		Map<Long, Long> orderMap=new HashMap<Long,Long>();
-    		for (OrdProductInfo ordProductInfo : productInfoList) {
-    			if(!orderMap.containsKey(ordProductInfo.getSupplierId())) {
-    				/* 创建业务订单,并返回订单Id*/
-    				orderId = this.createOrder(request, sysDate);
-    				/* 不包含的话,销售商Id和订单Id存入orderMap集合中*/
-    				orderMap.put(ordProductInfo.getSupplierId(), orderId);
-    				/* 创建商品明细信息 */
-    		        ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
-    		        /* 创建其它信息*/
-    		        ordFeeInfo=this.createOrderRelatedInfo(request, sysDate, orderId);
-    			}else if(ordProductInfo.getSupplierId()!=null && orderMap.containsKey(ordProductInfo.getSupplierId())){
-    				/* orderMap集合中包含的话,取出订单Id*/
-    				orderId = orderMap.get(ordProductInfo.getSupplierId());
-    		        ordProductResList = this.createOrderProd(request, sysDate, orderId,client);
-    		        ordFeeInfo=this.createOrderRelatedInfo(request, sysDate, orderId);
-    			}
-			}
-    	}
-        /* 封装返回参数 */
-        response.setOrderId(orderId);
+        List<OrdProductDetailInfo> ordProductDetailInfos = request.getOrdProductDetailInfos();
+        for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
+        	OrderResInfo orderResInfo=new OrderResInfo();
+        	/* 1.创建业务订单,并返回订单Id*/
+        	long orderId = this.createOrder(request, sysDate);
+        	/* 2.创建费用明细信息*/
+        	Map<String, Long> feeProdMap = this.createOrderFeeProd(ordProductDetailInfo, orderId);
+        	/* 3.创建商品明细信息 */
+        	ordProductResList = this.createOrderProd(request,ordProductDetailInfo,feeProdMap, sysDate, orderId,client);
+        	/* 4.费用信息处理 */
+        	ordFeeInfo = this.createFeeInfo(request,ordProductDetailInfo, sysDate, orderId);
+        	/* 5.创建发票信息 */
+        	this.createOrderFeeInvoice(request,ordProductDetailInfo, sysDate, orderId);
+        	/* 6. 处理配送信息，存在则写入 */
+        	this.createOrderLogistics(request, sysDate, orderId);
+        	/* 7. 记录一条订单创建轨迹记录 */
+        	this.writeOrderCreateStateChg(request, sysDate, orderId);
+        	/* 8. 更新订单状态 */
+        	this.updateOrderState(request.getTenantId(), sysDate, orderId);
+        	/* 9.封装返回参数*/
+        	orderResInfo.setOrderId(orderId);
+        	orderResInfo.setOrdProductResList(ordProductResList);
+        	orderResInfos.add(orderResInfo);
+		}
         response.setOrdFeeInfo(ordFeeInfo);
-        response.setOrdProductResList(ordProductResList);
+        response.setOrderResInfos(orderResInfos);
         return response;
     }
     
     
-    private OrdFeeInfo createOrderRelatedInfo(OrderTradeCenterRequest request, Timestamp sysDate,long orderId) {
-    	/* 1.费用信息处理 */
-    	OrdFeeInfo ordFeeInfo = this.createFeeInfo(request, sysDate, orderId);
-    	/* 2.创建发票信息 */
-    	this.createOrderFeeInvoice(request, sysDate, orderId);
-    	/* 3. 处理配送信息，存在则写入 */
-    	this.createOrderLogistics(request, sysDate, orderId);
-    	/* 4. 记录一条订单创建轨迹记录 */
-    	this.writeOrderCreateStateChg(request, sysDate, orderId);
-    	/* 5. 更新订单状态 */
-    	this.updateOrderState(request.getTenantId(), sysDate, orderId);
-        return ordFeeInfo;
-    } 
 
     /**
      * 创建订单信息
@@ -155,7 +138,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private long createOrder(OrderTradeCenterRequest request, Timestamp sysDate) {
-        //LOG.debug("开始处理订单主表[" + orderId + "]资料信息..");
         OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
         if (StringUtil.isBlank(ordBaseInfo.getOrderType())) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单类型为空");
@@ -185,7 +167,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setStateChgTime(sysDate);
         ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
         ordOrder.setDisplayFlagChgTime(sysDate);
-        ordOrder.setDeliveryFlag(OrdersConstants.OrdOrder.DeliveryFlag.NONE);
+        ordOrder.setDeliveryFlag(OrdersConstants.OrdOrder.DeliveryFlag.NONE); //TODO 物流信息传过来??
         ordOrder.setOrderTime(sysDate);
         ordOrder.setOrderDesc(ordBaseInfo.getOrderDesc());
         ordOrder.setKeywords(ordBaseInfo.getKeywords());
@@ -206,33 +188,20 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private List<OrdProductResInfo> createOrderProd(OrderTradeCenterRequest request,
-            Timestamp sysDate, long orderId, IDSSClient client) {
+    		OrdProductDetailInfo ordProductDetailInfo ,Map<String, Long> feeProdMap,
+    		Timestamp sysDate, long orderId, IDSSClient client) {
         LOG.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
-        /* 1.创建费用明细信息*/
-        List<OrdFeeTotalProdInfo> totalProdInfos = request.getOrdFeeTotalProdInfo();
-        long totalCouponFee=0;
-		long totalJfFee=0;
-        for (OrdFeeTotalProdInfo ordFeeTotalProdInfo : totalProdInfos) {
-			OrdOdFeeProd feeProd=new OrdOdFeeProd();
-			feeProd.setOrderId(orderId);
-			String payStyle = ordFeeTotalProdInfo.getPayStyle();
-			if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(payStyle)) {
-				totalCouponFee=ordFeeTotalProdInfo.getPaidFee();
-			}
-			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(payStyle)) {
-				totalJfFee=ordFeeTotalProdInfo.getPaidFee();
-			}
-			feeProd.setPayStyle(ordFeeTotalProdInfo.getPayStyle());
-			feeProd.setPaidFee(ordFeeTotalProdInfo.getPaidFee());
-        	ordOdFeeProdAtomSV.insertSelective(feeProd);
-		}
-        /* 2. 创建商品明细 */
+        /* 1. 创建商品明细 */
         OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
         String orderType = ordBaseInfo.getOrderType();
         List<OrdProductResInfo> ordProductResList = new ArrayList<OrdProductResInfo>();
-        List<OrdProductInfo> ordProductInfoList = request.getOrdProductInfoList();
-        long jfFee=totalJfFee/ordProductInfoList.size();
-        long couponFee=totalCouponFee/ordProductInfoList.size();
+        List<OrdProductInfo> ordProductInfoList = ordProductDetailInfo.getOrdProductInfoList();
+        Long totalCf = feeProdMap.get(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON);
+        Long totalJf = feeProdMap.get(OrdersConstants.OrdOdFeeProd.PayStyle.JF);
+        long totalCouponFee = totalCf==null?0:totalCf;
+        long totalJfFee = totalJf==null?0:totalJf;
+        long jfFee=totalCouponFee/ordProductInfoList.size();
+        long couponFee=totalJfFee/ordProductInfoList.size();
         for (OrdProductInfo ordProductInfo : ordProductInfoList) {
             StorageNumRes storageNumRes = this.querySkuInfo(request.getTenantId(),
                     ordProductInfo.getSkuId(), ordProductInfo.getBuySum());
@@ -258,6 +227,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setSkuStorageId(JSON.toJSONString(storageNum));
             ordOdProd.setValidTime(sysDate);
             ordOdProd.setInvalidTime(DateUtil.getFutureTime());
+            ordOdProd.setSupplierId(ordProductInfo.getSupplierId());
             ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
             ordOdProd.setBuySum(ordProductInfo.getBuySum());
             ordOdProd.setSalePrice(storageNumRes.getSalePrice());
@@ -267,7 +237,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setOperDiscountFee(ordProductInfo.getOperDiscountFee());
             ordOdProd.setOperDiscountDesc(ordProductInfo.getOperDiscountDesc());
             ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);;
-            ordOdProd.setAdjustFee(0);
+            ordOdProd.setAdjustFee(totalFee-couponFee-jfFee);
             ProdAttrInfoVo vo = new ProdAttrInfoVo();
             vo.setBasicOrgId(ordProductInfo.getBasicOrgId());
             vo.setProvinceCode(ordProductInfo.getProvinceCode());
@@ -301,40 +271,60 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private OrdFeeInfo createFeeInfo(OrderTradeCenterRequest request, Timestamp sysDate,
-            long orderId) {
+    private OrdFeeInfo createFeeInfo(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
+    		Timestamp sysDate,long orderId) {
         /* 1. 费用入总表 */
         List<OrdOdProd> ordOdProds = this.getOrdOdProds(request.getTenantId(), orderId);
         if (CollectionUtil.isEmpty(ordOdProds)) {
             throw new BusinessException("", "订单商品明细不存在[订单ID:" + orderId + "]");
         }
-        OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
-        String infoJson = ordExtendInfo.getInfoJson();
-        JSONObject object = JSON.parseObject(infoJson);
-        long totalFee = (long) object.get("totalFee"); //传过来的总费用
-        long adjustFee = (long) object.get("adjustFee"); //应收费用
-        long freightFee = (long) object.get("freight"); //运费费用
+        long totalFee = 0;
+        long discountFee = 0;
+        long operDiscountFee = 0;
+        for (OrdOdProd ordOdProd : ordOdProds) {
+            totalFee = ordOdProd.getTotalFee() + totalFee;
+            discountFee = ordOdProd.getDiscountFee() + discountFee;
+            operDiscountFee = ordOdProd.getOperDiscountFee() + operDiscountFee;
+        }
         OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
         ordOdFeeTotal.setOrderId(orderId);
         ordOdFeeTotal.setTenantId(request.getTenantId());
         ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);
         ordOdFeeTotal.setTotalFee(totalFee);
-        ordOdFeeTotal.setDiscountFee(totalFee-adjustFee);
-        ordOdFeeTotal.setOperDiscountFee(0);
+        long freight = ordProductDetailInfo.getFreight();
+        ordOdFeeTotal.setDiscountFee(discountFee+freight);
+        ordOdFeeTotal.setOperDiscountFee(operDiscountFee);
         ordOdFeeTotal.setOperDiscountDesc("");
-        ordOdFeeTotal.setAdjustFee(adjustFee);
+        ordOdFeeTotal.setAdjustFee(totalFee-discountFee-freight);
         ordOdFeeTotal.setPaidFee(0);
-        ordOdFeeTotal.setPayFee(adjustFee);
+        ordOdFeeTotal.setPayFee(totalFee-discountFee-freight);//减去运费
         ordOdFeeTotal.setUpdateTime(sysDate);
         ordOdFeeTotal.setUpdateChlId("");
         ordOdFeeTotal.setUpdateOperId("");
         ordOdFeeTotal.setTotalJf(0l);
-        ordOdFeeTotal.setFreight(freightFee);
+        ordOdFeeTotal.setFreight(freight);
         ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
         /* 2. 封装返回参数 */
+        OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
+        String infoJson = ordExtendInfo.getInfoJson();
+        JSONObject object = JSON.parseObject(infoJson);
+        Object objTotalFee = object.get("totalFee"); //传过来的总费用
+        Object objAdjustFee = object.get("adjustFee"); //传过来的总费用
+        long returnTotalFee;
+        long returnAdjustFee;
+        if (objTotalFee==null || false == NumberUtils.isNumber(objTotalFee+"")){	
+        	returnTotalFee=0L;
+        } else {
+        	returnTotalFee=Long.valueOf(objTotalFee+"");
+        }
+        if (objAdjustFee==null || false == NumberUtils.isNumber(objAdjustFee+"")){	
+        	returnAdjustFee=0L;
+        } else {
+        	returnAdjustFee=Long.valueOf(objAdjustFee+"");
+        }
         OrdFeeInfo ordFeeInfo = new OrdFeeInfo();
-        ordFeeInfo.setTotalFee(totalFee);
-        ordFeeInfo.setDiscountFee(totalFee-adjustFee);
+        ordFeeInfo.setTotalFee(returnTotalFee);
+        ordFeeInfo.setDiscountFee(returnTotalFee-returnAdjustFee);
         ordFeeInfo.setOperDiscountFee(0);
         return ordFeeInfo;
 
@@ -349,11 +339,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void createOrderFeeInvoice(OrderTradeCenterRequest request, Timestamp sysDate,
-            long orderId) {
+    private void createOrderFeeInvoice(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
+    		Timestamp sysDate,long orderId) {
     	LOG.debug("开始处理订单发票[" + orderId + "]信息..");
 		/* 1.判断商品是否允许发票*/
-		OrdInvoiceInfo ordInvoiceInfo = request.getOrdInvoiceInfo();
+		OrdInvoiceInfo ordInvoiceInfo = ordProductDetailInfo.getOrdInvoiceInfo();
 		/* 2.判断是否选择打印发票*/
 		if(ordInvoiceInfo==null) {
 			return;
@@ -417,6 +407,39 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	logistics.setLogisticsTimeId(ordLogisticsInfo.getLogisticsTime());
     	logistics.setRemark(ordLogisticsInfo.getRemark());
     	ordOdLogisticsAtomSV.insertSelective(logistics);
+    }
+    
+    
+    /**
+     * 创建费用明细信息
+     */
+    /**
+     * 创建费用明细信息
+     */
+    private Map<String,Long>  createOrderFeeProd(OrdProductDetailInfo ordProductDetailInfo,
+            long orderId) {
+    	 /* 1.创建费用明细信息*/
+    	Map<String,Long> feeProdMap=new HashMap<String,Long>();
+        List<OrdFeeTotalProdInfo> totalProdInfos = ordProductDetailInfo.getOrdFeeTotalProdInfo();
+        long totalCouponFee=0;
+		long totalJfFee=0;
+        for (OrdFeeTotalProdInfo ordFeeTotalProdInfo : totalProdInfos) {
+			OrdOdFeeProd feeProd=new OrdOdFeeProd();
+			feeProd.setOrderId(orderId);
+			String payStyle = ordFeeTotalProdInfo.getPayStyle();
+			if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(payStyle)) {
+				totalCouponFee=ordFeeTotalProdInfo.getPaidFee();
+				feeProdMap.put(payStyle, totalCouponFee);
+			}
+			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(payStyle)) {
+				totalJfFee=ordFeeTotalProdInfo.getPaidFee();
+				feeProdMap.put(payStyle, totalJfFee);
+			}
+			feeProd.setPayStyle(ordFeeTotalProdInfo.getPayStyle());
+			feeProd.setPaidFee(ordFeeTotalProdInfo.getPaidFee());
+        	ordOdFeeProdAtomSV.insertSelective(feeProd);
+		}
+        return feeProdMap;
     }
 
     /**
