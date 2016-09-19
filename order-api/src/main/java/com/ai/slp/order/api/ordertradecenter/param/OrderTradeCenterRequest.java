@@ -23,15 +23,10 @@ public class OrderTradeCenterRequest extends BaseInfo {
     private OrdBaseInfo ordBaseInfo;
 
     /**
-     * 商品信息
+     * 订单其它信息
      */
-    @NotNull(message = "商品信息列表不能为空")
-    private List<OrdProductInfo> ordProductInfoList;
-
-    /**
-     * 发票信息
-     */
-    private OrdInvoiceInfo ordInvoiceInfo;
+    @NotNull(message = "信息列表不能为空")
+    private List<OrdProductDetailInfo> ordProductDetailInfos;
 
     /**
      * 配送信息
@@ -43,21 +38,8 @@ public class OrderTradeCenterRequest extends BaseInfo {
      */
     private OrdExtendInfo ordExtendInfo;
     
-    /**
-     * 订单费用明细信息
-     */
-    private List<OrdFeeTotalProdInfo> ordFeeTotalProdInfo;
-
     public OrdBaseInfo getOrdBaseInfo() {
         return ordBaseInfo;
-    }
-
-    public List<OrdProductInfo> getOrdProductInfoList() {
-        return ordProductInfoList;
-    }
-
-    public OrdInvoiceInfo getOrdInvoiceInfo() {
-        return ordInvoiceInfo;
     }
 
     public OrdLogisticsInfo getOrdLogisticsInfo() {
@@ -72,14 +54,6 @@ public class OrderTradeCenterRequest extends BaseInfo {
         this.ordBaseInfo = ordBaseInfo;
     }
 
-    public void setOrdProductInfoList(List<OrdProductInfo> ordProductInfoList) {
-        this.ordProductInfoList = ordProductInfoList;
-    }
-
-    public void setOrdInvoiceInfo(OrdInvoiceInfo ordInvoiceInfo) {
-        this.ordInvoiceInfo = ordInvoiceInfo;
-    }
-
     public void setOrdLogisticsInfo(OrdLogisticsInfo ordLogisticsInfo) {
         this.ordLogisticsInfo = ordLogisticsInfo;
     }
@@ -88,11 +62,11 @@ public class OrderTradeCenterRequest extends BaseInfo {
         this.ordExtendInfo = ordExtendInfo;
     }
 
-	public List<OrdFeeTotalProdInfo> getOrdFeeTotalProdInfo() {
-		return ordFeeTotalProdInfo;
+	public List<OrdProductDetailInfo> getOrdProductDetailInfos() {
+		return ordProductDetailInfos;
 	}
 
-	public void setOrdFeeTotalProdInfo(List<OrdFeeTotalProdInfo> ordFeeTotalProdInfo) {
-		this.ordFeeTotalProdInfo = ordFeeTotalProdInfo;
+	public void setOrdProductDetailInfos(List<OrdProductDetailInfo> ordProductDetailInfos) {
+		this.ordProductDetailInfos = ordProductDetailInfos;
 	}
 }
