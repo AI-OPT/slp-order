@@ -11,7 +11,7 @@ public class OrdBaseInfo implements Serializable {
     /**
      * 用户Id
      */
-    @NotBlank(message = "用户Id不能为空")
+ //   @NotBlank(message = "用户Id不能为空")
     private String userId;
     
     /**
@@ -22,13 +22,13 @@ public class OrdBaseInfo implements Serializable {
     /**
      * 订单类型
      */
-    @NotBlank(message = "订单类型不能为空")
+ //   @NotBlank(message = "订单类型不能为空")
     private String orderType;
 
     /**
      * 渠道Id
      */
-    @NotBlank(message = "渠道Id不能为空")
+  //  @NotBlank(message = "渠道Id不能为空")
     private String chlId;
     
     /**
