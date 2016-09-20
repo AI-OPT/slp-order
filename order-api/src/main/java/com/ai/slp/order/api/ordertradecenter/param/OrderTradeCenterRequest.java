@@ -19,13 +19,13 @@ public class OrderTradeCenterRequest extends BaseInfo {
     /**
      * 订单基本信息
      */
-    @NotNull(message = "订单信息不能为空")
+   // @NotNull(message = "订单信息不能为空")
     private OrdBaseInfo ordBaseInfo;
 
     /**
      * 订单其它信息
      */
-    @NotNull(message = "信息列表不能为空")
+  //  @NotNull(message = "信息列表不能为空")
     private List<OrdProductDetailInfo> ordProductDetailInfos;
 
     /**
