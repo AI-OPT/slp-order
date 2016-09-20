@@ -28,6 +28,7 @@ public class OrdBaseInfo implements Serializable {
     /**
      * 渠道Id
      */
+    @NotBlank(message = "渠道Id不能为空")
     private String chlId;
     
     /**
@@ -39,6 +40,12 @@ public class OrdBaseInfo implements Serializable {
      * 操作员Id
      */
     private String operId;
+    
+    /**
+     * 是否需要物流
+     */
+    @NotBlank(message = "是否需要物流信息不能为空")
+    private String deliveryFlag;
 
     /**
      * 省份
@@ -164,5 +171,13 @@ public class OrdBaseInfo implements Serializable {
 
 	public void setAcctId(Long acctId) {
 		this.acctId = acctId;
+	}
+
+	public String getDeliveryFlag() {
+		return deliveryFlag;
+	}
+
+	public void setDeliveryFlag(String deliveryFlag) {
+		this.deliveryFlag = deliveryFlag;
 	}
 }
