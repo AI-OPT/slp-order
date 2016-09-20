@@ -135,6 +135,11 @@ public class OrdOrderVo extends BaseInfo {
      * 减免金额
      */
     private long operDiscountFee;
+    
+    /**
+     * 减免原因
+     */
+    private String operDiscountDesc;
 
     /**
      * 总应收费用
@@ -626,4 +631,13 @@ public class OrdOrderVo extends BaseInfo {
 	public void setOperId(String operId) {
 		this.operId = operId;
 	}
+
+	public String getOperDiscountDesc() {
+		return operDiscountDesc;
+	}
+
+	public void setOperDiscountDesc(String operDiscountDesc) {
+		this.operDiscountDesc = operDiscountDesc;
+	}
+	
 }
