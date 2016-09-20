@@ -702,17 +702,17 @@ public final class OrdersConstants {
             /**
              * 支付宝
              */
-            public static final String ZFB = "21";
+            public static final String ZFB = "20";
 
             /**
              * 银联
              */
-            public static final String YL = "22";
+            public static final String YL = "23";
 
             /**
              * 微信支付
              */
-            public static final String WEIXIN = "23";
+            public static final String WEIXIN = "28";
 
         }
 
