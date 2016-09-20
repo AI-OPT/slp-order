@@ -52,6 +52,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumRes;
@@ -90,6 +91,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
     	LOG.info("商品下单处理......");
+    	ValidateUtils.validateOrderTradeCenter(request); //校验
         OrderTradeCenterResponse response = new OrderTradeCenterResponse();
        // IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
         IDSSClient client =null;
@@ -140,7 +142,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private long createOrder(OrderTradeCenterRequest request, Timestamp sysDate) {
         OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
-        if (StringUtil.isBlank(ordBaseInfo.getOrderType())) {
+     /*   if (StringUtil.isBlank(ordBaseInfo.getOrderType())) {
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单类型为空");
         }
         if (StringUtil.isBlank(ordBaseInfo.getUserId())) {
@@ -148,7 +150,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         }
         if(StringUtil.isBlank(ordBaseInfo.getUserType())) {
         	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户类型为空");
-        }
+        }*/
         OrdOrder ordOrder = new OrdOrder();
         long orderId = SequenceUtil.createOrderId();
         ordOrder.setOrderId(orderId);
@@ -162,14 +164,12 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setAcctId(ordBaseInfo.getAcctId());
         ordOrder.setProvinceCode(ordBaseInfo.getProvinceCode());
         ordOrder.setCityCode(ordBaseInfo.getCityCode());
-        if(StringUtil.isBlank(ordBaseInfo.getChlId())) {
-        	ordOrder.setChlId(OrdersConstants.OrdOrder.ChlId.SELFOPERATION); //自运营
-        }
+        ordOrder.setChlId(ordBaseInfo.getChlId()); 
         ordOrder.setState(OrdersConstants.OrdOrder.State.NEW);
         ordOrder.setStateChgTime(sysDate);
         ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
         ordOrder.setDisplayFlagChgTime(sysDate);
-        ordOrder.setDeliveryFlag(OrdersConstants.OrdOrder.DeliveryFlag.EXPRESS); //TODO 物流信息传过来??
+        ordOrder.setDeliveryFlag(ordBaseInfo.getDeliveryFlag()); //TODO 物流信息传过来??
         ordOrder.setOrderTime(sysDate);
         ordOrder.setOrderDesc(ordBaseInfo.getOrderDesc());
         ordOrder.setKeywords(ordBaseInfo.getKeywords());
@@ -389,7 +389,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	LOG.debug("开始处理订单配送[" + orderId + "]信息..");
     	OrdLogisticsInfo ordLogisticsInfo = request.getOrdLogisticsInfo();
     	/* 1.参数检验*/
-    	this.checkLogisticsInfo(ordLogisticsInfo);
+    	//this.checkLogisticsInfo(ordLogisticsInfo);
     	/* 2.创建配送信息*/
     	OrdOdLogistics logistics=new OrdOdLogistics();
     	long logisticsId=SequenceUtil.genLogisticsId();
