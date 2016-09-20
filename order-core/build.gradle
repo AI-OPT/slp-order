@@ -20,6 +20,9 @@ dependencies {
     compile 'com.ai.slp.balance:deduct:1.0-SNAPSHOT'
     compile 'com.ai.platform.common:servicenum:1.0.1-SNAPSHOT'
     compile 'com.ai.slp.route:routemanage:1.0.1-SNAPSHOT'
+    
+    //支付
+    compile "com.ai.opt.chpay:ch-payclient:1.0-SNAPSHOT"
 
 
 

@@ -9,6 +9,8 @@ public final class OrdersConstants {
     public static final String O2P_NOTIFYURL = "o2p_nofityurl";
     
     public static final String DTS_SCHEDULE_NAME = "slp-order-dts-sched";
+    public static final String ORDER_SUCCESS = "000000";
+    public static final String ORDER_FAILD = "999999";
 
     public static final class OrdOrder {
 
