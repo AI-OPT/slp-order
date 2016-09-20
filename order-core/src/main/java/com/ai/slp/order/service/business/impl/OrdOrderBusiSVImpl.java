@@ -430,7 +430,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setPhoneCount(phoneCount);*/
                 /* 3.订单发票信息查询*/
                 OrdOdInvoice ordOdInvoice =null;
-                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())) {
+                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())||
+                		OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())) {
                 	 ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
                 }else {
                 	 ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getParentOrderId());
@@ -445,7 +446,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 }
                 /* 4.订单配送信息查询*/
                 OrdOdLogistics ordOdLogistics =null;
-                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())) {
+                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())||
+                		OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())) {
                 	ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getOrderId());
                 }else {
                 	ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getParentOrderId());
@@ -465,7 +467,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 	ordOrderVo.setExpressId(ordOdLogistics.getExpressId());
                 }
                 /* 5.订单费用明细查询 */
-                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())) {
+                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())||
+                		OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())) {
                 	List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
                 			order.getOrderId(),order.getTenantId());
                 	ordOrderVo.setPayDataList(orderFeeProdList);
@@ -482,7 +485,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 OrdBalacneIfCriteria exampleBalance=new OrdBalacneIfCriteria();
                 Criteria criteriaBalance = exampleBalance.createCriteria();
                 criteriaBalance.andTenantIdEqualTo(order.getTenantId());
-                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())) {
+                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())||
+                		OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())) {
                 	criteriaBalance.andOrderIdEqualTo(order.getOrderId());
                 }else {
                 	criteriaBalance.andOrderIdEqualTo(order.getParentOrderId());
