@@ -95,7 +95,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         IDSSClient client =null;
         List<OrderResInfo> orderResInfos=new ArrayList<OrderResInfo>();
         List<OrdProductResInfo> ordProductResList =null;
-        OrdFeeInfo ordFeeInfo =null;
         Timestamp sysDate = DateUtil.getSysDate();
         List<OrdProductDetailInfo> ordProductDetailInfos = request.getOrdProductDetailInfos();
         for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
@@ -107,7 +106,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	/* 3.创建商品明细信息 */
         	ordProductResList = this.createOrderProd(request,ordProductDetailInfo,feeProdMap, sysDate, orderId,client);
         	/* 4.费用信息处理 */
-        	ordFeeInfo = this.createFeeInfo(request,ordProductDetailInfo, sysDate, orderId);
+        	this.createFeeInfo(request,ordProductDetailInfo, sysDate, orderId);
         	/* 5.创建发票信息 */
         	this.createOrderFeeInvoice(request,ordProductDetailInfo, sysDate, orderId);
         	/* 6. 处理配送信息，存在则写入 */
@@ -121,6 +120,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	orderResInfo.setOrdProductResList(ordProductResList);
         	orderResInfos.add(orderResInfo);
 		}
+        /* 10.返回费用总金额*/
+        OrdFeeInfo ordFeeInfo = this.buildFeeInfo(request);
         response.setOrdFeeInfo(ordFeeInfo);
         response.setOrderResInfos(orderResInfos);
         return response;
@@ -158,6 +159,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setUserId(ordBaseInfo.getUserId());
         ordOrder.setUserType(ordBaseInfo.getUserType());
         ordOrder.setIpAddress(ordBaseInfo.getIpAddress());
+        ordOrder.setAcctId(ordBaseInfo.getAcctId());
         ordOrder.setProvinceCode(ordBaseInfo.getProvinceCode());
         ordOrder.setCityCode(ordBaseInfo.getCityCode());
         if(StringUtil.isBlank(ordBaseInfo.getChlId())) {
@@ -167,7 +169,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setStateChgTime(sysDate);
         ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
         ordOrder.setDisplayFlagChgTime(sysDate);
-        ordOrder.setDeliveryFlag(OrdersConstants.OrdOrder.DeliveryFlag.NONE); //TODO 物流信息传过来??
+        ordOrder.setDeliveryFlag(OrdersConstants.OrdOrder.DeliveryFlag.EXPRESS); //TODO 物流信息传过来??
         ordOrder.setOrderTime(sysDate);
         ordOrder.setOrderDesc(ordBaseInfo.getOrderDesc());
         ordOrder.setKeywords(ordBaseInfo.getKeywords());
@@ -271,7 +273,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private OrdFeeInfo createFeeInfo(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
+    private void createFeeInfo(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
     		Timestamp sysDate,long orderId) {
         /* 1. 费用入总表 */
         List<OrdOdProd> ordOdProds = this.getOrdOdProds(request.getTenantId(), orderId);
@@ -304,7 +306,13 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOdFeeTotal.setTotalJf(0l);
         ordOdFeeTotal.setFreight(freight);
         ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
-        /* 2. 封装返回参数 */
+    }
+    
+    /**
+     * 封装参数,返回费用总金额
+     */
+    private OrdFeeInfo buildFeeInfo(OrderTradeCenterRequest request) {
+    	/* 	1. 封装返回参数 */
         OrdExtendInfo ordExtendInfo = request.getOrdExtendInfo();
         String infoJson = ordExtendInfo.getInfoJson();
         JSONObject object = JSON.parseObject(infoJson);
@@ -327,7 +335,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordFeeInfo.setDiscountFee(returnTotalFee-returnAdjustFee);
         ordFeeInfo.setOperDiscountFee(0);
         return ordFeeInfo;
-
     }
 
     /**
@@ -410,9 +417,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     }
     
     
-    /**
-     * 创建费用明细信息
-     */
     /**
      * 创建费用明细信息
      */
