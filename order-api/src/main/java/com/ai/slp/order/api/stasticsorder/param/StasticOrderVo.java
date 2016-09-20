@@ -14,6 +14,10 @@ public class StasticOrderVo implements Serializable {
 	 * 状态
 	 */
 	private String state;
+	/**
+	 * 页面展示状态
+	 */
+	private String stateName;
 
 	/**
 	 * 业务类型
@@ -55,6 +59,14 @@ public class StasticOrderVo implements Serializable {
 
 	public void setProList(List<StasticsProdVo> proList) {
 		this.proList = proList;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
 	}
 
 }

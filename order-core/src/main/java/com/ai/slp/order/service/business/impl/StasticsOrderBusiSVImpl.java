@@ -88,24 +88,24 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				//获取绑定手机号
 				String phone = ChUserUtil.getPhone(parentOrderVo.getUserId());
 				parentOrderVo.setUserTel(phone);
-				//翻译订单状态
-				ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
-				SysParamSingleCond param = new SysParamSingleCond();
-        		param = new SysParamSingleCond();
-        		param.setTenantId(OrdersConstants.Sate.TENANT_ID);
-        		param.setColumnValue(order.getState());
-        		param.setTypeCode(OrdersConstants.Sate.TYPE_CODE);
-        		param.setParamCode(OrdersConstants.Sate.ORD_STATE);
-        		SysParam stateOrder = iCacheSV.getSysParamSingle(param);
-        		if(stateOrder!=null){
-        			parentOrderVo.setStateName(stateOrder.getColumnDesc());
-        		}
 				//获取子订单
 				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
 				for(OrdOrder child:childList){
 					List<StasticsProdVo> prodOrderList = new ArrayList<StasticsProdVo>();
 					StasticOrderVo childOrderVo = new StasticOrderVo();
 					BeanUtils.copyProperties(childOrderVo, child);
+					//翻译订单状态
+					ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+					SysParamSingleCond param = new SysParamSingleCond();
+	        		param = new SysParamSingleCond();
+	        		param.setTenantId(OrdersConstants.Sate.TENANT_ID);
+	        		param.setColumnValue(child.getState());
+	        		param.setTypeCode(OrdersConstants.Sate.TYPE_CODE);
+	        		param.setParamCode(OrdersConstants.Sate.ORD_STATE);
+	        		SysParam stateOrder = iCacheSV.getSysParamSingle(param);
+	        		if(stateOrder!=null){
+	        			childOrderVo.setStateName(stateOrder.getColumnDesc());
+	        		}
 					//获取子订单的商品信息
 					List<OrdOdProd>  childProList = iOrdOdProdAtomSV.selectByOrd(child.getTenantId(), child.getOrderId());
 					for(OrdOdProd prod:childProList){
