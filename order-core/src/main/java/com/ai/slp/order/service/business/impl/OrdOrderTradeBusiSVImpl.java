@@ -142,15 +142,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private long createOrder(OrderTradeCenterRequest request, Timestamp sysDate) {
         OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
-     /*   if (StringUtil.isBlank(ordBaseInfo.getOrderType())) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单类型为空");
-        }
-        if (StringUtil.isBlank(ordBaseInfo.getUserId())) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户Id为空");
-        }
-        if(StringUtil.isBlank(ordBaseInfo.getUserType())) {
-        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户类型为空");
-        }*/
         OrdOrder ordOrder = new OrdOrder();
         long orderId = SequenceUtil.createOrderId();
         ordOrder.setOrderId(orderId);
@@ -388,9 +379,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             long orderId) {
     	LOG.debug("开始处理订单配送[" + orderId + "]信息..");
     	OrdLogisticsInfo ordLogisticsInfo = request.getOrdLogisticsInfo();
-    	/* 1.参数检验*/
-    	//this.checkLogisticsInfo(ordLogisticsInfo);
-    	/* 2.创建配送信息*/
+    	/* 1.创建配送信息*/
     	OrdOdLogistics logistics=new OrdOdLogistics();
     	long logisticsId=SequenceUtil.genLogisticsId();
     	logistics.setLogisticsId(logisticsId);
@@ -401,8 +390,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	logistics.setContactName(ordLogisticsInfo.getContactName());
     	logistics.setContactTel(ordLogisticsInfo.getContactTel());
     	logistics.setContactEmail(ordLogisticsInfo.getContactEmail());
-    	//TODO
-    	//直接存入编码 ?
     	logistics.setProvinceCode(ordLogisticsInfo.getProvinceCode());
     	logistics.setCityCode(ordLogisticsInfo.getCityCode());
     	logistics.setCountyCode(ordLogisticsInfo.getCountyCode());
@@ -550,41 +537,5 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         storageNumUserReq.setSkuNum(skuNum);
         IStorageNumSV iStorageNumSV = DubboConsumerFactory.getService(IStorageNumSV.class);
         return iStorageNumSV.useStorageNum(storageNumUserReq);
-    }
-    
-    /**
-     * 配送信息校验
-     */
-    private void checkLogisticsInfo(OrdLogisticsInfo ordLogisticsInfo) {
-    	if(ordLogisticsInfo==null) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
-    	}
-    	if(StringUtil.isBlank(ordLogisticsInfo.getLogisticsType())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "配送方式不能为空");
-    	}
-    	if(StringUtil.isBlank(ordLogisticsInfo.getContactName())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人姓名不能为空");
-    	}
-    	if(StringUtil.isBlank(ordLogisticsInfo.getContactTel())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人电话不能为空");
-    	}
-    	if(StringUtil.isBlank(ordLogisticsInfo.getProvinceCode())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人省份不能为空");
-    	}
-    	if(StringUtil.isBlank(ordLogisticsInfo.getCityCode())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人地市不能为空");
-    	}
-    	if(StringUtil.isBlank(ordLogisticsInfo.getCountyCode())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人区县不能为空");
-    	}
-    	if(StringUtil.isBlank(ordLogisticsInfo.getPostCode())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人邮编不能为空");
-    	}
-    	if(StringUtil.isBlank(ordLogisticsInfo.getAddress())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "详细地址不能为空");
-    	}
-    	if(StringUtil.isBlank(ordLogisticsInfo.getExpressId())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流公司ID不能为空");
-    	}
     }
 }
