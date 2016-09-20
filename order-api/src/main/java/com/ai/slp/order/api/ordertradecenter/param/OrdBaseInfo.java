@@ -29,6 +29,11 @@ public class OrdBaseInfo implements Serializable {
      * 渠道Id
      */
     private String chlId;
+    
+    /**
+     * 账户id
+     */
+    private Long acctId;
 
     /**
      * 操作员Id
@@ -152,5 +157,12 @@ public class OrdBaseInfo implements Serializable {
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
 	}
-    
+
+	public Long getAcctId() {
+		return acctId;
+	}
+
+	public void setAcctId(Long acctId) {
+		this.acctId = acctId;
+	}
 }
