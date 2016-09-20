@@ -1,5 +1,7 @@
 package com.ai.slp.order.constants;
 
+import com.ai.slp.order.util.PropertiesLoader;
+
 public final class OrdersConstants {
 
     public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
@@ -11,6 +13,11 @@ public final class OrdersConstants {
     public static final String DTS_SCHEDULE_NAME = "slp-order-dts-sched";
     public static final String ORDER_SUCCESS = "000000";
     public static final String ORDER_FAILD = "999999";
+    
+    /**
+	 * 属性文件加载对象
+	 */
+	private static PropertiesLoader loader = new PropertiesLoader("remote_url.properties");
 
     public static final class OrdOrder {
 
@@ -826,5 +833,18 @@ public final class OrdersConstants {
 		/** 订单状态paramCode */
 		public static final String ORD_STATE = "ORD_STATE";
 	}
+    
 
+    /**OFCAPPKEY**/
+    private static final String OFC_APPKEY_KEY = "ofc.appkey";  
+    public static final String OFC_APPKEY = loader.getProperty(OFC_APPKEY_KEY);  
+    /**OFC查询URL**/
+    private static final String OFC_QUERY_URL_KEY = "ofc.query.url";  
+    public static final String OFC_QUERY_URL = loader.getProperty(OFC_QUERY_URL_KEY);  
+    /**OFC销售订单创建URL**/
+    private static final String OFC_ORDER_CREATE_URL_KEY = "ofc.order.create.url";  
+    public static final String OFC_ORDER_CREATE_URL = loader.getProperty(OFC_ORDER_CREATE_URL_KEY);  
+    /**OFC退换单创建URL**/
+    private static final String OFC_RETURN_CREATE_URL_KEY = "ofc.return.create.url";  
+    public static final String OFC_RETURN_CREATE_URL = loader.getProperty(OFC_RETURN_CREATE_URL_KEY);  
 }
