@@ -731,7 +731,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			criteriaOrder.andParentOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
         			criteriaOrder.andTenantIdEqualTo(orderListRequest.getTenantId());
         			if(!StringUtil.isBlank(states)) {
-        				String[] strState = arr.split(",");
+        				String[] strState = states.split(",");
                 		List<String> asList = Arrays.asList(strState); 
         				criteriaOrder.andStateIn(asList);
         			}
