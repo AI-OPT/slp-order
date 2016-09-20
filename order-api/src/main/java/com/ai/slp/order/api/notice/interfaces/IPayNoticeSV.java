@@ -21,10 +21,11 @@ public interface IPayNoticeSV {
 	 * @throws BusinessException
 	 * @throws SystemException
 	 * @author zhanglh
-	 * @ApiCode
+	 * @ApiCode NOTICE_001
+	 * @RestRelativeURL paynotice/notice
 	 */
 	@POST
-	@Path("/payNotice")
+	@Path("/notice")
 	public BaseResponse getPayNotice(String xmlbody,String signMsg,String header) throws BusinessException,SystemException;
 	
 }

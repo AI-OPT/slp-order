@@ -24,9 +24,10 @@ public interface IRefundNoticeSV {
 	 * @throws SystemException
 	 * @author zhanglh
 	 * @ApiCode
+	 * @RestRelativeURL refundnotice/notice
 	 */
 	
 	@POST
-	@Path("/refundNotice")
+	@Path("/notice")
 	public BaseResponse getRefundNotice(String xmlbody,String signMsg,String header) throws BusinessException,SystemException;
 }
