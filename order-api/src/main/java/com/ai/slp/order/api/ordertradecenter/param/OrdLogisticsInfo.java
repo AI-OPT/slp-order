@@ -12,7 +12,6 @@ public class OrdLogisticsInfo implements Serializable {
     /**
      * 配送方式
      */
-//    @NotBlank(message="配送方式不能为空")
     private String logisticsType;
     
     /**
@@ -28,7 +27,6 @@ public class OrdLogisticsInfo implements Serializable {
     /**
      * 收件人姓名
      */
-//    @NotBlank(message="收件人姓名不能为空")
     private String contactName;
     
     /**
@@ -39,25 +37,21 @@ public class OrdLogisticsInfo implements Serializable {
     /**
      * 收件人电话
      */
- //   @NotBlank(message="收件人电话不能为空")
     private String contactTel;
     
     /**
      * 收件人省份
      */
-  //  @NotBlank(message="收件人省份不能为空")
     private String provinceCode;
     
     /**
      * 收件人地市
      */
- //   @NotBlank(message="收件人地市不能为空")
     private String cityCode;
     
     /**
      * 收件人区县
      */
- //   @NotBlank(message="收件人区县不能为空")
     private String countyCode;
     
     /**
@@ -73,7 +67,6 @@ public class OrdLogisticsInfo implements Serializable {
     /**
      * 详细地址(自提地址)
      */
-    @NotBlank(message="收件人详细地址不能为空")
     private String address;
     
     /**
