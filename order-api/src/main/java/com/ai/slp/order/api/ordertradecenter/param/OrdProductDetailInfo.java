@@ -17,7 +17,7 @@ public class OrdProductDetailInfo extends BaseInfo{
     /**
      * 销售商id
      */
-    @NotBlank(message="销售商id不能为空")
+  //  @NotBlank(message="销售商id不能为空")
     private Long supplierId;
     
     /**
@@ -28,7 +28,7 @@ public class OrdProductDetailInfo extends BaseInfo{
     /**
      * 商品信息
      */
-    @NotNull(message = "商品信息列表不能为空")
+ //   @NotNull(message = "商品信息列表不能为空")
     private List<OrdProductInfo> ordProductInfoList;
     
     /**
