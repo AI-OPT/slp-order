@@ -86,13 +86,15 @@ public class MonitorService {
 		//
 		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
 		//
-		long time = DateUtil.getSysDate().getTime()/1000;
+		long millisTime = DateUtil.getSysDate().getTime();//毫秒
+		long time = millisTime/1000;//秒
+		
 		//1、添加用户规则下的预警信息
-		cacheClient.zadd(userId, time, userId+"_"+time);//用户有序集合
+		cacheClient.zadd(userId, time, userId+"_"+millisTime);//用户有序集合
 		//2、添加ip规则下的预警信息
-		cacheClient.zadd(ipAddress, time, ipAddress+"_"+time);//地址有序集合
+		cacheClient.zadd(ipAddress, time, ipAddress+"_"+millisTime);//地址有序集合
 		//3、添加订单总量集合预警信息
-		cacheClient.zadd("order_all", time, "order_all_"+time);//订单总量
+		cacheClient.zadd("order_all", time, "order_all_"+millisTime);//订单总量
 		
 		//查询用户规则信息
 		OrdRule ordRuleUser = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);

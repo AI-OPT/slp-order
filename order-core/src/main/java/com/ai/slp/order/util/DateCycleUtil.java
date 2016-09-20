@@ -10,6 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ai.opt.sdk.util.DateUtil;
 import com.alibaba.fastjson.JSON;
 
 public final class DateCycleUtil {
@@ -144,5 +145,8 @@ public final class DateCycleUtil {
 		DateCycleUtil.getCycleDate("D", -5);
 		
 		DateCycleUtil.strToDate("20000101000000");
+		
+		LOG.info("秒："+DateUtil.getSysDate().getTime()/1000);
+		LOG.info("毫秒："+DateUtil.getSysDate().getTime());
 	}
 }
