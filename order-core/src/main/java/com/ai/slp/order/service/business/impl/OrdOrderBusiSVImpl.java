@@ -271,8 +271,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setJfFee(ordOdProd.getJfFee()); //积分
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 ordProductVo.setProductImage(productImage);
-                ordProductVo.setProdExtendInfo(this.getProdExtendInfo(tenantId, orderId,
-                        ordOdProd.getProdDetalId()));
+               /* ordProductVo.setProdExtendInfo(this.getProdExtendInfo(tenantId, orderId,
+                        ordOdProd.getProdDetalId()));*/
                 productList.add(ordProductVo);
             }
 
@@ -415,6 +415,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
                 ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
                 ordOrderVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
+                ordOrderVo.setOperDiscountDesc(ordOdFeeTotal.getOperDiscountDesc());
                 ordOrderVo.setPaidFee(ordOdFeeTotal.getPaidFee());
                 ordOrderVo.setPayFee(ordOdFeeTotal.getPayFee());
                 ordOrderVo.setPayStyle(ordOdFeeTotal.getPayStyle());
@@ -424,11 +425,16 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
                 ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());
                 ordOrderVo.setFreight(ordOdFeeTotal.getFreight()); //运费
-                int phoneCount = this.getProdExtendInfo(orderRequest.getTenantId(),
+               /* int phoneCount = this.getProdExtendInfo(orderRequest.getTenantId(),
                         order.getOrderId());
-                ordOrderVo.setPhoneCount(phoneCount);
+                ordOrderVo.setPhoneCount(phoneCount);*/
                 /* 3.订单发票信息查询*/
-                OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getParentOrderId());
+                OrdOdInvoice ordOdInvoice =null;
+                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())) {
+                	 ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
+                }else {
+                	 ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getParentOrderId());
+                }
                 if(ordOdInvoice !=null) {
                 	ordOrderVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
                 	ordOrderVo.setInvoiceType(ordOdInvoice.getInvoiceType());
@@ -438,7 +444,12 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 	ordOrderVo.setInvoiceContent(ordOdInvoice.getInvoiceContent());
                 }
                 /* 4.订单配送信息查询*/
-                OrdOdLogistics ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getParentOrderId());
+                OrdOdLogistics ordOdLogistics =null;
+                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())) {
+                	ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getOrderId());
+                }else {
+                	ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getParentOrderId());
+                }
                 if(ordOdLogistics!=null) {
                 	ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
                 	ordOrderVo.setContactCompany(ordOdLogistics.getContactCompany());
@@ -454,9 +465,15 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 	ordOrderVo.setExpressId(ordOdLogistics.getExpressId());
                 }
                 /* 5.订单费用明细查询 */
-                List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
-                        order.getParentOrderId(),order.getTenantId());
-                ordOrderVo.setPayDataList(orderFeeProdList);
+                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())) {
+                	List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
+                			order.getOrderId(),order.getTenantId());
+                	ordOrderVo.setPayDataList(orderFeeProdList);
+                }else {
+                	List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV,
+                			order.getParentOrderId(),order.getTenantId());
+                	ordOrderVo.setPayDataList(orderFeeProdList);
+                }
                 /* 6.订单商品明细查询 */
                 List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,
                         order.getTenantId(), order.getOrderId());
@@ -465,7 +482,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 OrdBalacneIfCriteria exampleBalance=new OrdBalacneIfCriteria();
                 Criteria criteriaBalance = exampleBalance.createCriteria();
                 criteriaBalance.andTenantIdEqualTo(order.getTenantId());
-                criteriaBalance.andOrderIdEqualTo(order.getParentOrderId());
+                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())) {
+                	criteriaBalance.andOrderIdEqualTo(order.getOrderId());
+                }else {
+                	criteriaBalance.andOrderIdEqualTo(order.getParentOrderId());
+                }
                 List<OrdBalacneIf> ordBalacneIfs = ordBalacneIfAtomSV.selectByExample(exampleBalance);
                 if(!CollectionUtil.isEmpty(ordBalacneIfs)) {
                 	OrdBalacneIf ordBalacneIf = ordBalacneIfs.get(0);
