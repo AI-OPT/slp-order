@@ -34,7 +34,7 @@ public class OrdBaseInfo implements Serializable {
     /**
      * 账户id
      */
-    private Long acctId;
+    private long acctId;
 
     /**
      * 操作员Id
