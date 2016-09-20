@@ -51,7 +51,7 @@ public class OrderTradeCenterSVImplTest {
         ordProductInfo.setBasicOrgId("10");
         ordProductInfo.setBuySum(4);
         ordProductInfo.setChargeFee("40");
-        ordProductInfo.setSkuId("1000000000002519");
+        ordProductInfo.setSkuId("0000000000000194");
         ordProductInfo.setSupplierId(12l);
         ordProductInfoList.add(ordProductInfo);
         
@@ -95,7 +95,7 @@ public class OrderTradeCenterSVImplTest {
         ordProductInfo2.setBasicOrgId("10");
         ordProductInfo2.setBuySum(4);
         ordProductInfo2.setChargeFee("40");
-        ordProductInfo2.setSkuId("1000000000002519");
+        ordProductInfo2.setSkuId("0000000000000194");
         ordProductInfo2.setSupplierId(13l);
         ordProductInfoList1.add(ordProductInfo2);
         //发票信息2

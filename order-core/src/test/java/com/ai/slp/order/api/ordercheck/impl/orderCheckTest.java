@@ -21,7 +21,7 @@ public class orderCheckTest {
 	public void test() {
 		OrderCheckRequest request=new OrderCheckRequest();
 		request.setOrderId(2000000983277394l);
-		request.setState("212");
+		request.setState("21211");
 		request.setTenantId("changhong");
 		request.setOperId("12312");
 		System.out.println(JSON.toJSONString(request));

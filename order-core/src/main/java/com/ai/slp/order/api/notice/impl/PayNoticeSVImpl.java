@@ -14,7 +14,9 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.slp.order.api.notice.interfaces.IPayNoticeSV;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
@@ -28,13 +30,12 @@ import com.ylink.upp.oxm.entity.upp_103_001_01.GrpBody;
 public class PayNoticeSVImpl implements IPayNoticeSV {
 	@Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
-	 @Autowired
-	private OxmHandler oxmHandler;
 	@Override
 	public BaseResponse getPayNotice(String xmlbody, String signMsg, String header)
 			throws BusinessException, SystemException {
 		BaseResponse response = new BaseResponse();
 		ResponseHeader responseHeader = null;
+		OxmHandler oxmHandler = DubboConsumerFactory.getService(OxmHandler.class);
 		 try {  
 			 	GrpBody body = (GrpBody)oxmHandler.unmarshaller(xmlbody);
 			 	//验签

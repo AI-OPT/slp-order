@@ -831,7 +831,7 @@ public final class OrdersConstants {
 		/** 订单typeCode */
 		public static final String TYPE_CODE = "ORD_ORDER";
 		/** 订单状态paramCode */
-		public static final String ORD_STATE = "ORD_STATE";
+		public static final String ORD_STATE = "STATE";
 	}
     
 

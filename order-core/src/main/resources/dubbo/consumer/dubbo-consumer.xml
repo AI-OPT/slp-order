@@ -63,5 +63,8 @@
 	<!-- 仓库 -->	
 	<dubbo:reference id="iRouteManageSV"
 		interface="com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV" />
+		
+	<dubbo:reference id="oxmHandler"
+	interface="com.ylink.upp.base.oxm.util.OxmHandler" />
 	
 </beans>
