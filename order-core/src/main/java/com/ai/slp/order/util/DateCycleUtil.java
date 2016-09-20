@@ -53,7 +53,13 @@ public final class DateCycleUtil {
 	public static final String DATE_TYPE_WEEK = "W";
 
 	public static final String DATE_TYPE_MONTH = "M";
-
+	
+	public static final Map<String,String> dateTypeMap = new HashMap<String,String>();
+	static{
+		dateTypeMap.put(DATE_TYPE_DAY, "天");
+		dateTypeMap.put(DATE_TYPE_HOURS, "小时");
+		dateTypeMap.put(DATE_TYPE_MINUTE, "分钟");
+	}
 	private DateCycleUtil() {
 		// 禁止实例化
 	}
@@ -116,7 +122,7 @@ public final class DateCycleUtil {
 		return timeMap;
 
 	}
-
+	
 	public static Date strToDate(String timeStr) {
 		Date date = new Date();
 		try {
@@ -148,5 +154,8 @@ public final class DateCycleUtil {
 		
 		LOG.info("秒："+DateUtil.getSysDate().getTime()/1000);
 		LOG.info("毫秒："+DateUtil.getSysDate().getTime());
+		
+		String dateTypeValue = DateCycleUtil.dateTypeMap.get(DATE_TYPE_DAY);
+		LOG.info("日期类型："+dateTypeValue);
 	}
 }

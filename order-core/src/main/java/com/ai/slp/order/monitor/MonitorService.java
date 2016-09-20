@@ -53,15 +53,15 @@ public class MonitorService {
 		Set<String> orderAllSet = cacheClient.zrevrangeByScore("order_all", allCycleDate.get("startTime").toString(), allCycleDate.get("endTime").toString());
 		//用户预警提示
 		if(userSet.size() >= ordRuleUser.getOrderSum() ){
-			throw new BusinessException("999999","当前用户["+userId+"]下,"+ordRuleUser.getMonitorTime()+ordRuleUser.getTimeType()+"内,已达到"+ordRuleUser.getOrderSum()+"单预警");
+			throw new BusinessException("999999","当前用户["+userId+"]下,"+ordRuleUser.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleUser.getTimeType())+"内,已达到"+ordRuleUser.getOrderSum()+"单预警");
 		}
 		//ip预警提示
 		if(ipSet.size() >= ordRuleIp.getOrderSum() ){
-			throw new BusinessException("999999","当前ip["+ipAddress+"]下,"+ordRuleIp.getMonitorTime()+ordRuleIp.getTimeType()+"内,已达到"+ordRuleIp.getOrderSum()+"单预警");
+			throw new BusinessException("999999","当前ip["+ipAddress+"]下,"+ordRuleIp.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleIp.getTimeType())+"内,已达到"+ordRuleIp.getOrderSum()+"单预警");
 		}
 		//订单总量预警提示
 		if(orderAllSet.size() >= ordRuleAll.getOrderSum() ){
-			throw new BusinessException("999999","订单总量,"+ordRuleAll.getMonitorTime()+ordRuleAll.getTimeType()+"内,已达到"+ordRuleAll.getOrderSum()+"单预警");
+			throw new BusinessException("999999","订单总量,"+ordRuleAll.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleAll.getTimeType())+"内,已达到"+ordRuleAll.getOrderSum()+"单预警");
 		}
 		
 		log.info("当前用户下订单数量:"+userSet.size());
