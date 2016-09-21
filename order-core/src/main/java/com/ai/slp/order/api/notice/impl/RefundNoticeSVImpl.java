@@ -28,11 +28,12 @@ import com.ylink.upp.oxm.entity.upp_803_001_01.GrpBody;
 public class RefundNoticeSVImpl implements IRefundNoticeSV {
 	@Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
+	@Autowired
+	private OxmHandler oxmHandler;
 	@Override
 	public BaseResponse getRefundNotice(String xmlbody, String signMsg, String header)
 			throws BusinessException, SystemException {
 		BaseResponse response = new BaseResponse();
-		OxmHandler oxmHandler = DubboConsumerFactory.getService(OxmHandler.class);
 		 try {  
 			 	GrpBody body = (GrpBody)oxmHandler.unmarshaller(xmlbody);
 			 	//验签
