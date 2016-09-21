@@ -53,5 +53,8 @@
 
 	<dubbo:reference id="iShopCartSV"
 		interface="com.ai.slp.order.api.shopcart.interfaces.IShopCartSV" />
+		
+	<dubbo:reference id="iOrderListSV"
+		interface="com.ai.slp.order.api.orderlist.interfaces.IOrderListSV" />
 
 </beans>

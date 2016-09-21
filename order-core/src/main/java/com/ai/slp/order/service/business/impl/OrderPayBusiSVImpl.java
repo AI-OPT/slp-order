@@ -8,6 +8,7 @@ import com.ai.opt.sdk.components.dss.DSSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
+import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
@@ -15,6 +16,11 @@ import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.dss.base.interfaces.IDSSClient;
 import com.ai.paas.ipaas.mds.IMessageSender;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
+import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
+import com.ai.slp.order.api.orderlist.param.OrdProductVo;
+import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
+import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
@@ -24,6 +30,10 @@ import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.InfoJsonVo;
+import com.ai.slp.order.vo.OFCOrderCreateRequest;
+import com.ai.slp.order.vo.OrderCouponVo;
+import com.ai.slp.order.vo.OrderItemsVo;
+import com.ai.slp.order.vo.OrderVo;
 import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
 import com.ai.slp.order.vo.RouteServReqVo;
@@ -40,14 +50,15 @@ import com.ai.slp.route.api.supplyproduct.param.SupplyProduct;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProductQueryVo;
 import com.alibaba.fastjson.JSON;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,6 +122,18 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             if (flag) {
                 continue;
             }
+            /* 同步长虹OFC,获取参数*/
+            String params = this.getOFCRequestParams(request, orderId,sysdate);
+            Map<String, String> header=new HashMap<String, String>(); 
+            header.put("appkey", OrdersConstants.OFC_APPKEY);
+            //发送Post请求,并返回信息
+            try {
+				String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_ORDER_CREATE_URL, params, header);
+			} catch (IOException | URISyntaxException e) {
+				logger.error(e.getMessage());
+				throw new SystemException("", "OFC同步出现异常");
+			}
+            //TODO ?????
             /* 4.拆分子订单 */
             this.resoleOrders(ordOrder, request.getTenantId(), client);
             /* 5.归档 */
@@ -744,6 +767,93 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
     }
     
+    /**
+     * 组装OCF订单创建请求参数
+     */
+    private static String getOFCRequestParams(OrderPayRequest request,Long orderId,Timestamp sysdate) {
+        //封装数据查询该订单下的详细数据
+        IOrderListSV iOrderListSV = DubboConsumerFactory.getService(IOrderListSV.class);
+        QueryOrderRequest orderRequest=new QueryOrderRequest();
+        orderRequest.setOrderId(orderId);
+        orderRequest.setTenantId(request.getTenantId());
+        QueryOrderResponse queryOrder = iOrderListSV.queryOrder(orderRequest);
+        OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
+        OFCOrderCreateRequest paramsRequest=new OFCOrderCreateRequest();
+       // OrderVo orderVo=new OrderVo();
+        paramsRequest.setOrderNo(String.valueOf(orderId));
+        paramsRequest.setShopName(ordOrderVo.getChlId()); //TODO 翻译
+        paramsRequest.setReceiverContact(ordOrderVo.getContactName());
+        paramsRequest.setReceiverPhone(ordOrderVo.getContactTel());
+        paramsRequest.setProvince(ordOrderVo.getProvinceCode()); //TODO 翻译
+        paramsRequest.setCity(ordOrderVo.getCityCode());//TODO 翻译
+        paramsRequest.setRegion(ordOrderVo.getCountyCode());//TODO 翻译
+        paramsRequest.setReceiverAddress(ordOrderVo.getAddress());
+        paramsRequest.setPostCode(ordOrderVo.getPostCode());
+        paramsRequest.setPayTime(sysdate.toString());
+        paramsRequest.setPayNo(String.valueOf(ordOrderVo.getAcctId())); 
+        paramsRequest.setPayType(Long.parseLong(request.getPayType())); //TODO 待验证
+        paramsRequest.setOrderAmout(ordOrderVo.getTotalFee()/10); //分为单位,订单总金额
+        paramsRequest.setPayAmount(ordOrderVo.getPayFee()/10);//支付金额
+        paramsRequest.setCoupAmount(ordOrderVo.getDiscountFee()/10);//优惠金额
+        paramsRequest.setReceiveAmount(ordOrderVo.getPayFee()/10);
+        if(!StringUtil.isBlank(ordOrderVo.getInvoiceType())) {
+        	paramsRequest.setNeedInvoice(true);
+        	paramsRequest.setInvoiceType(Long.parseLong(ordOrderVo.getInvoiceType()));
+        	paramsRequest.setCompanyName("");
+        	paramsRequest.setTaxNo("");
+        	paramsRequest.setRegisterAddress("");
+        	paramsRequest.setRegisterTel("");
+        	paramsRequest.setBank("");
+        	paramsRequest.setBankNo("");
+        }else {  //发票类型为空的话,表示无需发票信息
+        	paramsRequest.setNeedInvoice(false);
+        }
+        paramsRequest.setBuyerRemark(ordOrderVo.getRemark());
+        paramsRequest.setSellerRemark(ordOrderVo.getOperDiscountDesc()); //TODO 商家备注 减免原因 ?? 
+        //订单明细
+        List<OrderItemsVo> orderItemsVoList=new ArrayList<OrderItemsVo>();
+        List<OrdProductVo> productList = ordOrderVo.getProductList();
+        for (OrdProductVo ordProductVo : productList) {
+        	OrderItemsVo orderItemsVo=new OrderItemsVo();
+        	orderItemsVo.setProductName(ordProductVo.getProdName());
+        	orderItemsVo.setProductCode(""); //TODO
+        	orderItemsVo.setProductNo("");; //TODO
+        	orderItemsVo.setPrice(ordProductVo.getSalePrice());
+        	orderItemsVo.setQuanlity(ordProductVo.getBuySum());
+        	//productList.add(ordProductVo);
+        	orderItemsVoList.add(orderItemsVo);
+		}
+        List<OrderCouponVo> orderCouponVoList=new ArrayList<OrderCouponVo>();
+        OrderCouponVo couponVo=new OrderCouponVo();
+        couponVo.setCouponName("");
+        couponVo.setCouponCode("");
+        couponVo.setProductCode(""); //TODO
+        couponVo.setAmount(0); //TODO  单个商品的优惠券还是优惠总金额 ???
+        orderCouponVoList.add(couponVo);
+        //封装参数,转化为json形式
+        paramsRequest.setItems(orderItemsVoList);
+        paramsRequest.setCouponList(orderCouponVoList);
+    	return JSON.toJSONString(paramsRequest);
+    }
+    
+    //TODO 测试
+    public static void main(String[] args) {
+    	OrderPayRequest request=new OrderPayRequest();
+    	request.setTenantId("changhong");
+    	request.setPayType("28");
+    	long orderId=2000000988564944l;
+    	/* 同步长虹OFC,获取参数*/
+        String params = getOFCRequestParams(request, orderId,DateUtil.getSysDate());
+        String url="http://10.19.13.16:28151/opaas/http/srv_slp_externalorder_create"; 
+        Map<String, String> header=new HashMap<String, String>(); 
+        header.put("appkey", "33a6e8c78f71a9f45bc09c572d3491ce");
+        //发送Post请求,并返回信息
+        try {
+			String strData = HttpClientUtil.sendPost(url, params, header);
+		} catch (IOException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
     
     /**
      * 归档

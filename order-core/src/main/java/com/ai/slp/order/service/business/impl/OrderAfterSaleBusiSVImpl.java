@@ -1,7 +1,12 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
@@ -34,6 +40,10 @@ import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.vo.OFCAfterSaleOrderCreateRequest;
+import com.ai.slp.order.vo.OrderAfterSaleApplyItemsVo;
+import com.ai.slp.order.vo.OrderAfterSaleApplyVo;
+import com.alibaba.fastjson.JSON;
 
 @Service
 @Transactional
@@ -135,6 +145,21 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		balacneIf.setPayFee(backTotalFee-backOrdOdProd.getDiscountFee());
 		balacneIf.setCreateTime(DateUtil.getSysDate());
 		ordBalacneIfAtomSV.insertSelective(balacneIf);
+		
+		//组装退货申请单创建参数(OFC)
+		String params = getOFCAfterSaleOrderCreateParam(order, ordOdProd, sysDate, 
+				backTotalFee, prodSum, 3);
+		//发送Post请求
+        Map<String, String> header=new HashMap<String, String>(); 
+        header.put("appkey", OrdersConstants.OFC_APPKEY);
+        //发送Post请求,并返回信息
+        try {
+			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
+		} catch (IOException | URISyntaxException e) {
+			logger.error(e.getMessage());
+			throw new SystemException("", "OFC同步出现异常");
+		}
+		
 	}
 
 	@Override
@@ -240,6 +265,20 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		balacneIf.setPayFee(ordOdProd.getAdjustFee());
 		balacneIf.setCreateTime(DateUtil.getSysDate());
 		ordBalacneIfAtomSV.insertSelective(balacneIf);
+		
+		//组装退款申请单创建参数(OFC)
+		String params = getOFCAfterSaleOrderCreateParam(order, ordOdProd, sysDate, 
+				ordOdProd.getTotalFee(), ordOdProd.getBuySum(), 1);
+		//发送Post请求
+        Map<String, String> header=new HashMap<String, String>(); 
+        header.put("appkey", OrdersConstants.OFC_APPKEY);
+        //发送Post请求,并返回信息
+        try {
+			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
+		} catch (IOException | URISyntaxException e) {
+			logger.error(e.getMessage());
+			throw new SystemException("", "OFC同步出现异常");
+		}
 	}
 	
 	
@@ -310,5 +349,30 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, 
 				newState,OrdOdStateChg.ChgDesc.ORDER_TO_AUDIT, ordOrder.getOperId(), null, null,sysDate);
     }
-	
+    
+    /**
+     * 组装退换货申请单创建参数(OCF)
+     */
+    private String getOFCAfterSaleOrderCreateParam(OrdOrder order,OrdOdProd ordOdProd,
+    		Timestamp sysDate,long backTotalFee,long prodSum,int type) {
+		OFCAfterSaleOrderCreateRequest orderCreateRequest=new OFCAfterSaleOrderCreateRequest();
+		OrderAfterSaleApplyVo applyVo=new OrderAfterSaleApplyVo();
+		applyVo.setOrderNo(String.valueOf(order.getOrderId())); //TODO 生成的退货订单还是之前的订单 ??
+		applyVo.setExternalApplyNo("");
+		applyVo.setApplyType(type);//代表退货
+		applyVo.setReasonType(0); //TODO 后台退换货时没有原因概述 ??
+		applyVo.setDescription("");
+		applyVo.setRefundAmount(backTotalFee/10); //分为单位
+		applyVo.setApplyTime(sysDate.toString());
+		applyVo.setRemark(""); //TODO
+		List<OrderAfterSaleApplyItemsVo> applyItemsVoList=new ArrayList<OrderAfterSaleApplyItemsVo>();
+		OrderAfterSaleApplyItemsVo applyItemsVo=new OrderAfterSaleApplyItemsVo();
+		applyItemsVo.setProductName(ordOdProd.getProdName());
+		applyItemsVo.setProductCode("");
+		applyItemsVo.setApplyQuanlity(prodSum);
+		applyItemsVoList.add(applyItemsVo);
+		orderCreateRequest.setOrderAfterSaleApplyVo(applyVo);
+		orderCreateRequest.setOrderAfterSaleApplyItemsVoList(applyItemsVoList);
+    	return JSON.toJSONString(orderCreateRequest);
+    }
 }
