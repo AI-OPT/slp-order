@@ -22,6 +22,9 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.dss.base.interfaces.IDSSClient;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.slp.order.api.orderrule.interfaces.IOrderMonitorSV;
+import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
+import com.ai.slp.order.api.orderrule.param.OrderMonitorRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdExtendInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdFeeInfo;
@@ -86,12 +89,21 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     
     @Autowired
     private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
+    
+    @Autowired
+    private IOrderMonitorSV orderMonitorSV;
 
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
     	LOG.info("商品下单处理......");
     	ValidateUtils.validateOrderTradeCenter(request); //校验
+    	//异常监控
+    	OrderMonitorRequest monitorRequest=new OrderMonitorRequest();
+    	OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
+    	monitorRequest.setUserId(ordBaseInfo.getUserId());
+    	monitorRequest.setIpAddress(ordBaseInfo.getIpAddress());
+    	OrderMonitorBeforResponse beforSubmitOrder = orderMonitorSV.beforSubmitOrder(monitorRequest);
         OrderTradeCenterResponse response = new OrderTradeCenterResponse();
        // IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
         IDSSClient client =null;
@@ -102,7 +114,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
         	OrderResInfo orderResInfo=new OrderResInfo();
         	/* 1.创建业务订单,并返回订单Id*/
-        	long orderId = this.createOrder(request, sysDate);
+        	long orderId = this.createOrder(ordBaseInfo,beforSubmitOrder,request.getTenantId(),sysDate);
         	/* 2.创建费用明细信息*/
         	Map<String, Long> feeProdMap = this.createOrderFeeProd(ordProductDetailInfo, orderId);
         	/* 3.创建商品明细信息 */
@@ -117,6 +129,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	this.writeOrderCreateStateChg(request, sysDate, orderId);
         	/* 8. 更新订单状态 */
         	this.updateOrderState(request.getTenantId(), sysDate, orderId);
+        	//订单提交成功后监控服务
+        	orderMonitorSV.afterSubmitOrder(monitorRequest);
         	/* 9.封装返回参数*/
         	orderResInfo.setOrderId(orderId);
         	orderResInfo.setOrdProductResList(ordProductResList);
@@ -129,7 +143,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         return response;
     }
     
-    
 
     /**
      * 创建订单信息
@@ -140,12 +153,12 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private long createOrder(OrderTradeCenterRequest request, Timestamp sysDate) {
-        OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
+    private long createOrder(OrdBaseInfo ordBaseInfo,OrderMonitorBeforResponse beforSubmitOrder,
+    		String tenantId,Timestamp sysDate) {
         OrdOrder ordOrder = new OrdOrder();
         long orderId = SequenceUtil.createOrderId();
         ordOrder.setOrderId(orderId);
-        ordOrder.setTenantId(request.getTenantId());
+        ordOrder.setTenantId(tenantId);
         ordOrder.setBusiCode(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
         ordOrder.setOrderType(ordBaseInfo.getOrderType());
         ordOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
@@ -165,6 +178,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setOrderDesc(ordBaseInfo.getOrderDesc());
         ordOrder.setKeywords(ordBaseInfo.getKeywords());
         ordOrder.setRemark(ordBaseInfo.getRemark());
+        ordOrder.setIfWarning(beforSubmitOrder.getIfWarning());
+        ordOrder.setWarningType(beforSubmitOrder.getWarningType());
         ordOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
         ordOrderAtomSV.insertSelective(ordOrder);
         return orderId;
@@ -239,6 +254,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setExtendInfo(JSON.toJSONString(vo));
             ordOdProd.setUpdateTime(sysDate);
             ordOdProd.setJfFee(jfFee);
+            ordOdProd.setJf(ordProductInfo.getGiveJF()); //赠送积分
             ordOdProd.setCouponFee(couponFee);
             ordOdProdAtomSV.insertSelective(ordOdProd);
             /* 2. 封装订单提交商品返回参数 */
@@ -274,10 +290,12 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         long totalFee = 0;
         long discountFee = 0;
         long operDiscountFee = 0;
+        long totalJf=0;
         for (OrdOdProd ordOdProd : ordOdProds) {
             totalFee = ordOdProd.getTotalFee() + totalFee;
             discountFee = ordOdProd.getDiscountFee() + discountFee;
             operDiscountFee = ordOdProd.getOperDiscountFee() + operDiscountFee;
+            totalJf=ordOdProd.getJf() + totalJf;
         }
         OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
         ordOdFeeTotal.setOrderId(orderId);
@@ -294,7 +312,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOdFeeTotal.setUpdateTime(sysDate);
         ordOdFeeTotal.setUpdateChlId("");
         ordOdFeeTotal.setUpdateOperId("");
-        ordOdFeeTotal.setTotalJf(0l);
+        ordOdFeeTotal.setTotalJf(totalJf);
         ordOdFeeTotal.setFreight(freight);
         ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
     }
