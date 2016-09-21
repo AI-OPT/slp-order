@@ -23,6 +23,7 @@ import com.ai.slp.order.api.ofcorderquery.param.OFCOrderVo;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IOFCOrderQueryBusiSV;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service
 @Transactional
@@ -32,6 +33,7 @@ public class OFCOrderQueryBusiSVImpl implements IOFCOrderQueryBusiSV {
 
 	@Override
 	public OFCOrderQueryResponse query(OFCOrderQueryRequest request) throws BusinessException, SystemException {
+		OFCOrderQueryResponse response=null;
 		/* 参数校验*/
 		if(request==null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
@@ -49,15 +51,19 @@ public class OFCOrderQueryBusiSVImpl implements IOFCOrderQueryBusiSV {
 		//发送Post请求,并返回信息
 		try {
 			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_QUERY_URL, params, header);
+			JSONObject object = JSON.parseObject(strData);
+			boolean val = ((Boolean)object.get("IsValid")).booleanValue(); //操作是否成功
+			if(!val) {
+				throw new BusinessException("", "OFC订单查询错误");
+			}
+			//封装返回信息
+			response = JSON.parseObject(strData, OFCOrderQueryResponse.class); //TODO
 		} catch (IOException | URISyntaxException e) {
 			logger.error(e.getMessage());
 			throw new SystemException("", "OFC同步出现异常");
 		}
-		//TODO 封装返回信息
 		
-		
-		
-		return null;
+		return response;
 	}
 
 }
