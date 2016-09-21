@@ -100,7 +100,7 @@ public class OrdOrderSqlProvider {
         	seqBuffer.append(" and ol.contact_tel like '" + "%"+contactTel+"%"+"'");
         String deliveryFlag = param.containsKey("deliveryFlag") ? (String) param.get("deliveryFlag") : null;
         if (!StringUtil.isBlank(deliveryFlag))
-            seqBuffer.append(" and oo.delivery_flag=" + deliveryFlag);
+            seqBuffer.append(" and oo.delivery_flag='" + deliveryFlag+"'");
         if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") == null) {
             seqBuffer.append(" and oo.order_time >= '" + param.get("orderTimeBegin")+ "'");
         }
@@ -163,7 +163,7 @@ public class OrdOrderSqlProvider {
         	seqBuffer.append(" and ol.contact_tel like '" + "%"+contactTel+"%"+"'");
         String deliveryFlag = param.containsKey("deliveryFlag") ? (String) param.get("deliveryFlag") : null;
         if (!StringUtil.isBlank(deliveryFlag))
-            seqBuffer.append(" and oo.delivery_flag=" + deliveryFlag);
+            seqBuffer.append(" and oo.delivery_flag='" + deliveryFlag+"'");
         if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") == null) {
             seqBuffer.append(" and oo.order_time >= '" + param.get("orderTimeBegin")+ "'");
         }
