@@ -23,7 +23,7 @@ public interface IRefundNoticeSV {
 	 * @throws BusinessException
 	 * @throws SystemException
 	 * @author zhanglh
-	 * @ApiCode
+	 * @ApiCode NOTICE_002
 	 * @RestRelativeURL refundnotice/notice
 	 */
 	
