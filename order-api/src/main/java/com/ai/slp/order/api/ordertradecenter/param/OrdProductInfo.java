@@ -25,6 +25,11 @@ public class OrdProductInfo implements Serializable {
      */
     @NotBlank(message = "购买数量不能为空")
     private int buySum;
+    
+    /**
+     * 赠送积分
+     */
+    private long giveJF;
 
     /**
      * 运营商
@@ -127,5 +132,12 @@ public class OrdProductInfo implements Serializable {
 	public void setSupplierId(Long supplierId) {
 		this.supplierId = supplierId;
 	}
-    
+
+	public long getGiveJF() {
+		return giveJF;
+	}
+
+	public void setGiveJF(long giveJF) {
+		this.giveJF = giveJF;
+	}
 }
