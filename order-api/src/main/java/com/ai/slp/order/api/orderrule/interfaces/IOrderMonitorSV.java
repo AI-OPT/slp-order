@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorRequest;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorResponse;
 
@@ -35,7 +36,7 @@ public interface IOrderMonitorSV {
      */
 	@POST
 	@Path("/beforSubmitOrder")
-	public OrderMonitorResponse beforSubmitOrder(OrderMonitorRequest request) throws BusinessException, SystemException;
+	public OrderMonitorBeforResponse beforSubmitOrder(OrderMonitorRequest request) throws BusinessException, SystemException;
 	/**
 	 * 订单提交成功后监控服务
 	 * @param request
@@ -44,7 +45,7 @@ public interface IOrderMonitorSV {
 	 * @throws SystemException
 	 * @author zhangzd
 	 * @ApiDocMethod
-	 * @ApiCode orderMonitorService-0001
+	 * @ApiCode orderMonitorService-0002
      * @RestRelativeURL orderMonitorService/afterSubmitOrder
      */
 	@POST

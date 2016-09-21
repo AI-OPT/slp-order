@@ -9,6 +9,7 @@ import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.orderrule.interfaces.IOrderMonitorSV;
+import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorRequest;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorResponse;
 import com.ai.slp.order.monitor.MonitorService;
@@ -21,9 +22,9 @@ public class OrderMonitorSVImpl implements IOrderMonitorSV {
 	private MonitorService orderMonitorService;
 	
 	@Override
-	public OrderMonitorResponse beforSubmitOrder(OrderMonitorRequest request)
+	public OrderMonitorBeforResponse beforSubmitOrder(OrderMonitorRequest request)
 			throws BusinessException, SystemException {
-		OrderMonitorResponse response = new OrderMonitorResponse();
+		OrderMonitorBeforResponse response = new OrderMonitorBeforResponse();
 		//
 		ResponseHeader responseHeader = new ResponseHeader();
 		if(null == request){
@@ -37,7 +38,7 @@ public class OrderMonitorSVImpl implements IOrderMonitorSV {
 		}
 		//
 		try{
-			this.orderMonitorService.beforSubmitOrder(request.getIpAddress(), request.getUserId());
+			response = this.orderMonitorService.beforSubmitOrder(request.getIpAddress(), request.getUserId());
 			responseHeader.setIsSuccess(true);
 			responseHeader.setResultCode("000000");
 			responseHeader.setResultMessage("成功");

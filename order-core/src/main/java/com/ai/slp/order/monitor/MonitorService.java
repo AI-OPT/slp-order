@@ -13,6 +13,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
+import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
 import com.ai.slp.order.constants.MonitorCoonstants;
 import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdRule;
@@ -31,8 +32,10 @@ public class MonitorService {
 	 * @ApiDocMethod
 	 * @ApiCode
 	 */
-	public void beforSubmitOrder(String ipAddress,String userId){
+	public OrderMonitorBeforResponse beforSubmitOrder(String ipAddress,String userId){
 		//
+		OrderMonitorBeforResponse response = new OrderMonitorBeforResponse();
+		
 		//查询用户规则信息
 		OrdRule ordRuleUser = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);
 		//查询购买Ip规则信息
@@ -53,15 +56,30 @@ public class MonitorService {
 		Set<String> orderAllSet = cacheClient.zrevrangeByScore("order_all", allCycleDate.get("startTime").toString(), allCycleDate.get("endTime").toString());
 		//用户预警提示
 		if(userSet.size() >= ordRuleUser.getOrderSum() ){
-			throw new BusinessException("999999","当前用户["+userId+"]下,"+ordRuleUser.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleUser.getTimeType())+"内,已达到"+ordRuleUser.getOrderSum()+"单预警");
+			//throw new BusinessException("999999","当前用户["+userId+"]下,"+ordRuleUser.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleUser.getTimeType())+"内,已达到"+ordRuleUser.getOrderSum()+"单预警");
+			response.setIfWarning(MonitorCoonstants.WARNING_YES);
+			response.setWarningType(MonitorCoonstants.WARNING_TYPE_USER_ID);
+			response.setWarningDesc("当前用户["+userId+"]下,"+ordRuleUser.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleUser.getTimeType())+"内,已达到"+ordRuleUser.getOrderSum()+"单预警");
+			//
+			return response;
 		}
 		//ip预警提示
 		if(ipSet.size() >= ordRuleIp.getOrderSum() ){
-			throw new BusinessException("999999","当前ip["+ipAddress+"]下,"+ordRuleIp.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleIp.getTimeType())+"内,已达到"+ordRuleIp.getOrderSum()+"单预警");
+			//throw new BusinessException("999999","当前ip["+ipAddress+"]下,"+ordRuleIp.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleIp.getTimeType())+"内,已达到"+ordRuleIp.getOrderSum()+"单预警");
+			response.setIfWarning(MonitorCoonstants.WARNING_YES);
+			response.setWarningType(MonitorCoonstants.WARNING_TYPE_IP);
+			response.setWarningDesc("当前ip["+ipAddress+"]下,"+ordRuleIp.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleIp.getTimeType())+"内,已达到"+ordRuleIp.getOrderSum()+"单预警");
+			//
+			return response;
 		}
 		//订单总量预警提示
 		if(orderAllSet.size() >= ordRuleAll.getOrderSum() ){
-			throw new BusinessException("999999","订单总量,"+ordRuleAll.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleAll.getTimeType())+"内,已达到"+ordRuleAll.getOrderSum()+"单预警");
+			//throw new BusinessException("999999","订单总量,"+ordRuleAll.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleAll.getTimeType())+"内,已达到"+ordRuleAll.getOrderSum()+"单预警");
+			response.setIfWarning(MonitorCoonstants.WARNING_YES);
+			response.setWarningType(MonitorCoonstants.WARNING_TYPE_ORDER_SUM);
+			response.setWarningDesc("订单总量,"+ordRuleAll.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleAll.getTimeType())+"内,已达到"+ordRuleAll.getOrderSum()+"单预警");
+			//
+			return response;
 		}
 		
 		log.info("当前用户下订单数量:"+userSet.size());
@@ -72,6 +90,12 @@ public class MonitorService {
 		//
 		log.info("订单总量下订单数量:"+orderAllSet.size());
 		log.info("当前订单总量下订单Json:"+JSON.toJSONString(orderAllSet));
+		//
+		response.setIfWarning(MonitorCoonstants.WARNING_NO);
+		response.setWarningType("");
+		response.setWarningDesc("无预警信息");
+		//
+		return response;
 	}
 	/**
 	 * 下单后缓存清空服务

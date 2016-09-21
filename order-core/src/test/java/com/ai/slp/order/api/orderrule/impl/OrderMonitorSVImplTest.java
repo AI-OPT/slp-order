@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.slp.order.api.orderrule.interfaces.IOrderMonitorSV;
+import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorRequest;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorResponse;
 import com.alibaba.fastjson.JSON;
@@ -28,7 +29,7 @@ public class OrderMonitorSVImplTest {
 		request.setIpAddress(ipAddress);
 		request.setUserId(userId);
 		//
-		OrderMonitorResponse response = this.orderMonitorSV.beforSubmitOrder(request);
+		OrderMonitorBeforResponse response = this.orderMonitorSV.beforSubmitOrder(request);
 		log.info("response:"+JSON.toJSONString(response));
 	}
 	@Test
