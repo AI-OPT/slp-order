@@ -33,7 +33,6 @@ import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.OFCOrderCreateRequest;
 import com.ai.slp.order.vo.OrderCouponVo;
 import com.ai.slp.order.vo.OrderItemsVo;
-import com.ai.slp.order.vo.OrderVo;
 import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
 import com.ai.slp.order.vo.RouteServReqVo;
@@ -98,6 +97,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
     
+    @Autowired
+    private  IOrderListSV orderListSV;
+    
     /**
      * 订单收费
      * 
@@ -107,7 +109,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
         /* 1.处理费用信息 */
         Timestamp sysdate = DateUtil.getSysDate();
-        IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
+        //IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
+        IDSSClient client = null;
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
             OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
@@ -237,7 +240,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             request.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.YL);
         }
         Long orderId = feeTotal.getOrderId();
-        /* 1.获取该订单的费用明细信息,如果不存在费用明细，则报错 */
+        /* 1.获取该订单的商品明细信息,如果不存在商品明细，则报错 */
         List<OrdOdProd> ordOdProds = this.getOrdOdProds(request.getTenantId(), orderId);
         if (CollectionUtil.isEmpty(ordOdProds)) {
             throw new BusinessException("", "订单商品明细不存在[订单ID:" + orderId + "]");
@@ -411,7 +414,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     private void createEntitySubOrder(String tenantId, OrdOrder parentOrdOrder,
     		OrdOdProd parentOrdOdProd,Map<String, Long> map) {
     	/* 1.根据商品信息获取routeId*/
-    	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId());
+    	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),parentOrdOdProd.getSupplierId());
         IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService(IRouteCoreService.class);
         SaleProductInfo saleProductInfo = new SaleProductInfo();
         saleProductInfo.setTenantId(tenantId);
@@ -564,7 +567,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	/* 1.非实物类的情况下*/
     	if(!OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(orderType)) {
     		/* 1.1.获取路由组ID */
-    		String routeGroupId = this.getRouteGroupId(tenantId, ordOdProd.getProdId());
+    		String routeGroupId = this.getRouteGroupId(tenantId, ordOdProd.getProdId(),0);
     		/* 1.2.路由计算获取路由ID */
     		IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService(IRouteCoreService.class);
     		SaleProductInfo saleProductInfo = new SaleProductInfo();
@@ -631,10 +634,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private String getRouteGroupId(String tenantId, String productId) {
+    private String getRouteGroupId(String tenantId, String productId,long supplierId) {
         ProductInfoQuery productInfoQuery = new ProductInfoQuery();
         productInfoQuery.setTenantId(tenantId);
         productInfoQuery.setProductId(productId);
+        productInfoQuery.setSupplierId(String.valueOf(supplierId));
         IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
         ProductRoute productRoute = iProductServerSV.queryRouteGroupOfProd(productInfoQuery);
         return productRoute.getRouteGroupId();
@@ -770,16 +774,15 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     /**
      * 组装OCF订单创建请求参数
      */
-    private static String getOFCRequestParams(OrderPayRequest request,Long orderId,Timestamp sysdate) {
+    private  String getOFCRequestParams(OrderPayRequest request,Long orderId,Timestamp sysdate) {
         //封装数据查询该订单下的详细数据
-        IOrderListSV iOrderListSV = DubboConsumerFactory.getService(IOrderListSV.class);
+       // IOrderListSV iOrderListSV = DubboConsumerFactory.getService(IOrderListSV.class);
         QueryOrderRequest orderRequest=new QueryOrderRequest();
         orderRequest.setOrderId(orderId);
         orderRequest.setTenantId(request.getTenantId());
-        QueryOrderResponse queryOrder = iOrderListSV.queryOrder(orderRequest);
+        QueryOrderResponse queryOrder = orderListSV.queryOrder(orderRequest);
         OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
         OFCOrderCreateRequest paramsRequest=new OFCOrderCreateRequest();
-       // OrderVo orderVo=new OrderVo();
         paramsRequest.setOrderNo(String.valueOf(orderId));
         paramsRequest.setShopName(ordOrderVo.getChlId()); //TODO 翻译
         paramsRequest.setReceiverContact(ordOrderVo.getContactName());
@@ -820,7 +823,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	orderItemsVo.setProductNo("");; //TODO
         	orderItemsVo.setPrice(ordProductVo.getSalePrice());
         	orderItemsVo.setQuanlity(ordProductVo.getBuySum());
-        	//productList.add(ordProductVo);
         	orderItemsVoList.add(orderItemsVo);
 		}
         List<OrderCouponVo> orderCouponVoList=new ArrayList<OrderCouponVo>();
@@ -837,12 +839,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     }
     
     //TODO 测试
-    public static void main(String[] args) {
+/*    public static void main(String[] args) {
     	OrderPayRequest request=new OrderPayRequest();
     	request.setTenantId("changhong");
     	request.setPayType("28");
     	long orderId=2000000988564944l;
-    	/* 同步长虹OFC,获取参数*/
+    	 同步长虹OFC,获取参数
         String params = getOFCRequestParams(request, orderId,DateUtil.getSysDate());
         String url="http://10.19.13.16:28151/opaas/http/srv_slp_externalorder_create"; 
         Map<String, String> header=new HashMap<String, String>(); 
@@ -853,7 +855,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
     
     /**
      * 归档
