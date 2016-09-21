@@ -44,6 +44,7 @@ import com.ai.slp.order.vo.OFCAfterSaleOrderCreateRequest;
 import com.ai.slp.order.vo.OrderAfterSaleApplyItemsVo;
 import com.ai.slp.order.vo.OrderAfterSaleApplyVo;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 @Service
 @Transactional
@@ -145,21 +146,23 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		balacneIf.setPayFee(backTotalFee-backOrdOdProd.getDiscountFee());
 		balacneIf.setCreateTime(DateUtil.getSysDate());
 		ordBalacneIfAtomSV.insertSelective(balacneIf);
-		
 		//组装退货申请单创建参数(OFC)
 		String params = getOFCAfterSaleOrderCreateParam(order, ordOdProd, sysDate, 
-				backTotalFee, prodSum, 3);
-		//发送Post请求
+				backTotalFee, prodSum, OrdersConstants.OFCApplyType.BACK);
         Map<String, String> header=new HashMap<String, String>(); 
         header.put("appkey", OrdersConstants.OFC_APPKEY);
         //发送Post请求,并返回信息
         try {
 			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
+			JSONObject object = JSON.parseObject(strData);
+			boolean val = ((Boolean)object.get("IsValid")).booleanValue(); 
+			if(!val) {
+				throw new BusinessException("", "退货申请同步到OFC错误");
+			}
 		} catch (IOException | URISyntaxException e) {
 			logger.error(e.getMessage());
 			throw new SystemException("", "OFC同步出现异常");
 		}
-		
 	}
 
 	@Override
@@ -268,16 +271,22 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		
 		//组装退款申请单创建参数(OFC)
 		String params = getOFCAfterSaleOrderCreateParam(order, ordOdProd, sysDate, 
-				ordOdProd.getTotalFee(), ordOdProd.getBuySum(), 1);
+				ordOdProd.getTotalFee(), ordOdProd.getBuySum(), OrdersConstants.OFCApplyType.REFUND);
 		//发送Post请求
         Map<String, String> header=new HashMap<String, String>(); 
         header.put("appkey", OrdersConstants.OFC_APPKEY);
         //发送Post请求,并返回信息
         try {
 			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
-		} catch (IOException | URISyntaxException e) {
+			JSONObject object = JSON.parseObject(strData);
+			boolean val = ((Boolean)object.get("IsValid")).booleanValue(); 
+			if(!val) {
+				throw new BusinessException("", "退款申请同步到OFC错误");
+			}
+        } catch (IOException | URISyntaxException e) {
 			logger.error(e.getMessage());
 			throw new SystemException("", "OFC同步出现异常");
+		} finally {
 		}
 	}
 	
@@ -359,8 +368,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		OrderAfterSaleApplyVo applyVo=new OrderAfterSaleApplyVo();
 		applyVo.setOrderNo(String.valueOf(order.getOrderId())); //TODO 生成的退货订单还是之前的订单 ??
 		applyVo.setExternalApplyNo("");
-		applyVo.setApplyType(type);//代表退货
-		applyVo.setReasonType(0); //TODO 后台退换货时没有原因概述 ??
+		applyVo.setApplyType(type);
+		applyVo.setReasonType(16); //其它
 		applyVo.setDescription("");
 		applyVo.setRefundAmount(backTotalFee/10); //分为单位
 		applyVo.setApplyTime(sysDate.toString());
