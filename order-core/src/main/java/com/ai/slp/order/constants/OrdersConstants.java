@@ -847,4 +847,14 @@ public final class OrdersConstants {
     /**OFC退换单创建URL**/
     private static final String OFC_RETURN_CREATE_URL_KEY = "ofc.return.create.url";  
     public static final String OFC_RETURN_CREATE_URL = loader.getProperty(OFC_RETURN_CREATE_URL_KEY);  
+    
+    /**
+     * 退换货申请同步OFC 申请类型
+     */
+    public static final class OFCApplyType{
+    	/** 退款类型 */
+ 		public static final int REFUND = 1;
+ 		/** 退货类型 */
+ 		public static final int BACK = 3;
+ 	}
 }
