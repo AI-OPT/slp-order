@@ -121,6 +121,11 @@ public class OrdProductVo extends BaseInfo{
      * 商品是否售后标识
      */
     private String cusServiceFlag;
+    
+    /**
+     * 商品赠送积分
+     */
+    private long giveJF;
 
 	public Long getOrderId() {
 		return orderId;
@@ -297,5 +302,13 @@ public class OrdProductVo extends BaseInfo{
 
 	public void setCusServiceFlag(String cusServiceFlag) {
 		this.cusServiceFlag = cusServiceFlag;
+	}
+
+	public long getGiveJF() {
+		return giveJF;
+	}
+
+	public void setGiveJF(long giveJF) {
+		this.giveJF = giveJF;
 	}
 }
