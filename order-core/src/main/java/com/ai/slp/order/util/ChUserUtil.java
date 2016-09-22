@@ -33,10 +33,6 @@ public  class ChUserUtil {
 	     if("000000".equals(reqResultCode)){
 	         String dataStr=(String)json.get("data");
 	         dataJson=JSON.parseObject(dataStr);
-	        /* Object phone =dataJson.get("phone");
-	         if(phone!=null){
-	        	 return phone.toString();
-	         }*/
 	     }else{
 	     	//请求过程失败
 	    	 LOG.info("请求失败,请求错误码:"+reqResultCode);
