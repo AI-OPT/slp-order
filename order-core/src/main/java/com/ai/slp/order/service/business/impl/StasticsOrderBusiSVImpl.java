@@ -30,6 +30,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IStasticsOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IStasticsOrderBusiSV;
 import com.ai.slp.order.util.ChUserUtil;
+import com.alibaba.fastjson.JSONObject;
 @Service
 @Transactional
 public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
@@ -86,8 +87,9 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 					parentOrderVo.setContactTel(logistics.getContactTel());
 				}
 				//获取绑定手机号
-				String phone = ChUserUtil.getPhone(parentOrderVo.getUserId());
-				parentOrderVo.setUserTel(phone);
+				JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
+		        Object phone =dataJson.get("phone");
+				parentOrderVo.setUserTel(phone.toString());
 				//获取子订单
 				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
 				for(OrdOrder child:childList){
