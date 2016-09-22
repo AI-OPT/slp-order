@@ -89,7 +89,7 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
 		        Object phone =dataJson.get("phone");
-				parentOrderVo.setUserTel(phone.toString());
+				parentOrderVo.setUserTel(phone==null?null:phone.toString());
 				//获取子订单
 				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
 				for(OrdOrder child:childList){
