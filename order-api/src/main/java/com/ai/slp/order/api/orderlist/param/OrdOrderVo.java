@@ -46,6 +46,16 @@ public class OrdOrderVo extends BaseInfo {
     private String userId;
     
     /**
+     * 用户姓名
+     */
+    private String userName;
+    
+    /**
+     * 用户绑定手机号
+     */
+    private String userTel;
+    
+    /**
      * 支付帐号
      */
     private Long acctId;
@@ -639,5 +649,20 @@ public class OrdOrderVo extends BaseInfo {
 	public void setOperDiscountDesc(String operDiscountDesc) {
 		this.operDiscountDesc = operDiscountDesc;
 	}
-	
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserTel() {
+		return userTel;
+	}
+
+	public void setUserTel(String userTel) {
+		this.userTel = userTel;
+	}
 }
