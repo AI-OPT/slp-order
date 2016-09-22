@@ -52,7 +52,7 @@ public class OFCOrderQueryBusiSVImpl implements IOFCOrderQueryBusiSV {
 		try {
 			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_QUERY_URL, params, header);
 			JSONObject object = JSON.parseObject(strData);
-			boolean val = ((Boolean)object.get("IsValid")).booleanValue(); //操作是否成功
+			boolean val = object.getBooleanValue("IsValid");//操作是否成功
 			if(!val) {
 				throw new BusinessException("", "OFC订单查询错误");
 			}
@@ -62,8 +62,6 @@ public class OFCOrderQueryBusiSVImpl implements IOFCOrderQueryBusiSV {
 			logger.error(e.getMessage());
 			throw new SystemException("", "OFC同步出现异常");
 		}
-		
 		return response;
 	}
-
 }
