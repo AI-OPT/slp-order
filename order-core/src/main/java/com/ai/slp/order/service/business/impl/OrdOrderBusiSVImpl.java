@@ -409,10 +409,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
             //获取用户名
             Object userName =dataJson.get("userName");
-            ordOrderVo.setUserName(userName.toString()); 
+            ordOrderVo.setUserName(userName==null?null:userName.toString()); 
             //获取绑定手机号
 	        Object phone =dataJson.get("phone");
-	        ordOrderVo.setUserTel(phone.toString());
+	        ordOrderVo.setUserTel(phone==null?null:phone.toString());
             ordOrderVo.setRemark(order.getRemark());//买家留言(订单备注)
             ordOrderVo.setOrigOrderId(order.getOrigOrderId()); //原始订单号
             ordOrderVo.setOperId(order.getOperId());
