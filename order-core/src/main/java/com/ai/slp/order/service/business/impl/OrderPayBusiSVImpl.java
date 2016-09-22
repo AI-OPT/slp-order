@@ -16,6 +16,8 @@ import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.dss.base.interfaces.IDSSClient;
 import com.ai.paas.ipaas.mds.IMessageSender;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
@@ -28,6 +30,7 @@ import com.ai.slp.order.dao.mapper.bo.*;
 import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.OFCOrderCreateRequest;
@@ -43,11 +46,15 @@ import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
 import com.ai.slp.route.api.core.interfaces.IRouteCoreService;
 import com.ai.slp.route.api.core.params.SaleProductInfo;
+import com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV;
+import com.ai.slp.route.api.routemanage.param.RouteQueryByGroupIdAndAreaRequest;
+import com.ai.slp.route.api.routemanage.param.RouteQueryByGroupIdAndAreaResponse;
 import com.ai.slp.route.api.server.params.IRouteServerRequest;
 import com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProduct;
 import com.ai.slp.route.api.supplyproduct.param.SupplyProductQueryVo;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +107,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Autowired
     private  IOrderListSV orderListSV;
     
+    @Autowired
+    private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
     /**
      * 订单收费
      * 
@@ -132,15 +141,17 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             //发送Post请求,并返回信息
             try {
 				String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_ORDER_CREATE_URL, params, header);
+				JSONObject object = JSON.parseObject(strData);
+				boolean val = object.getBooleanValue("IsValid");
+				/*if(!val) {
+					throw new BusinessException("", "销售订单创建同步到OFC错误");
+				}*/
 			} catch (IOException | URISyntaxException e) {
 				logger.error(e.getMessage());
 				throw new SystemException("", "OFC同步出现异常");
 			}
-            //TODO ?????
             /* 4.拆分子订单 */
             this.resoleOrders(ordOrder, request.getTenantId(), client);
-            /* 5.归档 */
-            this.archiveOrderData(request);
         }
 
     }
@@ -158,7 +169,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         logger.debug("开始进行订单收费处理..");
         List<Long> orderIds = request.getOrderIds();
         if (CollectionUtil.isEmpty(orderIds)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "待收费订单号");
+            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "待收费订单号为空");
         }
         List<OrdOdFeeTotal> noPayList = new ArrayList<OrdOdFeeTotal>();
         /* 1.校验订单是否存在未支付的费用 */
@@ -363,8 +374,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	Map<String, Long> map=new HashMap<String,Long>();
         	for (OrdOdProd ordOdProd : ordOdProdList) {
         		long prodOperDiscountFee=(ordOdProd.getTotalFee()/totalFee)*operDiscountFee;//商品的减免费用
-        		ordOdProd.setOperDiscountFee(prodOperDiscountFee); //减免费用
-        		ordOdProd.setDiscountFee(prodOperDiscountFee+ordOdProd.getJfFee()+ordOdProd.getCouponFee()); //优惠费用
+        		ordOdProd.setOperDiscountFee(prodOperDiscountFee+ordOdProd.getOperDiscountFee()); //减免费用
+        		ordOdProd.setDiscountFee(prodOperDiscountFee+ordOdProd.getDiscountFee()); //优惠费用
         		ordOdProd.setAdjustFee(ordOdProd.getTotalFee()-ordOdProd.getDiscountFee()); //应收费用
         		ordOdProdAtomSV.updateById(ordOdProd);
         		/* 2.生成子订单*/
@@ -415,16 +426,19 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		OrdOdProd parentOrdOdProd,Map<String, Long> map) {
     	/* 1.根据商品信息获取routeId*/
     	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),parentOrdOdProd.getSupplierId());
-        IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService(IRouteCoreService.class);
-        SaleProductInfo saleProductInfo = new SaleProductInfo();
-        saleProductInfo.setTenantId(tenantId);
-        saleProductInfo.setRouteGroupId(routeGroupId);
-        saleProductInfo.setTotalConsumption(parentOrdOdProd.getSalePrice());
-        String routeId = iRouteCoreService.findRoute(saleProductInfo);
-    	if(StringUtil.isBlank(routeId)) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据路由组ID["
-                    + routeGroupId + "]订单金额[" + parentOrdOdProd.getSalePrice() + "]未能找到供货路由");
+    	IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
+    	OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, parentOrdOrder.getOrderId());
+        RouteQueryByGroupIdAndAreaRequest andAreaRequest=new RouteQueryByGroupIdAndAreaRequest();
+        andAreaRequest.setProvinceCode(ordOdLogistics.getProvinceCode());
+        andAreaRequest.setRouteGroupId(routeGroupId);
+        andAreaRequest.setTenantId(tenantId);
+        RouteQueryByGroupIdAndAreaResponse routeResponse = iRouteManageSV.queryRouteInfoByGroupIdAndArea(andAreaRequest);
+        boolean isSuccess = routeResponse.getResponseHeader().getIsSuccess();
+        if(!isSuccess||routeResponse==null){
+        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据路由组ID["
+                    + routeGroupId + "]省份编码[" + ordOdLogistics.getProvinceCode()+ "]未能找到供货路由");
     	}
+    	String routeId = routeResponse.getRouteId();
     	Long subOrderId=null;
     	OrdOdProd ordOdProd =null;
     	/* 2.判断routeId是否在map集合中*/
@@ -776,20 +790,25 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     private  String getOFCRequestParams(OrderPayRequest request,Long orderId,Timestamp sysdate) {
         //封装数据查询该订单下的详细数据
-       // IOrderListSV iOrderListSV = DubboConsumerFactory.getService(IOrderListSV.class);
-        QueryOrderRequest orderRequest=new QueryOrderRequest();
+    	ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+    	QueryOrderRequest orderRequest=new QueryOrderRequest();
         orderRequest.setOrderId(orderId);
         orderRequest.setTenantId(request.getTenantId());
         QueryOrderResponse queryOrder = orderListSV.queryOrder(orderRequest);
         OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
         OFCOrderCreateRequest paramsRequest=new OFCOrderCreateRequest();
         paramsRequest.setOrderNo(String.valueOf(orderId));
-        paramsRequest.setShopName(ordOrderVo.getChlId()); //TODO 翻译
+        SysParam sysParamChlId = InfoTranslateUtil.translateInfo(request.getTenantId(), 
+				"ORD_ORDER", "CHL_ID", ordOrderVo.getChlId(), iCacheSV);
+        paramsRequest.setShopName(sysParamChlId==null?"":sysParamChlId.getColumnDesc()); 
         paramsRequest.setReceiverContact(ordOrderVo.getContactName());
         paramsRequest.setReceiverPhone(ordOrderVo.getContactTel());
-        paramsRequest.setProvince(ordOrderVo.getProvinceCode()); //TODO 翻译
-        paramsRequest.setCity(ordOrderVo.getCityCode());//TODO 翻译
-        paramsRequest.setRegion(ordOrderVo.getCountyCode());//TODO 翻译
+        paramsRequest.setProvince(ordOrderVo.getProvinceCode()==null?"":iCacheSV.
+        		getAreaName(ordOrderVo.getProvinceCode())); 
+        paramsRequest.setCity(ordOrderVo.getCityCode()==null?"":iCacheSV.
+    			getAreaName(ordOrderVo.getCityCode()));//TODO 翻译
+        paramsRequest.setRegion(ordOrderVo.getCountyCode()==null?"":iCacheSV.
+    			getAreaName(ordOrderVo.getCountyCode()));
         paramsRequest.setReceiverAddress(ordOrderVo.getAddress());
         paramsRequest.setPostCode(ordOrderVo.getPostCode());
         paramsRequest.setPayTime(sysdate.toString());
@@ -857,13 +876,4 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 		}
 	}*/
     
-    /**
-     * 归档
-     * 
-     * @param request
-     * @author zhangxw
-     * @ApiDocMethod
-     */
-    private void archiveOrderData(OrderPayRequest request) {
-    }
 }
