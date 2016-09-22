@@ -91,5 +91,31 @@
 	<context:annotation-config />
 	<!-- 设定注解扫描基础包 -->
 	<context:component-scan base-package="com.ai.slp.order" />
-	<import resource="classpath:application-context.xml" />
+	<bean id="oxmHandler" class="com.ylink.upp.base.oxm.util.OxmHandler">
+		<property name="unmarshaller" ref="jaxb2Marshaller"/>
+		<property name="marshaller" ref="jaxb2Marshaller"/>
+	</bean>
+	<!-- Jaxb 配置 -->
+	<bean id="jaxb2Marshaller" class="com.ylink.upp.base.oxm.util.TwsJaxb2Marshaller" scope="singleton">
+		<property name="marshallerProperties">
+			<map>
+				<entry key="jaxb.formatted.output" value-ref="booleanTrue"/>
+				<entry key="jaxb.encoding" value="UTF-8"/>
+			</map>
+		</property>
+		<property name="packagesToScan">
+			<list>
+				<value>com.ylink.upp.oxm.entity</value>
+			</list>
+		</property>
+<!-- 		<property name="schemasToScan"> -->
+<!-- 			<list> -->
+<!-- 				<value>classpath:config/schema</value> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+	</bean>
+	<!-- 上面的属性需要Boolean对象，特殊定义 -->
+	<bean id="booleanTrue" class="java.lang.Boolean">
+		<constructor-arg value="true"/>
+	</bean>
 </beans>

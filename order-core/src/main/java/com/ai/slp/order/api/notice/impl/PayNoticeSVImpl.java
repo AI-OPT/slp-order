@@ -21,8 +21,11 @@ import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.ylink.itfin.certificate.SecurityUtil;
+import com.ylink.upp.base.oxm.XmlBodyEntity;
+import com.ylink.upp.base.oxm.util.Dom4jHelper;
+import com.ylink.upp.base.oxm.util.HandlerMsgUtil;
+import com.ylink.upp.base.oxm.util.HeaderBean;
 import com.ylink.upp.base.oxm.util.OxmHandler;
-import com.ylink.upp.oxm.entity.upp_103_001_01.GrpBody;
 @Service(validation="true")
 @Component
 public class PayNoticeSVImpl implements IPayNoticeSV {
@@ -36,18 +39,19 @@ public class PayNoticeSVImpl implements IPayNoticeSV {
 		BaseResponse response = new BaseResponse();
 		ResponseHeader responseHeader = null;
 		 try {  
-			 	GrpBody body = (GrpBody)oxmHandler.unmarshaller(xmlbody);
 			 	//验签
-			 	boolean flag = verify(xmlbody,signMsg);
-			 	if (!flag) {
-			 		 responseHeader = new ResponseHeader(false,
-			 				OrdersConstants.ORDER_FAILD, "验签失败");
-		             response.setResponseHeader(responseHeader);
-		             return response;
+			 	com.ylink.upp.oxm.entity.upp_103_001_01.RespInfo receive = (com.ylink.upp.oxm.entity.upp_103_001_01.RespInfo) 
+		        		receiveMsg(header, xmlbody, signMsg);
+			 	if (receive==null) {
+			 		com.ylink.upp.oxm.entity.upp_599_001_01.RespInfo messageReseive = (com.ylink.upp.oxm.entity.upp_599_001_01.RespInfo) 
+			        		receiveMsg(header, xmlbody, signMsg);
+			 		if (!"90000".equals(messageReseive.getGrpBody().getStsRsn().getRespCode())) {
+						throw new RuntimeException("系统异常.");
+					}
 				}
 	             //获取支付状态
-	             String state =  body.getPayStatus();
-	             String orderId = body.getMerOrderId();
+	             String state =  receive.getGrpBody().getPayStatus();
+	             String orderId = receive.getGrpBody().getMerOrderId();
 	             if(!StringUtil.isBlank(state)){
 	            	 if(state.equals("00")){
 	            		 //更新订单状态
@@ -83,5 +87,21 @@ public class PayNoticeSVImpl implements IPayNoticeSV {
 		InputStream in = new FileInputStream(pfxResource.getFile());
 		byte[] cerByte = IOUtils.toByteArray(in);
 		return SecurityUtil.verify(cerByte, xmlMsg, sign);
+	}
+	private XmlBodyEntity receiveMsg(String msgHeader, String xmlMsg, String sign) {
+		try {
+			boolean verify = this.verify(xmlMsg, sign);
+			if (!verify) {
+				throw new RuntimeException("验签失败");
+			}
+			HeaderBean headerBean = new HeaderBean();
+			HandlerMsgUtil.conversion(msgHeader, headerBean);
+			xmlMsg = Dom4jHelper.addNamespace(xmlMsg, headerBean.getMesgType(), "UTF-8");
+			return (XmlBodyEntity) oxmHandler.unmarshaller(xmlMsg);
+		} catch (Exception e) {
+			System.out.println("接收数据时发生异常，错误信息为:" + e.getMessage());
+			throw new RuntimeException(e);
+		}
+
 	}
 }
