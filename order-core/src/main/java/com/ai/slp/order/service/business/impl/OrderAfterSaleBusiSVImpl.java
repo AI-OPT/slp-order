@@ -110,6 +110,14 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		long backTotalFee=backOrdOdProd.getSalePrice()*prodSum;
 		backOrdOdProd.setBuySum(prodSum);
 		backOrdOdProd.setTotalFee(backTotalFee);
+		long backCouponFee=(ordOdProd.getCouponFee()/ordOdProd.getBuySum())*prodSum;  //该商品数目下的退款优惠券
+		long backJfFee=(ordOdProd.getJfFee()/ordOdProd.getBuySum())*prodSum;      //该商品数目下的退款消费积分
+		long backGiveJf=(ordOdProd.getJf()/ordOdProd.getBuySum())*prodSum;	//该商品数目下的退款赠送积分
+		backOrdOdProd.setCouponFee(backCouponFee);
+		backOrdOdProd.setJfFee(backJfFee); 
+		backOrdOdProd.setJf(backGiveJf);
+		//积分兑换 TODO
+		backOrdOdProd.setDiscountFee(backCouponFee+backJfFee+backGiveJf); 
 		backOrdOdProd.setAdjustFee(backTotalFee-backOrdOdProd.getDiscountFee());
 		backOrdOdProd.setState(OrdersConstants.OrdOdProd.State.RETURN);
 		backOrdOdProd.setUpdateTime(DateUtil.getSysDate());
@@ -155,7 +163,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
         try {
 			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
 			JSONObject object = JSON.parseObject(strData);
-			boolean val = ((Boolean)object.get("IsValid")).booleanValue(); 
+			boolean val = object.getBooleanValue("IsValid");
 			if(!val) {
 				throw new BusinessException("", "退货申请同步到OFC错误");
 			}
@@ -279,7 +287,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
         try {
 			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
 			JSONObject object = JSON.parseObject(strData);
-			boolean val = ((Boolean)object.get("IsValid")).booleanValue(); 
+			boolean val = object.getBooleanValue("IsValid");
 			if(!val) {
 				throw new BusinessException("", "退款申请同步到OFC错误");
 			}
