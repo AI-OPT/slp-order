@@ -14,6 +14,7 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.aftersaleorder.impl.OrderAfterSaleSVImpl;
 import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -80,13 +81,21 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 			this.updateOrderState(ordOrder, orgState,transitionState, transitionChgDesc, request);
 			this.updateOrderState(ordOrder, transitionState,newState, chgDesc, request);
 		}else {
-			//审核拒绝  改变原始订单的商品售后标识状态
+			//审核拒绝 
+			String remark = request.getRemark();
+			if(StringUtil.isBlank(remark)) {
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "审核理由不能为空");
+			}
+			if(remark.length()>200) {
+				throw new BusinessException("", "审核理由不能超过200字");
+			}
+			//改变原始订单的商品售后标识状态
 			this.updateProdCusServiceFlag(ordOrder);
 			String newState=OrdersConstants.OrdOrder.State.AUDIT_FAILURE;
 			String chgDesc=OrdOdStateChg.ChgDesc.ORDER_AUDIT_NOT_PASS;
 			ordOrder.setState(newState);
 	        ordOrder.setStateChgTime(DateUtil.getSysDate());
-	        ordOrder.setRemark(request.getRemark());
+	        ordOrder.setRemark(remark);
 	        ordOrderAtomSV.updateById(ordOrder);
 			this.updateOrderState(ordOrder, orgState,newState, chgDesc, request);
 		}
