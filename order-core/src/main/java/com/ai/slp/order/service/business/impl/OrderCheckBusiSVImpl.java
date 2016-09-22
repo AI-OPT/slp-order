@@ -75,7 +75,6 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 			String chgDesc=OrdOdStateChg.ChgDesc.ORDER_BUYERS_TO_RETURN;
 			ordOrder.setState(newState);
 	        ordOrder.setStateChgTime(DateUtil.getSysDate());
-	        ordOrder.setRemark(null);
 	        ordOrderAtomSV.updateById(ordOrder);
 	        // 写入订单状态变化轨迹表
 			this.updateOrderState(ordOrder, orgState,transitionState, transitionChgDesc, request);
@@ -100,7 +99,6 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 			this.updateOrderState(ordOrder, orgState,newState, chgDesc, request);
 		}
 	}
-	
 	
 	/**
      * 更新订单状态
