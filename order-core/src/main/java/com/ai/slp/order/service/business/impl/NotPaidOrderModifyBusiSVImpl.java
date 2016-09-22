@@ -1,6 +1,5 @@
 package com.ai.slp.order.service.business.impl;
 
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
-import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.business.interfaces.INotPaidOrderModifyBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 
@@ -29,9 +24,6 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 	
 	@Autowired
 	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
-	
-	@Autowired
-	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	
 	@Override
 	public void modify(OrderModifyRequest request) throws BusinessException, SystemException {
@@ -51,16 +43,6 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 		if(odFeeTotal==null) {
 			logger.warn("未能查询到指定的订单费用总表信息[订单id:"+request.getOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,"未能查询到指定的订单费用总表信息[订单id:"+request.getOrderId()+"]");
-		}
-		/* 3.查询订单商品明细信息*/
-		OrdOdProdCriteria example=new OrdOdProdCriteria();
-		OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(request.getTenantId());
-		criteria.andOrderIdEqualTo(request.getOrderId());
-		List<OrdOdProd> ordOdProdList = ordOdProdAtomSV.selectByExample(example);
-		if(CollectionUtil.isEmpty(ordOdProdList)) {
-			logger.warn("未能查询到指定的订单商品明细表信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,"未能查询到指定的订单商品明细表信息[订单id:"+request.getOrderId()+"]");
 		}
 		long updateAmount = request.getUpdateAmount();
 		if(updateAmount>odFeeTotal.getAdjustFee()) {
