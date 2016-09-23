@@ -19,7 +19,7 @@ import com.ai.slp.order.util.KeyType;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.changhong.upp.crypto.rsa.RSACoder;
 import com.changhong.upp.util.XBConvertor;
-@Service(validation="true")
+@Service
 @Component
 public class PayNoticeSVImpl implements IPayNoticeSV {
 	@Autowired
