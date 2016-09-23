@@ -75,6 +75,16 @@ public class OrdOrderVo extends BaseInfo {
      */
     private Long origOrderId;
     
+    /**
+     * 积分账户id
+     */
+    private String accountId;
+    
+    /**
+     * 积分中心返回的id
+     */
+    private String downstreamOrderId;
+    
 
     /**
      * 业务类型
@@ -664,5 +674,21 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setUserTel(String userTel) {
 		this.userTel = userTel;
+	}
+
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+
+	public String getDownstreamOrderId() {
+		return downstreamOrderId;
+	}
+
+	public void setDownstreamOrderId(String downstreamOrderId) {
+		this.downstreamOrderId = downstreamOrderId;
 	}
 }
