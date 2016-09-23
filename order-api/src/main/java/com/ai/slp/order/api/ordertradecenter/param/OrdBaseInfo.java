@@ -13,11 +13,6 @@ public class OrdBaseInfo implements Serializable {
     private String userId;
     
     /**
-     * 用户ip地址
-     */
-    private String userIp;
-    
-    /**
      * 用户类型
      */
     private String userType;
@@ -179,14 +174,6 @@ public class OrdBaseInfo implements Serializable {
 
 	public void setDeliveryFlag(String deliveryFlag) {
 		this.deliveryFlag = deliveryFlag;
-	}
-
-	public String getUserIp() {
-		return userIp;
-	}
-
-	public void setUserIp(String userIp) {
-		this.userIp = userIp;
 	}
 
 	public void setAcctId(long acctId) {
