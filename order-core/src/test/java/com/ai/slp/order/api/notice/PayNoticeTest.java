@@ -15,7 +15,6 @@ import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.notice.interfaces.IPayNoticeSV;
 import com.ai.slp.order.util.Key;
 import com.ai.slp.order.util.KeyType;
-import com.ai.slp.order.util.NoticeUtil;
 import com.alibaba.fastjson.JSON;
 import com.changhong.upp.business.entity.upp_103_001_01.GrpBody;
 import com.changhong.upp.business.entity.upp_103_001_01.GrpHdr;
@@ -63,8 +62,8 @@ public class PayNoticeTest {
 			e.printStackTrace();
 		}
 		// 拼装报文头
-		String msgHeader = NoticeUtil.initMsgHeader(merNo, TranType.PAY_NOTICE.getValue());
-		BaseResponse INFO= iPayNoticeSV.getPayNotice(data, sign, msgHeader);
+		//String msgHeader = NoticeUtil.initMsgHeader(merNo, TranType.PAY_NOTICE.getValue());
+		BaseResponse INFO= iPayNoticeSV.getPayNotice(data, sign, "");
         System.out.println("info="+JSON.toJSONString(INFO.getResponseHeader()));
     }
 }
