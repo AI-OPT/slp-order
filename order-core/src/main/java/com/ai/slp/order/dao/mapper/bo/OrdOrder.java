@@ -87,6 +87,8 @@ public class OrdOrder {
 
     private String cusServiceFlag;
 
+    private String accountId;
+
     public long getOrderId() {
         return orderId;
     }
@@ -421,5 +423,13 @@ public class OrdOrder {
 
     public void setCusServiceFlag(String cusServiceFlag) {
         this.cusServiceFlag = cusServiceFlag == null ? null : cusServiceFlag.trim();
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId == null ? null : accountId.trim();
     }
 }
