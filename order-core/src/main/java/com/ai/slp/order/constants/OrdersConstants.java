@@ -14,6 +14,7 @@ public final class OrdersConstants {
     public static final String ORDER_SUCCESS = "000000";
     public static final String ORDER_FAILD = "999999";
     
+    
     /**
 	 * 属性文件加载对象
 	 */
@@ -856,5 +857,46 @@ public final class OrdersConstants {
  		public static final int REFUND = 1;
  		/** 退货类型 */
  		public static final int BACK = 3;
+ 	}
+ 	/**
+ 	 * 支付通知
+ 	 * Date: 2016年9月23日 <br>
+ 	 * Copyright (c) 2016 asiainfo.com <br>
+ 	 * 
+ 	 * @author zhanglh
+ 	 */
+    public static final class NoticeState{
+    	/** 待支付 */
+ 		public static final String UN_PAID_STATE = "00";
+ 		/** 支付中 */
+ 		public static final String  PAING_STATE = "01";
+ 		/** 支付成功 */
+ 		public static final String  PAID_SUCCESS_STATE = "02";
+ 		/** 支付失败 */
+ 		public static final String  PAID_FAILD_STATE = "03";
+ 		/** 退款中 */
+ 		public static final String REFUNDING_STATE = "00";
+ 		/** 退款成功 */
+ 		public static final String REFUND_SUCCESS_STATE = "01";
+ 		/** 退款失败 */
+ 		public static final String REFUND_FAILD_STATE = "02";
+ 		
+ 		
+ 	}
+    public static final class Notice{
+    	/** 成功 */
+ 		public static final String NOTICE_SUCCESS_STATE = "000000";
+ 		/** 失败 */
+ 		public static final String  NOTICE_FAILD_STATE = "999999";
+ 		/** 支付中 */
+ 		public static final String  NOTICE_PAING_STATE = "111111";
+ 		/** 待支付 */
+ 		public static final String  NOTICE_UNPAID_STATE = "222222";
+ 		/** 退款中 */
+ 		public static final String  NOTICE_REFUNDING_STATE = "555555";
+ 		/** 验签失败 */
+ 		public static final String SIGN_CHECK_FAILD = "333333";
+ 		
+ 		
  	}
 }
