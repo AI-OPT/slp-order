@@ -75,6 +75,9 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(ordBaseInfo.getUserId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户id不能为空");
 		}
+		if (StringUtil.isBlank(ordBaseInfo.getIpAddress())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户ip不能为空");
+		}
 		if (StringUtil.isBlank(ordBaseInfo.getOrderType())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单类型不能为空");
 		}
