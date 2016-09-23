@@ -406,6 +406,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo.setRouteName(routeInfo.getRouteName()); //仓库信息
             ordOrderVo.setParentOrderId(order.getParentOrderId());
             ordOrderVo.setUserId(order.getUserId());//买家帐号(用户号)
+            ordOrderVo.setAccountId(order.getAccountId());
+            ordOrderVo.setDownstreamOrderId(order.getDownstreamOrderId());
             JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
             //获取用户名
             Object userName =dataJson.get("userName");
