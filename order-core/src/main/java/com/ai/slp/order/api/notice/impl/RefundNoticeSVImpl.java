@@ -1,89 +1,69 @@
 package com.ai.slp.order.api.notice.impl;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
-import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.slp.order.api.notice.interfaces.IRefundNoticeSV;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.util.Key;
+import com.ai.slp.order.util.KeyType;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.ylink.itfin.certificate.SecurityUtil;
-import com.ylink.upp.base.oxm.util.OxmHandler;
-import com.ylink.upp.oxm.entity.upp_803_001_01.GrpBody;
+import com.changhong.upp.crypto.rsa.RSACoder;
+import com.changhong.upp.util.XBConvertor;
 @Service(validation="true")
 @Component
 public class RefundNoticeSVImpl implements IRefundNoticeSV {
 	@Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
-	@Autowired
-	private OxmHandler oxmHandler;
+	@Resource
+	private Key key;
 	@Override
 	public BaseResponse getRefundNotice(String xmlbody, String signMsg, String header)
 			throws BusinessException, SystemException {
 		BaseResponse response = new BaseResponse();
 		 try {  
-			 	GrpBody body = (GrpBody)oxmHandler.unmarshaller(xmlbody);
-			 	//验签
-			 	boolean flag = verify(xmlbody,signMsg);
-			 	if (!flag) {
-			 		ResponseHeader responseHeader = new ResponseHeader(false,
-			 				OrdersConstants.ORDER_FAILD, "验签失败");
-		             response.setResponseHeader(responseHeader);
-		             return response;
+			 boolean flag = RSACoder.verify(key.getKey(KeyType.PUBLIC_KEY), xmlbody, signMsg);
+				if (!flag) {
+					 ResponseHeader responseHeader = new ResponseHeader(false,
+				 				OrdersConstants.Notice.SIGN_CHECK_FAILD, "验签失败");
+			             response.setResponseHeader(responseHeader);
+			     		return response;
 				}
+				com.changhong.upp.business.entity.upp_803_001_01.RepsInfo receive = (com.changhong.upp.business.entity.upp_803_001_01.RepsInfo) XBConvertor.toBean(xmlbody, com.changhong.upp.business.entity.upp_803_001_01.RepsInfo.class);
 	             //获取退款状态
-			 	String state = body.getRefundStatus();
-			 	String orderId = body.getResv();
-			 	if("00".equals(state)){
+			 	String state = receive.getGrpBody().getRefundStatus();
+			 	String orderId = receive.getGrpBody().getMerRefundSn();
+			 	if(OrdersConstants.NoticeState.REFUNDING_STATE.equals(state)){
 			 		//退款中
-			 	}else if("01".equals(state)){
+			 		 ResponseHeader responseHeader = new ResponseHeader(false,
+			 				OrdersConstants.Notice.NOTICE_REFUNDING_STATE, "退款中");
+			 		 response.setResponseHeader(responseHeader);
+			 	}else if(OrdersConstants.NoticeState.REFUND_SUCCESS_STATE.equals(state)){
 			 		//成功,更新订单状态
 	           		 OrdOrder order = new OrdOrder();
 	           		 order.setOrderId(Long.valueOf(orderId));
-	           		 order.setState("311");
+	           		 order.setState(OrdersConstants.OrdOrder.State.FINISH_REPAY);
 	           		 ordOrderAtomSV.updateById(order);
-			 	}else if("02".equals(state)){
-			 		//失败
-			 		 ResponseHeader responseHeader = new ResponseHeader(false,
-			 				OrdersConstants.ORDER_FAILD, "退款失败");
+	           		ResponseHeader responseHeader = new ResponseHeader(true,
+	           				OrdersConstants.Notice.NOTICE_SUCCESS_STATE, "退款成功");
 		             response.setResponseHeader(responseHeader);
-		             return response;
+			 	}else{
+			 		 ResponseHeader responseHeader = new ResponseHeader(false,
+				 				OrdersConstants.Notice.NOTICE_FAILD_STATE, "退款失败");
+			             response.setResponseHeader(responseHeader);
 			 	}
-	             ResponseHeader responseHeader = new ResponseHeader(true,
-	            		 OrdersConstants.ORDER_SUCCESS, "退款成功");
-	             response.setResponseHeader(responseHeader);
+	             
 	        } catch (Exception e) {  
 	            e.printStackTrace();  
 	        }  
 		return response;
-	}
-	
-	/**
-	 * 验签
-	 * 
-	 * @param xmlMsg
-	 * @param sign
-	 * @return
-	 * @throws Exception
-	 */
-	private boolean verify(String xmlMsg, String sign) throws Exception {
-		ResourceLoader resourceLoader = new DefaultResourceLoader();
-		Resource pfxResource = resourceLoader.getResource("classpath:mobile.cer"); // 支付公钥解签
-		InputStream in = new FileInputStream(pfxResource.getFile());
-		byte[] cerByte = IOUtils.toByteArray(in);
-		return SecurityUtil.verify(cerByte, xmlMsg, sign);
 	}
 }
