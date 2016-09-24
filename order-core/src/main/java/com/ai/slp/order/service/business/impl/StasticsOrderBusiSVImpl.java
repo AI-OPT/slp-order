@@ -117,6 +117,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 	        		if(stateOrder!=null){
 	        			childVo.setStateName(stateOrder.getColumnDesc());
 	        		}
+	        		//将父级订单号存入子订单中
+	        		childVo.setParentOrderId(order.getOrderId());
 	        		//将父商品信息存入子订单中
 	        		childVo.setProList(parentProdList);
 	        		childsList.add(childVo);
@@ -126,6 +128,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 						List<StasticsProdVo> prodOrderList = new ArrayList<StasticsProdVo>();
 						StasticOrderVo childOrderVo = new StasticOrderVo();
 						BeanUtils.copyProperties(childOrderVo, child);
+						//将父级订单号存入子订单中
+						childOrderVo.setParentOrderId(order.getOrderId());
 						//翻译订单状态
 						ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 						SysParamSingleCond param = new SysParamSingleCond();

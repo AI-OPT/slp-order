@@ -7,6 +7,10 @@ public class StasticOrderVo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	/**
+	 * 父订单id
+	 */
+	private Long parentOrderId;
+	/**
 	 * 订单id
 	 */
 	private Long orderId;
@@ -27,7 +31,6 @@ public class StasticOrderVo implements Serializable {
 	 * 商品信息
 	 */
 	private List<StasticsProdVo> proList;
-
 
 	public Long getOrderId() {
 		return orderId;
@@ -67,6 +70,14 @@ public class StasticOrderVo implements Serializable {
 
 	public void setStateName(String stateName) {
 		this.stateName = stateName;
+	}
+
+	public Long getParentOrderId() {
+		return parentOrderId;
+	}
+
+	public void setParentOrderId(Long parentOrderId) {
+		this.parentOrderId = parentOrderId;
 	}
 
 }
