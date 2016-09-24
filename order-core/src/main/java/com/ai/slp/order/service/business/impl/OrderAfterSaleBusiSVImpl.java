@@ -27,12 +27,14 @@ import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria.Criteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
@@ -66,7 +68,9 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	
 	@Autowired
 	private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
-
+	
+	@Autowired
+	private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
 	@Override
 	public void back(OrderReturnRequest request) throws BusinessException, SystemException {
 		/* 1.参数校验及返回子订单下的商品信息*/
@@ -116,14 +120,21 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		backOrdOdProd.setCouponFee(backCouponFee);
 		backOrdOdProd.setJfFee(backJfFee); 
 		backOrdOdProd.setJf(backGiveJf);
-		//积分兑换 TODO
-		backOrdOdProd.setDiscountFee(backCouponFee+backJfFee+backGiveJf); 
+		OrdOdFeeProd feeProd = ordOdFeeProdAtomSV.selectByOrdAndStyle(order.getParentOrderId(), 
+				OrdersConstants.OrdOdFeeProd.PayStyle.JF);
+		if(feeProd==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"订单费用明细信息不存在[订单id:"+order.getParentOrderId()+"]");
+		}
+		long jfAmount = feeProd.getJfAmount();
+		long jfPaidFee = feeProd.getPaidFee(); 
+		backOrdOdProd.setDiscountFee((backJfFee*jfAmount)/jfPaidFee+backCouponFee); 
 		backOrdOdProd.setAdjustFee(backTotalFee-backOrdOdProd.getDiscountFee());
 		backOrdOdProd.setState(OrdersConstants.OrdOdProd.State.RETURN);
 		backOrdOdProd.setUpdateTime(DateUtil.getSysDate());
 		backOrdOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		backOrdOdProd.setOrderId(backOrderId);
-		backOrdOdProd.setUpdateOperId(request.getOperId());//变更工号 
+		backOrdOdProd.setUpdateOperId(request.getOperId());
 		ordOdProdAtomSV.insertSelective(backOrdOdProd);
 		/* 6.生成退款订单费用总表*/
 		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
