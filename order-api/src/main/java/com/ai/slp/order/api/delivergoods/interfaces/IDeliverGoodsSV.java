@@ -35,5 +35,4 @@ public interface IDeliverGoodsSV {
 	@POST
 	@Path("/deliverGoods")
 	public BaseResponse deliverGoods(DeliverGoodsRequest request) throws BusinessException,SystemException;
-
 }
