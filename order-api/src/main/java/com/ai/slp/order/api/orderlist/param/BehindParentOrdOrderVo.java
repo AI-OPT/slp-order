@@ -35,6 +35,11 @@ public class BehindParentOrdOrderVo extends BaseInfo {
     private String userId;
     
     /**
+     * 用户姓名
+     */
+    private String userName;
+    
+    /**
      * 绑定手机号 (用户相关)
      */
     private String userTel;
@@ -185,5 +190,13 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
 	public void setTotalCouponFee(Long totalCouponFee) {
 		this.totalCouponFee = totalCouponFee;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 }
