@@ -15,6 +15,11 @@ public class OrdFeeTotalProdInfo extends BaseInfo{
 	 * 实收费用
 	 */
 	private long paidFee;
+	
+	/**
+	 * 积分对应的转换金额
+	 */
+	private long jfAmount;
 
 	public String getPayStyle() {
 		return payStyle;
@@ -31,5 +36,12 @@ public class OrdFeeTotalProdInfo extends BaseInfo{
 	public void setPaidFee(long paidFee) {
 		this.paidFee = paidFee;
 	}
-	
+
+	public long getJfAmount() {
+		return jfAmount;
+	}
+
+	public void setJfAmount(long jfAmount) {
+		this.jfAmount = jfAmount;
+	}
 }
