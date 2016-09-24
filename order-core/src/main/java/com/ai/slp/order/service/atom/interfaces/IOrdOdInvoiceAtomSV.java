@@ -12,5 +12,9 @@ public interface IOrdOdInvoiceAtomSV {
 	List<OrdOdInvoice> selectByExample(OrdOdInvoiceCriteria example);
 	
 	OrdOdInvoice selectByPrimaryKey(long orderId);
+	
+	int countByExample(OrdOdInvoiceCriteria example);
+	
+	int updateByPrimaryKey(OrdOdInvoice record);
 
 }
