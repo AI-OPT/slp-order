@@ -109,6 +109,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     
     @Autowired
     private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
+    
+    @Autowired
+    private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
+    
     /**
      * 订单收费
      * 
@@ -712,8 +716,13 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		ordOdProd.setOrderId(subOrderId);
     		ordOdProd.setRouteId(routeId);
     		ordOdProdAtomSV.insertSelective(ordOdProd);
-    		/*根据商品来判断是否能创建发票信息*/
-    		//TODO
+    		/* 判断是否有发票信息*/
+    		OrdOdInvoice odInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(parentOrdOrder.getOrderId());
+    		if(odInvoice!=null) {
+    			OrdOdInvoice invoice=new OrdOdInvoice();
+    			BeanUtils.copyProperties(invoice, odInvoice);
+    			invoice.setOrderId(subOrderId);
+    		}
     	}else {
 	        OrdOdProdCriteria example = new OrdOdProdCriteria();
 	        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
