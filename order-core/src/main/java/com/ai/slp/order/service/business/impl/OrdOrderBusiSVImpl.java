@@ -20,7 +20,6 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
-import com.ai.platform.common.api.cache.param.SysParamSingleCond;
 import com.ai.slp.order.api.orderlist.param.BehindOrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.BehindOrdProductVo;
 import com.ai.slp.order.api.orderlist.param.BehindParentOrdOrderVo;
@@ -412,9 +411,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             //获取用户名
             Object userName =dataJson.get("userName");
             ordOrderVo.setUserName(userName==null?null:userName.toString()); 
-            //获取绑定手机号
-	        Object phone =dataJson.get("phone");
-	        ordOrderVo.setUserTel(phone==null?null:phone.toString());
             ordOrderVo.setRemark(order.getRemark());//买家留言(订单备注)
             ordOrderVo.setOrigOrderId(order.getOrigOrderId()); //原始订单号
             ordOrderVo.setOperId(order.getOperId());
@@ -722,6 +718,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		pOrderVo.setChlIdName(sysParamChlId==null?"":sysParamChlId.getColumnDesc());
         		pOrderVo.setContactTel(behindOrdOrderAttach.getContactTel());
         		pOrderVo.setUserId(behindOrdOrderAttach.getUserId());
+        		JSONObject dataJson = ChUserUtil.getUserInfo(behindOrdOrderAttach.getUserId());
+               //获取用户名
+        		Object userName =dataJson.get("userName");
+        		pOrderVo.setUserName(userName==null?null:userName.toString()); 
+               //获取绑定手机号
+       	        Object phone =dataJson.get("phone");
+       	        pOrderVo.setUserTel(phone==null?null:phone.toString());
         		pOrderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
         		SysParam sysParamDf = InfoTranslateUtil.translateInfo(behindOrdOrderAttach.getTenantId(), 
         				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
@@ -744,10 +747,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     			if(!flag) {
     				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO);
     			}else {
-    				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.YES);  //售后订单
+    				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.YES); 
     			}
     			List<OrdOrder> orders= ordOrderAtomSV.selectByExample(exampleOrder);
-    			if(CollectionUtil.isEmpty(orders)) {  //没有子订单
+    			if(CollectionUtil.isEmpty(orders)) {  
     				BehindOrdOrderVo orderVo=new BehindOrdOrderVo();
         			/* 查询父订单下的商品信息*/
         			List<BehindOrdProductVo> prodList = this.getProdList(null,orderListRequest,behindOrdOrderAttach,null);
