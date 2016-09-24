@@ -52,6 +52,11 @@ public class StasticParentOrderVo extends BaseInfo {
 
 	private List<StasticsProdVo> proList;
 
+	/**
+	 * 子订单信息
+	 */
+	private List<StasticOrderVo> childOrderList;
+
 	public Long getOrderId() {
 		return orderId;
 	}
@@ -138,6 +143,14 @@ public class StasticParentOrderVo extends BaseInfo {
 
 	public void setStateName(String stateName) {
 		this.stateName = stateName;
+	}
+
+	public List<StasticOrderVo> getChildOrderList() {
+		return childOrderList;
+	}
+
+	public void setChildOrderList(List<StasticOrderVo> childOrderList) {
+		this.childOrderList = childOrderList;
 	}
 
 }

@@ -16,6 +16,7 @@ import com.ai.opt.sdk.util.StringUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.platform.common.api.cache.param.SysParamSingleCond;
+import com.ai.slp.order.api.stasticsorder.param.StasticOrderVo;
 import com.ai.slp.order.api.stasticsorder.param.StasticParentOrderVo;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.ai.slp.order.api.stasticsorder.param.StasticsProdVo;
@@ -76,9 +77,19 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 		}
 		if(!CollectionUtil.isEmpty(commonOrderList)){
 			for(OrdOrder order:commonOrderList){
-				List<StasticsProdVo> prodOrderList = new ArrayList<StasticsProdVo>();
+				//返回的字订单
+				List<StasticOrderVo> childOrderList =new ArrayList<StasticOrderVo>();
 				StasticParentOrderVo parentOrderVo = new StasticParentOrderVo();
+				List<StasticsProdVo> parentProdList = new ArrayList<StasticsProdVo>();
 				BeanUtils.copyProperties(parentOrderVo, order);
+				//获取福订单的商品信息
+				List<OrdOdProd>  parentProList = iOrdOdProdAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+				for(OrdOdProd prod:parentProList){
+					StasticsProdVo staticProdVo = new StasticsProdVo();
+					BeanUtils.copyProperties(staticProdVo, prod);
+					parentProdList.add(staticProdVo);
+				}
+				parentOrderVo.setProList(parentProdList);
 				//获取收货人信息
 				OrdOdLogistics logistics = iOrdOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
 				if(logistics!=null){
@@ -88,26 +99,35 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
 		        Object phone =dataJson.get("phone");
 				parentOrderVo.setUserTel(phone==null?null:phone.toString());
-				//翻译订单状态
-				ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
-				SysParamSingleCond param = new SysParamSingleCond();
-        		param = new SysParamSingleCond();
-        		param.setTenantId(OrdersConstants.Sate.TENANT_ID);
-        		param.setColumnValue(order.getState());
-        		param.setTypeCode(OrdersConstants.Sate.TYPE_CODE);
-        		param.setParamCode(OrdersConstants.Sate.ORD_STATE);
-        		SysParam stateOrder = iCacheSV.getSysParamSingle(param);
-        		if(stateOrder!=null){
-        			parentOrderVo.setStateName(stateOrder.getColumnDesc());
-        		}
-        		//获取订单的商品信息
-				List<OrdOdProd>  childProList = iOrdOdProdAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
-				for(OrdOdProd prod:childProList){
-					StasticsProdVo staticProdVo = new StasticsProdVo();
-					BeanUtils.copyProperties(staticProdVo, prod);
-					prodOrderList.add(staticProdVo);
+				//获取子订单
+				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
+				for(OrdOrder child:childList){
+					List<StasticsProdVo> prodOrderList = new ArrayList<StasticsProdVo>();
+					StasticOrderVo childOrderVo = new StasticOrderVo();
+					BeanUtils.copyProperties(childOrderVo, child);
+					//翻译订单状态
+					ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+					SysParamSingleCond param = new SysParamSingleCond();
+	        		param = new SysParamSingleCond();
+	        		param.setTenantId(OrdersConstants.Sate.TENANT_ID);
+	        		param.setColumnValue(child.getState());
+	        		param.setTypeCode(OrdersConstants.Sate.TYPE_CODE);
+	        		param.setParamCode(OrdersConstants.Sate.ORD_STATE);
+	        		SysParam stateOrder = iCacheSV.getSysParamSingle(param);
+	        		if(stateOrder!=null){
+	        			childOrderVo.setStateName(stateOrder.getColumnDesc());
+	        		}
+					//获取子订单的商品信息
+					List<OrdOdProd>  childProList = iOrdOdProdAtomSV.selectByOrd(child.getTenantId(), child.getOrderId());
+					for(OrdOdProd prod:childProList){
+						StasticsProdVo staticProdVo = new StasticsProdVo();
+						BeanUtils.copyProperties(staticProdVo, prod);
+						prodOrderList.add(staticProdVo);
+					}
+					childOrderVo.setProList(prodOrderList);
+					childOrderList.add(childOrderVo);
 				}
-				parentOrderVo.setProList(prodOrderList);
+				parentOrderVo.setChildOrderList(childOrderList);
 				staticParentOrderList.add(parentOrderVo);
 			}
 		}
