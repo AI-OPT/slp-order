@@ -26,4 +26,14 @@ public class OrdOdInvoiceAtomSVImpl implements IOrdOdInvoiceAtomSV{
 	public OrdOdInvoice selectByPrimaryKey(long orderId) {
 		return MapperFactory.getOrdOdInvoiceMapper().selectByPrimaryKey(orderId);
 	}
+
+	@Override
+	public int countByExample(OrdOdInvoiceCriteria example) {
+		return MapperFactory.getOrdOdInvoiceMapper().countByExample(example);
+	}
+
+	@Override
+	public int updateByPrimaryKey(OrdOdInvoice record) {
+		return MapperFactory.getOrdOdInvoiceMapper().updateByPrimaryKey(record);
+	}
 }
