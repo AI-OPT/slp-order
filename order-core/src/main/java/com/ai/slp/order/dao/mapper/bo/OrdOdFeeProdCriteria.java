@@ -313,6 +313,66 @@ public class OrdOdFeeProdCriteria {
             addCriterion("PAID_FEE not between", value1, value2, "paidFee");
             return (Criteria) this;
         }
+
+        public Criteria andJfAmountIsNull() {
+            addCriterion("JF_AMOUNT is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountIsNotNull() {
+            addCriterion("JF_AMOUNT is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountEqualTo(long value) {
+            addCriterion("JF_AMOUNT =", value, "jfAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountNotEqualTo(long value) {
+            addCriterion("JF_AMOUNT <>", value, "jfAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountGreaterThan(long value) {
+            addCriterion("JF_AMOUNT >", value, "jfAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountGreaterThanOrEqualTo(long value) {
+            addCriterion("JF_AMOUNT >=", value, "jfAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountLessThan(long value) {
+            addCriterion("JF_AMOUNT <", value, "jfAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountLessThanOrEqualTo(long value) {
+            addCriterion("JF_AMOUNT <=", value, "jfAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountIn(List<Long> values) {
+            addCriterion("JF_AMOUNT in", values, "jfAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountNotIn(List<Long> values) {
+            addCriterion("JF_AMOUNT not in", values, "jfAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountBetween(long value1, long value2) {
+            addCriterion("JF_AMOUNT between", value1, value2, "jfAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andJfAmountNotBetween(long value1, long value2) {
+            addCriterion("JF_AMOUNT not between", value1, value2, "jfAmount");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -1,5 +1,7 @@
 package com.ai.slp.order.dao.mapper.bo;
 
+import java.sql.Timestamp;
+
 public class OrdOdInvoice {
     private long orderId;
 
@@ -10,6 +12,14 @@ public class OrdOdInvoice {
     private String invoiceTitle;
 
     private String invoiceContent;
+
+    private String invoiceStatus;
+
+    private String invoiceId;
+
+    private String invoiceNum;
+
+    private Timestamp invoiceTime;
 
     public long getOrderId() {
         return orderId;
@@ -49,5 +59,37 @@ public class OrdOdInvoice {
 
     public void setInvoiceContent(String invoiceContent) {
         this.invoiceContent = invoiceContent == null ? null : invoiceContent.trim();
+    }
+
+    public String getInvoiceStatus() {
+        return invoiceStatus;
+    }
+
+    public void setInvoiceStatus(String invoiceStatus) {
+        this.invoiceStatus = invoiceStatus == null ? null : invoiceStatus.trim();
+    }
+
+    public String getInvoiceId() {
+        return invoiceId;
+    }
+
+    public void setInvoiceId(String invoiceId) {
+        this.invoiceId = invoiceId == null ? null : invoiceId.trim();
+    }
+
+    public String getInvoiceNum() {
+        return invoiceNum;
+    }
+
+    public void setInvoiceNum(String invoiceNum) {
+        this.invoiceNum = invoiceNum == null ? null : invoiceNum.trim();
+    }
+
+    public Timestamp getInvoiceTime() {
+        return invoiceTime;
+    }
+
+    public void setInvoiceTime(Timestamp invoiceTime) {
+        this.invoiceTime = invoiceTime;
     }
 }

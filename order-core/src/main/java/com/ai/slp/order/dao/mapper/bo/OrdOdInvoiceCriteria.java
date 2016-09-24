@@ -1,5 +1,6 @@
 package com.ai.slp.order.dao.mapper.bo;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -461,6 +462,276 @@ public class OrdOdInvoiceCriteria {
 
         public Criteria andInvoiceContentNotBetween(String value1, String value2) {
             addCriterion("INVOICE_CONTENT not between", value1, value2, "invoiceContent");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusIsNull() {
+            addCriterion("INVOICE_STATUS is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusIsNotNull() {
+            addCriterion("INVOICE_STATUS is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusEqualTo(String value) {
+            addCriterion("INVOICE_STATUS =", value, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusNotEqualTo(String value) {
+            addCriterion("INVOICE_STATUS <>", value, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusGreaterThan(String value) {
+            addCriterion("INVOICE_STATUS >", value, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusGreaterThanOrEqualTo(String value) {
+            addCriterion("INVOICE_STATUS >=", value, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusLessThan(String value) {
+            addCriterion("INVOICE_STATUS <", value, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusLessThanOrEqualTo(String value) {
+            addCriterion("INVOICE_STATUS <=", value, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusLike(String value) {
+            addCriterion("INVOICE_STATUS like", value, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusNotLike(String value) {
+            addCriterion("INVOICE_STATUS not like", value, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusIn(List<String> values) {
+            addCriterion("INVOICE_STATUS in", values, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusNotIn(List<String> values) {
+            addCriterion("INVOICE_STATUS not in", values, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusBetween(String value1, String value2) {
+            addCriterion("INVOICE_STATUS between", value1, value2, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceStatusNotBetween(String value1, String value2) {
+            addCriterion("INVOICE_STATUS not between", value1, value2, "invoiceStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdIsNull() {
+            addCriterion("INVOICE_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdIsNotNull() {
+            addCriterion("INVOICE_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdEqualTo(String value) {
+            addCriterion("INVOICE_ID =", value, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdNotEqualTo(String value) {
+            addCriterion("INVOICE_ID <>", value, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdGreaterThan(String value) {
+            addCriterion("INVOICE_ID >", value, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdGreaterThanOrEqualTo(String value) {
+            addCriterion("INVOICE_ID >=", value, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdLessThan(String value) {
+            addCriterion("INVOICE_ID <", value, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdLessThanOrEqualTo(String value) {
+            addCriterion("INVOICE_ID <=", value, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdLike(String value) {
+            addCriterion("INVOICE_ID like", value, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdNotLike(String value) {
+            addCriterion("INVOICE_ID not like", value, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdIn(List<String> values) {
+            addCriterion("INVOICE_ID in", values, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdNotIn(List<String> values) {
+            addCriterion("INVOICE_ID not in", values, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdBetween(String value1, String value2) {
+            addCriterion("INVOICE_ID between", value1, value2, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceIdNotBetween(String value1, String value2) {
+            addCriterion("INVOICE_ID not between", value1, value2, "invoiceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumIsNull() {
+            addCriterion("INVOICE_NUM is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumIsNotNull() {
+            addCriterion("INVOICE_NUM is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumEqualTo(String value) {
+            addCriterion("INVOICE_NUM =", value, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumNotEqualTo(String value) {
+            addCriterion("INVOICE_NUM <>", value, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumGreaterThan(String value) {
+            addCriterion("INVOICE_NUM >", value, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumGreaterThanOrEqualTo(String value) {
+            addCriterion("INVOICE_NUM >=", value, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumLessThan(String value) {
+            addCriterion("INVOICE_NUM <", value, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumLessThanOrEqualTo(String value) {
+            addCriterion("INVOICE_NUM <=", value, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumLike(String value) {
+            addCriterion("INVOICE_NUM like", value, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumNotLike(String value) {
+            addCriterion("INVOICE_NUM not like", value, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumIn(List<String> values) {
+            addCriterion("INVOICE_NUM in", values, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumNotIn(List<String> values) {
+            addCriterion("INVOICE_NUM not in", values, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumBetween(String value1, String value2) {
+            addCriterion("INVOICE_NUM between", value1, value2, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceNumNotBetween(String value1, String value2) {
+            addCriterion("INVOICE_NUM not between", value1, value2, "invoiceNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeIsNull() {
+            addCriterion("INVOICE_TIME is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeIsNotNull() {
+            addCriterion("INVOICE_TIME is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeEqualTo(Timestamp value) {
+            addCriterion("INVOICE_TIME =", value, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeNotEqualTo(Timestamp value) {
+            addCriterion("INVOICE_TIME <>", value, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeGreaterThan(Timestamp value) {
+            addCriterion("INVOICE_TIME >", value, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeGreaterThanOrEqualTo(Timestamp value) {
+            addCriterion("INVOICE_TIME >=", value, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeLessThan(Timestamp value) {
+            addCriterion("INVOICE_TIME <", value, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeLessThanOrEqualTo(Timestamp value) {
+            addCriterion("INVOICE_TIME <=", value, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeIn(List<Timestamp> values) {
+            addCriterion("INVOICE_TIME in", values, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeNotIn(List<Timestamp> values) {
+            addCriterion("INVOICE_TIME not in", values, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeBetween(Timestamp value1, Timestamp value2) {
+            addCriterion("INVOICE_TIME between", value1, value2, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceTimeNotBetween(Timestamp value1, Timestamp value2) {
+            addCriterion("INVOICE_TIME not between", value1, value2, "invoiceTime");
             return (Criteria) this;
         }
     }

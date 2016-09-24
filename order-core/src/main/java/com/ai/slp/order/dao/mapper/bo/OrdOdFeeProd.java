@@ -7,6 +7,8 @@ public class OrdOdFeeProd {
 
     private long paidFee;
 
+    private long jfAmount;
+
     public long getOrderId() {
         return orderId;
     }
@@ -29,5 +31,13 @@ public class OrdOdFeeProd {
 
     public void setPaidFee(long paidFee) {
         this.paidFee = paidFee;
+    }
+
+    public long getJfAmount() {
+        return jfAmount;
+    }
+
+    public void setJfAmount(long jfAmount) {
+        this.jfAmount = jfAmount;
     }
 }
