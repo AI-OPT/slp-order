@@ -29,5 +29,4 @@ public class DeliverGoodsSVImpl implements IDeliverGoodsSV {
 	    response.setResponseHeader(responseHeader);
 		return response;
 	}
-
 }
