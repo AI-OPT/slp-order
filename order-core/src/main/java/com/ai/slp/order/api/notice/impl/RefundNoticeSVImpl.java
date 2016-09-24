@@ -23,7 +23,7 @@ import com.changhong.upp.util.XBConvertor;
 public class RefundNoticeSVImpl implements IRefundNoticeSV {
 	@Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
-	@Resource
+	@Resource(name="key")
 	private Key key;
 	@Override
 	public BaseResponse getRefundNotice(String xmlbody, String signMsg, String header)

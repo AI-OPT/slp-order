@@ -19,12 +19,12 @@ import com.ai.slp.order.util.KeyType;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.changhong.upp.crypto.rsa.RSACoder;
 import com.changhong.upp.util.XBConvertor;
-@Service(validation="true")
+@Service
 @Component
 public class PayNoticeSVImpl implements IPayNoticeSV {
 	@Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
-	@Resource
+	@Resource(name="key")
 	private Key key;
 	@Override
 	public BaseResponse getPayNotice(String xmlbody, String signMsg, String header)
@@ -35,7 +35,7 @@ public class PayNoticeSVImpl implements IPayNoticeSV {
 			//验签
 				boolean flag = RSACoder.verify(key.getKey(KeyType.PUBLIC_KEY), xmlbody, signMsg);
 				if (!flag) {
-					 responseHeader = new ResponseHeader(true,
+					 responseHeader = new ResponseHeader(false,
 							 OrdersConstants.Notice.SIGN_CHECK_FAILD, "验签失败"); 
 				}
 				com.changhong.upp.business.entity.upp_103_001_01.RespInfo receive = (com.changhong.upp.business.entity.upp_103_001_01.RespInfo) XBConvertor.toBean(xmlbody, com.changhong.upp.business.entity.upp_103_001_01.RespInfo.class);
@@ -52,16 +52,16 @@ public class PayNoticeSVImpl implements IPayNoticeSV {
 	            		  responseHeader = new ResponseHeader(true,
 	    	            		  OrdersConstants.ORDER_SUCCESS, "支付成功");
 	            	 }else if(state.equals(OrdersConstants.NoticeState.PAID_FAILD_STATE)){
-	            		 responseHeader = new ResponseHeader(true,
+	            		 responseHeader = new ResponseHeader(false,
 	            				 OrdersConstants.Notice.NOTICE_FAILD_STATE, "支付失败");
 	            	 }else if(state.equals(OrdersConstants.NoticeState.PAING_STATE)){
-	            		 responseHeader = new ResponseHeader(true,
+	            		 responseHeader = new ResponseHeader(false,
 		   	            		  OrdersConstants.Notice.NOTICE_PAING_STATE, "支付中"); 
 	            	 }else if(state.equals(OrdersConstants.NoticeState.UN_PAID_STATE)){
-	            		 responseHeader = new ResponseHeader(true,
+	            		 responseHeader = new ResponseHeader(false,
 		   	            		  OrdersConstants.Notice.NOTICE_UNPAID_STATE, "待支付");  
 	            	 }else{
-	            		 responseHeader = new ResponseHeader(true,
+	            		 responseHeader = new ResponseHeader(false,
 	            				 OrdersConstants.Notice.NOTICE_FAILD_STATE, "支付失败"); 
 	            	 }
 	             }

@@ -43,6 +43,10 @@ public class StasticParentOrderVo extends BaseInfo {
 	 */
 	private String userTel;
 	/**
+	 * 页面展示状态
+	 */
+	private String stateName;
+	/**
 	 * 子订单信息
 	 */
 	private List<StasticOrderVo> childOrderList;
@@ -111,20 +115,28 @@ public class StasticParentOrderVo extends BaseInfo {
 		this.supplierName = supplierName;
 	}
 
-	public List<StasticOrderVo> getChildOrderList() {
-		return childOrderList;
-	}
-
-	public void setChildOrderList(List<StasticOrderVo> childOrderList) {
-		this.childOrderList = childOrderList;
-	}
-
 	public String getUserTel() {
 		return userTel;
 	}
 
 	public void setUserTel(String userTel) {
 		this.userTel = userTel;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public List<StasticOrderVo> getChildOrderList() {
+		return childOrderList;
+	}
+
+	public void setChildOrderList(List<StasticOrderVo> childOrderList) {
+		this.childOrderList = childOrderList;
 	}
 
 }
