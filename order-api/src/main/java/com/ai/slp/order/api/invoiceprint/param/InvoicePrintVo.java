@@ -2,86 +2,99 @@ package com.ai.slp.order.api.invoiceprint.param;
 
 import java.io.Serializable;
 
+
 public class InvoicePrintVo implements Serializable{
-	
+
 	private static final long serialVersionUID = 1L;
 	
-	 /**
-     * 商户编号
-     */
-	private String skuId;
+	/**
+	 * 订单号
+	 */
+	private long orderId;
 
 	/**
-     * 商品名称
-     */
-    private String prodName;
-    
-    /**
-     * 规格
-     */
-    private String extendInfo;
-    
-    /**
-     * 价格
-     */
-    private long salePrice;
-    
-    /**
-     * 数量
-     */
-    private long buySum;
-    
-    /**
-     * 合并id
-     */
-    private long horOrderId;
-    
-	public String getSkuId() {
-		return skuId;
-	}
-
-	public void setSkuId(String skuId) {
-		this.skuId = skuId;
-	}
-
-	public String getProdName() {
-		return prodName;
-	}
-
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
-	}
-
-	public String getExtendInfo() {
-		return extendInfo;
-	}
-
-	public void setExtendInfo(String extendInfo) {
-		this.extendInfo = extendInfo;
-	}
-
-	public long getBuySum() {
-		return buySum;
-	}
-
-	public void setBuySum(long buySum) {
-		this.buySum = buySum;
-	}
-
-	public long getSalePrice() {
-		return salePrice;
-	}
-
-	public void setSalePrice(long salePrice) {
-		this.salePrice = salePrice;
-	}
-
-	public long getHorOrderId() {
-		return horOrderId;
-	}
-
-	public void setHorOrderId(long horOrderId) {
-		this.horOrderId = horOrderId;
-	}
+	 * 发票类目
+	 */
+	private String invoiceContent;
 	
+	/**
+	 * 发票抬头
+	 */
+	private String invoiceTitle;
+	
+	/**
+	 * 发票类型
+	 */
+	private String invoiceType;
+	
+	/**
+	 * 发票打印状态
+	 */
+	private String invoiceStatus;
+	
+	/**
+	 * 税率
+	 */
+	private String taxRate;
+	
+	/**
+	 * 税额
+	 */
+	private long taxAmount;
+
+	public long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(long orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getInvoiceContent() {
+		return invoiceContent;
+	}
+
+	public void setInvoiceContent(String invoiceContent) {
+		this.invoiceContent = invoiceContent;
+	}
+
+	public String getInvoiceTitle() {
+		return invoiceTitle;
+	}
+
+	public void setInvoiceTitle(String invoiceTitle) {
+		this.invoiceTitle = invoiceTitle;
+	}
+
+	public String getInvoiceType() {
+		return invoiceType;
+	}
+
+	public void setInvoiceType(String invoiceType) {
+		this.invoiceType = invoiceType;
+	}
+
+	public String getInvoiceStatus() {
+		return invoiceStatus;
+	}
+
+	public void setInvoiceStatus(String invoiceStatus) {
+		this.invoiceStatus = invoiceStatus;
+	}
+
+	public String getTaxRate() {
+		return taxRate;
+	}
+
+	public void setTaxRate(String taxRate) {
+		this.taxRate = taxRate;
+	}
+
+	public long getTaxAmount() {
+		return taxAmount;
+	}
+
+	public void setTaxAmount(long taxAmount) {
+		this.taxAmount = taxAmount;
+	}
 }
