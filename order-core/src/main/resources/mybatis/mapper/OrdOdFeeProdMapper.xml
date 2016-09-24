@@ -5,6 +5,7 @@
     <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
     <result column="PAY_STYLE" property="payStyle" jdbcType="VARCHAR" />
     <result column="PAID_FEE" property="paidFee" jdbcType="BIGINT" />
+    <result column="JF_AMOUNT" property="jfAmount" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -65,7 +66,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    ORDER_ID, PAY_STYLE, PAID_FEE
+    ORDER_ID, PAY_STYLE, PAID_FEE, JF_AMOUNT
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeProdCriteria" >
     select
@@ -92,10 +93,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd" >
-    insert into ord_od_fee_prod (ORDER_ID, PAY_STYLE, PAID_FEE
-      )
-    values (#{orderId,jdbcType=BIGINT}, #{payStyle,jdbcType=VARCHAR}, #{paidFee,jdbcType=BIGINT}
-      )
+    insert into ord_od_fee_prod (ORDER_ID, PAY_STYLE, PAID_FEE, 
+      JF_AMOUNT)
+    values (#{orderId,jdbcType=BIGINT}, #{payStyle,jdbcType=VARCHAR}, #{paidFee,jdbcType=BIGINT}, 
+      #{jfAmount,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd" >
     insert into ord_od_fee_prod
@@ -105,6 +106,7 @@
         PAY_STYLE,
       </if>
       PAID_FEE,
+      JF_AMOUNT,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{orderId,jdbcType=BIGINT},
@@ -112,6 +114,7 @@
         #{payStyle,jdbcType=VARCHAR},
       </if>
       #{paidFee,jdbcType=BIGINT},
+      #{jfAmount,jdbcType=BIGINT},
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeProdCriteria" resultType="java.lang.Integer" >
@@ -132,6 +135,9 @@
       <if test="record.paidFee != null" >
         PAID_FEE = #{record.paidFee,jdbcType=BIGINT},
       </if>
+      <if test="record.jfAmount != null" >
+        JF_AMOUNT = #{record.jfAmount,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -141,7 +147,8 @@
     update ord_od_fee_prod
     set ORDER_ID = #{record.orderId,jdbcType=BIGINT},
       PAY_STYLE = #{record.payStyle,jdbcType=VARCHAR},
-      PAID_FEE = #{record.paidFee,jdbcType=BIGINT}
+      PAID_FEE = #{record.paidFee,jdbcType=BIGINT},
+      JF_AMOUNT = #{record.jfAmount,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>

@@ -7,6 +7,10 @@
     <result column="INVOICE_TYPE" property="invoiceType" jdbcType="VARCHAR" />
     <result column="INVOICE_TITLE" property="invoiceTitle" jdbcType="VARCHAR" />
     <result column="INVOICE_CONTENT" property="invoiceContent" jdbcType="VARCHAR" />
+    <result column="INVOICE_STATUS" property="invoiceStatus" jdbcType="VARCHAR" />
+    <result column="INVOICE_ID" property="invoiceId" jdbcType="VARCHAR" />
+    <result column="INVOICE_NUM" property="invoiceNum" jdbcType="VARCHAR" />
+    <result column="INVOICE_TIME" property="invoiceTime" jdbcType="DATE" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -67,7 +71,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    ORDER_ID, TENANT_ID, INVOICE_TYPE, INVOICE_TITLE, INVOICE_CONTENT
+    ORDER_ID, TENANT_ID, INVOICE_TYPE, INVOICE_TITLE, INVOICE_CONTENT, INVOICE_STATUS, 
+    INVOICE_ID, INVOICE_NUM, INVOICE_TIME
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria" >
     select
@@ -105,9 +110,13 @@
   </delete>
   <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdInvoice" >
     insert into ord_od_invoice (ORDER_ID, TENANT_ID, INVOICE_TYPE, 
-      INVOICE_TITLE, INVOICE_CONTENT)
+      INVOICE_TITLE, INVOICE_CONTENT, INVOICE_STATUS, 
+      INVOICE_ID, INVOICE_NUM, INVOICE_TIME
+      )
     values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{invoiceType,jdbcType=VARCHAR}, 
-      #{invoiceTitle,jdbcType=VARCHAR}, #{invoiceContent,jdbcType=VARCHAR})
+      #{invoiceTitle,jdbcType=VARCHAR}, #{invoiceContent,jdbcType=VARCHAR}, #{invoiceStatus,jdbcType=VARCHAR}, 
+      #{invoiceId,jdbcType=VARCHAR}, #{invoiceNum,jdbcType=VARCHAR}, #{invoiceTime,jdbcType=DATE}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdInvoice" >
     insert into ord_od_invoice
@@ -125,6 +134,18 @@
       <if test="invoiceContent != null" >
         INVOICE_CONTENT,
       </if>
+      <if test="invoiceStatus != null" >
+        INVOICE_STATUS,
+      </if>
+      <if test="invoiceId != null" >
+        INVOICE_ID,
+      </if>
+      <if test="invoiceNum != null" >
+        INVOICE_NUM,
+      </if>
+      <if test="invoiceTime != null" >
+        INVOICE_TIME,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{orderId,jdbcType=BIGINT},
@@ -139,6 +160,18 @@
       </if>
       <if test="invoiceContent != null" >
         #{invoiceContent,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceStatus != null" >
+        #{invoiceStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceId != null" >
+        #{invoiceId,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceNum != null" >
+        #{invoiceNum,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceTime != null" >
+        #{invoiceTime,jdbcType=DATE},
       </if>
     </trim>
   </insert>
@@ -166,6 +199,18 @@
       <if test="record.invoiceContent != null" >
         INVOICE_CONTENT = #{record.invoiceContent,jdbcType=VARCHAR},
       </if>
+      <if test="record.invoiceStatus != null" >
+        INVOICE_STATUS = #{record.invoiceStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.invoiceId != null" >
+        INVOICE_ID = #{record.invoiceId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.invoiceNum != null" >
+        INVOICE_NUM = #{record.invoiceNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.invoiceTime != null" >
+        INVOICE_TIME = #{record.invoiceTime,jdbcType=DATE},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -177,7 +222,11 @@
       TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
       INVOICE_TYPE = #{record.invoiceType,jdbcType=VARCHAR},
       INVOICE_TITLE = #{record.invoiceTitle,jdbcType=VARCHAR},
-      INVOICE_CONTENT = #{record.invoiceContent,jdbcType=VARCHAR}
+      INVOICE_CONTENT = #{record.invoiceContent,jdbcType=VARCHAR},
+      INVOICE_STATUS = #{record.invoiceStatus,jdbcType=VARCHAR},
+      INVOICE_ID = #{record.invoiceId,jdbcType=VARCHAR},
+      INVOICE_NUM = #{record.invoiceNum,jdbcType=VARCHAR},
+      INVOICE_TIME = #{record.invoiceTime,jdbcType=DATE}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -197,6 +246,18 @@
       <if test="invoiceContent != null" >
         INVOICE_CONTENT = #{invoiceContent,jdbcType=VARCHAR},
       </if>
+      <if test="invoiceStatus != null" >
+        INVOICE_STATUS = #{invoiceStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceId != null" >
+        INVOICE_ID = #{invoiceId,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceNum != null" >
+        INVOICE_NUM = #{invoiceNum,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceTime != null" >
+        INVOICE_TIME = #{invoiceTime,jdbcType=DATE},
+      </if>
     </set>
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
@@ -205,7 +266,11 @@
     set TENANT_ID = #{tenantId,jdbcType=VARCHAR},
       INVOICE_TYPE = #{invoiceType,jdbcType=VARCHAR},
       INVOICE_TITLE = #{invoiceTitle,jdbcType=VARCHAR},
-      INVOICE_CONTENT = #{invoiceContent,jdbcType=VARCHAR}
+      INVOICE_CONTENT = #{invoiceContent,jdbcType=VARCHAR},
+      INVOICE_STATUS = #{invoiceStatus,jdbcType=VARCHAR},
+      INVOICE_ID = #{invoiceId,jdbcType=VARCHAR},
+      INVOICE_NUM = #{invoiceNum,jdbcType=VARCHAR},
+      INVOICE_TIME = #{invoiceTime,jdbcType=DATE}
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>
