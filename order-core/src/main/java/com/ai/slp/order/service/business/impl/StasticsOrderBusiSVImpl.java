@@ -118,6 +118,7 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 	        			childVo.setStateName(stateOrder.getColumnDesc());
 	        		}
 	        		childVo.setState(order.getState());
+	        		childVo.setOrderId(order.getOrderId());
 	        		//将父级订单号存入子订单中
 	        		childVo.setParentOrderId(order.getOrderId());
 	        		//将父商品信息存入子订单中
