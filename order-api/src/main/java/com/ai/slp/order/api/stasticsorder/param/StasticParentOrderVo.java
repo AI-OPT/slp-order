@@ -47,12 +47,6 @@ public class StasticParentOrderVo extends BaseInfo {
 	 */
 	private String stateName;
 	/**
-	 * 商品信息
-	 */
-
-	private List<StasticsProdVo> proList;
-
-	/**
 	 * 子订单信息
 	 */
 	private List<StasticOrderVo> childOrderList;
@@ -119,14 +113,6 @@ public class StasticParentOrderVo extends BaseInfo {
 
 	public void setSupplierName(String supplierName) {
 		this.supplierName = supplierName;
-	}
-
-	public List<StasticsProdVo> getProList() {
-		return proList;
-	}
-
-	public void setProList(List<StasticsProdVo> proList) {
-		this.proList = proList;
 	}
 
 	public String getUserTel() {
