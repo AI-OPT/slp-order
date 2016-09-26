@@ -47,19 +47,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 		//获取父订单信息
 		PageInfo<StasticParentOrderVo> pageResult = new PageInfo<StasticParentOrderVo>();
 		PageInfo<OrdOrder> pageInfo = iStasticsOrderAtomSV.getStasticOrdPage(request);
-		List<OrdOrder> parentOrderList = new ArrayList<OrdOrder>();
-		List<OrdOrder> orderList = pageInfo.getResult();
+		List<OrdOrder> parentOrderList = pageInfo.getResult();
 		List<OrdOrder> prodPOrderList = new ArrayList<OrdOrder>();
-		//获取父订单
-		if(!CollectionUtil.isEmpty(orderList)){
-			for(OrdOrder ord: orderList){
-				if(!StringUtil.isBlank(ord.getSubFlag())){
-					if(OrdersConstants.OrdOrder.SubFlag.NO.equals(ord.getSubFlag())){
-						parentOrderList.add(ord);
-					}
-				}
-			}
-		}
 		//公共的父级订单
 		List<OrdOrder> commonOrderList = new ArrayList<OrdOrder>();
 		//返回的订单

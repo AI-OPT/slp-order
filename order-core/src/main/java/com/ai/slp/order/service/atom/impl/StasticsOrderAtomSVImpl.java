@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.ai.opt.base.vo.PageInfo;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper;
@@ -46,6 +47,8 @@ public class StasticsOrderAtomSVImpl implements IStasticsOrderAtomSV {
 		if(!StringUtil.isBlank(request.getSupplierId())){
 			param.andSupplierIdEqualTo(request.getSupplierId());
 		}
+		//父订单标志
+		param.andSubFlagEqualTo(OrdersConstants.OrdOrder.SubFlag.NO);
 		// 统计查询条目数
 		int count = ordOrderMapper.countByExample(example);
 
