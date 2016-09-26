@@ -35,12 +35,17 @@ public class InvoicePrintVo implements Serializable{
 	/**
 	 * 税率
 	 */
-	private String taxRate;
+	private long taxRate;
 	
 	/**
 	 * 税额
 	 */
 	private long taxAmount;
+	
+	/**
+	 * 发票金额
+	 */
+	private long invoiceAmount;
 
 	public long getOrderId() {
 		return orderId;
@@ -82,11 +87,11 @@ public class InvoicePrintVo implements Serializable{
 		this.invoiceStatus = invoiceStatus;
 	}
 
-	public String getTaxRate() {
+	public long getTaxRate() {
 		return taxRate;
 	}
 
-	public void setTaxRate(String taxRate) {
+	public void setTaxRate(long taxRate) {
 		this.taxRate = taxRate;
 	}
 
@@ -96,5 +101,13 @@ public class InvoicePrintVo implements Serializable{
 
 	public void setTaxAmount(long taxAmount) {
 		this.taxAmount = taxAmount;
+	}
+
+	public long getInvoiceAmount() {
+		return invoiceAmount;
+	}
+
+	public void setInvoiceAmount(long invoiceAmount) {
+		this.invoiceAmount = invoiceAmount;
 	}
 }
