@@ -142,6 +142,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 					printVo.setInvoiceType(ordOdInvoice.getInvoiceType());
 					printVo.setTaxRate(17l);//17  查看该订单下的商品税率
 					printVo.setTaxAmount((invoiceAmount/100)*17);//税率和金额
+					printVo.setInvoiceAmount(invoiceAmount);
 					invoicePrintVos.add(printVo);
 				}
 			}
