@@ -108,10 +108,12 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	        example.setOrderByClause("INVOICE_TIME DESC");//顺序号正序
 	        OrdOdInvoiceCriteria.Criteria criteria = example.createCriteria();
 	        criteria.andTenantIdEqualTo(tenantId);
+	        if (orderId!=null)
+	            criteria.andOrderIdEqualTo(orderId);
 	        if (StringUtils.isNotBlank(invoiceTitle))
-	            criteria.andInvoiceTitleLike("%"+invoiceStatus+"%");
+	            criteria.andInvoiceTitleLike("%"+invoiceTitle+"%");
 	        if (StringUtils.isNotBlank(invoiceStatus))
-	        	criteria.andInvoiceTitleEqualTo(invoiceStatus);
+	        	criteria.andInvoiceStatusEqualTo(invoiceStatus);
 	        PageInfo<InvoicePrintVo> pageInfo = new PageInfo<InvoicePrintVo>();
 	        //设置总数
 	        pageInfo.setCount(ordOdInvoiceAtomSV.countByExample(example));
@@ -127,20 +129,19 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 						throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 								"商品信息不存在[订单id:"+ordOdInvoice.getOrderId()+"]");
 					}
-					long taxAmount=0;
+					long invoiceAmount=0;
 					//计算发票金额
 					for (OrdOdProd ordOdProd : prods) {
 						//TODO 通过商品信息计算税率
-						
-						taxAmount=ordOdProd.getAdjustFee()+taxAmount;
+						invoiceAmount=ordOdProd.getAdjustFee()+invoiceAmount;
 					}
 					printVo.setOrderId(ordOdInvoice.getOrderId());
 					printVo.setInvoiceContent(ordOdInvoice.getInvoiceContent());
 					printVo.setInvoiceStatus(ordOdInvoice.getInvoiceStatus());
 					printVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
 					printVo.setInvoiceType(ordOdInvoice.getInvoiceType());
-					printVo.setTaxRate("");//17%  查看该订单下的商品税率
-					printVo.setTaxAmount(taxAmount);//税率和金额
+					printVo.setTaxRate(17l);//17  查看该订单下的商品税率
+					printVo.setTaxAmount((invoiceAmount/100)*17);//税率和金额
 					invoicePrintVos.add(printVo);
 				}
 			}
