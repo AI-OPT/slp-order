@@ -48,9 +48,9 @@ public interface IInvoicePrintSV {
 	 * @author caofz
 	 * @ApiDocMethod
 	 * @ApiCode ORDER_INVOICE_002
-	 * @RestRelativeURL invoice/queryList
+	 * @RestRelativeURL invoice/updateInvoiceStatus
 	 */
 	@POST
-	@Path("/queryList")
+	@Path("/updateInvoiceStatus")
 	public BaseResponse updateInvoiceStatus(InvoiceNoticeRequest request) throws BusinessException,SystemException;
 }
