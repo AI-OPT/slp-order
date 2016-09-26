@@ -108,7 +108,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	        example.setOrderByClause("INVOICE_TIME DESC");//顺序号正序
 	        OrdOdInvoiceCriteria.Criteria criteria = example.createCriteria();
 	        criteria.andTenantIdEqualTo(tenantId);
-	        if (orderId!=null)
+	        if (null!=orderId||0!=orderId)
 	            criteria.andOrderIdEqualTo(orderId);
 	        if (StringUtils.isNotBlank(invoiceTitle))
 	            criteria.andInvoiceTitleLike("%"+invoiceTitle+"%");
