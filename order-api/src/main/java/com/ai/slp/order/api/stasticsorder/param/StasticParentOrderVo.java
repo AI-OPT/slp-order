@@ -27,6 +27,11 @@ public class StasticParentOrderVo extends BaseInfo {
 	 */
 	private String userId;
 	/**
+	 * 用户名称
+	 */
+	private String userName;
+
+	/**
 	 * 收货人手机号
 	 */
 	private String contactTel;
@@ -137,6 +142,14 @@ public class StasticParentOrderVo extends BaseInfo {
 
 	public void setChildOrderList(List<StasticOrderVo> childOrderList) {
 		this.childOrderList = childOrderList;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }
