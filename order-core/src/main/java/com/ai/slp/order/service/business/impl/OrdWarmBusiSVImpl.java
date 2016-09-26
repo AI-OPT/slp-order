@@ -25,9 +25,11 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdWarmAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdWarmBusiSV;
+import com.ai.slp.order.util.ChUserUtil;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
+import com.alibaba.fastjson.JSONObject;
 @Service
 @Transactional
 public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
@@ -54,6 +56,13 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				OrderWarmVo orderVo = new OrderWarmVo();
 				List<ProductInfo> prodinfoList = new ArrayList<ProductInfo>();
 				BeanUtils.copyProperties(orderVo, ord);
+				//获取绑定手机号
+				JSONObject dataJson = ChUserUtil.getUserInfo(ord.getUserId());
+		        Object phone =dataJson.get("phone");
+		        orderVo.setUserTel(phone==null?null:phone.toString());
+				//获取用户名
+        		Object userName =dataJson.get("userName");
+        		orderVo.setUserName(userName==null?null:userName.toString()); 
 				//获取商品信息
 				if(orderVo.getOrderId()!=null){
 					List<OrdOdProd>  proList = iOrdOdProdAtomSV.selectByOrd(ord.getTenantId(), ord.getOrderId());
@@ -132,6 +141,13 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				orderWarmVo.setLogisticsType(logistics.getLogisticsType());
 				orderWarmVo.setContactName(logistics.getContactName());
 			}
+			//获取绑定手机号
+			JSONObject dataJson = ChUserUtil.getUserInfo(orderWarmVo.getUserId());
+	        Object phone =dataJson.get("phone");
+	        orderWarmVo.setUserTel(phone==null?null:phone.toString());
+			//获取用户名
+    		Object userName =dataJson.get("userName");
+    		orderWarmVo.setUserName(userName==null?null:userName.toString()); 
 			if(!CollectionUtil.isEmpty(prodinfoList)){
 				orderWarmVo.setProdInfo(prodinfoList);
 			}

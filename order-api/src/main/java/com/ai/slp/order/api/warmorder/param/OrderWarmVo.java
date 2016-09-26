@@ -21,6 +21,10 @@ public class OrderWarmVo extends BaseInfo {
 	 */
 	private String userId;
 	/**
+	 * 用户名称
+	 */
+	private String userName;
+	/**
 	 * 收货人手机
 	 */
 	private String contactTel;
@@ -249,6 +253,14 @@ public class OrderWarmVo extends BaseInfo {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }
