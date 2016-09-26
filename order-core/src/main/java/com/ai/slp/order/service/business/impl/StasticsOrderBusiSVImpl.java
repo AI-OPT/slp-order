@@ -47,8 +47,20 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 		//获取父订单信息
 		PageInfo<StasticParentOrderVo> pageResult = new PageInfo<StasticParentOrderVo>();
 		PageInfo<OrdOrder> pageInfo = iStasticsOrderAtomSV.getStasticOrdPage(request);
-		List<OrdOrder> parentOrderList = pageInfo.getResult();
+		List<OrdOrder> parentOrderList = new ArrayList<OrdOrder>();
+		List<OrdOrder> orderList = pageInfo.getResult();
 		List<OrdOrder> prodPOrderList = new ArrayList<OrdOrder>();
+		//获取父订单
+		if(!CollectionUtil.isEmpty(orderList)){
+			for(OrdOrder ord: orderList){
+				if(!StringUtil.isBlank(ord.getSubFlag())){
+					OrdOrder order = new OrdOrder();
+					if(OrdersConstants.OrdOrder.SubFlag.NO.equals(ord.getSubFlag())){
+						parentOrderList.add(order);
+					}
+				}
+			}
+		}
 		//公共的父级订单
 		List<OrdOrder> commonOrderList = new ArrayList<OrdOrder>();
 		//返回的订单
@@ -69,11 +81,15 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				}
 			}
 			//如果商品查询出来的订单部位空空，那么取父订单集合与商品订单集合的余
-			commonOrderList = (List<OrdOrder>)CollectionUtils.intersection(parentOrderList, prodPOrderList);
+			if(!CollectionUtil.isEmpty(parentOrderList)){
+				commonOrderList = (List<OrdOrder>)CollectionUtils.intersection(parentOrderList, prodPOrderList);
+			}else{
+				commonOrderList = prodPOrderList;
+			}
 			pageResult.setCount(commonOrderList.size());
 		}else{
-			commonOrderList = pageInfo.getResult();
-			pageResult.setCount(pageInfo.getCount());
+			commonOrderList = parentOrderList;
+			pageResult.setCount(parentOrderList.size());
 		}
 		if(!CollectionUtil.isEmpty(commonOrderList)){
 			for(OrdOrder order:commonOrderList){
