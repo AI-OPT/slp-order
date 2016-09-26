@@ -160,20 +160,16 @@ public class OrdBaseInfo implements Serializable {
 		this.ipAddress = ipAddress;
 	}
 
-	public Long getAcctId() {
-		return acctId;
-	}
-
-	public void setAcctId(Long acctId) {
-		this.acctId = acctId;
-	}
-
 	public String getDeliveryFlag() {
 		return deliveryFlag;
 	}
 
 	public void setDeliveryFlag(String deliveryFlag) {
 		this.deliveryFlag = deliveryFlag;
+	}
+
+	public long getAcctId() {
+		return acctId;
 	}
 
 	public void setAcctId(long acctId) {

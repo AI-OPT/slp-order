@@ -7,6 +7,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
@@ -19,25 +21,22 @@ import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintResponse;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintVo;
-import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.business.interfaces.IInvoicePrintBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 
+@Service
+@Transactional
 public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	
 	private static final Logger logger=LoggerFactory.getLogger(InvoicePrintBusiSVImpl.class);
 	
 	@Autowired
 	private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
-	
-	@Autowired
-	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
 	
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
@@ -54,7 +53,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		Integer pageNo = request.getPageNo();
 		Integer pageSize = request.getPageSize();
 		if (pageNo==null||(pageNo!=null && pageNo<1)) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码不能为空或者小于1");
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码不能为空或者不能小于1");
 		}
 		if (pageSize==null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码大小不能为空");
@@ -62,7 +61,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
 		InvoicePrintResponse response = new InvoicePrintResponse();
 		/* 发票列表信息*/
-		PageInfo<InvoicePrintVo> pageInfo = this.queryForPage(pageNo, pageSize, request.getOrderId(), 
+		PageInfo<InvoicePrintVo> pageInfo = queryForPage(pageNo, pageSize, request.getOrderId(), 
 				request.getTenantId(), request.getInvoiceTitle(), request.getInvoiceStatus());
 		response.setPageInfo(pageInfo);
 		return response;
@@ -102,7 +101,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	}
 	
 	
-	 private PageInfo<InvoicePrintVo> queryForPage(Integer pageNo,Integer pageSize,long orderId,
+	 private PageInfo<InvoicePrintVo> queryForPage(Integer pageNo,Integer pageSize,Long orderId,
 	            String tenantId, String invoiceTitle, String invoiceStatus) {
 		 	OrdOdInvoiceCriteria example = new OrdOdInvoiceCriteria();
 		 	List<InvoicePrintVo> invoicePrintVos=new ArrayList<InvoicePrintVo>();
@@ -132,11 +131,9 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 					//计算发票金额
 					for (OrdOdProd ordOdProd : prods) {
 						//TODO 通过商品信息计算税率
+						
 						taxAmount=ordOdProd.getAdjustFee()+taxAmount;
 					}
-					OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(ordOdInvoice.getTenantId(), 
-							ordOdInvoice.getOrderId());
-					
 					printVo.setOrderId(ordOdInvoice.getOrderId());
 					printVo.setInvoiceContent(ordOdInvoice.getInvoiceContent());
 					printVo.setInvoiceStatus(ordOdInvoice.getInvoiceStatus());
