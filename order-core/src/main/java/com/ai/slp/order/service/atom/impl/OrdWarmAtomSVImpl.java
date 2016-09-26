@@ -38,7 +38,7 @@ public class OrdWarmAtomSVImpl implements IOrdWarmAtomSV {
         //预警订单查询的是待支付状态的订单
         param.andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_PAY);
         //预警条件IF_WARNING
-        param.andIfWarningEqualTo(OrdersConstants.IfWarning.result.WARING);
+        param.andIfWarningEqualTo(OrdersConstants.IfWarning.result.NO_WARING);
         //统计查询条目数
         int count = ordOrderMapper.countByExample(example);
         
