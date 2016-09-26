@@ -54,9 +54,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 		if(!CollectionUtil.isEmpty(orderList)){
 			for(OrdOrder ord: orderList){
 				if(!StringUtil.isBlank(ord.getSubFlag())){
-					OrdOrder order = new OrdOrder();
 					if(OrdersConstants.OrdOrder.SubFlag.NO.equals(ord.getSubFlag())){
-						parentOrderList.add(order);
+						parentOrderList.add(ord);
 					}
 				}
 			}
