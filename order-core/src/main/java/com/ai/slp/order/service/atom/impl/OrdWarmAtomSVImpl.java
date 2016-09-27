@@ -44,7 +44,7 @@ public class OrdWarmAtomSVImpl implements IOrdWarmAtomSV {
         
         example.setLimitStart((request.getPageNo()-1)*request.getPageSize());
         example.setLimitEnd(request.getPageSize());
-        
+        example.setOrderByClause("ORDER_TIME desc");
         PageInfo<OrdOrder> warmPage = new PageInfo<OrdOrder>();
         warmPage.setPageSize(request.getPageSize());
         warmPage.setPageNo(request.getPageNo());
