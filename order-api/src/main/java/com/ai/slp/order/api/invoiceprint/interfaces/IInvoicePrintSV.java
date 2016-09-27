@@ -32,7 +32,7 @@ public interface IInvoicePrintSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode ORDER_INVOICE_001
+	 * @ApiCode INVOICE_QUERY_001
 	 * @RestRelativeURL invoice/queryList
 	 */
 	@POST
@@ -47,7 +47,7 @@ public interface IInvoicePrintSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode ORDER_INVOICE_002
+	 * @ApiCode INVOICE_UPDATE_001
 	 * @RestRelativeURL invoice/updateInvoiceStatus
 	 */
 	@POST
