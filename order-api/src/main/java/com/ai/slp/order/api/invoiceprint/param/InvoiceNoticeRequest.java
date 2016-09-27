@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.invoiceprint.param;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class InvoiceNoticeRequest implements Serializable{
 
@@ -9,7 +10,7 @@ public class InvoiceNoticeRequest implements Serializable{
 	/**
 	 * 公司代码(销售方的公司代码)
 	 */
-	private String companyId;
+	private Long companyId;
 	
 	/**
 	 * 凭证号(子订单号)
@@ -34,7 +35,7 @@ public class InvoiceNoticeRequest implements Serializable{
 	/**
 	 * 打印日期
 	 */
-	private String invoiceTime;
+	private Date invoiceTime;
 	
 	/**
 	 * 发票总额
@@ -46,11 +47,11 @@ public class InvoiceNoticeRequest implements Serializable{
 	 */
 	private String invoiceStatus;
 
-	public String getCompanyId() {
+	public Long getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(String companyId) {
+	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
 
@@ -86,11 +87,11 @@ public class InvoiceNoticeRequest implements Serializable{
 		this.invoiceNum = invoiceNum;
 	}
 
-	public String getInvoiceTime() {
+	public Date getInvoiceTime() {
 		return invoiceTime;
 	}
 
-	public void setInvoiceTime(String invoiceTime) {
+	public void setInvoiceTime(Date invoiceTime) {
 		this.invoiceTime = invoiceTime;
 	}
 
