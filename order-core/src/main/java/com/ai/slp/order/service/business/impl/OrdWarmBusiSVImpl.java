@@ -70,26 +70,8 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 						for(OrdOdProd prod:proList){
 							ProductInfo prodVo = new ProductInfo();
 							BeanUtils.copyProperties(prodVo, prod);
-							//获取图片信息
-							ProductImage productImage = this.getProductImage(prod.getTenantId(), prod.getSkuId());
-							prodVo.setProductImage(productImage);
 							prodinfoList.add(prodVo);
 						}
-					}
-					/*//获取优惠信息
-					OrdOdFeeProd jfProd = iOrdOdFeeProdAtomSV.selectByOrdAndStyle(orderVo.getOrderId(), OrdersConstants.OrdOdFeeProd.PayStyle.JF);
-					OrdOdFeeProd couponProd = iOrdOdFeeProdAtomSV.selectByOrdAndStyle(orderVo.getOrderId(), OrdersConstants.OrdOdFeeProd.PayStyle.COUPON);
-					if(jfProd!=null){
-						orderVo.setJfDeduction(jfProd.getPaidFee());
-					}
-					if(couponProd!=null){
-						orderVo.setCouponFee(couponProd.getPaidFee());
-					}*/
-					//获取费用信息
-					OrdOdFeeTotal fee = iOrdOdFeeTotalAtomSV.selectByOrderId(orderVo.getTenantId(), orderVo.getOrderId());
-					if(fee!=null){
-						orderVo.setDiscountFee(fee.getDiscountFee());
-						orderVo.setPaidFee(fee.getPaidFee());
 					}
 					//获取收货人信息
 					OrdOdLogistics logistics = iOrdOdLogisticsAtomSV.selectByOrd(orderVo.getTenantId(), orderVo.getOrderId());
