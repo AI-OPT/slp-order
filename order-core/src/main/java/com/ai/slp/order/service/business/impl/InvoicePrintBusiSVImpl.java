@@ -1,6 +1,7 @@
 package com.ai.slp.order.service.business.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -75,7 +76,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		if (request == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
 		}
-		if(StringUtil.isBlank(request.getCompanyId())) {
+		if(null==request.getCompanyId()) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "公司代码(销售方)不能为空");
 		}
 		if(StringUtil.isBlank(request.getInvoiceId())) {
@@ -84,18 +85,37 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		if(StringUtil.isBlank(request.getInvoiceNum())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票号码不能为空");
 		}
-		boolean validDate = DateUtil.isValidDate(request.getInvoiceTime(), "yyyy-MM-dd");
-		if(validDate) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印日期不能为空或者格式不正确");
+		if(request.getInvoiceTime()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印日期不能为空");
 		}
 		if(StringUtil.isBlank(request.getInvoiceStatus())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票状态不能为空");
 		}
-		Long orderId = request.getOrderId();
+		long orderId = request.getOrderId();
+		List<OrdOdProd> prods = ordOdProdAtomSV.selectByOrd(null, orderId);
+		if(CollectionUtil.isEmpty(prods)) {
+			logger.error("商品信息不存在[订单id:"+orderId+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"商品信息不存在[订单id:"+orderId+"]");
+		}
+		long invoiceAmount=0;
+		long supplierId =0;
+		//计算发票金额
+		for (OrdOdProd ordOdProd : prods) {
+			invoiceAmount=ordOdProd.getAdjustFee()+invoiceAmount;
+			supplierId = ordOdProd.getSupplierId();
+		}
+		if(supplierId!=request.getCompanyId()) {
+			throw new BusinessException("", "公司代码(销售方id)和商品中的销售方id不一致");
+		}
+		if(request.getInvoiceTotalFee()!=0 && invoiceAmount!=request.getInvoiceTotalFee()) {
+			throw new BusinessException("", "发票总额和商品获取的额度不一致");
+		}
 		OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
 		ordOdInvoice.setInvoiceId(request.getInvoiceId());
 		ordOdInvoice.setInvoiceNum(request.getInvoiceNum());
-		ordOdInvoice.setInvoiceTime(DateUtil.getTimestamp(request.getInvoiceTime()));
+		Date invoiceTime = request.getInvoiceTime();
+		ordOdInvoice.setInvoiceTime(DateUtil.getTimestamp(invoiceTime.getTime()));
 		ordOdInvoice.setInvoiceStatus(request.getInvoiceStatus());
 		ordOdInvoiceAtomSV.updateByPrimaryKey(ordOdInvoice);
 	}
