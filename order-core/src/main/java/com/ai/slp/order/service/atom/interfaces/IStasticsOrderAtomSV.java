@@ -1,11 +1,14 @@
 package com.ai.slp.order.service.atom.interfaces;
 
-import com.ai.opt.base.vo.PageInfo;
+import java.util.List;
+
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
-import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.dao.mapper.attach.StasticOrdOrderAttach;
 
 public interface IStasticsOrderAtomSV {
 	
-	public PageInfo<OrdOrder> getStasticOrdPage(StasticsOrderRequest request);
+	public List<StasticOrdOrderAttach> getStasticOrd(StasticsOrderRequest request);
+	
+    public int queryCount(StasticsOrderRequest request);
 
 }

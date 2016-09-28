@@ -51,7 +51,7 @@ public class OrdWarmSVImplTest {
     public void testWarmOrderDetail(){
 		OrderWarmDetailRequest  query=new OrderWarmDetailRequest ();
         query.setTenantId("changhong");
-        query.setOrderId(334570392L);
+        query.setOrderId(2000001000218776l);
         OrderWarmDetailResponse info=iOrderWarmSV.searchWarmorderDetail(query);
         System.out.println("info="+JSON.toJSONString(info));
         

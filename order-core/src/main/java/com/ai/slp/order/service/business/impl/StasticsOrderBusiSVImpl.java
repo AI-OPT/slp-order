@@ -3,7 +3,6 @@ package com.ai.slp.order.service.business.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +11,6 @@ import com.ai.opt.base.vo.PageInfo;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
-import com.ai.opt.sdk.util.StringUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.platform.common.api.cache.param.SysParamSingleCond;
@@ -21,6 +19,7 @@ import com.ai.slp.order.api.stasticsorder.param.StasticParentOrderVo;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.ai.slp.order.api.stasticsorder.param.StasticsProdVo;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.dao.mapper.attach.StasticOrdOrderAttach;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
@@ -46,58 +45,26 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 	public PageInfo<StasticParentOrderVo> getStasticOrdPage(StasticsOrderRequest request) {
 		//获取父订单信息
 		PageInfo<StasticParentOrderVo> pageResult = new PageInfo<StasticParentOrderVo>();
-		PageInfo<OrdOrder> pageInfo = iStasticsOrderAtomSV.getStasticOrdPage(request);
-		List<OrdOrder> parentOrderList = pageInfo.getResult();
-		List<OrdOrder> prodPOrderList = new ArrayList<OrdOrder>();
-		//公共的父级订单
-		List<OrdOrder> commonOrderList = new ArrayList<OrdOrder>();
-		//返回的订单
-		List<StasticParentOrderVo> staticParentOrderList = new ArrayList<StasticParentOrderVo>();
-		if(!StringUtil.isBlank(request.getProdName())){
-			//如果商品名称不为空，根据名称获取订单集合
-			List<OrdOdProd> parentProList =iOrdOdProdAtomSV.selectByProdName(request.getTenantId(),request.getProdName()); 
-			if(!CollectionUtil.isEmpty(parentProList)){
-				for(OrdOdProd prod: parentProList){
-					OrdOrder order = iOrdOrderAtomSV.selectByOrderId(request.getTenantId(), prod.getOrderId());
-					if(order!=null){
-						if(!StringUtil.isBlank(order.getSubFlag())){
-							if(OrdersConstants.OrdOrder.SubFlag.NO.equals(order.getSubFlag())){
-								prodPOrderList.add(order);
-							}
-						}
-					}
-				}
-			}
-			//如果商品查询出来的订单部位空空，那么取父订单集合与商品订单集合的余
-			if(!CollectionUtil.isEmpty(parentOrderList)){
-				commonOrderList = (List<OrdOrder>)CollectionUtils.intersection(parentOrderList, prodPOrderList);
-			}else{
-				commonOrderList = prodPOrderList;
-			}
-			pageResult.setCount(commonOrderList.size());
-		}else{
-			commonOrderList = parentOrderList;
-			pageResult.setCount(parentOrderList.size());
-		}
-		if(!CollectionUtil.isEmpty(commonOrderList)){
-			for(OrdOrder order:commonOrderList){
-				//返回的字订单
+		List<StasticOrdOrderAttach> parentOrderList = iStasticsOrderAtomSV.getStasticOrd(request);
+		List<StasticParentOrderVo> orderVoList = new ArrayList<StasticParentOrderVo>();
+		if(!CollectionUtil.isEmpty(parentOrderList)){
+			for(StasticOrdOrderAttach order:parentOrderList){
+				//返回的子订单
 				List<StasticOrderVo> childOrderList =new ArrayList<StasticOrderVo>();
 				StasticParentOrderVo parentOrderVo = new StasticParentOrderVo();
 				List<StasticsProdVo> parentProdList = new ArrayList<StasticsProdVo>();
 				BeanUtils.copyProperties(parentOrderVo, order);
-				//获取父级订单的商品信息
+				//获取收货人信息
+				OrdOdLogistics logistics = iOrdOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+				if(logistics!=null){
+					parentOrderVo.setContactTel(logistics.getContactTel());
+				}
+				//获取父订单商品
 				List<OrdOdProd>  parentProList = iOrdOdProdAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
 				for(OrdOdProd prod:parentProList){
 					StasticsProdVo staticProdVo = new StasticsProdVo();
 					BeanUtils.copyProperties(staticProdVo, prod);
 					parentProdList.add(staticProdVo);
-				}
-				//parentOrderVo.setProList(parentProdList);
-				//获取收货人信息
-				OrdOdLogistics logistics = iOrdOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
-				if(logistics!=null){
-					parentOrderVo.setContactTel(logistics.getContactTel());
 				}
 				//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
@@ -125,7 +92,6 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 	        			childVo.setStateName(stateOrder.getColumnDesc());
 	        		}
 	        		childVo.setState(order.getState());
-	        		//childVo.setOrderId(order.getOrderId());
 	        		//将父级订单号存入子订单中
 	        		childVo.setParentOrderId(order.getOrderId());
 	        		//将父商品信息存入子订单中
@@ -163,12 +129,14 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 					}
 					parentOrderVo.setChildOrderList(childOrderList);
 				}
-				staticParentOrderList.add(parentOrderVo);
+				orderVoList.add(parentOrderVo);
 			}
 		}
+		int count=iStasticsOrderAtomSV.queryCount(request);
 		pageResult.setPageSize(request.getPageSize());
+		pageResult.setCount(count);
 		pageResult.setPageNo(request.getPageNo());
-		pageResult.setResult(staticParentOrderList);
+		pageResult.setResult(orderVoList);
 		return pageResult;
 	}
 }

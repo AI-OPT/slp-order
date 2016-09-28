@@ -1,7 +1,5 @@
 package com.ai.slp.order.api.stasticsorder.param;
 
-import java.sql.Timestamp;
-
 import com.ai.opt.base.vo.BaseInfo;
 
 public class StasticsOrderRequest extends BaseInfo {
@@ -29,11 +27,11 @@ public class StasticsOrderRequest extends BaseInfo {
 	/**
 	 * 开始时间
 	 */
-	private Timestamp orderTimeStart;
+	private String orderTimeStart;
 	/**
 	 * 结束时间
 	 */
-	private Timestamp orderTimeEnd;
+	private String orderTimeEnd;
 	/**
 	 * 页码
 	 */
@@ -82,20 +80,19 @@ public class StasticsOrderRequest extends BaseInfo {
 	public void setState(String state) {
 		this.state = state;
 	}
-
-	public Timestamp getOrderTimeStart() {
+	public String getOrderTimeStart() {
 		return orderTimeStart;
 	}
 
-	public void setOrderTimeStart(Timestamp orderTimeStart) {
+	public void setOrderTimeStart(String orderTimeStart) {
 		this.orderTimeStart = orderTimeStart;
 	}
 
-	public Timestamp getOrderTimeEnd() {
+	public String getOrderTimeEnd() {
 		return orderTimeEnd;
 	}
 
-	public void setOrderTimeEnd(Timestamp orderTimeEnd) {
+	public void setOrderTimeEnd(String orderTimeEnd) {
 		this.orderTimeEnd = orderTimeEnd;
 	}
 

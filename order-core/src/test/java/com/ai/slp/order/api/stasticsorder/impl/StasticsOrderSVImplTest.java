@@ -23,11 +23,11 @@ public class StasticsOrderSVImplTest {
     public void testStasticOrder(){
 		StasticsOrderRequest query=new StasticsOrderRequest();
         query.setTenantId("changhong");
-        query.setPageSize(20);
+        query.setPageSize(10);
         query.setPageNo(1);
         //query.setState("14");
        // query.setUserId("123");
-        query.setOrderId(2003749534534L);
+        query.setOrderId(2000001000333539L);
         List<String> list = new ArrayList<String>();
         //list.add("000000000000000945");
        // list.add("123");
@@ -35,8 +35,8 @@ public class StasticsOrderSVImplTest {
         //List<Long> suList = new ArrayList<Long>();
         //suList.add(334570392323l);
        // query.setSupplierIdList(suList);
-       // query.setState("90");
-       // query.setProdName("test22");
+        //query.setState("11");
+        query.setProdName("test22");
         StasticOrderResponse info=iStasticsOrderSV.queryStasticOrdPage(query);
         System.out.println("info="+JSON.toJSONString(info.getPageInfo()));
         
