@@ -22,6 +22,7 @@ import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintResponse;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintVo;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
@@ -90,6 +91,14 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		}
 		if(StringUtil.isBlank(request.getInvoiceStatus())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票状态不能为空");
+		}else {
+			String status = request.getInvoiceStatus();
+			if(!(OrdersConstants.ordOdInvoice.invoiceStatus.ONE.equals(status)||
+					OrdersConstants.ordOdInvoice.invoiceStatus.TWO.equals(status)||
+					OrdersConstants.ordOdInvoice.invoiceStatus.THREE.equals(status)||
+					OrdersConstants.ordOdInvoice.invoiceStatus.FOUR.equals(status))) {
+				throw new BusinessException("", "发票状态不符合要求");
+			}
 		}
 		long orderId = request.getOrderId();
 		List<OrdOdProd> prods = ordOdProdAtomSV.selectByOrd(null, orderId);
