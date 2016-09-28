@@ -792,6 +792,22 @@ public final class OrdersConstants {
 
     }
     
+    
+    public static final class ordOdInvoice {
+
+        public static class invoiceStatus {
+            /**1：发票未打印*/
+            public static final String ONE = "1";
+            /** 2：已报送*/
+            public static final String TWO = "2";
+            /** 已打印*/
+            public static final String THREE = "3";
+            /** 打印失败*/
+            public static final String FOUR = "4";
+        }
+
+    }
+    
     public static final class IfWarning {
 
         public static class result {
