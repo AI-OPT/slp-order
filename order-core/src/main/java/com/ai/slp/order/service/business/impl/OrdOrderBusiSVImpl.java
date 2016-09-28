@@ -400,9 +400,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo.setRouteId(order.getRouteId());//仓库ID
             IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
             RouteIdParamRequest routeRequest=new RouteIdParamRequest();
-            routeRequest.setRouteId(order.getRouteId());
-            RouteResponse routeInfo = iRouteManageSV.findRouteInfo(routeRequest);
-            ordOrderVo.setRouteName(routeInfo.getRouteName()); //仓库信息
+            if(order.getRouteId()!=null) {
+            	routeRequest.setRouteId(order.getRouteId());
+            	RouteResponse routeInfo = iRouteManageSV.findRouteInfo(routeRequest);
+            	ordOrderVo.setRouteName(routeInfo.getRouteName()); //仓库信息
+            }
             ordOrderVo.setParentOrderId(order.getParentOrderId());
             ordOrderVo.setUserId(order.getUserId());//买家帐号(用户号)
             ordOrderVo.setAccountId(order.getAccountId());
@@ -750,12 +752,14 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.YES); 
     			}
     			List<OrdOrder> orders= ordOrderAtomSV.selectByExample(exampleOrder);
+    			int totalProdSize=0;
     			if(CollectionUtil.isEmpty(orders)) {  
     				BehindOrdOrderVo orderVo=new BehindOrdOrderVo();
         			/* 查询父订单下的商品信息*/
         			List<BehindOrdProductVo> prodList = this.getProdList(null,orderListRequest,behindOrdOrderAttach,null);
         			orderVo.setProductList(prodList);
         			orderVo.setProdSize(prodList.size());
+        			totalProdSize=prodList.size()+totalProdSize;
         			orderVo.setState(behindOrdOrderAttach.getState());
         			orderVo.setParentOrderId(behindOrdOrderAttach.getOrderId());
         			SysParam sysParamState = InfoTranslateUtil.translateInfo(orderListRequest.getTenantId(), "ORD_ORDER",
@@ -774,6 +778,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     					orderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
     					List<BehindOrdProductVo> prodList = this.getProdList(ordOrder,orderListRequest, behindOrdOrderAttach,ordOrder.getOrderId());
     					orderVo.setProdSize(prodList.size());
+    					totalProdSize=prodList.size()+totalProdSize;
     					orderVo.setProductList(prodList);
     					orderList.add(orderVo);
     				}
@@ -799,6 +804,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			pOrderVo.setPoints(points);
         			pOrderVo.setTotalCouponFee(totalCouponFee);
         		}
+        	pOrderVo.setTotalProdSize(totalProdSize);
     		orderVoList.add(pOrderVo);
          }
        }
