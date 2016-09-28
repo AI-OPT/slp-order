@@ -17,7 +17,7 @@ import com.ai.slp.order.api.aftersaleorder.param.OrderJuageResponse;
 public interface IOrderAfterSaleJudgeSV {
 	
 	/**
-	 * 判断该商品的业务类型
+	 * 判断该商品对应的订单所属业务类型
 	 * @param request
 	 * @return
 	 * @throws BusinessException
