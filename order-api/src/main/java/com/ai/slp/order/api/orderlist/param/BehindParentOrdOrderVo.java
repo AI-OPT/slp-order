@@ -83,6 +83,11 @@ public class BehindParentOrdOrderVo extends BaseInfo {
     private Long totalCouponFee;
     
     /**
+     * 父订单对应的子订单下的所有商品数量
+     */
+    private int totalProdSize;
+    
+    /**
      * 订单及商品信息
      */
     private List<BehindOrdOrderVo> orderList;
@@ -198,5 +203,13 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public int getTotalProdSize() {
+		return totalProdSize;
+	}
+
+	public void setTotalProdSize(int totalProdSize) {
+		this.totalProdSize = totalProdSize;
 	}
 }
