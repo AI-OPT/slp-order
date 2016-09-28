@@ -112,6 +112,10 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			throw new BusinessException("", "发票总额和商品获取的额度不一致");
 		}
 		OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
+		if(ordOdInvoice==null) {
+			logger.error("发票信息不存在[订单id:"+orderId+"]");
+			throw new BusinessException("", "发票信息不存在[订单id:"+orderId+"]");
+		}
 		ordOdInvoice.setInvoiceId(request.getInvoiceId());
 		ordOdInvoice.setInvoiceNum(request.getInvoiceNum());
 		Date invoiceTime = request.getInvoiceTime();
