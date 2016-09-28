@@ -326,12 +326,12 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);
         ordOdFeeTotal.setTotalFee(totalFee);
         long freight = ordProductDetailInfo.getFreight();
-        ordOdFeeTotal.setDiscountFee(discountFee+freight);
+        ordOdFeeTotal.setDiscountFee(discountFee);
         ordOdFeeTotal.setOperDiscountFee(operDiscountFee);
         ordOdFeeTotal.setOperDiscountDesc("");
-        ordOdFeeTotal.setAdjustFee(totalFee-discountFee-freight);
+        ordOdFeeTotal.setAdjustFee(totalFee-discountFee+freight);
         ordOdFeeTotal.setPaidFee(0);
-        ordOdFeeTotal.setPayFee(totalFee-discountFee-freight);//减去运费
+        ordOdFeeTotal.setPayFee(totalFee-discountFee+freight);//加上运费
         ordOdFeeTotal.setUpdateTime(sysDate);
         ordOdFeeTotal.setUpdateChlId("");
         ordOdFeeTotal.setUpdateOperId("");
