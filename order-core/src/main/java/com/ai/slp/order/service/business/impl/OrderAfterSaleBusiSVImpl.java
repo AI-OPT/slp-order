@@ -299,13 +299,12 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
 			JSONObject object = JSON.parseObject(strData);
 			boolean val = object.getBooleanValue("IsValid");
-			if(!val) {
+			/*if(!val) {
 				throw new BusinessException("", "退款申请同步到OFC错误");
-			}
+			}*/
         } catch (IOException | URISyntaxException e) {
 			logger.error(e.getMessage());
 			throw new SystemException("", "OFC同步出现异常");
-		} finally {
 		}
 	}
 	
