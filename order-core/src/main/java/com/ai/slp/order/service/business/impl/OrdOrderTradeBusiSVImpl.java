@@ -268,7 +268,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setOperDiscountFee(ordProductInfo.getOperDiscountFee());
             ordOdProd.setOperDiscountDesc(ordProductInfo.getOperDiscountDesc());
             ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);;
-            ordOdProd.setAdjustFee(totalFee-couponFee-jfAmount);
+            long prodAdjustFee= totalFee-(couponFee+jfAmount+ordProductInfo.getOperDiscountFee());
+            ordOdProd.setAdjustFee(prodAdjustFee<0?0:prodAdjustFee);
             ProdAttrInfoVo vo = new ProdAttrInfoVo();
             vo.setBasicOrgId(ordProductInfo.getBasicOrgId());
             vo.setProvinceCode(ordProductInfo.getProvinceCode());
@@ -329,9 +330,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOdFeeTotal.setDiscountFee(discountFee);
         ordOdFeeTotal.setOperDiscountFee(operDiscountFee);
         ordOdFeeTotal.setOperDiscountDesc("");
-        ordOdFeeTotal.setAdjustFee(totalFee-discountFee+freight);
+        long totalProdFee=totalFee-discountFee+freight;
+        ordOdFeeTotal.setAdjustFee(totalProdFee<0?0:totalProdFee);
         ordOdFeeTotal.setPaidFee(0);
-        ordOdFeeTotal.setPayFee(totalFee-discountFee+freight);//加上运费
+        ordOdFeeTotal.setPayFee(totalProdFee<0?0:totalProdFee);//加上运费
         ordOdFeeTotal.setUpdateTime(sysDate);
         ordOdFeeTotal.setUpdateChlId("");
         ordOdFeeTotal.setUpdateOperId("");
