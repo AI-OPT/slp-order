@@ -210,7 +210,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         List<OrdProductInfo> ordProductInfoList = ordProductDetailInfo.getOrdProductInfoList();
         List<OrdFeeTotalProdInfo> totalProdInfos = ordProductDetailInfo.getOrdFeeTotalProdInfo();
         long totalCouponFee=0;
-		long totalJfFee=0;
+		long totalJfFee=0; 
 		long totallJfAmount=0;
         for (OrdFeeTotalProdInfo ordFeeTotalProdInfo : totalProdInfos) {
 			OrdOdFeeProd feeProd=new OrdOdFeeProd();
@@ -229,8 +229,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	ordOdFeeProdAtomSV.insertSelective(feeProd);
         }
         /* 1. 创建商品明细 */
-        long jfFee=totalCouponFee/ordProductInfoList.size();
-        long couponFee=totalJfFee/ordProductInfoList.size();
+        long jfFee=totalJfFee/ordProductInfoList.size();
+        long couponFee=totalCouponFee/ordProductInfoList.size();
         //单个商品的积分金额
         long jfAmount=totallJfAmount/ordProductInfoList.size(); 
         for (OrdProductInfo ordProductInfo : ordProductInfoList) {
