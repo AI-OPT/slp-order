@@ -52,6 +52,10 @@ public class StasticParentOrderVo extends BaseInfo {
 	 */
 	private String stateName;
 	/**
+	 * 总商品数量
+	 */
+	private int prodTotal;
+	/**
 	 * 子订单信息
 	 */
 	private List<StasticOrderVo> childOrderList;
@@ -150,6 +154,14 @@ public class StasticParentOrderVo extends BaseInfo {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public int getProdTotal() {
+		return prodTotal;
+	}
+
+	public void setProdTotal(int prodTotal) {
+		this.prodTotal = prodTotal;
 	}
 
 }

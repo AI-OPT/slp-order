@@ -75,6 +75,7 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
         		parentOrderVo.setUserName(userName==null?null:userName.toString()); 
 				//获取子订单
 				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
+				int totalProdSize=0;
 				if(CollectionUtil.isEmpty(childList)){
 					//将父级菜单信息存入子订单中方便前台展示
 					List<StasticOrderVo> childsList = new ArrayList<StasticOrderVo>();
@@ -96,6 +97,10 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 	        		childVo.setParentOrderId(order.getOrderId());
 	        		//将父商品信息存入子订单中
 	        		childVo.setProList(parentProdList);
+	        		childVo.setProdSize(parentProdList.size());
+	        		totalProdSize=parentProdList.size()+totalProdSize;
+	        		//总商品数量
+					parentOrderVo.setProdTotal(totalProdSize);
 	        		childsList.add(childVo);
 	        		parentOrderVo.setChildOrderList(childsList);
 				}else{
@@ -124,10 +129,15 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 							BeanUtils.copyProperties(staticProdVo, prod);
 							prodOrderList.add(staticProdVo);
 						}
+						//子订单商品数量
+						childOrderVo.setProdSize(prodOrderList.size());
+						totalProdSize=prodOrderList.size()+totalProdSize;
 						childOrderVo.setProList(prodOrderList);
 						childOrderList.add(childOrderVo);
 					}
 					parentOrderVo.setChildOrderList(childOrderList);
+					//总商品数量
+					parentOrderVo.setProdTotal(totalProdSize);
 				}
 				orderVoList.add(parentOrderVo);
 			}

@@ -28,6 +28,10 @@ public class StasticOrderVo implements Serializable {
 	 */
 	private String busiCode;
 	/**
+	 * 商品数量
+	 */
+	private int prodSize;
+	/**
 	 * 商品信息
 	 */
 	private List<StasticsProdVo> proList;
@@ -80,4 +84,11 @@ public class StasticOrderVo implements Serializable {
 		this.parentOrderId = parentOrderId;
 	}
 
+	public int getProdSize() {
+		return prodSize;
+	}
+
+	public void setProdSize(int prodSize) {
+		this.prodSize = prodSize;
+	}
 }
