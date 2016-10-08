@@ -10,6 +10,7 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 
 public interface IOrdOrderBusiSV {
 
@@ -23,6 +24,9 @@ public interface IOrdOrderBusiSV {
             throws BusinessException, SystemException;
     
     public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
+            throws BusinessException, SystemException;
+    
+    public int updateOrder(OrdOrder request)
             throws BusinessException, SystemException;
     
 }
