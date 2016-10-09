@@ -18,6 +18,11 @@ public class OrdBaseInfo implements Serializable {
     private String userType;
     
     /**
+     * 业务标识
+     */
+    private String flag;
+    
+    /**
      * 订单类型
      */
     private String orderType;
@@ -175,4 +180,13 @@ public class OrdBaseInfo implements Serializable {
 	public void setAcctId(long acctId) {
 		this.acctId = acctId;
 	}
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+	
 }
