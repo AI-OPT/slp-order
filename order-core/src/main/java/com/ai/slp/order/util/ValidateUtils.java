@@ -7,6 +7,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
+import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductDetailInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
@@ -14,6 +15,7 @@ import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmDetailRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
+import com.ai.slp.order.constants.OrdersConstants;
 
 public class ValidateUtils {
 	private ValidateUtils() {
@@ -141,5 +143,36 @@ public class ValidateUtils {
     	if(StringUtil.isBlank(logisticsInfo.getExpressId())) {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流公司ID不能为空");
     	}
+	}
+	
+	/**
+	 * 订单下单时,发票参数检验
+	 */
+	public static void validateOrdInvoice(OrdInvoiceInfo condition) {
+		if(StringUtil.isBlank(condition.getInvoiceType())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "在打印发票的情况下,发票类型不能为空");
+		}
+		if(StringUtil.isBlank(condition.getInvoiceTitle())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "在打印发票的情况下,发票抬头不能为空");
+		}
+		if(StringUtil.isBlank(condition.getInvoiceContent())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "在打印发票的情况下,发票内容不能为空");
+		}
+		if(StringUtil.isBlank(condition.getInvoiceKind())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "在打印发票的情况下,发票种类不能为空");
+		}else {
+			if(OrdersConstants.ordOdInvoice.invoiceKind.VAT_SPECIAL_INVOICE.equals(condition.getInvoiceKind())||
+					OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_SPECIAL_INVOICE.equals(condition.getInvoiceKind())) {
+				if(StringUtil.isBlank(condition.getBuyerTaxpayerNumber())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "专用发票时,购货方纳税人识别号不能为空");
+				}
+				if(StringUtil.isBlank(condition.getBuyerBankName())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "专用发票时,购货方开户行名称不能为空");
+				}
+				if(StringUtil.isBlank(condition.getBuyerBankAccount())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "专用发票时,购货方开户行账号不能为空");
+				}
+			}
+		}
 	}
 }
