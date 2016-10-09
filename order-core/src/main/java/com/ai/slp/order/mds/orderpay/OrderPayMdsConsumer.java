@@ -18,7 +18,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderReturnGoodBusiSV;
 
-@Component
+//@Component
 public class OrderPayMdsConsumer extends AbstractMdsConsumer {
 	private static Logger logger = LoggerFactory.getLogger(OrderPayMdsConsumer.class);
 	
