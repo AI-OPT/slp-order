@@ -12,6 +12,8 @@ import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintResponse;
+import com.ai.slp.order.api.invoiceprint.param.InvoiceSubmitRequest;
+import com.ai.slp.order.api.invoiceprint.param.InvoiceSumbitResponse;
 
 /**
  * 发票打印服务
@@ -53,4 +55,20 @@ public interface IInvoicePrintSV {
 	@POST
 	@Path("/updateInvoiceStatus")
 	public BaseResponse updateInvoiceStatus(InvoiceNoticeRequest request) throws BusinessException,SystemException;
+	
+	/**
+	 * 发票报送(打印)
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode INVOICE_SUBMIT_001
+	 * @RestRelativeURL invoice/invoiceSubmit
+	 */
+	@POST
+	@Path("/invoiceSubmit")
+	public InvoiceSumbitResponse invoiceSubmit(InvoiceSubmitRequest request) throws BusinessException,SystemException;
+	
 }
