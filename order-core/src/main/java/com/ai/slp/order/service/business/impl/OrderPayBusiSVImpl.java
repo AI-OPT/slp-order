@@ -138,27 +138,31 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             if (flag) {
                 continue;
             }
+            /*if(Flag=="0") {
+            	
             /* 同步长虹OFC,获取参数*/
-            String params = this.getOFCRequestParams(request, orderId,sysdate);
-            Map<String, String> header=new HashMap<String, String>(); 
-            header.put("appkey", OrdersConstants.OFC_APPKEY);
-            //发送Post请求,并返回信息
-            try {
-				String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_ORDER_CREATE_URL, params, header);
-				JSONObject object = JSON.parseObject(strData);
-				boolean val = object.getBooleanValue("IsValid");
-				/*if(!val) {
-					throw new BusinessException("", "销售订单创建同步到OFC错误");
-				}*/
-			} catch (IOException | URISyntaxException e) {
-				logger.error(e.getMessage());
-				throw new SystemException("", "OFC同步出现异常");
-			}
-            /* 4.拆分子订单 */
-            this.resoleOrders(ordOrder, request.getTenantId(), client);
+	            String params = this.getOFCRequestParams(request, orderId,sysdate);
+	            Map<String, String> header=new HashMap<String, String>(); 
+	            header.put("appkey", OrdersConstants.OFC_APPKEY);
+	            //发送Post请求,并返回信息
+	            try {
+	            	String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_ORDER_CREATE_URL, params, header);
+	            	JSONObject object = JSON.parseObject(strData);
+	            	boolean val = object.getBooleanValue("IsValid");
+	            	/*if(!val) {
+						throw new BusinessException("", "销售订单创建同步到OFC错误");
+					}*/
+	            } catch (IOException | URISyntaxException e) {
+	            	logger.error(e.getMessage());
+	            	throw new SystemException("", "OFC同步出现异常");
+	            }
+            //}else {
+	            /* 4.拆分子订单 */
+	            this.resoleOrders(ordOrder, request.getTenantId(), client);
+        	}
         }
 
-    }
+   // }
 
     /**
      * 订单收费处理
@@ -429,7 +433,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     private void createEntitySubOrder(String tenantId, OrdOrder parentOrdOrder,
     		OrdOdProd parentOrdOdProd,Map<String, Long> map) {
     	/* 1.根据商品信息获取routeId*/
-    	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),parentOrdOdProd.getSupplierId());
+    	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),Long.parseLong(parentOrdOdProd.getSupplierId()));
     	IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
     	OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, parentOrdOrder.getOrderId());
         RouteQueryByGroupIdAndAreaRequest andAreaRequest=new RouteQueryByGroupIdAndAreaRequest();
@@ -765,7 +769,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setOrderId(subOrderId);
     	ordOdFeeTotal.setTotalFee(ordOdProd.getTotalFee());
     	ordOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
-    	long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
+    	long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee()+ordOdFeeTotal.getFreight();
     	ordOdFeeTotal.setAdjustFee(apaidFee);
     	ordOdFeeTotal.setPaidFee(apaidFee);
     	ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
@@ -815,15 +819,15 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         paramsRequest.setProvince(ordOrderVo.getProvinceCode()==null?"":iCacheSV.
         		getAreaName(ordOrderVo.getProvinceCode())); 
         paramsRequest.setCity(ordOrderVo.getCityCode()==null?"":iCacheSV.
-    			getAreaName(ordOrderVo.getCityCode()));//TODO 翻译
+    			getAreaName(ordOrderVo.getCityCode()));
         paramsRequest.setRegion(ordOrderVo.getCountyCode()==null?"":iCacheSV.
     			getAreaName(ordOrderVo.getCountyCode()));
         paramsRequest.setReceiverAddress(ordOrderVo.getAddress());
         paramsRequest.setPostCode(ordOrderVo.getPostCode());
         paramsRequest.setPayTime(sysdate.toString());
-        paramsRequest.setPayNo(String.valueOf(ordOrderVo.getAcctId())); 
+        paramsRequest.setPayNo(String.valueOf(ordOrderVo.getAcctId())); //支付帐号
         paramsRequest.setPayType(Long.parseLong(request.getPayType())); //TODO 待验证
-        paramsRequest.setOrderAmout(ordOrderVo.getTotalFee()/10); //分为单位,订单总金额
+        paramsRequest.setOrderAmout(ordOrderVo.getTotalFee()/10); //分为单位,订单总金额 ??
         paramsRequest.setPayAmount(ordOrderVo.getPayFee()/10);//支付金额
         paramsRequest.setCoupAmount(ordOrderVo.getDiscountFee()/10);//优惠金额
         paramsRequest.setReceiveAmount(ordOrderVo.getPayFee()/10);
