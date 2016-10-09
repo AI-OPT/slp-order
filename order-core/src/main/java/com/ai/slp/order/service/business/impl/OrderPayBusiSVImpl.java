@@ -139,9 +139,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
                 continue;
             }
             /*if(Flag=="0") {
-            	
             /* 同步长虹OFC,获取参数*/
-	            String params = this.getOFCRequestParams(request, orderId,sysdate);
+	       /*     String params = this.getOFCRequestParams(request, orderId,sysdate);
 	            Map<String, String> header=new HashMap<String, String>(); 
 	            header.put("appkey", OrdersConstants.OFC_APPKEY);
 	            //发送Post请求,并返回信息
@@ -149,13 +148,13 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 	            	String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_ORDER_CREATE_URL, params, header);
 	            	JSONObject object = JSON.parseObject(strData);
 	            	boolean val = object.getBooleanValue("IsValid");
-	            	/*if(!val) {
+	            	if(!val) {
 						throw new BusinessException("", "销售订单创建同步到OFC错误");
-					}*/
+					}
 	            } catch (IOException | URISyntaxException e) {
 	            	logger.error(e.getMessage());
 	            	throw new SystemException("", "OFC同步出现异常");
-	            }
+	            }*/
             //}else {
 	            /* 4.拆分子订单 */
 	            this.resoleOrders(ordOrder, request.getTenantId(), client);
