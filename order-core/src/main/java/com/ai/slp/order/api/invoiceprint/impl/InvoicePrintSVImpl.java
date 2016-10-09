@@ -12,6 +12,8 @@ import com.ai.slp.order.api.invoiceprint.interfaces.IInvoicePrintSV;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintResponse;
+import com.ai.slp.order.api.invoiceprint.param.InvoiceSubmitRequest;
+import com.ai.slp.order.api.invoiceprint.param.InvoiceSumbitResponse;
 import com.ai.slp.order.service.business.interfaces.IInvoicePrintBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
 
@@ -34,6 +36,14 @@ public class InvoicePrintSVImpl implements IInvoicePrintSV {
 	public BaseResponse updateInvoiceStatus(InvoiceNoticeRequest request) throws BusinessException, SystemException {
 		BaseResponse response=new BaseResponse();
 		invoicePrintBusiSV.updateInvoiceStatus(request);
+		ResponseHeader header=new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "成功");
+		response.setResponseHeader(header);
+		return response;
+	}
+
+	@Override
+	public InvoiceSumbitResponse invoiceSubmit(InvoiceSubmitRequest request) throws BusinessException, SystemException {
+		InvoiceSumbitResponse response = invoicePrintBusiSV.invoiceSubmit(request);
 		ResponseHeader header=new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "成功");
 		response.setResponseHeader(header);
 		return response;
