@@ -805,7 +805,19 @@ public final class OrdersConstants {
             /** 打印失败*/
             public static final String FOUR = "4";
         }
-
+        
+        public static class invoiceKind {
+            /** 001：增值税专用发票*/
+            public static final String VAT_SPECIAL_INVOICE  = "001";
+            /** 002：增值税电子普通发票*/
+            public static final String VAT_ELECTRONIC_ORDINARY_INVOICE = "002";
+            /** 003: 增值税普通发票*/
+            public static final String VAT_ORDINARY_INVOICE = "003";
+            /** 004: 废旧物资发票*/
+            public static final String WASTE_INVOICE = "004";
+            /** 005:增值税电子专用发票*/
+            public static final String VAT_ELECTRONIC_SPECIAL_INVOICE = "005";
+        }
     }
     
     public static final class IfWarning {
