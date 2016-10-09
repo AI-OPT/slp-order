@@ -178,7 +178,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setStateChgTime(sysDate);
         ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
         ordOrder.setDisplayFlagChgTime(sysDate);
-        //TODO 物流信息传过来??
         ordOrder.setDeliveryFlag(ordBaseInfo.getDeliveryFlag());
         ordOrder.setOrderTime(sysDate);
         ordOrder.setOrderDesc(ordBaseInfo.getOrderDesc());
@@ -258,7 +257,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setSkuStorageId(JSON.toJSONString(storageNum));
             ordOdProd.setValidTime(sysDate);
             ordOdProd.setInvalidTime(DateUtil.getFutureTime());
-            ordOdProd.setSupplierId(ordProductInfo.getSupplierId());
+            ordOdProd.setSupplierId(String.valueOf(ordProductInfo.getSupplierId()));
             ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
             ordOdProd.setBuySum(ordProductInfo.getBuySum());
             ordOdProd.setSalePrice(storageNumRes.getSalePrice());
@@ -280,6 +279,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setJfFee(jfFee);
             ordOdProd.setJf(ordProductInfo.getGiveJF()); //赠送积分
             ordOdProd.setCouponFee(couponFee);
+            ordOdProd.setProdCode(""); //商品域获取
             ordOdProdAtomSV.insertSelective(ordOdProd);
             /* 2. 封装订单提交商品返回参数 */
             OrdProductResInfo ordProductResInfo = new OrdProductResInfo();
@@ -390,15 +390,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 			return;
 		}else {
 			/* 3.参数校验*/
-			if(StringUtil.isBlank(ordInvoiceInfo.getInvoiceType())) {
-				throw new BusinessException("", "在打印发票的情况下,发票类型不能为空");
-			}
-			if(StringUtil.isBlank(ordInvoiceInfo.getInvoiceTitle())) {
-				throw new BusinessException("", "在打印发票的情况下,发票抬头不能为空");
-			}
-			if(StringUtil.isBlank(ordInvoiceInfo.getInvoiceContent())) {
-				throw new BusinessException("", "在打印发票的情况下,发票内容不能为空");
-			}
+			ValidateUtils.validateOrdInvoice(ordInvoiceInfo);
 		}
 		OrdOdInvoice ordInvoice=new OrdOdInvoice();
 		ordInvoice.setOrderId(orderId);
@@ -406,6 +398,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInvoice.setInvoiceTitle(ordInvoiceInfo.getInvoiceTitle());
 		ordInvoice.setInvoiceType(ordInvoiceInfo.getInvoiceType());
 		ordInvoice.setInvoiceContent(ordInvoiceInfo.getInvoiceContent());
+		ordInvoice.setInvoiceKind(ordInvoiceInfo.getInvoiceKind());
+		ordInvoice.setBuyerTaxpayerNumber(ordInvoiceInfo.getBuyerTaxpayerNumber());
+		ordInvoice.setBuyerBankCode(ordInvoiceInfo.getBuyerBankCode());
+		ordInvoice.setBuyerBankName(ordInvoiceInfo.getBuyerBankName());
+		ordInvoice.setBuyerBankAccount(ordInvoiceInfo.getBuyerBankAccount());
 		ordOdInvoiceAtomSV.insertSelective(ordInvoice);
     }
 
