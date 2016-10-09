@@ -10,7 +10,12 @@
     <result column="INVOICE_STATUS" property="invoiceStatus" jdbcType="VARCHAR" />
     <result column="INVOICE_ID" property="invoiceId" jdbcType="VARCHAR" />
     <result column="INVOICE_NUM" property="invoiceNum" jdbcType="VARCHAR" />
+    <result column="INVOICE_KIND" property="invoiceKind" jdbcType="VARCHAR" />
     <result column="INVOICE_TIME" property="invoiceTime" jdbcType="DATE" />
+    <result column="BUYER_TAXPAYER_NUMBER" property="buyerTaxpayerNumber" jdbcType="VARCHAR" />
+    <result column="BUYER_BANK_CODE" property="buyerBankCode" jdbcType="VARCHAR" />
+    <result column="BUYER_BANK_NAME" property="buyerBankName" jdbcType="VARCHAR" />
+    <result column="BUYER_BANK_ACCOUNT" property="buyerBankAccount" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -72,7 +77,8 @@
   </sql>
   <sql id="Base_Column_List" >
     ORDER_ID, TENANT_ID, INVOICE_TYPE, INVOICE_TITLE, INVOICE_CONTENT, INVOICE_STATUS, 
-    INVOICE_ID, INVOICE_NUM, INVOICE_TIME
+    INVOICE_ID, INVOICE_NUM, INVOICE_KIND, INVOICE_TIME, BUYER_TAXPAYER_NUMBER, BUYER_BANK_CODE, 
+    BUYER_BANK_NAME, BUYER_BANK_ACCOUNT
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria" >
     select
@@ -111,12 +117,14 @@
   <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdInvoice" >
     insert into ord_od_invoice (ORDER_ID, TENANT_ID, INVOICE_TYPE, 
       INVOICE_TITLE, INVOICE_CONTENT, INVOICE_STATUS, 
-      INVOICE_ID, INVOICE_NUM, INVOICE_TIME
-      )
+      INVOICE_ID, INVOICE_NUM, INVOICE_KIND, 
+      INVOICE_TIME, BUYER_TAXPAYER_NUMBER, BUYER_BANK_CODE, 
+      BUYER_BANK_NAME, BUYER_BANK_ACCOUNT)
     values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{invoiceType,jdbcType=VARCHAR}, 
       #{invoiceTitle,jdbcType=VARCHAR}, #{invoiceContent,jdbcType=VARCHAR}, #{invoiceStatus,jdbcType=VARCHAR}, 
-      #{invoiceId,jdbcType=VARCHAR}, #{invoiceNum,jdbcType=VARCHAR}, #{invoiceTime,jdbcType=DATE}
-      )
+      #{invoiceId,jdbcType=VARCHAR}, #{invoiceNum,jdbcType=VARCHAR}, #{invoiceKind,jdbcType=VARCHAR}, 
+      #{invoiceTime,jdbcType=DATE}, #{buyerTaxpayerNumber,jdbcType=VARCHAR}, #{buyerBankCode,jdbcType=VARCHAR}, 
+      #{buyerBankName,jdbcType=VARCHAR}, #{buyerBankAccount,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdInvoice" >
     insert into ord_od_invoice
@@ -143,8 +151,23 @@
       <if test="invoiceNum != null" >
         INVOICE_NUM,
       </if>
+      <if test="invoiceKind != null" >
+        INVOICE_KIND,
+      </if>
       <if test="invoiceTime != null" >
         INVOICE_TIME,
+      </if>
+      <if test="buyerTaxpayerNumber != null" >
+        BUYER_TAXPAYER_NUMBER,
+      </if>
+      <if test="buyerBankCode != null" >
+        BUYER_BANK_CODE,
+      </if>
+      <if test="buyerBankName != null" >
+        BUYER_BANK_NAME,
+      </if>
+      <if test="buyerBankAccount != null" >
+        BUYER_BANK_ACCOUNT,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -170,8 +193,23 @@
       <if test="invoiceNum != null" >
         #{invoiceNum,jdbcType=VARCHAR},
       </if>
+      <if test="invoiceKind != null" >
+        #{invoiceKind,jdbcType=VARCHAR},
+      </if>
       <if test="invoiceTime != null" >
         #{invoiceTime,jdbcType=DATE},
+      </if>
+      <if test="buyerTaxpayerNumber != null" >
+        #{buyerTaxpayerNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerBankCode != null" >
+        #{buyerBankCode,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerBankName != null" >
+        #{buyerBankName,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerBankAccount != null" >
+        #{buyerBankAccount,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -208,8 +246,23 @@
       <if test="record.invoiceNum != null" >
         INVOICE_NUM = #{record.invoiceNum,jdbcType=VARCHAR},
       </if>
+      <if test="record.invoiceKind != null" >
+        INVOICE_KIND = #{record.invoiceKind,jdbcType=VARCHAR},
+      </if>
       <if test="record.invoiceTime != null" >
         INVOICE_TIME = #{record.invoiceTime,jdbcType=DATE},
+      </if>
+      <if test="record.buyerTaxpayerNumber != null" >
+        BUYER_TAXPAYER_NUMBER = #{record.buyerTaxpayerNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.buyerBankCode != null" >
+        BUYER_BANK_CODE = #{record.buyerBankCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.buyerBankName != null" >
+        BUYER_BANK_NAME = #{record.buyerBankName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.buyerBankAccount != null" >
+        BUYER_BANK_ACCOUNT = #{record.buyerBankAccount,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -226,7 +279,12 @@
       INVOICE_STATUS = #{record.invoiceStatus,jdbcType=VARCHAR},
       INVOICE_ID = #{record.invoiceId,jdbcType=VARCHAR},
       INVOICE_NUM = #{record.invoiceNum,jdbcType=VARCHAR},
-      INVOICE_TIME = #{record.invoiceTime,jdbcType=DATE}
+      INVOICE_KIND = #{record.invoiceKind,jdbcType=VARCHAR},
+      INVOICE_TIME = #{record.invoiceTime,jdbcType=DATE},
+      BUYER_TAXPAYER_NUMBER = #{record.buyerTaxpayerNumber,jdbcType=VARCHAR},
+      BUYER_BANK_CODE = #{record.buyerBankCode,jdbcType=VARCHAR},
+      BUYER_BANK_NAME = #{record.buyerBankName,jdbcType=VARCHAR},
+      BUYER_BANK_ACCOUNT = #{record.buyerBankAccount,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -255,8 +313,23 @@
       <if test="invoiceNum != null" >
         INVOICE_NUM = #{invoiceNum,jdbcType=VARCHAR},
       </if>
+      <if test="invoiceKind != null" >
+        INVOICE_KIND = #{invoiceKind,jdbcType=VARCHAR},
+      </if>
       <if test="invoiceTime != null" >
         INVOICE_TIME = #{invoiceTime,jdbcType=DATE},
+      </if>
+      <if test="buyerTaxpayerNumber != null" >
+        BUYER_TAXPAYER_NUMBER = #{buyerTaxpayerNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerBankCode != null" >
+        BUYER_BANK_CODE = #{buyerBankCode,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerBankName != null" >
+        BUYER_BANK_NAME = #{buyerBankName,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerBankAccount != null" >
+        BUYER_BANK_ACCOUNT = #{buyerBankAccount,jdbcType=VARCHAR},
       </if>
     </set>
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
@@ -270,7 +343,12 @@
       INVOICE_STATUS = #{invoiceStatus,jdbcType=VARCHAR},
       INVOICE_ID = #{invoiceId,jdbcType=VARCHAR},
       INVOICE_NUM = #{invoiceNum,jdbcType=VARCHAR},
-      INVOICE_TIME = #{invoiceTime,jdbcType=DATE}
+      INVOICE_KIND = #{invoiceKind,jdbcType=VARCHAR},
+      INVOICE_TIME = #{invoiceTime,jdbcType=DATE},
+      BUYER_TAXPAYER_NUMBER = #{buyerTaxpayerNumber,jdbcType=VARCHAR},
+      BUYER_BANK_CODE = #{buyerBankCode,jdbcType=VARCHAR},
+      BUYER_BANK_NAME = #{buyerBankName,jdbcType=VARCHAR},
+      BUYER_BANK_ACCOUNT = #{buyerBankAccount,jdbcType=VARCHAR}
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>
