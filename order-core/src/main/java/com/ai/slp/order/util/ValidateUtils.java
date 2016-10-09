@@ -6,6 +6,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.slp.order.api.ordermodify.param.OrdRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
@@ -33,6 +34,20 @@ public class ValidateUtils {
 		}
 		if (condition.getPageSize()==null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码大小不能为空");
+		}
+	}
+	public static void validateOrdUpdate(OrdRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if (condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单ID不能为空");
+		}
+		if (StringUtil.isBlank(condition.getState())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单状态不能为空");
 		}
 	}
 	public static void validateWarmOrdDetail(OrderWarmDetailRequest condition) {

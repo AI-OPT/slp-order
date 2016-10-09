@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.PageInfo;
+import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
@@ -37,6 +39,7 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.ai.slp.order.api.ordermodify.param.OrdRequest;
 import com.ai.slp.order.constants.ErrorCodeConstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.attach.BehindOrdOrderAttach;
@@ -70,6 +73,7 @@ import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
 import com.ai.slp.order.util.ChUserUtil;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.InfoTranslateUtil;
+import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
@@ -835,4 +839,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		}
 		return productList;
     }
+
+	@Override
+	public int updateOrder(OrdOrder request) throws BusinessException, SystemException {
+		return ordOrderAtomSV.updateById(request);
+		
+	}
 }
