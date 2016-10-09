@@ -16,7 +16,7 @@ import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
 
-@Component
+//@Component
 public class ShopCartMdsConsumer extends AbstractMdsConsumer {
 	private static Logger logger = LoggerFactory.getLogger(ShopCartMdsConsumer.class);
 
