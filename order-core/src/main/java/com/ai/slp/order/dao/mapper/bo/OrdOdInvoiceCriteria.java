@@ -675,6 +675,76 @@ public class OrdOdInvoiceCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andInvoiceKindIsNull() {
+            addCriterion("INVOICE_KIND is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindIsNotNull() {
+            addCriterion("INVOICE_KIND is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindEqualTo(String value) {
+            addCriterion("INVOICE_KIND =", value, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindNotEqualTo(String value) {
+            addCriterion("INVOICE_KIND <>", value, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindGreaterThan(String value) {
+            addCriterion("INVOICE_KIND >", value, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindGreaterThanOrEqualTo(String value) {
+            addCriterion("INVOICE_KIND >=", value, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindLessThan(String value) {
+            addCriterion("INVOICE_KIND <", value, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindLessThanOrEqualTo(String value) {
+            addCriterion("INVOICE_KIND <=", value, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindLike(String value) {
+            addCriterion("INVOICE_KIND like", value, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindNotLike(String value) {
+            addCriterion("INVOICE_KIND not like", value, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindIn(List<String> values) {
+            addCriterion("INVOICE_KIND in", values, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindNotIn(List<String> values) {
+            addCriterion("INVOICE_KIND not in", values, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindBetween(String value1, String value2) {
+            addCriterion("INVOICE_KIND between", value1, value2, "invoiceKind");
+            return (Criteria) this;
+        }
+
+        public Criteria andInvoiceKindNotBetween(String value1, String value2) {
+            addCriterion("INVOICE_KIND not between", value1, value2, "invoiceKind");
+            return (Criteria) this;
+        }
+
         public Criteria andInvoiceTimeIsNull() {
             addCriterion("INVOICE_TIME is null");
             return (Criteria) this;
@@ -732,6 +802,286 @@ public class OrdOdInvoiceCriteria {
 
         public Criteria andInvoiceTimeNotBetween(Timestamp value1, Timestamp value2) {
             addCriterion("INVOICE_TIME not between", value1, value2, "invoiceTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberIsNull() {
+            addCriterion("BUYER_TAXPAYER_NUMBER is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberIsNotNull() {
+            addCriterion("BUYER_TAXPAYER_NUMBER is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberEqualTo(String value) {
+            addCriterion("BUYER_TAXPAYER_NUMBER =", value, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberNotEqualTo(String value) {
+            addCriterion("BUYER_TAXPAYER_NUMBER <>", value, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberGreaterThan(String value) {
+            addCriterion("BUYER_TAXPAYER_NUMBER >", value, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberGreaterThanOrEqualTo(String value) {
+            addCriterion("BUYER_TAXPAYER_NUMBER >=", value, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberLessThan(String value) {
+            addCriterion("BUYER_TAXPAYER_NUMBER <", value, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberLessThanOrEqualTo(String value) {
+            addCriterion("BUYER_TAXPAYER_NUMBER <=", value, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberLike(String value) {
+            addCriterion("BUYER_TAXPAYER_NUMBER like", value, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberNotLike(String value) {
+            addCriterion("BUYER_TAXPAYER_NUMBER not like", value, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberIn(List<String> values) {
+            addCriterion("BUYER_TAXPAYER_NUMBER in", values, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberNotIn(List<String> values) {
+            addCriterion("BUYER_TAXPAYER_NUMBER not in", values, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberBetween(String value1, String value2) {
+            addCriterion("BUYER_TAXPAYER_NUMBER between", value1, value2, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerTaxpayerNumberNotBetween(String value1, String value2) {
+            addCriterion("BUYER_TAXPAYER_NUMBER not between", value1, value2, "buyerTaxpayerNumber");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeIsNull() {
+            addCriterion("BUYER_BANK_CODE is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeIsNotNull() {
+            addCriterion("BUYER_BANK_CODE is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeEqualTo(String value) {
+            addCriterion("BUYER_BANK_CODE =", value, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeNotEqualTo(String value) {
+            addCriterion("BUYER_BANK_CODE <>", value, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeGreaterThan(String value) {
+            addCriterion("BUYER_BANK_CODE >", value, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("BUYER_BANK_CODE >=", value, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeLessThan(String value) {
+            addCriterion("BUYER_BANK_CODE <", value, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeLessThanOrEqualTo(String value) {
+            addCriterion("BUYER_BANK_CODE <=", value, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeLike(String value) {
+            addCriterion("BUYER_BANK_CODE like", value, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeNotLike(String value) {
+            addCriterion("BUYER_BANK_CODE not like", value, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeIn(List<String> values) {
+            addCriterion("BUYER_BANK_CODE in", values, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeNotIn(List<String> values) {
+            addCriterion("BUYER_BANK_CODE not in", values, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeBetween(String value1, String value2) {
+            addCriterion("BUYER_BANK_CODE between", value1, value2, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankCodeNotBetween(String value1, String value2) {
+            addCriterion("BUYER_BANK_CODE not between", value1, value2, "buyerBankCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameIsNull() {
+            addCriterion("BUYER_BANK_NAME is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameIsNotNull() {
+            addCriterion("BUYER_BANK_NAME is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameEqualTo(String value) {
+            addCriterion("BUYER_BANK_NAME =", value, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameNotEqualTo(String value) {
+            addCriterion("BUYER_BANK_NAME <>", value, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameGreaterThan(String value) {
+            addCriterion("BUYER_BANK_NAME >", value, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameGreaterThanOrEqualTo(String value) {
+            addCriterion("BUYER_BANK_NAME >=", value, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameLessThan(String value) {
+            addCriterion("BUYER_BANK_NAME <", value, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameLessThanOrEqualTo(String value) {
+            addCriterion("BUYER_BANK_NAME <=", value, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameLike(String value) {
+            addCriterion("BUYER_BANK_NAME like", value, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameNotLike(String value) {
+            addCriterion("BUYER_BANK_NAME not like", value, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameIn(List<String> values) {
+            addCriterion("BUYER_BANK_NAME in", values, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameNotIn(List<String> values) {
+            addCriterion("BUYER_BANK_NAME not in", values, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameBetween(String value1, String value2) {
+            addCriterion("BUYER_BANK_NAME between", value1, value2, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankNameNotBetween(String value1, String value2) {
+            addCriterion("BUYER_BANK_NAME not between", value1, value2, "buyerBankName");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountIsNull() {
+            addCriterion("BUYER_BANK_ACCOUNT is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountIsNotNull() {
+            addCriterion("BUYER_BANK_ACCOUNT is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountEqualTo(String value) {
+            addCriterion("BUYER_BANK_ACCOUNT =", value, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountNotEqualTo(String value) {
+            addCriterion("BUYER_BANK_ACCOUNT <>", value, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountGreaterThan(String value) {
+            addCriterion("BUYER_BANK_ACCOUNT >", value, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountGreaterThanOrEqualTo(String value) {
+            addCriterion("BUYER_BANK_ACCOUNT >=", value, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountLessThan(String value) {
+            addCriterion("BUYER_BANK_ACCOUNT <", value, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountLessThanOrEqualTo(String value) {
+            addCriterion("BUYER_BANK_ACCOUNT <=", value, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountLike(String value) {
+            addCriterion("BUYER_BANK_ACCOUNT like", value, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountNotLike(String value) {
+            addCriterion("BUYER_BANK_ACCOUNT not like", value, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountIn(List<String> values) {
+            addCriterion("BUYER_BANK_ACCOUNT in", values, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountNotIn(List<String> values) {
+            addCriterion("BUYER_BANK_ACCOUNT not in", values, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountBetween(String value1, String value2) {
+            addCriterion("BUYER_BANK_ACCOUNT between", value1, value2, "buyerBankAccount");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyerBankAccountNotBetween(String value1, String value2) {
+            addCriterion("BUYER_BANK_ACCOUNT not between", value1, value2, "buyerBankAccount");
             return (Criteria) this;
         }
     }

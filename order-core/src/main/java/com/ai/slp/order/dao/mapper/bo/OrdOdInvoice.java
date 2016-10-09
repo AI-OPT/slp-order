@@ -19,7 +19,17 @@ public class OrdOdInvoice {
 
     private String invoiceNum;
 
+    private String invoiceKind;
+
     private Timestamp invoiceTime;
+
+    private String buyerTaxpayerNumber;
+
+    private String buyerBankCode;
+
+    private String buyerBankName;
+
+    private String buyerBankAccount;
 
     public long getOrderId() {
         return orderId;
@@ -85,11 +95,51 @@ public class OrdOdInvoice {
         this.invoiceNum = invoiceNum == null ? null : invoiceNum.trim();
     }
 
+    public String getInvoiceKind() {
+        return invoiceKind;
+    }
+
+    public void setInvoiceKind(String invoiceKind) {
+        this.invoiceKind = invoiceKind == null ? null : invoiceKind.trim();
+    }
+
     public Timestamp getInvoiceTime() {
         return invoiceTime;
     }
 
     public void setInvoiceTime(Timestamp invoiceTime) {
         this.invoiceTime = invoiceTime;
+    }
+
+    public String getBuyerTaxpayerNumber() {
+        return buyerTaxpayerNumber;
+    }
+
+    public void setBuyerTaxpayerNumber(String buyerTaxpayerNumber) {
+        this.buyerTaxpayerNumber = buyerTaxpayerNumber == null ? null : buyerTaxpayerNumber.trim();
+    }
+
+    public String getBuyerBankCode() {
+        return buyerBankCode;
+    }
+
+    public void setBuyerBankCode(String buyerBankCode) {
+        this.buyerBankCode = buyerBankCode == null ? null : buyerBankCode.trim();
+    }
+
+    public String getBuyerBankName() {
+        return buyerBankName;
+    }
+
+    public void setBuyerBankName(String buyerBankName) {
+        this.buyerBankName = buyerBankName == null ? null : buyerBankName.trim();
+    }
+
+    public String getBuyerBankAccount() {
+        return buyerBankAccount;
+    }
+
+    public void setBuyerBankAccount(String buyerBankAccount) {
+        this.buyerBankAccount = buyerBankAccount == null ? null : buyerBankAccount.trim();
     }
 }

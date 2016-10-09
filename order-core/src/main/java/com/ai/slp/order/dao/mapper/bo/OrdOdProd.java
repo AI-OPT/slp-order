@@ -11,7 +11,7 @@ public class OrdOdProd {
 
     private String prodType;
 
-    private long supplierId;
+    private String supplierId;
 
     private String sellerId;
 
@@ -75,6 +75,8 @@ public class OrdOdProd {
 
     private String cusServiceFlag;
 
+    private String prodCode;
+
     public long getProdDetalId() {
         return prodDetalId;
     }
@@ -107,12 +109,12 @@ public class OrdOdProd {
         this.prodType = prodType == null ? null : prodType.trim();
     }
 
-    public long getSupplierId() {
+    public String getSupplierId() {
         return supplierId;
     }
 
-    public void setSupplierId(long supplierId) {
-        this.supplierId = supplierId;
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId == null ? null : supplierId.trim();
     }
 
     public String getSellerId() {
@@ -363,6 +365,14 @@ public class OrdOdProd {
         this.cusServiceFlag = cusServiceFlag == null ? null : cusServiceFlag.trim();
     }
 
+    public String getProdCode() {
+        return prodCode;
+    }
+
+    public void setProdCode(String prodCode) {
+        this.prodCode = prodCode == null ? null : prodCode.trim();
+    }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -381,6 +391,7 @@ public class OrdOdProd {
 		result = prime * result + ((operDiscountDesc == null) ? 0 : operDiscountDesc.hashCode());
 		result = prime * result + (int) (operDiscountFee ^ (operDiscountFee >>> 32));
 		result = prime * result + (int) (orderId ^ (orderId >>> 32));
+		result = prime * result + ((prodCode == null) ? 0 : prodCode.hashCode());
 		result = prime * result + ((prodDesc == null) ? 0 : prodDesc.hashCode());
 		result = prime * result + (int) (prodDetalId ^ (prodDetalId >>> 32));
 		result = prime * result + ((prodId == null) ? 0 : prodId.hashCode());
@@ -395,7 +406,7 @@ public class OrdOdProd {
 		result = prime * result + ((standardProdId == null) ? 0 : standardProdId.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((storageId == null) ? 0 : storageId.hashCode());
-		result = prime * result + (int) (supplierId ^ (supplierId >>> 32));
+		result = prime * result + ((supplierId == null) ? 0 : supplierId.hashCode());
 		result = prime * result + ((supplyId == null) ? 0 : supplyId.hashCode());
 		result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
 		result = prime * result + (int) (totalFee ^ (totalFee >>> 32));
@@ -457,6 +468,11 @@ public class OrdOdProd {
 		if (operDiscountFee != other.operDiscountFee)
 			return false;
 		if (orderId != other.orderId)
+			return false;
+		if (prodCode == null) {
+			if (other.prodCode != null)
+				return false;
+		} else if (!prodCode.equals(other.prodCode))
 			return false;
 		if (prodDesc == null) {
 			if (other.prodDesc != null)
@@ -522,7 +538,10 @@ public class OrdOdProd {
 				return false;
 		} else if (!storageId.equals(other.storageId))
 			return false;
-		if (supplierId != other.supplierId)
+		if (supplierId == null) {
+			if (other.supplierId != null)
+				return false;
+		} else if (!supplierId.equals(other.supplierId))
 			return false;
 		if (supplyId == null) {
 			if (other.supplyId != null)
@@ -558,5 +577,4 @@ public class OrdOdProd {
 			return false;
 		return true;
 	}
-    
 }
