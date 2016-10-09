@@ -1,7 +1,8 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -95,15 +96,6 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		if(null==request.getCompanyId()) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "公司代码(销售方)不能为空");
 		}
-	/*	if(StringUtil.isBlank(request.getInvoiceId())) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票代码不能为空");
-		}
-		if(StringUtil.isBlank(request.getInvoiceNum())) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票号码不能为空");
-		}
-		if(request.getInvoiceTime()==null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印日期不能为空");
-		}*/
 		if(StringUtil.isBlank(request.getInvoiceStatus())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票状态不能为空");
 		}else {
@@ -118,6 +110,11 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 				}
 				if(request.getInvoiceTime()==null) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印日期不能为空");
+				}else {
+					boolean valiFlag = this.isValidDate(request.getInvoiceTime(), "yyyy-MM-dd");
+					if(!valiFlag) {
+						throw new BusinessException("", "打印日期格式有误,请根据yyyy-MM-dd格式");
+					}
 				}
 			}
 			if(!(OrdersConstants.ordOdInvoice.invoiceStatus.ONE.equals(status)||
@@ -154,8 +151,8 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		}
 		ordOdInvoice.setInvoiceId(request.getInvoiceId());
 		ordOdInvoice.setInvoiceNum(request.getInvoiceNum());
-		Date invoiceTime = request.getInvoiceTime();
-		ordOdInvoice.setInvoiceTime(DateUtil.getTimestamp(invoiceTime.getTime()));
+		String invoiceTime = request.getInvoiceTime();
+		ordOdInvoice.setInvoiceTime(DateUtil.getTimestamp(DateUtil.str2Date(invoiceTime).getTime()));
 		ordOdInvoice.setInvoiceStatus(request.getInvoiceStatus());
 		ordOdInvoiceAtomSV.updateByPrimaryKey(ordOdInvoice);
 	}
@@ -215,7 +212,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			st.append(odLogistics.getCountyCode()==null?"":iCacheSV.
         			getAreaName(odLogistics.getCountyCode()));
 			st.append(odLogistics.getAddress());
-			respVo.setBuyerAddress(st.toString()); //TODO 详细地址
+			respVo.setBuyerAddress(st.toString()); //详细地址
 			respVo.setBuyerTelephone("");
 			respVo.setBuyerMobile(odLogistics.getContactTel());
 			respVo.setBuyerEmail(odLogistics.getContactEmail()==null?"":odLogistics.getContactEmail());
@@ -227,7 +224,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			respVo.setSalesOrderNo(String.valueOf(order.getOrderId()));
 			respVo.setOrderCreateTime(DateUtil.getDateString(order.getOrderTime(), "yyyyMMddHHmmss"));
 			respVo.setOrderItem(String.valueOf(ordOdProd.getProdDetalId()));
-			respVo.setMaterialCode("");//TODO 商品编码
+			respVo.setMaterialCode(ordOdProd.getProdCode());
 			respVo.setSpecification(""); 
 			respVo.setMaterialName(ordOdProd.getProdName());
 			respVo.setPrice(String.valueOf(ordOdProd.getSalePrice()));
@@ -235,9 +232,11 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			respVo.setUnit("");
 			respVo.setDiscountAmount("0.00");
 			respVo.setRate("0.17");
-			respVo.setTax(String.valueOf(ordOdProd.getAdjustFee()*0.17));
-			respVo.setAmount(String.valueOf(ordOdProd.getAdjustFee()));
-			respVo.setTaxAmount("");//TODO
+			String taxValue = String.valueOf(ordOdProd.getAdjustFee()*0.17);
+			String amoutValue = String.valueOf(ordOdProd.getAdjustFee());
+			respVo.setTax(taxValue);
+			respVo.setAmount(amoutValue);
+			respVo.setTaxAmount(taxValue+amoutValue);
 			respVo.setRemark(order.getRemark()==null?"":order.getRemark());
 			invoiceList.add(respVo);
 		}
@@ -297,5 +296,27 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	        pageInfo.setResult(invoicePrintVos);
 	        return pageInfo;
 	    }
-
+	 
+	 /**
+	  * 判断时间是否符合格式要求
+	  */
+	  private boolean isValidDate(String str, String fomat) throws SystemException {
+	        if (StringUtil.isBlank(str)) {
+	            throw new SystemException("请指定时间字符");
+	        }
+	        if (StringUtil.isBlank(fomat)) {
+	            throw new SystemException("请指定格式");
+	        }
+	        boolean flag = true;
+	        try {
+	            SimpleDateFormat sdf = new SimpleDateFormat(fomat);
+	            sdf.setLenient(false);
+	            sdf.parse(str);
+	            flag = true;
+	        } catch (ParseException e) {
+	        	logger.error(e.getMessage(), e);
+	            flag = false;
+	        }
+	        return flag;
+	    }
 }
