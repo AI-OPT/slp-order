@@ -12,7 +12,7 @@ docker push 10.19.13.19:5000/slp-order:v1.0
 3. 运行镜像
 #--net=host  表示为主机(host)模式  去掉该配置，默认为桥接(bridge)模式
 #-e 代表需要设置的环境变量
-docker run -d --name slp-order -p 10887:10887 -e "REST_REGISTRY_ADDR=10.19.13.13:29181" -e "REST_PORT=10887" -e "CONTEXT_PATH=slp-order" -e "SDK_MODE=0" -e "CCS_NAME=aiopt-ch-order" -e "ZK_ADDR=10.19.13.13:29181"  10.19.13.19:5000/slp-order:v1.0 
+docker run -d --name slp-order -p 10887:10887 -e "REST_REGISTRY_ADDR=10.19.13.13:29181" -e "REST_PORT=10887" -e "CONTEXT_PATH=slp-order" -e "SDK_MODE=0" -e "CCS_NAME=aiopt-ch-order" -e "ZK_ADDR=10.19.13.13:29181"  10.19.13.18:5000/slp-order:v1.0 
 #查看镜像启动日志
 docker logs slp-order
 #进入容器，查看镜像内部的情况
