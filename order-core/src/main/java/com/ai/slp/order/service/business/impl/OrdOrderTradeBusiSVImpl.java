@@ -279,7 +279,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setJfFee(jfFee);
             ordOdProd.setJf(ordProductInfo.getGiveJF()); //赠送积分
             ordOdProd.setCouponFee(couponFee);
-            ordOdProd.setProdCode(storageNumRes.getProdCode()); //商品编码
+            ordOdProd.setProdCode(""); //商品编码
             ordOdProdAtomSV.insertSelective(ordOdProd);
             /* 2. 封装订单提交商品返回参数 */
             OrdProductResInfo ordProductResInfo = new OrdProductResInfo();
