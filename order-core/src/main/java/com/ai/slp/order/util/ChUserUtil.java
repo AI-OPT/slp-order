@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -16,13 +17,12 @@ public  class ChUserUtil {
 	public static JSONObject getUserInfo(String id){
 		 Map<String,String> params=new HashMap<String,String>();
 		   params.put("openId", id);
-	       String url="http://10.19.13.16:28151/opaas/http/srv_up_user_getuserinfobyopenid_qry";
 	       String param=JSON.toJSONString(params);
 	       Map<String,String> mapHeader = new HashMap<String,String>();
-	       mapHeader.put("appkey", "3a83ed361ebce978731b736328a97ea8");
+	       mapHeader.put("appkey", OrdersConstants.USER_APPKEY);
 	       String result ="";
 			try {
-				result = HttpClientUtil.sendPost(url, param,mapHeader);
+				result = HttpClientUtil.sendPost(OrdersConstants.USER_URL, param,mapHeader);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
