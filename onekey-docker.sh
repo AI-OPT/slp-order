@@ -1,4 +1,4 @@
-tagversion=v1.0
+tagversion=v1.0_1
 git reset --hard origin/master 
 git pull 
 chmod a+x onekey-docker.sh 
