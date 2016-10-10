@@ -3014,6 +3014,76 @@ public class OrdOrderCriteria {
             addCriterion("ACCOUNT_ID not between", value1, value2, "accountId");
             return (Criteria) this;
         }
+
+        public Criteria andFlagIsNull() {
+            addCriterion("FLAG is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIsNotNull() {
+            addCriterion("FLAG is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagEqualTo(String value) {
+            addCriterion("FLAG =", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotEqualTo(String value) {
+            addCriterion("FLAG <>", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThan(String value) {
+            addCriterion("FLAG >", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThanOrEqualTo(String value) {
+            addCriterion("FLAG >=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThan(String value) {
+            addCriterion("FLAG <", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThanOrEqualTo(String value) {
+            addCriterion("FLAG <=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLike(String value) {
+            addCriterion("FLAG like", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotLike(String value) {
+            addCriterion("FLAG not like", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIn(List<String> values) {
+            addCriterion("FLAG in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotIn(List<String> values) {
+            addCriterion("FLAG not in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagBetween(String value1, String value2) {
+            addCriterion("FLAG between", value1, value2, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotBetween(String value1, String value2) {
+            addCriterion("FLAG not between", value1, value2, "flag");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

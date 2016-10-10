@@ -186,6 +186,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setIfWarning(beforSubmitOrder.getIfWarning());
         ordOrder.setWarningType(beforSubmitOrder.getWarningType());
         ordOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
+        ordOrder.setFlag(ordBaseInfo.getFlag());
         ordOrderAtomSV.insertSelective(ordOrder);
         return orderId;
     }

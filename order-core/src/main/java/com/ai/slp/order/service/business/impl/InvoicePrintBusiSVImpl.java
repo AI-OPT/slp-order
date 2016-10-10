@@ -147,7 +147,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
 		if(ordOdInvoice==null) {
 			logger.error("发票信息不存在[订单id:"+orderId+"]");
-			throw new BusinessException("", "发票信息不存在[订单id:"+orderId+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "发票信息不存在[订单id:"+orderId+"]");
 		}
 		ordOdInvoice.setInvoiceId(request.getInvoiceId());
 		ordOdInvoice.setInvoiceNum(request.getInvoiceNum());

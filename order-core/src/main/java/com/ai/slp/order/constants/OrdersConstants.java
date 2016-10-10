@@ -21,6 +21,19 @@ public final class OrdersConstants {
 	private static PropertiesLoader loader = new PropertiesLoader("remote_url.properties");
 
     public static final class OrdOrder {
+    	
+    	  public static final class Flag {
+              /**
+               * 0:OFC
+               */
+              public static final String OFC = "0";
+
+              /**
+               * 1：up平台
+               */
+              public static final String UPPLATFORM = "1";
+
+          }
 
         public static final class DeliveryFlag {
             /**
@@ -897,6 +910,16 @@ public final class OrdersConstants {
  		/** 退货类型 */
  		public static final int BACK = 3;
  	}
+    
+    public static final class OFCDeliveryState{
+    	/** 已发货*/
+ 		public static final String ALREADY_DELIVER_GOODS = "12";
+ 		/** 已收货 */
+ 		public static final String ALREADY_RECEIVE_GOODS = "13";
+ 		/** 部分发货 */
+ 		public static final String PART_DELIVER_GOODS = "18";
+ 	}
+    
  	/**
  	 * 支付通知
  	 * Date: 2016年9月23日 <br>
