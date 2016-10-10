@@ -89,6 +89,8 @@ public class OrdOrder {
 
     private String accountId;
 
+    private String flag;
+
     public long getOrderId() {
         return orderId;
     }
@@ -431,5 +433,13 @@ public class OrdOrder {
 
     public void setAccountId(String accountId) {
         this.accountId = accountId == null ? null : accountId.trim();
+    }
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag == null ? null : flag.trim();
     }
 }
