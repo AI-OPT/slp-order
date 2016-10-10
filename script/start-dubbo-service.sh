@@ -37,12 +37,12 @@ sed -i "s/ccs.appname=.*/ccs.appname=${CCS_NAME}/g" ${APP_HOME}/config/paas/paas
 sed -i "s/ccs.zk_address=.*/ccs.zk_address=${ZK_ADDR}/g" ${APP_HOME}/config/paas/paas-conf.properties
 #用户信息
 sed -i "s/user.appkey=.*/user.appkey=${USER_APPKEY}/g" ${APP_HOME}/config/remote_url.properties
-sed -i "s/user.query.url=.*/user.query.url=${USER_QUERY_URL}/g" ${APP_HOME}/config/remote_url.properties
+sed -i "s%user.query.url=.*%user.query.url=${USER_QUERY_URL}%g" ${APP_HOME}/config/remote_url.properties
 #物流信息
 sed -i "s/ofc.appkey=.*/ofc.appkey=${OFC_APPKEY}/g" ${APP_HOME}/config/remote_url.properties
-sed -i "s/ofc.query.url=.*/ofc.query.url=${OFC_QUERY_URL}/g" ${APP_HOME}/config/remote_url.properties
-sed -i "s/ofc.order.create.url=.*/ofc.order.create.url=${OFC_ORDER_CREATE_URL}/g" ${APP_HOME}/config/remote_url.properties
-sed -i "s/ofc.return.create.url=.*/ofc.return.create.url=${OFC_RETURN_CREATE_URL}/g" ${APP_HOME}/config/remote_url.properties
+sed -i "s%ofc.query.url=.*%ofc.query.url=${OFC_QUERY_URL}%g" ${APP_HOME}/config/remote_url.properties
+sed -i "s%ofc.order.create.url=.*%ofc.order.create.url=${OFC_ORDER_CREATE_URL}%g" ${APP_HOME}/config/remote_url.properties
+sed -i "s%ofc.return.create.url=.*%ofc.return.create.url=${OFC_RETURN_CREATE_URL}%g" ${APP_HOME}/config/remote_url.properties
 
 
 
