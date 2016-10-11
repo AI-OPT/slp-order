@@ -1,8 +1,12 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -13,11 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.PageInfo;
-import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
+import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
@@ -39,7 +42,6 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
-import com.ai.slp.order.api.ordermodify.param.OrdRequest;
 import com.ai.slp.order.constants.ErrorCodeConstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.attach.BehindOrdOrderAttach;
@@ -53,7 +55,6 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
-import com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
@@ -73,7 +74,6 @@ import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
 import com.ai.slp.order.util.ChUserUtil;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.InfoTranslateUtil;
-import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.order.vo.ProdExtendInfoVo;
@@ -84,6 +84,7 @@ import com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV;
 import com.ai.slp.route.api.routemanage.param.RouteIdParamRequest;
 import com.ai.slp.route.api.routemanage.param.RouteResponse;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 
@@ -176,8 +177,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                     orderAttach.getOrderId(),orderAttach.getTenantId());
             ordOrderVo.setPayDataList(orderFeeProdList);
             /* 5.订单商品明细查询 */
-            List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,
-                    orderAttach.getTenantId(), orderAttach.getOrderId());
+            List<OrdProductVo> productList = this.getOrdProductList(orderAttach.getTenantId(), orderAttach.getOrderId());
             ordOrderVo.setProductList(productList);
             ordOrderList.add(ordOrderVo);
         }
@@ -251,7 +251,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
      * @param tenantId
      * @ApiDocMethod
      */
-    private List<OrdProductVo> getOrdProductList(ICacheSV iCacheSV, String tenantId, long orderId) {
+    private List<OrdProductVo> getOrdProductList(String tenantId, long orderId) {
         List<OrdProductVo> productList = new ArrayList<OrdProductVo>();
         OrdOdProdCriteria example = new OrdOdProdCriteria();
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
@@ -276,6 +276,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setCusServiceFlag(ordOdProd.getCusServiceFlag());  //商品是否售后标识
                 ordProductVo.setJfFee(ordOdProd.getJfFee()); //消费积分
                 ordProductVo.setGiveJF(ordOdProd.getJf()); //赠送积分
+                ordProductVo.setProdCode(ordOdProd.getProdCode()); //商品编码
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 ordProductVo.setProductImage(productImage);
                /* ordProductVo.setProdExtendInfo(this.getProdExtendInfo(tenantId, orderId,
@@ -458,14 +459,17 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                             "ORD_OD_INVOICE", "INVOICE_TYPE", ordOdInvoice.getInvoiceType(), iCacheSV);
                 	ordOrderVo.setInvoiceTypeName(sysParamInvoice == null ? "" : sysParamInvoice.getColumnDesc());
                 	ordOrderVo.setInvoiceContent(ordOdInvoice.getInvoiceContent());
+                	ordOrderVo.setBuyerTaxpayerNumber(ordOdInvoice.getBuyerTaxpayerNumber());
+                	ordOrderVo.setBuyerBankName(ordOdInvoice.getBuyerBankName());
+                	ordOrderVo.setBuyerBankAccount(ordOdInvoice.getBuyerBankAccount());
                 }
                 /* 4.订单配送信息查询*/
                 OrdOdLogistics ordOdLogistics =null;
                 if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())||
                 		OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())) {
-                	ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getOrderId());
+                	ordOdLogistics =ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
                 }else {
-                	ordOdLogistics = this.getOrdOdLogistics(order.getTenantId(), order.getParentOrderId());
+                	ordOdLogistics =ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getParentOrderId());
                 }
                 if(ordOdLogistics!=null) {
                 	ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
@@ -497,8 +501,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 	ordOrderVo.setPayDataList(orderFeeProdList);
                 }
                 /* 6.订单商品明细查询 */
-                List<OrdProductVo> productList = this.getOrdProductList(iCacheSV,
-                        order.getTenantId(), order.getOrderId());
+                List<OrdProductVo> productList = this.getOrdProductList(order.getTenantId(), order.getOrderId());
                 ordOrderVo.setProductList(productList);
                 /* 7.订单支付机构查询*/
                 OrdBalacneIfCriteria exampleBalance=new OrdBalacneIfCriteria();
@@ -688,24 +691,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     }
     
     /**
-     * 获取配送信息
-     */
-    private OrdOdLogistics getOrdOdLogistics(String tenantId,
-    		long orderId) {
-    	OrdOdLogisticsCriteria example=new OrdOdLogisticsCriteria();
-    	OrdOdLogisticsCriteria.Criteria criteria = example.createCriteria();
-    	criteria.andTenantIdEqualTo(tenantId);
-    	criteria.andOrderIdEqualTo(orderId);
-    	List<OrdOdLogistics> list = ordOdLogisticsAtomSV.selectByExample(example);
-    	OrdOdLogistics ordOdLogistics=null;
-    	if(!CollectionUtil.isEmpty(list)) {
-    		 ordOdLogistics = list.get(0);
-    	}
-    	return ordOdLogistics;
-    }
-    
-    
-    /**
      * 运营后台列表信息
      */
     private List<BehindParentOrdOrderVo> getBehindOrdOrderVos(BehindQueryOrderListRequest orderListRequest,
@@ -725,10 +710,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		pOrderVo.setContactTel(behindOrdOrderAttach.getContactTel());
         		pOrderVo.setUserId(behindOrdOrderAttach.getUserId());
         		JSONObject dataJson = ChUserUtil.getUserInfo(behindOrdOrderAttach.getUserId());
-               //获取用户名
+        		//获取用户名
         		Object userName =dataJson.get("userName");
         		pOrderVo.setUserName(userName==null?null:userName.toString()); 
-               //获取绑定手机号
+        		//获取绑定手机号
        	        Object phone =dataJson.get("phone");
        	        pOrderVo.setUserTel(phone==null?null:phone.toString());
         		pOrderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
@@ -740,7 +725,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		if(!flag) {
         			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
         		}
-    			//TODO 绑定手机号??
     			OrdOrderCriteria exampleOrder=new OrdOrderCriteria();
     			OrdOrderCriteria.Criteria criteriaOrder = exampleOrder.createCriteria();
     			criteriaOrder.andParentOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
@@ -774,6 +758,43 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     			}else {
     				for (OrdOrder ordOrder : orders) {
     					BehindOrdOrderVo orderVo=new BehindOrdOrderVo();
+    					//订单查询OFC
+    					if(OrdersConstants.OrdOrder.Flag.OFC.equals(ordOrder.getFlag())) {
+    						String logisticsName = null;
+							String logisticsNo = null;
+    						JSONObject object = queryOFC(ordOrder);
+    						//TODO 判断
+    					/*	if(object==null) {
+    							
+    						}else {}*/
+    						JSONArray jsonArray = object.getJSONArray("OrderList");
+    						for (int i = 0; i < jsonArray.size(); i++) {
+    							JSONObject  jsonObject = (JSONObject) jsonArray.get(i);
+    							String state = jsonObject.getString("DeliveryState");
+    							JSONArray shipArray = jsonObject.getJSONArray("ShipOrderList");
+    							for (int j = 0; j < shipArray.size(); j++) {
+    								JSONObject  shipObject = (JSONObject) jsonArray.get(i);
+    								logisticsName = shipObject.getString("LogisticsName");
+    								logisticsNo = shipObject.getString("LogisticsNo");
+								}
+    							if(OrdersConstants.OFCDeliveryState.ALREADY_DELIVER_GOODS.equals(state)||
+    									OrdersConstants.OFCDeliveryState.ALREADY_RECEIVE_GOODS.equals(state)||
+    									OrdersConstants.OFCDeliveryState.PART_DELIVER_GOODS.equals(state)) {
+    								OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(ordOrder.getTenantId(), 
+    										ordOrder.getParentOrderId());
+    								if(ordOdLogistics==null) {
+    									logger.error("配送信息不存在");
+    									throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+    											"配送信息不存在[父订单id:"+ordOrder.getParentOrderId()+"]");
+    								}
+    								ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_CONFIRM);
+    								ordOdLogistics.setExpressOddNumber(logisticsNo);
+    								ordOdLogistics.setContactCompany(logisticsName);//物流商
+    								ordOrderAtomSV.updateById(ordOrder);
+    								ordOdLogisticsAtomSV.updateByPrimaryKey(ordOdLogistics);
+    							}
+    						}
+    					}
     					orderVo.setOrderId(ordOrder.getOrderId());
     					orderVo.setState(ordOrder.getState());
     					orderVo.setBusiCode(ordOrder.getBusiCode());
@@ -843,6 +864,39 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	@Override
 	public int updateOrder(OrdOrder request) throws BusinessException, SystemException {
 		return ordOrderAtomSV.updateById(request);
-		
+	}
+	
+	/**
+	 * OFC订单查询
+	 */
+	public JSONObject queryOFC(OrdOrder ordOrder) throws BusinessException, SystemException {
+		List<String> orderNoList = new ArrayList<String>();
+		orderNoList.add(String.valueOf(ordOrder.getOrderId()));
+		Map<String,Object> mapField=new HashMap<String,Object>();
+		mapField.put("OrderNoList", orderNoList);
+		/*mapField.put("shopName", "");
+		mapField.put("PageIndex", "");
+		mapField.put("PageSize", "");*/
+		String params=JSON.toJSONString(mapField);
+		Map<String, String> header=new HashMap<String, String>(); 
+		header.put("appkey", OrdersConstants.OFC_APPKEY);
+		JSONObject object =null;
+		//发送Post请求,并返回信息
+		try {
+			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_QUERY_URL, params, header);
+			object = JSON.parseObject(strData);
+			//TODO 是否判断
+		/*	if(object==null) {
+				
+			}else {}*/
+			boolean val = object.getBooleanValue("IsValid");//操作是否成功
+			if(!val) {
+				throw new BusinessException("", "OFC订单查询失败");
+			}
+		} catch (IOException | URISyntaxException e) {
+			logger.error(e.getMessage());
+			throw new SystemException("", "OFC订单查询出现异常");
+		}
+		return object;
 	}
 }
