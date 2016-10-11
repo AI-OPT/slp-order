@@ -39,7 +39,7 @@ public class InvoiceNoticeRequest implements Serializable{
 	/**
 	 * 发票总额
 	 */
-	private long invoiceTotalFee;
+	private double invoiceTotalFee;
 	
 	/**
 	 * 发票状态
@@ -94,11 +94,11 @@ public class InvoiceNoticeRequest implements Serializable{
 		this.invoiceTime = invoiceTime;
 	}
 
-	public long getInvoiceTotalFee() {
+	public double getInvoiceTotalFee() {
 		return invoiceTotalFee;
 	}
 
-	public void setInvoiceTotalFee(long invoiceTotalFee) {
+	public void setInvoiceTotalFee(double invoiceTotalFee) {
 		this.invoiceTotalFee = invoiceTotalFee;
 	}
 
