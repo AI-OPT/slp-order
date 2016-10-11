@@ -126,6 +126,11 @@ public class OrdProductVo extends BaseInfo{
      * 商品赠送积分
      */
     private long giveJF;
+    
+    /**
+     * 商品编码
+     */
+    private String prodCode;
 
 	public Long getOrderId() {
 		return orderId;
@@ -270,7 +275,6 @@ public class OrdProductVo extends BaseInfo{
 	public void setState(String state) {
 		this.state = state;
 	}
-
 	
 	public long getCouponFee() {
 		return couponFee;
@@ -310,5 +314,13 @@ public class OrdProductVo extends BaseInfo{
 
 	public void setGiveJF(long giveJF) {
 		this.giveJF = giveJF;
+	}
+
+	public String getProdCode() {
+		return prodCode;
+	}
+
+	public void setProdCode(String prodCode) {
+		this.prodCode = prodCode;
 	}
 }

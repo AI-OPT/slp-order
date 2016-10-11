@@ -260,6 +260,21 @@ public class OrdOrderVo extends BaseInfo {
      * 受理工号
      */
     private String operId;
+    
+    /**
+     * 纳税人识别号
+     */
+    private String buyerTaxpayerNumber;
+    
+    /**
+     * 购货方开户行名称
+     */
+    private String buyerBankName;
+    
+    /**
+     * 购货方开户行帐号
+     */
+    private String buyerBankAccount;
 
     /**
      * 支付信息(订单费用总表信息)
@@ -677,5 +692,29 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setDownstreamOrderId(String downstreamOrderId) {
 		this.downstreamOrderId = downstreamOrderId;
+	}
+
+	public String getBuyerTaxpayerNumber() {
+		return buyerTaxpayerNumber;
+	}
+
+	public void setBuyerTaxpayerNumber(String buyerTaxpayerNumber) {
+		this.buyerTaxpayerNumber = buyerTaxpayerNumber;
+	}
+
+	public String getBuyerBankName() {
+		return buyerBankName;
+	}
+
+	public void setBuyerBankName(String buyerBankName) {
+		this.buyerBankName = buyerBankName;
+	}
+
+	public String getBuyerBankAccount() {
+		return buyerBankAccount;
+	}
+
+	public void setBuyerBankAccount(String buyerBankAccount) {
+		this.buyerBankAccount = buyerBankAccount;
 	}
 }
