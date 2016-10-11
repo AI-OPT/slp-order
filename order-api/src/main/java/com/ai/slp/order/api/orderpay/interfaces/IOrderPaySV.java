@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 /**
  * 订单收费服务
@@ -37,5 +38,20 @@ public interface IOrderPaySV {
 	@Path("/pay")
     public BaseResponse pay(OrderPayRequest request)throws BusinessException,SystemException;
     //@interface pay{}
-
+	
+	
+	 /**
+     * 积分中心回调
+     * @param request
+     * @return
+     * @throws BusinessException
+     * @throws SystemException
+     * @author zhangxw
+     * @ApiDocMethod
+     * @ApiCode ORDER_RETURNOID_001
+     * @RestRelativeURL orderpay/returnOid
+     */
+	@POST
+	@Path("/returnOid")
+    public BaseResponse returnOid(OrderOidRequest request)throws BusinessException,SystemException;
 }
