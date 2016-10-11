@@ -2,6 +2,8 @@ package com.ai.slp.order.vo;
 
 import java.io.Serializable;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class OrderItemsVo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -9,23 +11,28 @@ public class OrderItemsVo implements Serializable{
 	/**
 	 * 产品名称
 	 */
+	@JSONField(name="ProductName")
 	private String productName;
 	
 	/**
 	 * 产品编码
 	 */
-	private String productCode;
+	@JSONField(name="ProductCode")
+	private String ProductCode;
 	/**
 	 * 产品型号
 	 */
+	@JSONField(name="ProductNo")
 	private String productNo;
 	/**
 	 * 产品单价
 	 */
+	@JSONField(name="Price")
 	private long price;
 	/**
 	 * 产品数量
 	 */
+	@JSONField(name="Quanlity")
 	private long quanlity;
 	public String getProductName() {
 		return productName;
@@ -34,10 +41,10 @@ public class OrderItemsVo implements Serializable{
 		this.productName = productName;
 	}
 	public String getProductCode() {
-		return productCode;
+		return ProductCode;
 	}
 	public void setProductCode(String productCode) {
-		this.productCode = productCode;
+		ProductCode = productCode;
 	}
 	public String getProductNo() {
 		return productNo;

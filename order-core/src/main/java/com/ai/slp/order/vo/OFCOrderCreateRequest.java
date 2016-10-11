@@ -3,6 +3,10 @@ package com.ai.slp.order.vo;
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
+
+
 public class OFCOrderCreateRequest implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -10,144 +14,187 @@ public class OFCOrderCreateRequest implements Serializable{
 	/**
 	 * 订单号
 	 */
+	@JSONField(name="OrderNo")
 	private String orderNo;
+	
+	/**
+	 * 订单时间
+	 */
+	@JSONField(name="orderTime")
+	private String orderTime;
 	
 	/**
 	 * 店铺名称
 	 */
+	@JSONField(name="ShopName")
 	private String shopName;
 	
 	/**
 	 * 买家姓名
 	 */
+	@JSONField(name="ReceiverContact")
 	private String receiverContact;
 	
 	/**
 	 * 买家电话
 	 */
+	@JSONField(name="ReceiverPhone")
 	private String receiverPhone;
 	
 	/**
 	 * 省
 	 */
+	@JSONField(name="Province")
 	private String province;
 	
 	/**
 	 * 市
 	 */
+	@JSONField(name="City")
 	private String city;
 	
 	/**
 	 * 区县
 	 */
+	@JSONField(name="Region")
 	private String region;
 	
 	/**
 	 * 详细地址
 	 */
+	@JSONField(name="ReceiverAddress")
 	private String receiverAddress;
 	
 	/**
 	 * 邮编
 	 */
+	@JSONField(name="PostCode")
 	private String postCode;
 	
 	/**
 	 * 支付时间
 	 */
+	@JSONField(name="PayTime")
 	private String payTime;
 	
 	/**
 	 * 支付帐号
 	 */
+	@JSONField(name="PayNo")
 	private String payNo;
 	/**
 	 * 支付方式
 	 */
+	@JSONField(name="PayType")
 	private long payType;
 	/**
 	 * 订单金额
 	 */
+	@JSONField(name="OrderAmout")
 	private long orderAmout;
 	
 	/**
 	 * 支付金额
 	 */
+	@JSONField(name="PayAmount")
 	private long payAmount;
 	/**
 	 * 优惠金额
 	 */
+	@JSONField(name="CoupAmount")
 	private long coupAmount;
 	
 	/**
 	 * 应收金额
 	 */
+	@JSONField(name="ReceiveAmount")
 	private long receiveAmount;
 	
 	/**
 	 * 是否开票
 	 */
-	private boolean needInvoice; 
+	@JSONField(name="NeedInvoice")
+	private int needInvoice; 
 	
 	/**
 	 * 发票抬头
 	 */
+	@JSONField(name="InvoiceTitle")
 	private String invoiceTitle;
 	/**
 	 * 发票类型
 	 */
+	@JSONField(name="InvoiceType")
 	private long invoiceType;
 	
 	/**
 	 * 单位名称
 	 */
+	@JSONField(name="CompanyName")
 	private String companyName;
 	/**
 	 * 纳税人识别号
 	 */
+	@JSONField(name="TaxNo")
 	private String taxNo;
 	/**
 	 * 注册地址
 	 */
+	@JSONField(name="RegisterAddress")
 	private String registerAddress;
 	/**
 	 * 注册电话
 	 */
+	@JSONField(name="RegisterTel")
 	private String registerTel;
 	
 	/**
 	 * 开户银行
 	 */
+	@JSONField(name="Bank")
 	private String bank;
 	/**
 	 * 银行账户
 	 */
+	@JSONField(name="BankNo")
 	private String bankNo;
 	/**
 	 * 买家备注
 	 */
+	@JSONField(name="BuyerRemark")
 	private String buyerRemark;
 	/**
 	 * 商家备注
 	 */
+	@JSONField(name="SellerRemark")
 	private String sellerRemark;
 	
 	/**
 	 * 订单明细
 	 */
+	@JSONField(name="Items")
 	private List<OrderItemsVo> items;
 	
 	/**
 	 * 优惠明细
 	 */
+	@JSONField(name="CouponList")
 	private List<OrderCouponVo> couponList;
-
+	
 	public String getOrderNo() {
 		return orderNo;
 	}
 
 	public void setOrderNo(String orderNo) {
 		this.orderNo = orderNo;
+	}
+
+	public String getOrderTime() {
+		return orderTime;
+	}
+
+	public void setOrderTime(String orderTime) {
+		this.orderTime = orderTime;
 	}
 
 	public String getShopName() {
@@ -270,11 +317,11 @@ public class OFCOrderCreateRequest implements Serializable{
 		this.receiveAmount = receiveAmount;
 	}
 
-	public boolean isNeedInvoice() {
+	public int getNeedInvoice() {
 		return needInvoice;
 	}
 
-	public void setNeedInvoice(boolean needInvoice) {
+	public void setNeedInvoice(int needInvoice) {
 		this.needInvoice = needInvoice;
 	}
 

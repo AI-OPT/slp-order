@@ -2,6 +2,8 @@ package com.ai.slp.order.vo;
 
 import java.io.Serializable;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class OrderCouponVo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -9,21 +11,25 @@ public class OrderCouponVo implements Serializable{
 	/**
 	 * 优惠名称
 	 */
+	@JSONField(name="CouponName")
 	private String couponName;
 	
 	/**
 	 * 优惠编码
 	 */
+	@JSONField(name="CouponCode")
 	private String couponCode;
 	
 	/**
 	 * 关联产品编码
 	 */
+	@JSONField(name="ProductCode")
 	private String productCode;
 	
 	/**
 	 * 优惠金额
 	 */
+	@JSONField(name="Amount")
 	private long amount;
 
 	public String getCouponName() {
