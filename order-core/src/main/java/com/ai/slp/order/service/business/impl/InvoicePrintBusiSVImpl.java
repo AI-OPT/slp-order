@@ -142,7 +142,12 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		if((request.getCompanyId().equals(supplierId))) {
 			throw new BusinessException("", "公司代码(销售方id)和商品中的销售方id不一致");
 		}
-		if(request.getInvoiceTotalFee()!=0 && invoiceAmount!=request.getInvoiceTotalFee()) {
+		String taxValue = String.valueOf((invoiceAmount/1000)*0.17);
+		String amoutValue = String.valueOf(invoiceAmount/1000);
+		BigDecimal b1 = new BigDecimal(taxValue);
+		BigDecimal b2 = new BigDecimal(amoutValue);
+		double totalMoney=b1.add(b2).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue(); 
+		if(request.getInvoiceTotalFee()!=0 && totalMoney!=request.getInvoiceTotalFee()) {
 			throw new BusinessException("", "发票总额和商品获取的额度不一致");
 		}
 		OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
