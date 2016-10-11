@@ -133,16 +133,18 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 					"商品信息不存在[订单id:"+orderId+"]");
 		}
 		long invoiceAmount=0;
+		long invoiceTotal=0;
 		String supplierId = null;
 		//计算发票金额
 		for (OrdOdProd ordOdProd : prods) {
+			invoiceTotal=ordOdProd.getTotalFee()+invoiceTotal;
 			invoiceAmount=ordOdProd.getAdjustFee()+invoiceAmount;
 			supplierId = ordOdProd.getSupplierId();
 		}
 		if((request.getCompanyId().equals(supplierId))) {
 			throw new BusinessException("", "公司代码(销售方id)和商品中的销售方id不一致");
 		}
-		String taxValue = String.valueOf((invoiceAmount/1000)*0.17);
+		String taxValue = String.valueOf((invoiceTotal/1000)*0.17);
 		String amoutValue = String.valueOf(invoiceAmount/1000);
 		BigDecimal b1 = new BigDecimal(taxValue);
 		BigDecimal b2 = new BigDecimal(amoutValue);
@@ -239,7 +241,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			respVo.setUnit("");
 			respVo.setDiscountAmount("0.00");
 			respVo.setRate("0.17");
-			String taxValue = String.valueOf((ordOdProd.getAdjustFee()/1000)*0.17);
+			String taxValue = String.valueOf((ordOdProd.getTotalFee()/1000)*0.17);
 			String amoutValue = String.valueOf(ordOdProd.getAdjustFee()/1000);
 			BigDecimal b1 = new BigDecimal(taxValue);
 			BigDecimal b2 = new BigDecimal(amoutValue);
