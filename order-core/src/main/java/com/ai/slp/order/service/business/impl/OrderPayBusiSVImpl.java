@@ -23,6 +23,7 @@ import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
@@ -32,6 +33,7 @@ import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.InfoJsonVo;
 import com.ai.slp.order.vo.OFCOrderCreateRequest;
 import com.ai.slp.order.vo.OrderCouponVo;
@@ -68,9 +70,11 @@ import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * 订单收费 Date: 2016年5月24日 <br>
@@ -105,7 +109,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
     
     @Autowired
-    private  IOrderListSV orderListSV;
+    private IOrderListSV orderListSV;
     
     @Autowired
     private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
@@ -121,12 +125,14 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Override
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
         /* 1.处理费用信息 */
-        Timestamp sysdate = DateUtil.getSysDate();
         //IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
         IDSSClient client = null;
+        OrdOrder ordOrder =null;
+        Set<Long> subOrderIds =new HashSet<Long>();
+        Timestamp sysdate = DateUtil.getSysDate();
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
-            OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
+            ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
             if (ordOrder == null) {
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
                         "订单信息不存在[订单ID:" + orderId + "]");
@@ -138,30 +144,30 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             if (flag) {
                 continue;
             }
-            /*if(Flag=="0") {
-            /* 同步长虹OFC,获取参数*/
-	       /*     String params = this.getOFCRequestParams(request, orderId,sysdate);
-	            Map<String, String> header=new HashMap<String, String>(); 
-	            header.put("appkey", OrdersConstants.OFC_APPKEY);
-	            //发送Post请求,并返回信息
-	            try {
-	            	String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_ORDER_CREATE_URL, params, header);
-	            	JSONObject object = JSON.parseObject(strData);
-	            	boolean val = object.getBooleanValue("IsValid");
-	            	if(!val) {
-						throw new BusinessException("", "销售订单创建同步到OFC错误");
-					}
-	            } catch (IOException | URISyntaxException e) {
-	            	logger.error(e.getMessage());
-	            	throw new SystemException("", "OFC同步出现异常");
-	            }*/
-            //}else {
-	            /* 4.拆分子订单 */
-	            this.resoleOrders(ordOrder, request.getTenantId(), client);
-        	}
+            /* 4.拆分子订单 */
+            subOrderIds = this.resoleOrders(ordOrder, request.getTenantId(), client,request,sysdate);
+            /* 5.销售订单创建同步到OFC*/
+            if(OrdersConstants.OrdOrder.Flag.OFC.equals(ordOrder.getFlag())) {
+            	/* 获取参数*/
+            	for (Long subOrderId : subOrderIds) {
+            		String params = this.getOFCRequestParams(request, subOrderId,sysdate);
+            		Map<String, String> header=new HashMap<String, String>(); 
+            		header.put("appkey", OrdersConstants.OFC_APPKEY);
+            		try {
+            			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_ORDER_CREATE_URL, params, header);
+            			JSONObject object = JSON.parseObject(strData);
+            			boolean val = object.getBooleanValue("IsValid");
+            			if(!val) {
+            				throw new BusinessException("", "销售订单创建同步到OFC错误");
+            			}
+            		} catch (IOException | URISyntaxException e) {
+            			logger.error(e.getMessage());
+            			throw new SystemException("", "OFC同步出现异常");
+            		}
+				}
+            }
         }
-
-   // }
+    }
 
     /**
      * 订单收费处理
@@ -353,8 +359,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @throws IllegalAccessException
      * @ApiDocMethod
      */
-    private void resoleOrders(OrdOrder ordOrder, String tenantId, IDSSClient client) {
+    private Set<Long> resoleOrders(OrdOrder ordOrder, String tenantId, IDSSClient client,
+    		OrderPayRequest request,Timestamp sysdate) {
         logger.debug("开始对订单[" + ordOrder.getOrderId() + "]进行拆分..");
+        Set<Long> subOrderIds =new HashSet<Long>();;
+        Long subOrder=null;
         /* 购买实物类商品 */
         if(OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(ordOrder.getOrderType())) {
         	/* 查询费用总表信息*/
@@ -386,8 +395,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         		ordOdProd.setAdjustFee(ordOdProd.getTotalFee()-ordOdProd.getDiscountFee()); //应收费用
         		ordOdProdAtomSV.updateById(ordOdProd);
         		/* 2.生成子订单*/
-        		this.createEntitySubOrder(tenantId, ordOrder,ordOdProd,map);
+        		subOrder = this.createEntitySubOrder(tenantId, ordOrder,ordOdProd,map,request,sysdate);
         	}
+        	subOrderIds.add(subOrder);
         }else {
         	/* 购买虚拟类商品*/
         	/* 1.查询商品明细拓展表 */
@@ -418,6 +428,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
                 }
             }
         }
+        return subOrderIds;
     }
     
     
@@ -429,8 +440,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @param map
      * @author caofz
      */
-    private void createEntitySubOrder(String tenantId, OrdOrder parentOrdOrder,
-    		OrdOdProd parentOrdOdProd,Map<String, Long> map) {
+    private Long createEntitySubOrder(String tenantId, OrdOrder parentOrdOrder,
+    		OrdOdProd parentOrdOdProd,Map<String, Long> map,OrderPayRequest request,Timestamp sysdate) {
     	/* 1.根据商品信息获取routeId*/
     	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),Long.parseLong(parentOrdOdProd.getSupplierId()));
     	IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
@@ -472,12 +483,13 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		ordOdProd = this.createTableInfo(subOrderId, parentOrdOrder, parentOrdOdProd, routeId,null);
     		this.updateFeeTotal(subOrderId, parentOrdOrder, ordOdProd);
     	}
-        /* 3.写入订单状态变化轨迹表 */
-        String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DISTRIBUTION;
-		orderFrameCoreSV.ordOdStateChg(subOrderId, tenantId, parentOrdOrder.getState(),
-				OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION, chgDesc, null, null, null, DateUtil.getSysDate());
-        /* 4.调用路由,并更新订单明细表*/ 
-		this.callRoute(tenantId,ordOdProd,null,routeId,parentOrdOrder.getOrderType());
+    	/* 3.写入订单状态变化轨迹表 */
+    	String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DISTRIBUTION;
+    	orderFrameCoreSV.ordOdStateChg(subOrderId, tenantId, parentOrdOrder.getState(),
+    			OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION, chgDesc, null, null, null, DateUtil.getSysDate());
+    	/* 4.调用路由,并更新订单明细表*/ 
+    	this.callRoute(tenantId,ordOdProd,null,routeId,parentOrdOrder.getOrderType());
+    	return subOrderId;
     }
     
     
@@ -798,21 +810,25 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     }
     
     /**
-     * 组装OCF订单创建请求参数
+     * 组装OFC订单创建请求参数
      */
-    private  String getOFCRequestParams(OrderPayRequest request,Long orderId,Timestamp sysdate) {
+    public static String getOFCRequestParams(OrderPayRequest request,Long orderId,Timestamp sysdate) {
         //封装数据查询该订单下的详细数据
     	ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
     	QueryOrderRequest orderRequest=new QueryOrderRequest();
         orderRequest.setOrderId(orderId);
         orderRequest.setTenantId(request.getTenantId());
-        QueryOrderResponse queryOrder = orderListSV.queryOrder(orderRequest);
+        IOrderListSV listSV = DubboConsumerFactory.getService(IOrderListSV.class);
+        QueryOrderResponse queryOrder = listSV.queryOrder(orderRequest);
         OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
         OFCOrderCreateRequest paramsRequest=new OFCOrderCreateRequest();
         paramsRequest.setOrderNo(String.valueOf(orderId));
         SysParam sysParamChlId = InfoTranslateUtil.translateInfo(request.getTenantId(), 
 				"ORD_ORDER", "CHL_ID", ordOrderVo.getChlId(), iCacheSV);
-        paramsRequest.setShopName(sysParamChlId==null?"":sysParamChlId.getColumnDesc()); 
+       // paramsRequest.setShopName(sysParamChlId==null?"":sysParamChlId.getColumnDesc()); 
+        paramsRequest.setShopName("长虹官方旗舰店"); 
+        String time = DateUtil.getDateString(ordOrderVo.getOrderTime(), DateUtil.DATETIME_FORMAT);
+        paramsRequest.setOrderTime(time);
         paramsRequest.setReceiverContact(ordOrderVo.getContactName());
         paramsRequest.setReceiverPhone(ordOrderVo.getContactTel());
         paramsRequest.setProvince(ordOrderVo.getProvinceCode()==null?"":iCacheSV.
@@ -831,16 +847,24 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         paramsRequest.setCoupAmount(ordOrderVo.getDiscountFee()/10);//优惠金额
         paramsRequest.setReceiveAmount(ordOrderVo.getPayFee()/10);
         if(!StringUtil.isBlank(ordOrderVo.getInvoiceType())) {
-        	paramsRequest.setNeedInvoice(true);
+        	paramsRequest.setNeedInvoice(1); //TODO 确定下?
         	paramsRequest.setInvoiceType(Long.parseLong(ordOrderVo.getInvoiceType()));
-        	paramsRequest.setCompanyName("");
-        	paramsRequest.setTaxNo("");
-        	paramsRequest.setRegisterAddress("");
-        	paramsRequest.setRegisterTel("");
-        	paramsRequest.setBank("");
-        	paramsRequest.setBankNo("");
+        	paramsRequest.setCompanyName(ordOrderVo.getInvoiceTitle());
+        	paramsRequest.setTaxNo(ordOrderVo.getBuyerTaxpayerNumber());
+        	StringBuffer st=new StringBuffer();////组装详细地址
+			st.append(ordOrderVo.getProvinceCode()==null?"":iCacheSV.
+        			getAreaName(ordOrderVo.getProvinceCode()));
+			st.append(ordOrderVo.getCityCode()==null?"":iCacheSV.
+        			getAreaName(ordOrderVo.getCityCode()));
+			st.append(ordOrderVo.getCountyCode()==null?"":iCacheSV.
+        			getAreaName(ordOrderVo.getCountyCode()));
+			st.append(ordOrderVo.getAddress());
+        	paramsRequest.setRegisterAddress(st.toString()); 
+        	paramsRequest.setRegisterTel(ordOrderVo.getContactTel());
+        	paramsRequest.setBank(ordOrderVo.getBuyerBankName());
+        	paramsRequest.setBankNo(ordOrderVo.getBuyerBankAccount());
         }else {  //发票类型为空的话,表示无需发票信息
-        	paramsRequest.setNeedInvoice(false);
+        	paramsRequest.setNeedInvoice(0);
         }
         paramsRequest.setBuyerRemark(ordOrderVo.getRemark());
         paramsRequest.setSellerRemark(ordOrderVo.getOperDiscountDesc()); //TODO 商家备注 减免原因 ?? 
@@ -850,8 +874,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         for (OrdProductVo ordProductVo : productList) {
         	OrderItemsVo orderItemsVo=new OrderItemsVo();
         	orderItemsVo.setProductName(ordProductVo.getProdName());
-        	orderItemsVo.setProductCode(""); //TODO
-        	orderItemsVo.setProductNo("");; //TODO
+        	orderItemsVo.setProductCode(ordProductVo.getProdCode()); //商品编码
+        	orderItemsVo.setProductNo("");
         	orderItemsVo.setPrice(ordProductVo.getSalePrice());
         	orderItemsVo.setQuanlity(ordProductVo.getBuySum());
         	orderItemsVoList.add(orderItemsVo);
@@ -860,7 +884,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         OrderCouponVo couponVo=new OrderCouponVo();
         couponVo.setCouponName("");
         couponVo.setCouponCode("");
-        couponVo.setProductCode(""); //TODO
+        couponVo.setProductCode(""); 
         couponVo.setAmount(0); //TODO  单个商品的优惠券还是优惠总金额 ???
         orderCouponVoList.add(couponVo);
         //封装参数,转化为json形式
@@ -868,24 +892,41 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         paramsRequest.setCouponList(orderCouponVoList);
     	return JSON.toJSONString(paramsRequest);
     }
+
+	@Override
+	public void returnOid(OrderOidRequest request) throws BusinessException, SystemException {
+		/* 参数校验*/
+		ValidateUtils.validateReturnOid(request);
+		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+		if(order==null) {
+			throw new BusinessException("", "订单信息不存在[订单id:"+request.getOrderId()+
+					",租户id:"+request.getTenantId()+"]");
+		}
+		order.setDownstreamOrderId(request.getOid());
+		ordOrderAtomSV.updateById(order);
+	}
     
     //TODO 测试
-/*    public static void main(String[] args) {
+   /* public static void main(String[] args) {
     	OrderPayRequest request=new OrderPayRequest();
     	request.setTenantId("changhong");
     	request.setPayType("28");
     	long orderId=2000000988564944l;
-    	 同步长虹OFC,获取参数
+    	//同步长虹OFC,获取参数  
         String params = getOFCRequestParams(request, orderId,DateUtil.getSysDate());
         String url="http://10.19.13.16:28151/opaas/http/srv_slp_externalorder_create"; 
         Map<String, String> header=new HashMap<String, String>(); 
-        header.put("appkey", "33a6e8c78f71a9f45bc09c572d3491ce");
+        header.put("appkey", "3a83ed361ebce978731b736328a97ea8");
         //发送Post请求,并返回信息
         try {
 			String strData = HttpClientUtil.sendPost(url, params, header);
+			JSONObject object = JSON.parseObject(strData);
+			boolean val = object.getBooleanValue("IsValid");
+			if(!val) {
+				throw new BusinessException("", "销售订单创建同步到OFC错误");
+			}
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 	}*/
-    
 }
