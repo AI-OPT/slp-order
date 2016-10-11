@@ -2,6 +2,7 @@ package com.ai.slp.order.service.business.interfaces;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 
 /**
@@ -13,4 +14,5 @@ import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 public interface IOrderPayBusiSV {
 
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException;
+    public void returnOid(OrderOidRequest request) throws BusinessException, SystemException;
 }
