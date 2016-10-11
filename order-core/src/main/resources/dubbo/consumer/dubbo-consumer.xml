@@ -64,6 +64,9 @@
 	<dubbo:reference id="iRouteManageSV"
 		interface="com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV" />
 		
+	<dubbo:reference id="iOrderListSV"
+		interface="com.ai.slp.order.api.orderlist.interfaces.IOrderListSV" />
+		
 	
 	
 </beans>
