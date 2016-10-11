@@ -1,5 +1,6 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -227,23 +228,26 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			respVo.setMaterialCode(ordOdProd.getProdCode());
 			respVo.setSpecification(""); 
 			respVo.setMaterialName(ordOdProd.getProdName());
-			respVo.setPrice(String.valueOf(ordOdProd.getSalePrice()));
+			String salePrice = String.valueOf(ordOdProd.getSalePrice()/1000);
+			respVo.setPrice(new BigDecimal(salePrice).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
 			respVo.setQuantity(String.valueOf(ordOdProd.getBuySum()));
 			respVo.setUnit("");
 			respVo.setDiscountAmount("0.00");
 			respVo.setRate("0.17");
-			String taxValue = String.valueOf(ordOdProd.getAdjustFee()*0.17);
-			String amoutValue = String.valueOf(ordOdProd.getAdjustFee());
-			respVo.setTax(taxValue);
-			respVo.setAmount(amoutValue);
-			respVo.setTaxAmount(taxValue+amoutValue);
+			String taxValue = String.valueOf((ordOdProd.getAdjustFee()/1000)*0.17);
+			String amoutValue = String.valueOf(ordOdProd.getAdjustFee()/1000);
+			BigDecimal b1 = new BigDecimal(taxValue);
+			BigDecimal b2 = new BigDecimal(amoutValue);
+			respVo.setTax(b1.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+			respVo.setAmount(b2.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+			String s=b1.add(b2).setScale(2,BigDecimal.ROUND_HALF_UP).toString(); 
+			respVo.setTaxAmount(s);
 			respVo.setRemark(order.getRemark()==null?"":order.getRemark());
 			invoiceList.add(respVo);
 		}
 		response.setInvoiceSumbitVo(invoiceList);
 		return response;
 	}
-
 	
 	
 	 private PageInfo<InvoicePrintVo> queryForPage(Integer pageNo,Integer pageSize,Long orderId,
