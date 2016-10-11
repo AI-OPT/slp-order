@@ -24,11 +24,6 @@ public class OrdProductDetailInfo extends BaseInfo{
     private long freight;
     
     /**
-     * 积分中心返回的id
-     */
-    private String downstreamOrderId;
-    
-    /**
      * 商品信息
      */
     private List<OrdProductInfo> ordProductInfoList;
@@ -82,14 +77,6 @@ public class OrdProductDetailInfo extends BaseInfo{
 
 	public void setOrdInvoiceInfo(OrdInvoiceInfo ordInvoiceInfo) {
 		this.ordInvoiceInfo = ordInvoiceInfo;
-	}
-
-	public String getDownstreamOrderId() {
-		return downstreamOrderId;
-	}
-
-	public void setDownstreamOrderId(String downstreamOrderId) {
-		this.downstreamOrderId = downstreamOrderId;
 	}
 
 	public String getAccountId() {
