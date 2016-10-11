@@ -10,6 +10,7 @@ import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.aftersaleorder.interfaces.IOrderAfterSaleSV;
+import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -45,6 +46,16 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	public BaseResponse refund(OrderReturnRequest request) throws BusinessException, SystemException {
 		BaseResponse response =new BaseResponse();
 		orderAfterSaleBusiSV.refund(request);
+        ResponseHeader responseHeader = new ResponseHeader(true,
+                ExceptCodeConstants.Special.SUCCESS, "成功");
+        response.setResponseHeader(responseHeader);
+        return response;
+	}
+
+	@Override
+	public BaseResponse backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException {
+		BaseResponse response =new BaseResponse();
+		orderAfterSaleBusiSV.backStateOFC(request);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
         response.setResponseHeader(responseHeader);
