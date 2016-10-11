@@ -6,7 +6,9 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
+import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
@@ -91,6 +93,9 @@ public class ValidateUtils {
 		}
 		if (StringUtil.isBlank(ordBaseInfo.getUserId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户id不能为空");
+		}
+		if (StringUtil.isBlank(ordBaseInfo.getFlag())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "业务标识不能为空");
 		}
 		if (StringUtil.isBlank(ordBaseInfo.getIpAddress())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户ip不能为空");
@@ -188,6 +193,42 @@ public class ValidateUtils {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "专用发票时,购货方开户行账号不能为空");
 				}
 			}
+		}
+	}
+	
+	/**
+	 * 积分中心回调参数校验
+	 */
+	public static void validateReturnOid(OrderOidRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if (condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单号不能为空");
+		}
+		if(StringUtil.isBlank(condition.getOid())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "积分中心返回的oid不能为空");
+		}
+	}
+	
+	/**
+	 * OFC售后订单状态通知参数校验
+	 */
+	public static void validateOFCBackRequest(OrderOFCBackRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		if (condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单号不能为空");
+		}
+		if (StringUtil.isBlank(condition.getExternalOrderId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "外部申请单号不能为空");
+		}
+		if(StringUtil.isBlank(condition.getState())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "审核状态不能为空");
 		}
 	}
 }
