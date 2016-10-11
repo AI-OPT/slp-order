@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
 
 /**
@@ -67,5 +68,22 @@ public interface IOrderAfterSaleSV {
 	@POST
 	@Path("/refund")
 	public BaseResponse refund(OrderReturnRequest request) throws BusinessException,SystemException;
+	
+	
+	/**
+	 * 售后订单状态通知(OFC)
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode ORDER_BACKSATE_OFC_001
+	 * @RestRelativeURL aftersaleorder/backStateOFC
+	 */
+	@POST
+	@Path("/backStateOFC")
+	public BaseResponse backStateOFC(OrderOFCBackRequest request) throws BusinessException,SystemException;
+	
 	
 }
