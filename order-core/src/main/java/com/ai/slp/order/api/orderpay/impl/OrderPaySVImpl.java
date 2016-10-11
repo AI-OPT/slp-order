@@ -11,6 +11,7 @@ import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.orderpay.interfaces.IOrderPaySV;
+import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -42,4 +43,14 @@ public class OrderPaySVImpl implements IOrderPaySV {
         response.setResponseHeader(responseHeader);
         return response;
     }
+
+	@Override
+	public BaseResponse returnOid(OrderOidRequest request) throws BusinessException, SystemException {
+		 BaseResponse response = new BaseResponse();
+         orderPayBusiSV.returnOid(request);
+         ResponseHeader responseHeader = new ResponseHeader(true,
+                ExceptCodeConstants.Special.SUCCESS, "成功");
+         response.setResponseHeader(responseHeader);
+	     return response;  
+	}
 }
