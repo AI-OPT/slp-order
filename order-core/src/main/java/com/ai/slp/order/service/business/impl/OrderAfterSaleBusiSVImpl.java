@@ -23,6 +23,7 @@ import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.aftersaleorder.impl.OrderAfterSaleSVImpl;
+import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
@@ -33,6 +34,7 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria.Criteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
@@ -42,6 +44,7 @@ import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.OFCAfterSaleOrderCreateRequest;
 import com.ai.slp.order.vo.OrderAfterSaleApplyItemsVo;
 import com.ai.slp.order.vo.OrderAfterSaleApplyVo;
@@ -165,22 +168,25 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		balacneIf.setPayFee(backTotalFee-backOrdOdProd.getDiscountFee());
 		balacneIf.setCreateTime(DateUtil.getSysDate());
 		ordBalacneIfAtomSV.insertSelective(balacneIf);
-		//组装退货申请单创建参数(OFC)
-		String params = getOFCAfterSaleOrderCreateParam(order, ordOdProd, sysDate, 
-				backTotalFee, prodSum, OrdersConstants.OFCApplyType.BACK);
-        Map<String, String> header=new HashMap<String, String>(); 
-        header.put("appkey", OrdersConstants.OFC_APPKEY);
-        //发送Post请求,并返回信息
-        try {
-			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
-			JSONObject object = JSON.parseObject(strData);
-			boolean val = object.getBooleanValue("IsValid");
-		/*	if(!val) {
+		
+		//组装退货申请单(OFC)
+		if(OrdersConstants.OrdOrder.Flag.OFC.equals(order.getFlag())) {
+			String params = getOFCAfterSaleOrderCreateParam(order, ordOdProd, sysDate, 
+					backTotalFee, prodSum, OrdersConstants.OFCApplyType.BACK);
+			Map<String, String> header=new HashMap<String, String>(); 
+			header.put("appkey", OrdersConstants.OFC_APPKEY);
+			//发送Post请求,并返回信息
+			try {
+				String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
+				JSONObject object = JSON.parseObject(strData);
+				boolean val = object.getBooleanValue("IsValid");
+				/*	if(!val) {
 				throw new BusinessException("", "退货申请同步到OFC错误");
 			}*/
-		} catch (IOException | URISyntaxException e) {
-			logger.error(e.getMessage());
-			throw new SystemException("", "OFC同步出现异常");
+			} catch (IOException | URISyntaxException e) {
+				logger.error(e.getMessage());
+				throw new SystemException("", "OFC同步出现异常");
+			}
 		}
 	}
 
@@ -288,24 +294,46 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		balacneIf.setCreateTime(DateUtil.getSysDate());
 		ordBalacneIfAtomSV.insertSelective(balacneIf);
 		
-		//组装退款申请单创建参数(OFC)
-		String params = getOFCAfterSaleOrderCreateParam(order, ordOdProd, sysDate, 
-				ordOdProd.getTotalFee(), ordOdProd.getBuySum(), OrdersConstants.OFCApplyType.REFUND);
-		//发送Post请求
-        Map<String, String> header=new HashMap<String, String>(); 
-        header.put("appkey", OrdersConstants.OFC_APPKEY);
-        //发送Post请求,并返回信息
-        try {
-			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
-			JSONObject object = JSON.parseObject(strData);
-			boolean val = object.getBooleanValue("IsValid");
-			/*if(!val) {
+		//组装退款申请单(OFC) TODO
+		if(OrdersConstants.OrdOrder.Flag.OFC.equals(order.getFlag())) {
+			String params = getOFCAfterSaleOrderCreateParam(order, ordOdProd, sysDate, 
+					ordOdProd.getTotalFee(), ordOdProd.getBuySum(), OrdersConstants.OFCApplyType.REFUND);
+			//发送Post请求
+			Map<String, String> header=new HashMap<String, String>(); 
+			header.put("appkey", OrdersConstants.OFC_APPKEY);
+			//发送Post请求,并返回信息
+			try {
+				String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
+				JSONObject object = JSON.parseObject(strData);
+				boolean val = object.getBooleanValue("IsValid");
+				/*if(!val) {
 				throw new BusinessException("", "退款申请同步到OFC错误");
 			}*/
-        } catch (IOException | URISyntaxException e) {
-			logger.error(e.getMessage());
-			throw new SystemException("", "OFC同步出现异常");
+			} catch (IOException | URISyntaxException e) {
+				logger.error(e.getMessage());
+				throw new SystemException("", "OFC同步出现异常");
+			}
 		}
+	}
+	
+	
+	@Override
+	public void backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException {
+		/*参数校验*/
+		ValidateUtils.validateOFCBackRequest(request);
+		OrdOrderCriteria example=new OrdOrderCriteria();
+		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		criteria.andOrderIdEqualTo(Long.parseLong(request.getExternalOrderId()));
+		criteria.andOrigOrderIdEqualTo(Long.parseLong(request.getOrderId()));
+		List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(example);
+		if(CollectionUtil.isEmpty(orderList)) {
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"订单信息不存在[订单id:"+request.getOrderId()+"]");
+		}
+		OrdOrder ordOrder = orderList.get(0);
+		ordOrder.setState(request.getState());
+		ordOrder.setRemark(request.getReasonDesc());
+		ordOrderAtomSV.updateById(ordOrder);
 	}
 	
 	
@@ -388,14 +416,14 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		applyVo.setExternalApplyNo("");
 		applyVo.setApplyType(type);
 		applyVo.setReasonType(16); //其它
-		applyVo.setDescription("");
+		applyVo.setDescription("其它"); //TODO
 		applyVo.setRefundAmount(backTotalFee/10); //分为单位
 		applyVo.setApplyTime(sysDate.toString());
-		applyVo.setRemark(""); //TODO
+		applyVo.setRemark(""); 
 		List<OrderAfterSaleApplyItemsVo> applyItemsVoList=new ArrayList<OrderAfterSaleApplyItemsVo>();
 		OrderAfterSaleApplyItemsVo applyItemsVo=new OrderAfterSaleApplyItemsVo();
 		applyItemsVo.setProductName(ordOdProd.getProdName());
-		applyItemsVo.setProductCode("");
+		applyItemsVo.setProductCode(ordOdProd.getProdCode()); //产品编码
 		applyItemsVo.setApplyQuanlity(prodSum);
 		applyItemsVoList.add(applyItemsVo);
 		orderCreateRequest.setOrderAfterSaleApplyVo(applyVo);
