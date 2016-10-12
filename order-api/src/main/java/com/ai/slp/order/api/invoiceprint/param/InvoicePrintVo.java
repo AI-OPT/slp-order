@@ -33,6 +33,16 @@ public class InvoicePrintVo implements Serializable{
 	private String invoiceStatus;
 	
 	/**
+	 * 发票代码
+	 */
+	private String invoiceId;
+	
+	/**
+	 * 发票号码
+	 */
+	private String invoiceNum;
+	
+	/**
 	 * 税率
 	 */
 	private long taxRate;
@@ -109,5 +119,21 @@ public class InvoicePrintVo implements Serializable{
 
 	public void setInvoiceAmount(long invoiceAmount) {
 		this.invoiceAmount = invoiceAmount;
+	}
+
+	public String getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(String invoiceId) {
+		this.invoiceId = invoiceId;
+	}
+
+	public String getInvoiceNum() {
+		return invoiceNum;
+	}
+
+	public void setInvoiceNum(String invoiceNum) {
+		this.invoiceNum = invoiceNum;
 	}
 }
