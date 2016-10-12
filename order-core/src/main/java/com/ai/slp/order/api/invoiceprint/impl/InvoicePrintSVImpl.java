@@ -9,6 +9,7 @@ import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.invoiceprint.interfaces.IInvoicePrintSV;
+import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintResponse;
@@ -44,6 +45,15 @@ public class InvoicePrintSVImpl implements IInvoicePrintSV {
 	@Override
 	public InvoiceSumbitResponse invoiceSubmit(InvoiceSubmitRequest request) throws BusinessException, SystemException {
 		InvoiceSumbitResponse response = invoicePrintBusiSV.invoiceSubmit(request);
+		ResponseHeader header=new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "成功");
+		response.setResponseHeader(header);
+		return response;
+	}
+
+	@Override
+	public BaseResponse modifyState(InvoiceModifyRequest request) throws BusinessException, SystemException {
+		BaseResponse response=new BaseResponse();
+		invoicePrintBusiSV.modifyState(request);
 		ResponseHeader header=new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "成功");
 		response.setResponseHeader(header);
 		return response;
