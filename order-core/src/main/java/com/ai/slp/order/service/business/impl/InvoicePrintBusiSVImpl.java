@@ -22,6 +22,7 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintResponse;
@@ -32,6 +33,7 @@ import com.ai.slp.order.api.invoiceprint.param.InvoiceSumbitVo;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria;
+import com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria.Criteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
@@ -41,6 +43,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IInvoicePrintBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
+import com.ai.slp.order.util.ValidateUtils;
 
 @Service
 @Transactional
@@ -101,8 +104,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票状态不能为空");
 		}else {
 			String status = request.getInvoiceStatus();
-			if(OrdersConstants.ordOdInvoice.invoiceStatus.TWO.equals(status)||
-					OrdersConstants.ordOdInvoice.invoiceStatus.THREE.equals(status)) {
+			if(OrdersConstants.ordOdInvoice.invoiceStatus.THREE.equals(status)) {
 				if(StringUtil.isBlank(request.getInvoiceId())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票代码不能为空");
 				}
@@ -118,9 +120,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 					}
 				}
 			}
-			if(!(OrdersConstants.ordOdInvoice.invoiceStatus.ONE.equals(status)||
-					OrdersConstants.ordOdInvoice.invoiceStatus.TWO.equals(status)||
-					OrdersConstants.ordOdInvoice.invoiceStatus.THREE.equals(status)||
+			if(!(OrdersConstants.ordOdInvoice.invoiceStatus.THREE.equals(status)||
 					OrdersConstants.ordOdInvoice.invoiceStatus.FOUR.equals(status))) {
 				throw new BusinessException("", "发票状态不符合要求");
 			}
@@ -296,6 +296,8 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 					printVo.setInvoiceStatus(ordOdInvoice.getInvoiceStatus());
 					printVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
 					printVo.setInvoiceType(ordOdInvoice.getInvoiceType());
+					printVo.setInvoiceId(ordOdInvoice.getInvoiceId());
+					printVo.setInvoiceNum(ordOdInvoice.getInvoiceNum());
 					printVo.setTaxRate(17l);//17  查看该订单下的商品税率
 					printVo.setTaxAmount((invoiceAmount/100)*17);//税率和金额
 					printVo.setInvoiceAmount(invoiceAmount);
@@ -330,4 +332,25 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	        }
 	        return flag;
 	    }
+
+
+
+	@Override
+	public void modifyState(InvoiceModifyRequest request) throws BusinessException, SystemException {
+		/* 参数校验*/
+		ValidateUtils.validateModifyRequest(request);
+		/* 查询订单信息*/
+		OrdOdInvoiceCriteria example=new OrdOdInvoiceCriteria();
+		Criteria criteria = example.createCriteria();
+		criteria.andOrderIdEqualTo(request.getOrderId());
+		criteria.andTenantIdEqualTo(request.getTenantId());
+		List<OrdOdInvoice> invoiceList = ordOdInvoiceAtomSV.selectByExample(example);
+		if(CollectionUtil.isEmpty(invoiceList)) {
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"发票信息不存在[订单id:"+request.getOrderId()+",租户id"+request.getTenantId()+"]");
+		}
+		OrdOdInvoice ordOdInvoice = invoiceList.get(0);
+		ordOdInvoice.setInvoiceStatus(request.getInvoiceStatus());
+		ordOdInvoiceAtomSV.updateByPrimaryKey(ordOdInvoice);
+	}
 }
