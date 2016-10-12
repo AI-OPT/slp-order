@@ -7,6 +7,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
+import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
@@ -229,6 +230,28 @@ public class ValidateUtils {
 		}
 		if(StringUtil.isBlank(condition.getState())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "审核状态不能为空");
+		}
+	}
+	
+	
+	/**
+	 * 订单发票修改状态参数校验
+	 */
+	public static void validateModifyRequest(InvoiceModifyRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if (condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单号不能为空");
+		}
+		String status = condition.getInvoiceStatus();
+		if(StringUtil.isBlank(status)) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印状态不能为空");
+		}else if(!OrdersConstants.ordOdInvoice.invoiceStatus.ONE.equals(status)){
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印状态不属于未打印");
 		}
 	}
 }
