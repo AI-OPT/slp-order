@@ -9,6 +9,7 @@ import javax.ws.rs.core.MediaType;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoicePrintResponse;
@@ -40,6 +41,22 @@ public interface IInvoicePrintSV {
 	@POST
 	@Path("/queryList")
 	public InvoicePrintResponse queryList(InvoicePrintRequest request) throws BusinessException,SystemException;
+	
+	
+	/**
+	 * 发票状态修改
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode INVOICE_MODIFYSTATE_001
+	 * @RestRelativeURL invoice/modifyState
+	 */
+	@POST
+	@Path("/modifyState")
+	public BaseResponse modifyState(InvoiceModifyRequest request) throws BusinessException,SystemException;
 	
 	/**
 	 * 发票回调,状态修改
