@@ -18,7 +18,7 @@ public class OrderItemsVo implements Serializable{
 	 * 产品编码
 	 */
 	@JSONField(name="ProductCode")
-	private String ProductCode;
+	private String productCode;
 	/**
 	 * 产品型号
 	 */
@@ -41,10 +41,10 @@ public class OrderItemsVo implements Serializable{
 		this.productName = productName;
 	}
 	public String getProductCode() {
-		return ProductCode;
+		return productCode;
 	}
 	public void setProductCode(String productCode) {
-		ProductCode = productCode;
+		this.productCode = productCode;
 	}
 	public String getProductNo() {
 		return productNo;
