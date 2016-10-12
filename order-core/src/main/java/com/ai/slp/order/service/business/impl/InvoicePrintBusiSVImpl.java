@@ -347,10 +347,10 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		List<OrdOdInvoice> invoiceList = ordOdInvoiceAtomSV.selectByExample(example);
 		if(CollectionUtil.isEmpty(invoiceList)) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"发票信息不存在[订单id:"+request.getOrderId()+",租户id"+request.getTenantId()+"]");
+					"发票信息不存在[订单id: "+request.getOrderId()+",租户id: "+request.getTenantId()+"]");
 		}
 		OrdOdInvoice ordOdInvoice = invoiceList.get(0);
-		ordOdInvoice.setInvoiceStatus(request.getInvoiceStatus());
+		ordOdInvoice.setInvoiceStatus(OrdersConstants.ordOdInvoice.invoiceStatus.TWO);
 		ordOdInvoiceAtomSV.updateByPrimaryKey(ordOdInvoice);
 	}
 }
