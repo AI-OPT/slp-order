@@ -150,8 +150,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		rdOrdOdFeeTotal.setTotalFee(backTotalFee);
 		rdOrdOdFeeTotal.setAdjustFee(backTotalFee-backOrdOdProd.getDiscountFee());
 		rdOrdOdFeeTotal.setPayFee(backTotalFee-backOrdOdProd.getDiscountFee());
-		rdOrdOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
-		rdOrdOdFeeTotal.setOperDiscountFee(ordOdProd.getOperDiscountFee());
+		rdOrdOdFeeTotal.setDiscountFee(backOrdOdProd.getDiscountFee());
+		rdOrdOdFeeTotal.setOperDiscountFee(backOrdOdProd.getOperDiscountFee());
 		rdOrdOdFeeTotal.setPaidFee(0);
 		rdOrdOdFeeTotal.setFreight(0);
 		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
