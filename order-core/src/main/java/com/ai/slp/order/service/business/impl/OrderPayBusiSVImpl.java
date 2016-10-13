@@ -832,9 +832,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         paramsRequest.setReceiverContact(ordOrderVo.getContactName());
         paramsRequest.setReceiverPhone(ordOrderVo.getContactTel());
         paramsRequest.setProvince(ordOrderVo.getProvinceCode()==null?"":iCacheSV.
-        		getAreaName(ordOrderVo.getProvinceCode())); 
+        		getAreaName(ordOrderVo.getProvinceCode())+"省"); 
         paramsRequest.setCity(ordOrderVo.getCityCode()==null?"":iCacheSV.
-    			getAreaName(ordOrderVo.getCityCode()));
+    			getAreaName(ordOrderVo.getCityCode())+"市");
         paramsRequest.setRegion(ordOrderVo.getCountyCode()==null?"":iCacheSV.
     			getAreaName(ordOrderVo.getCountyCode()));
         paramsRequest.setReceiverAddress(ordOrderVo.getAddress());
@@ -849,13 +849,14 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         if(!StringUtil.isBlank(ordOrderVo.getInvoiceType())) {
         	paramsRequest.setNeedInvoice(1); //TODO 确定下?
         	paramsRequest.setInvoiceType(Long.parseLong(ordOrderVo.getInvoiceType()));
+        	paramsRequest.setInvoiceTitle(ordOrderVo.getInvoiceTitle());
         	paramsRequest.setCompanyName(ordOrderVo.getInvoiceTitle());
         	paramsRequest.setTaxNo(ordOrderVo.getBuyerTaxpayerNumber());
         	StringBuffer st=new StringBuffer();////组装详细地址
 			st.append(ordOrderVo.getProvinceCode()==null?"":iCacheSV.
-        			getAreaName(ordOrderVo.getProvinceCode()));
+        			getAreaName(ordOrderVo.getProvinceCode())+"省");
 			st.append(ordOrderVo.getCityCode()==null?"":iCacheSV.
-        			getAreaName(ordOrderVo.getCityCode()));
+        			getAreaName(ordOrderVo.getCityCode())+"市");
 			st.append(ordOrderVo.getCountyCode()==null?"":iCacheSV.
         			getAreaName(ordOrderVo.getCountyCode()));
 			st.append(ordOrderVo.getAddress());
@@ -907,11 +908,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 	}
     
     //TODO 测试
-   /* public static void main(String[] args) {
+ /*  public static void main(String[] args) {
     	OrderPayRequest request=new OrderPayRequest();
     	request.setTenantId("changhong");
     	request.setPayType("28");
-    	long orderId=2000000988564944l;
+    	long orderId=2000001012752032l;//2000001011472557l;
     	//同步长虹OFC,获取参数  
         String params = getOFCRequestParams(request, orderId,DateUtil.getSysDate());
         String url="http://10.19.13.16:28151/opaas/http/srv_slp_externalorder_create"; 
