@@ -24,7 +24,7 @@ public class DeliverGoodsPrintVo implements Serializable{
     /**
      * 价格
      */
-    private long salePrice;
+    private String salePrice;
     
     /**
      * 数量
@@ -68,11 +68,11 @@ public class DeliverGoodsPrintVo implements Serializable{
 		this.buySum = buySum;
 	}
 
-	public long getSalePrice() {
+	public String getSalePrice() {
 		return salePrice;
 	}
 
-	public void setSalePrice(long salePrice) {
+	public void setSalePrice(String salePrice) {
 		this.salePrice = salePrice;
 	}
 
