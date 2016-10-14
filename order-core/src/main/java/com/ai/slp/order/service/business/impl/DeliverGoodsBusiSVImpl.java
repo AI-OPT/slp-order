@@ -12,6 +12,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
@@ -54,6 +55,9 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 			logger.error("未能查询到指定的配送信息[父订单id:"+ordOrder.getParentOrderId()+" ,租户id:"+ordOrder.getTenantId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"未能查询到指定的配送信息[订单id:"+ordOrder.getParentOrderId()+" ,租户id:"+ordOrder.getTenantId()+"]");
+		}
+		if(!StringUtil.isBlank(ordOdLogistics.getExpressOddNumber())) {
+			throw new BusinessException("", "订单不能重复发货");
 		}
 		ordOdLogistics.setExpressId(request.getExpressId());
 		ordOdLogistics.setExpressOddNumber(request.getExpressOddNumber());
