@@ -9,11 +9,6 @@ public class OrdProductDetailInfo extends BaseInfo{
 	private static final long serialVersionUID = 1L;
 	
     /**
-     * 销售商id
-     */
-    private Long supplierId;
-    
-    /**
      * 积分账户id
      */
     private String accountId;
@@ -22,6 +17,16 @@ public class OrdProductDetailInfo extends BaseInfo{
      * 运费
      */
     private long freight;
+    
+    /**
+     * 优惠费用
+     */
+    private long discountFee;
+    
+    /**
+     * 买家留言
+     */
+    private String remark;
     
     /**
      * 商品信息
@@ -45,14 +50,6 @@ public class OrdProductDetailInfo extends BaseInfo{
 
 	public void setOrdProductInfoList(List<OrdProductInfo> ordProductInfoList) {
 		this.ordProductInfoList = ordProductInfoList;
-	}
-
-	public Long getSupplierId() {
-		return supplierId;
-	}
-
-	public void setSupplierId(Long supplierId) {
-		this.supplierId = supplierId;
 	}
 
 	public List<OrdFeeTotalProdInfo> getOrdFeeTotalProdInfo() {
@@ -85,5 +82,21 @@ public class OrdProductDetailInfo extends BaseInfo{
 
 	public void setAccountId(String accountId) {
 		this.accountId = accountId;
+	}
+
+	public long getDiscountFee() {
+		return discountFee;
+	}
+
+	public void setDiscountFee(long discountFee) {
+		this.discountFee = discountFee;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 }
