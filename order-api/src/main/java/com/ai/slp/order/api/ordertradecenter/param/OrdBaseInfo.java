@@ -72,11 +72,6 @@ public class OrdBaseInfo implements Serializable {
      */
     private String keywords;
 
-    /**
-     * 订单备注
-     */
-    private String remark;
-
     public String getUserId() {
         return userId;
     }
@@ -113,10 +108,6 @@ public class OrdBaseInfo implements Serializable {
         return keywords;
     }
 
-    public String getRemark() {
-        return remark;
-    }
-
     public void setUserId(String userId) {
         this.userId = userId;
     }
@@ -151,10 +142,6 @@ public class OrdBaseInfo implements Serializable {
 
     public void setKeywords(String keywords) {
         this.keywords = keywords;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
     }
 
 	public String getIpAddress() {
