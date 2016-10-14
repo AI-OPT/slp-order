@@ -724,6 +724,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		boolean flag=arr.equals(states);
         		if(!flag) {
         			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
+        			pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());//优惠金额
         		}
     			OrdOrderCriteria exampleOrder=new OrdOrderCriteria();
     			OrdOrderCriteria.Criteria criteriaOrder = exampleOrder.createCriteria();
@@ -815,19 +816,19 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         			criteriaFeeProd.andOrderIdEqualTo(behindOrdOrderAttach.getOrderId()); //父订单id
         			List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByExample(exampleFeeProd);
         			long points = 0; //积分
-        			long totalCouponFee=0;//优惠券
+        			//long totalCouponFee=0;//优惠券
         			if (!CollectionUtil.isEmpty(orderFeeProdList)) {
         				for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) { 
         					if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
         						points+=ordOdFeeProd.getPaidFee();
         					}
-        					if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
+        				/*	if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
         						totalCouponFee+=ordOdFeeProd.getPaidFee();
-        					}
+        					}*/
         				}
         			}
         			pOrderVo.setPoints(points);
-        			pOrderVo.setTotalCouponFee(totalCouponFee);
+        			//pOrderVo.setTotalCouponFee(totalCouponFee);
         		}
         	pOrderVo.setTotalProdSize(totalProdSize);
     		orderVoList.add(pOrderVo);
@@ -869,14 +870,14 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	/**
 	 * OFC订单查询
 	 */
-	public JSONObject queryOFC(OrdOrder ordOrder) throws BusinessException, SystemException {
+	public static JSONObject queryOFC(OrdOrder ordOrder) throws BusinessException, SystemException {
 		List<String> orderNoList = new ArrayList<String>();
 		orderNoList.add(String.valueOf(ordOrder.getOrderId()));
 		Map<String,Object> mapField=new HashMap<String,Object>();
 		mapField.put("OrderNoList", orderNoList);
-		/*mapField.put("shopName", "");
-		mapField.put("PageIndex", "");
-		mapField.put("PageSize", "");*/
+		//mapField.put("ShopName", "长虹官方旗舰店");
+		mapField.put("PageIndex", "1");
+		mapField.put("PageSize", "1");
 		String params=JSON.toJSONString(mapField);
 		Map<String, String> header=new HashMap<String, String>(); 
 		header.put("appkey", OrdersConstants.OFC_APPKEY);
