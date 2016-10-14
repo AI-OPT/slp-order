@@ -11,19 +11,16 @@ public class OrdProductInfo implements Serializable {
     /**
      * 单品Id
      */
-    @NotBlank(message = "单品Id不能为空")
     private String skuId;
     
     /**
      * 销售商id
      */
-    @NotBlank(message="销售商id不能为空")
     private Long supplierId;
 
     /**
      * 购买数量
      */
-    @NotBlank(message = "购买数量不能为空")
     private int buySum;
     
     /**
@@ -45,45 +42,6 @@ public class OrdProductInfo implements Serializable {
      * 充值面额
      */
     private String chargeFee;
-
-    /**
-     * 优惠费用
-     */
-    private long discountFee;
-
-    /**
-     * 减免金额
-     */
-    private long operDiscountFee;
-
-    /**
-     * 减免原因
-     */
-    private String operDiscountDesc;
-
-    public long getDiscountFee() {
-        return discountFee;
-    }
-
-    public long getOperDiscountFee() {
-        return operDiscountFee;
-    }
-
-    public String getOperDiscountDesc() {
-        return operDiscountDesc;
-    }
-
-    public void setDiscountFee(long discountFee) {
-        this.discountFee = discountFee;
-    }
-
-    public void setOperDiscountFee(long operDiscountFee) {
-        this.operDiscountFee = operDiscountFee;
-    }
-
-    public void setOperDiscountDesc(String operDiscountDesc) {
-        this.operDiscountDesc = operDiscountDesc;
-    }
 
     public String getSkuId() {
         return skuId;
