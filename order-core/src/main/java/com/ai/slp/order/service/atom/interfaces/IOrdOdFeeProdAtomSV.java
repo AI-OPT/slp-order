@@ -12,4 +12,6 @@ public interface IOrdOdFeeProdAtomSV {
     
     OrdOdFeeProd selectByOrdAndStyle(long orderId,String payStyle);
 
+    List<OrdOdFeeProd> selectByOrderId(long orderId);
+
 }
