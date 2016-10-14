@@ -20,6 +20,7 @@ import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.slp.order.api.delivergoods.param.DeliverGoodsPrintInfoVo;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsPrintInfosRequest;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsPrintRequest;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsPrintResponse;
@@ -159,8 +160,8 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 	@Override
 	public void deliverGoodsPrint(DeliverGoodsPrintInfosRequest request)
 			throws BusinessException, SystemException {
-		List<DeliverGoodsPrintVo> invoicePrintVos = request.getInvoicePrintVos();
-		for (DeliverGoodsPrintVo invoicePrintVo : invoicePrintVos) {
+		List<DeliverGoodsPrintInfoVo> invoicePrintVos = request.getInvoicePrintVos();
+		for (DeliverGoodsPrintInfoVo invoicePrintVo : invoicePrintVos) {
 			Long invoiceInfoId = SequenceUtil.createdeliverInfoId();
 			OrdOdDeliverInfo invoiceInfo=new OrdOdDeliverInfo();
 			invoiceInfo.setDeliverInfoId(invoiceInfoId);
