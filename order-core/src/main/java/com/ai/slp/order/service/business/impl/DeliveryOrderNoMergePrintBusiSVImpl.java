@@ -137,6 +137,7 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 		  dpVo.setExtendInfo(ordOdProd.getExtendInfo());
 		  dpVo.setProdName(ordOdProd.getProdName());
 		  dpVo.setSkuId(ordOdProd.getSkuId());
+		  dpVo.setSalePrice(ordOdProd.getSalePrice());
 		  return dpVo;
 	  }
 	  
