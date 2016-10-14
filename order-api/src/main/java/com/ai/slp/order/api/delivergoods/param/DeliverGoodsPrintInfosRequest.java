@@ -31,7 +31,7 @@
 	    /**
 	     * 打印的商品信息集合
 	     */
-	    private List<DeliverGoodsPrintVo> invoicePrintVos;
+	    private List<DeliverGoodsPrintInfoVo> invoicePrintVos;
 	    
 		public Long getOrderId() {
 			return orderId;
@@ -48,13 +48,12 @@
 		public void setInvoiceDate(Date invoiceDate) {
 			this.invoiceDate = invoiceDate;
 		}
-	
-		public List<DeliverGoodsPrintVo> getInvoicePrintVos() {
+
+		public List<DeliverGoodsPrintInfoVo> getInvoicePrintVos() {
 			return invoicePrintVos;
 		}
-	
-		public void setInvoicePrintVos(List<DeliverGoodsPrintVo> invoicePrintVos) {
+
+		public void setInvoicePrintVos(List<DeliverGoodsPrintInfoVo> invoicePrintVos) {
 			this.invoicePrintVos = invoicePrintVos;
 		}
-		
 	}
