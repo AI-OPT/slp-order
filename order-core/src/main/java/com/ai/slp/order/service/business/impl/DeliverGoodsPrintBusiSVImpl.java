@@ -123,7 +123,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 				invoicePrintVo.setExtendInfo(deliverInfoProd.getExtendInfo());
 				Long afterSaleBuySum = prodMap.get(deliverInfoProd.getSkuId());
 				invoicePrintVo.setBuySum(deliverInfoProd.getBuySum()-(afterSaleBuySum==null?0:afterSaleBuySum));
-				invoicePrintVo.setSalePrice(deliverInfoProd.getSalePrice());
+				invoicePrintVo.setSalePrice(String.valueOf(deliverInfoProd.getSalePrice()/1000));//厘转元
 				invoicePrintVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
 				sum+=deliverInfoProd.getBuySum()-(afterSaleBuySum==null?0:afterSaleBuySum);
 				list.add(invoicePrintVo);
