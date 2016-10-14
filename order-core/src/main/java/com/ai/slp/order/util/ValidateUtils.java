@@ -115,9 +115,6 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "信息列表不能为空");
 		}
 		for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
-			if (ordProductDetailInfo.getSupplierId()==null) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "销售商id不能为空");
-			}
 			List<OrdProductInfo> ordProductInfoList = ordProductDetailInfo.getOrdProductInfoList();
 			if (CollectionUtil.isEmpty(ordProductInfoList)) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品信息列表不能为空");
