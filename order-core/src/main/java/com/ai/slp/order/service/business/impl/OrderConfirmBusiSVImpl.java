@@ -54,12 +54,28 @@ public class OrderConfirmBusiSVImpl implements IOrderConfirmBusiSV {
 	private void updateOrderState(String tenantId, Timestamp sysDate, long orderId) {
         OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
         String orgState = ordOrder.getState();
-        String newState = OrdersConstants.OrdOrder.State.FINISH_CONFIRMED;
-        ordOrder.setState(newState);
+        if(!OrdersConstants.OrdOrder.State.WAIT_CONFIRM.equals(orgState)) {
+        	throw new BusinessException("", "订单的状态不是待确认,无法修改");
+        }
+        String newState1 = OrdersConstants.OrdOrder.State.FINISH_CONFIRMED;
+        String newState2 = OrdersConstants.OrdOrder.State.COMPLETED;
+        ordOrder.setState(newState2);
         ordOrder.setStateChgTime(sysDate);
+        //子订单写入订单状态变化轨迹表 (待确认-已确认)
+        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, orgState, newState1,
+        		OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_CONFIRM, null, null, null, sysDate);
         ordOrderAtomSV.updateById(ordOrder);
-        // 写入订单状态变化轨迹表
-        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, orgState, newState,
+        //子订单写入订单状态变化轨迹表 (已确认-完成)
+        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, newState1, newState2,
+                OrdOdStateChg.ChgDesc.ORDER_TO_COMPLETED, null, null, null, sysDate);
+        //父订单
+        OrdOrder pOrder = ordOrderAtomSV.selectByOrderId(tenantId, ordOrder.getParentOrderId());
+        String pOldstate = pOrder.getState();
+        pOrder.setState(newState2);
+        pOrder.setStateChgTime(sysDate);
+        ordOrderAtomSV.updateById(pOrder);
+        //父订单写入订单状态变化轨迹表 (已支付-完成)
+        orderFrameCoreSV.ordOdStateChg(pOrder.getOrderId(), tenantId, pOldstate, newState2,
                 OrdOdStateChg.ChgDesc.ORDER_TO_COMPLETED, null, null, null, sysDate);
     }
 
