@@ -28,6 +28,7 @@ import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.*;
+import com.ai.slp.order.service.atom.impl.OrdOdFeeProdAtomSVImpl;
 import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
@@ -116,6 +117,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     
     @Autowired
     private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
+    
+    @Autowired
+    private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
     
     /**
      * 订单收费
@@ -769,11 +773,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     private void createFeeTotal(long subOrderId,OrdOrder parentOrdOrder,OrdOdProd ordOdProd) {
     	/* 创建子订单-费用汇总表*/
+    	long parentOrderId = parentOrdOrder.getOrderId();
     	OrdOdFeeTotal parentOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(parentOrdOrder.getTenantId(), 
-    			parentOrdOrder.getOrderId());
+    			parentOrderId);
     	if(parentOrdOdFeeTotal==null) {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-    				"订单费用总表[orderId:"+parentOrdOrder.getOrderId()+"]");
+    				"订单费用总表信息不存在[父订单Id:"+parentOrderId+"]");
     	}
     	OrdOdFeeTotal ordOdFeeTotal=new OrdOdFeeTotal();
     	BeanUtils.copyProperties(ordOdFeeTotal, parentOrdOdFeeTotal);
@@ -785,6 +790,22 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setPaidFee(apaidFee);
     	ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
     	ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
+    	/* 创建子订单-费用明细信息*/
+    /*	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(parentOrderId);
+    	if(CollectionUtil.isEmpty(OrdOdFeeProds)) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+    				"订单费用明细信息不存在[父订单Id:"+parentOrderId+"]");
+    	}
+    	for (OrdOdFeeProd ordOdFeeProd : OrdOdFeeProds) {
+    		OrdOdFeeProd newFeeProd=new OrdOdFeeProd();
+    		BeanUtils.copyProperties(newFeeProd, ordOdFeeProd);
+    		newFeeProd.setPaidFee(ordOdProd.getAdjustFee());
+    		if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(newFeeProd.getPayStyle())) {
+    			newFeeProd.setJfAmount();//TODO 积分对应的金额
+    		}
+    		newFeeProd.setOrderId(subOrderId);
+    		ordOdFeeProdAtomSV.insertSelective(newFeeProd);
+		}*/
     }
     
     /**
@@ -796,7 +817,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     			subOrderId);
     	if(pOrdOdFeeTotal==null) {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-    				"订单费用总表[orderId:"+parentOrdOrder.getOrderId()+"]");
+    				"订单费用总表不存在[orderId:"+parentOrdOrder.getOrderId()+"]");
     	}
     	OrdOdFeeTotal ordOdFeeTotal=new OrdOdFeeTotal();
     	BeanUtils.copyProperties(ordOdFeeTotal, pOrdOdFeeTotal);
@@ -807,6 +828,22 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setPaidFee(pOrdOdFeeTotal.getPaidFee()+apaidFee);
     	ordOdFeeTotal.setTotalJf(pOrdOdFeeTotal.getTotalJf()+ordOdProd.getJf());
     	ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
+    	/* 创建子订单-费用明细信息*/
+   /* 	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(subOrderId);
+    	if(CollectionUtil.isEmpty(OrdOdFeeProds)) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+    				"订单费用明细信息不存在[订单Id:"+subOrderId+"]");
+    	}
+    	for (OrdOdFeeProd ordOdFeeProd : OrdOdFeeProds) {
+    		OrdOdFeeProd newFeeProd=new OrdOdFeeProd();
+    		BeanUtils.copyProperties(newFeeProd, ordOdFeeProd);
+    		newFeeProd.setPaidFee(newFeeProd.getPaidFee()+ordOdProd.getAdjustFee());
+    		if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(newFeeProd.getPayStyle())) {
+    			newFeeProd.setJfAmount();//TODO 积分对应的金额
+    		}
+    		newFeeProd.setOrderId(subOrderId);
+    		ordOdFeeProdAtomSV.insertSelective(newFeeProd);
+		}*/
     }
     
     /**
