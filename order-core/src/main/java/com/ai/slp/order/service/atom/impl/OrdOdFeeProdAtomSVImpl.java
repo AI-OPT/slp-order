@@ -38,5 +38,13 @@ public class OrdOdFeeProdAtomSVImpl implements IOrdOdFeeProdAtomSV {
         }
         return null;
 	}
+	
+	@Override
+	public List<OrdOdFeeProd> selectByOrderId(long orderId) {
+		OrdOdFeeProdCriteria example = new OrdOdFeeProdCriteria();
+		OrdOdFeeProdCriteria.Criteria param = example.createCriteria();
+		param.andOrderIdEqualTo(orderId);
+		return MapperFactory.getOrdOdFeeProdMapper().selectByExample(example);
+	}
 
 }
