@@ -568,7 +568,7 @@ public final class OrdersConstants {
             /**
              * 订单 用户确认收货
              */
-            public static final String ORDER_TO_FINISH_CUST_NETHALL_CONFIRM = "您已经在网厅完成收货";
+            public static final String ORDER_TO_FINISH_CONFIRM = "您已经完成确认收货";
 
             /**
              * 订单待用户营业厅自提确认
