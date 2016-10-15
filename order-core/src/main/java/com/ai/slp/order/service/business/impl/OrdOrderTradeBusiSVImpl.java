@@ -1,5 +1,6 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -314,11 +315,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         /* 更新商品明细信息*/
         for (OrdOdProd ordOdProd : ordOdProds) {
         	//积分 积分金额 优惠券 优惠金额,按比例划分
-        	long prodRate=ordOdProd.getTotalFee()/totalFee;
-        	long prodJfFee=prodRate*totalJfFee;
-        	long prodCouponFee=prodRate*totalCouponFee;
-        	long prodJfAmount=prodRate*totallJfAmount;
-        	long prodDiscountFee=prodRate*shopDiscountFee;
+        	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee),2,BigDecimal.ROUND_HALF_UP);
+        	long prodJfFee=(rate.multiply(new BigDecimal(totalJfFee))).longValue();
+        	long prodCouponFee=(rate.multiply(new BigDecimal(totalCouponFee))).longValue();
+        	long prodJfAmount=(rate.multiply(new BigDecimal(totallJfAmount))).longValue();
+        	long prodDiscountFee=(rate.multiply(new BigDecimal(shopDiscountFee))).longValue();
         	long prodAdjustFee= totalFee-(prodCouponFee+prodJfAmount+prodDiscountFee);
         	ordOdProd.setJfFee(prodJfFee);
         	ordOdProd.setCouponFee(prodCouponFee);
@@ -336,8 +337,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);
         long freight = ordProductDetailInfo.getFreight();
         ordOdFeeTotal.setTotalFee(totalFee+freight);
-        ordOdFeeTotal.setDiscountFee(discountFee+shopDiscountFee);
-        long totalProdFee=totalFee-discountFee+freight-shopDiscountFee;
+        ordOdFeeTotal.setDiscountFee(discountFee);
+        long totalProdFee=totalFee-discountFee+freight;
         ordOdFeeTotal.setAdjustFee(totalProdFee<0?0:totalProdFee);
         ordOdFeeTotal.setPaidFee(0);
         ordOdFeeTotal.setPayFee(totalProdFee<0?0:totalProdFee);//加上运费
@@ -393,27 +394,20 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		/* 1.判断商品是否允许发票*/
 		OrdInvoiceInfo ordInvoiceInfo = ordProductDetailInfo.getOrdInvoiceInfo();
 		/* 2.判断是否选择打印发票*/
-		if(ordInvoiceInfo==null) {
-			return;
-		}else {
-			/* 3.参数校验*/
-			ValidateUtils.validateOrdInvoice(ordInvoiceInfo);
+		if(ordInvoiceInfo!=null) {
+			OrdOdInvoice ordInvoice=new OrdOdInvoice();
+			ordInvoice.setOrderId(orderId);
+			ordInvoice.setTenantId(request.getTenantId());
+			ordInvoice.setInvoiceTitle(ordInvoiceInfo.getInvoiceTitle());
+			ordInvoice.setInvoiceType(ordInvoiceInfo.getInvoiceType());
+			ordInvoice.setInvoiceContent(ordInvoiceInfo.getInvoiceContent());
+			ordInvoice.setInvoiceKind(ordInvoiceInfo.getInvoiceKind());
+			ordInvoice.setBuyerTaxpayerNumber(ordInvoiceInfo.getBuyerTaxpayerNumber());
+			ordInvoice.setBuyerBankCode(ordInvoiceInfo.getBuyerBankCode());
+			ordInvoice.setBuyerBankName(ordInvoiceInfo.getBuyerBankName());
+			ordInvoice.setBuyerBankAccount(ordInvoiceInfo.getBuyerBankAccount());
+			ordOdInvoiceAtomSV.insertSelective(ordInvoice);
 		}
-		OrdOdInvoice ordInvoice=new OrdOdInvoice();
-		ordInvoice.setOrderId(orderId);
-		ordInvoice.setTenantId(request.getTenantId());
-		ordInvoice.setInvoiceTitle(ordInvoiceInfo.getInvoiceTitle());
-		ordInvoice.setInvoiceType(ordInvoiceInfo.getInvoiceType());
-		ordInvoice.setInvoiceContent(ordInvoiceInfo.getInvoiceContent());
-		ordInvoice.setInvoiceKind(ordInvoiceInfo.getInvoiceKind());
-		ordInvoice.setBuyerTaxpayerNumber(ordInvoiceInfo.getBuyerTaxpayerNumber());
-		ordInvoice.setBuyerBankCode(ordInvoiceInfo.getBuyerBankCode());
-		ordInvoice.setBuyerBankName(ordInvoiceInfo.getBuyerBankName());
-		ordInvoice.setBuyerBankAccount(ordInvoiceInfo.getBuyerBankAccount());
-		ordOdInvoiceAtomSV.insertSelective(ordInvoice);
-		
-		/*更新商品明细表信息*/
-		
     }
 
     /**
