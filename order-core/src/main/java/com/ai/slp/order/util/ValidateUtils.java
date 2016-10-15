@@ -9,6 +9,7 @@ import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
+import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
@@ -116,6 +117,13 @@ public class ValidateUtils {
 		}
 		for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
 			List<OrdProductInfo> ordProductInfoList = ordProductDetailInfo.getOrdProductInfoList();
+			/** 判断商品是否允许发票*/
+			OrdInvoiceInfo ordInvoiceInfo = ordProductDetailInfo.getOrdInvoiceInfo();
+			/** 判断是否选择打印发票*/
+			if(ordInvoiceInfo!=null) {
+				/** 发票参数校验*/
+				ValidateUtils.validateOrdInvoice(ordInvoiceInfo);
+			}
 			if (CollectionUtil.isEmpty(ordProductInfoList)) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品信息列表不能为空");
 			}
@@ -192,6 +200,21 @@ public class ValidateUtils {
 				}
 			}
 		}
+		
+		if(OrdersConstants.ordOdInvoice.invoiceType.ZERO.equals(condition.getInvoiceType())) {
+			if(!(OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_ORDINARY_INVOICE.equals(condition.getInvoiceKind())
+					||OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_SPECIAL_INVOICE.equals(condition.getInvoiceKind()))) {
+				throw new BusinessException("","电子发票必须对应相应的发票种类");
+			}
+		}else if(OrdersConstants.ordOdInvoice.invoiceType.ONE.equals(condition.getInvoiceType())){
+			if(!(OrdersConstants.ordOdInvoice.invoiceKind.VAT_SPECIAL_INVOICE.equals(condition.getInvoiceKind())||
+					OrdersConstants.ordOdInvoice.invoiceKind.VAT_ORDINARY_INVOICE.equals(condition.getInvoiceKind())||
+					OrdersConstants.ordOdInvoice.invoiceKind.WASTE_INVOICE.equals(condition.getInvoiceKind()))) {
+				throw new BusinessException("","纸质发票必须对应相应的发票种类");
+			}
+		}else {
+			throw new BusinessException("","发票类型不符合要求");
+		}
 	}
 	
 	/**
@@ -249,6 +272,27 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印状态不能为空");
 		}else if(!OrdersConstants.ordOdInvoice.invoiceStatus.ONE.equals(status)){
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印状态不属于未打印");
+		}
+	}
+	
+	/**
+	 * 未支付订单金额修改参数校验
+	 */
+	public static void validateNotPaidModifyRequest(OrderModifyRequest condition) {
+		if(condition==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if(condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
+		}
+		if(StringUtil.isBlank(condition.getOperId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "受理工号operId不能为空");
+		}
+		if(condition.getUpdateAmount()<=0) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额必须大于0");
 		}
 	}
 }
