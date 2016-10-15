@@ -7,6 +7,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
+import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
 import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
@@ -293,6 +294,31 @@ public class ValidateUtils {
 		}
 		if(condition.getUpdateAmount()<=0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额必须大于0");
+		}
+	}
+	
+	
+	/**
+	 * 订单发货参数校验
+	 */
+	public static void validateDeliverGoodsRequest(DeliverGoodsRequest condition) {
+		if(condition==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if(condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
+		}
+		if(StringUtil.isBlank(condition.getOperId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "受理工号operId不能为空");
+		}
+		if(StringUtil.isBlank(condition.getExpressId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流公司id不能为空");
+		}
+		if(StringUtil.isBlank(condition.getExpressOddNumber())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流单号不能为空");
 		}
 	}
 }
