@@ -819,6 +819,13 @@ public final class OrdersConstants {
             public static final String FOUR = "4";
         }
         
+        public static class invoiceType {
+            /** 0：电子发票*/
+            public static final String ZERO = "0";
+            /** 1：纸质发票*/
+            public static final String ONE = "1";
+        }
+        
         public static class invoiceKind {
             /** 001：增值税专用发票*/
             public static final String VAT_SPECIAL_INVOICE  = "001";
