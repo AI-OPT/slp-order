@@ -82,7 +82,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
 				//该商品为售后标识 不可打印
-				throw new BusinessException("", "此订单下商品处于售后状态,不可打印");
+				throw new BusinessException("", "订单下商品处于售后状态,不可打印");
 			}
 		}
 		if(CollectionUtil.isEmpty(infos)) {
@@ -246,11 +246,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 	   * 获取订单下的商品信息
 	   */
 		private List<OrdOdProd> getOrdOdProds(DeliverGoodsPrintRequest request) {
-			OrdOdProdCriteria example=new OrdOdProdCriteria();
-			OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-			criteria.andTenantIdEqualTo(request.getTenantId());
-			criteria.andOrderIdEqualTo(request.getOrderId());
-			List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByExample(example);
+			List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByOrd(request.getTenantId(), request.getOrderId());
 			if(CollectionUtil.isEmpty(ordOdProds)) {
 				logger.warn("未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
