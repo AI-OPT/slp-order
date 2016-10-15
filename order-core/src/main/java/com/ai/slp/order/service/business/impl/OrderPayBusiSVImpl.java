@@ -67,6 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -393,7 +394,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	}
         	Map<String, Long> map=new HashMap<String,Long>();
         	for (OrdOdProd ordOdProd : ordOdProdList) {
-        		long prodOperDiscountFee=(ordOdProd.getTotalFee()/totalFee)*operDiscountFee;//商品的减免费用
+        		//单个商品费用占总费用的比例
+            	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee),2,BigDecimal.ROUND_HALF_UP);
+            	long prodOperDiscountFee=(rate.multiply(new BigDecimal(operDiscountFee))).longValue();//商品的减免费用
         		ordOdProd.setOperDiscountFee(prodOperDiscountFee+ordOdProd.getOperDiscountFee()); //减免费用
         		ordOdProd.setDiscountFee(prodOperDiscountFee+ordOdProd.getDiscountFee()); //优惠费用
         		ordOdProd.setAdjustFee(ordOdProd.getTotalFee()-ordOdProd.getDiscountFee()); //应收费用
