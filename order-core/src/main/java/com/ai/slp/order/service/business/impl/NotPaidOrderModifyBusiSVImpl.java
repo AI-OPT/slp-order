@@ -14,7 +14,7 @@ import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.business.interfaces.INotPaidOrderModifyBusiSV;
-import com.ai.slp.order.util.CommonCheckUtils;
+import com.ai.slp.order.util.ValidateUtils;
 
 @Service
 @Transactional
@@ -28,16 +28,7 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 	@Override
 	public void modify(OrderModifyRequest request) throws BusinessException, SystemException {
 		/* 1.检验参数*/
-		if(request==null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-		}
-		if(request.getOrderId()==0) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
-		}
-		if(request.getUpdateAmount()<=0) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "未支付订单修改金额必须大于0");
-		}
-		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
+		ValidateUtils.validateNotPaidModifyRequest(request);
 		/* 2.修改金额和备注*/
 		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(odFeeTotal==null) {
