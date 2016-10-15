@@ -1,10 +1,5 @@
 package com.ai.slp.order.api.ordermodify.param;
 
-
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.ai.opt.base.vo.BaseInfo;
 
 /**
@@ -19,13 +14,12 @@ public class OrderModifyRequest extends BaseInfo{
 	/**
      * 业务订单ID
      */
-	@NotNull(message="订单id不能为空")
     private Long orderId;
     
     /**
      * 改动金额
      */
-    private Long updateAmount ;
+    private long updateAmount ;
     
     /**
      * 改动备注
@@ -35,7 +29,6 @@ public class OrderModifyRequest extends BaseInfo{
     /**
      * 受理工号
      */
-    @NotBlank(message="受理工号不能为空")
     private String operId;
 
 	public Long getOrderId() {
@@ -45,13 +38,11 @@ public class OrderModifyRequest extends BaseInfo{
 	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
-
-	
-	public Long getUpdateAmount() {
+	public long getUpdateAmount() {
 		return updateAmount;
 	}
 
-	public void setUpdateAmount(Long updateAmount) {
+	public void setUpdateAmount(long updateAmount) {
 		this.updateAmount = updateAmount;
 	}
 
