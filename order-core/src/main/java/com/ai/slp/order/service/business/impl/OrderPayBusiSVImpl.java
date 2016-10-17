@@ -852,10 +852,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	}
     	for (OrdOdFeeProd ordOdFeeProd : OrdOdFeeProds) {
     		OrdOdFeeProd subOrdOdFeeProd=new OrdOdFeeProd();
-    		subOrdOdFeeProd.setPaidFee(subOrdOdFeeProd.getPaidFee()+ordOdProd.getAdjustFee());
     		if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
-				subOrdOdFeeProd.setPaidFee(subOrdOdFeeProd.getPaidFee()+ordOdProd.getJfFee());
+				subOrdOdFeeProd.setPaidFee(ordOdFeeProd.getPaidFee()+ordOdProd.getJfFee());
 				String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
@@ -865,13 +864,13 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 				}
 			}else if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
-				subOrdOdFeeProd.setPaidFee(subOrdOdFeeProd.getPaidFee()+ordOdProd.getCouponFee());//优惠券
+				subOrdOdFeeProd.setPaidFee(ordOdFeeProd.getPaidFee()+ordOdProd.getCouponFee());//优惠券
 			}else {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
-				subOrdOdFeeProd.setPaidFee(subOrdOdFeeProd.getPaidFee()+ordOdProd.getAdjustFee());//运费不涉及
+				subOrdOdFeeProd.setPaidFee(ordOdFeeProd.getPaidFee()+ordOdProd.getAdjustFee());//运费不涉及
 			}
     		subOrdOdFeeProd.setOrderId(subOrderId);
-    		ordOdFeeProdAtomSV.insertSelective(subOrdOdFeeProd);
+    		ordOdFeeProdAtomSV.updateByExample(subOrdOdFeeProd, subOrderId, ordOdFeeProd.getPayStyle());
 		}
     	
     }
