@@ -2,6 +2,7 @@ package com.ai.slp.order.service.atom.interfaces;
 
 import java.util.List;
 
+
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProdCriteria;
 
@@ -13,5 +14,7 @@ public interface IOrdOdFeeProdAtomSV {
     OrdOdFeeProd selectByOrdAndStyle(long orderId,String payStyle);
 
     List<OrdOdFeeProd> selectByOrderId(long orderId);
+    
+    int updateByExample(OrdOdFeeProd record, long orderId, String payStyle);
 
 }
