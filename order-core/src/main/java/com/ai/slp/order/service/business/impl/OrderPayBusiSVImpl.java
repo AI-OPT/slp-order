@@ -28,11 +28,11 @@ import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.*;
-import com.ai.slp.order.service.atom.impl.OrdOdFeeProdAtomSVImpl;
 import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.InfoTranslateUtil;
+import com.ai.slp.order.util.JfAndAmountExchangeUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.InfoJsonVo;
@@ -795,21 +795,33 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
     	ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
     	/* 创建子订单-费用明细信息*/
-    /*	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(parentOrderId);
+    	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(parentOrderId);
     	if(CollectionUtil.isEmpty(OrdOdFeeProds)) {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
     				"订单费用明细信息不存在[父订单Id:"+parentOrderId+"]");
     	}
     	for (OrdOdFeeProd ordOdFeeProd : OrdOdFeeProds) {
-    		OrdOdFeeProd newFeeProd=new OrdOdFeeProd();
-    		BeanUtils.copyProperties(newFeeProd, ordOdFeeProd);
-    		newFeeProd.setPaidFee(ordOdProd.getAdjustFee());
-    		if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(newFeeProd.getPayStyle())) {
-    			newFeeProd.setJfAmount();//TODO 积分对应的金额
-    		}
-    		newFeeProd.setOrderId(subOrderId);
-    		ordOdFeeProdAtomSV.insertSelective(newFeeProd);
-		}*/
+			OrdOdFeeProd subOrdOdFeeProd=new OrdOdFeeProd();
+			subOrdOdFeeProd.setOrderId(subOrderId);
+			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
+				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+				subOrdOdFeeProd.setPaidFee(ordOdProd.getJfFee());
+				String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
+				if(!StringUtil.isBlank(rate)) {
+					String[] split = rate.split(":");
+					BigDecimal JfAmout=BigDecimal.valueOf(ordOdProd.getJfFee()).divide(new BigDecimal(split[0]),
+							2,BigDecimal.ROUND_HALF_UP);
+					subOrdOdFeeProd.setJfAmount(JfAmout.multiply(new BigDecimal(1000)).longValue());//积分对应的金额,并元转厘
+				}
+			}else if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
+				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+				subOrdOdFeeProd.setPaidFee(ordOdProd.getCouponFee());//优惠券
+			}else {
+				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+				subOrdOdFeeProd.setPaidFee(ordOdProd.getAdjustFee());//运费不涉及
+			}
+			ordOdFeeProdAtomSV.insertSelective(subOrdOdFeeProd);
+		}
     }
     
     /**
@@ -833,21 +845,35 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setTotalJf(pOrdOdFeeTotal.getTotalJf()+ordOdProd.getJf());
     	ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
     	/* 创建子订单-费用明细信息*/
-   /* 	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(subOrderId);
+    	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(subOrderId);
     	if(CollectionUtil.isEmpty(OrdOdFeeProds)) {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
     				"订单费用明细信息不存在[订单Id:"+subOrderId+"]");
     	}
     	for (OrdOdFeeProd ordOdFeeProd : OrdOdFeeProds) {
-    		OrdOdFeeProd newFeeProd=new OrdOdFeeProd();
-    		BeanUtils.copyProperties(newFeeProd, ordOdFeeProd);
-    		newFeeProd.setPaidFee(newFeeProd.getPaidFee()+ordOdProd.getAdjustFee());
-    		if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(newFeeProd.getPayStyle())) {
-    			newFeeProd.setJfAmount();//TODO 积分对应的金额
-    		}
-    		newFeeProd.setOrderId(subOrderId);
-    		ordOdFeeProdAtomSV.insertSelective(newFeeProd);
-		}*/
+    		OrdOdFeeProd subOrdOdFeeProd=new OrdOdFeeProd();
+    		subOrdOdFeeProd.setPaidFee(subOrdOdFeeProd.getPaidFee()+ordOdProd.getAdjustFee());
+    		if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
+				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+				subOrdOdFeeProd.setPaidFee(subOrdOdFeeProd.getPaidFee()+ordOdProd.getJfFee());
+				String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
+				if(!StringUtil.isBlank(rate)) {
+					String[] split = rate.split(":");
+					BigDecimal JfAmout=BigDecimal.valueOf(subOrdOdFeeProd.getPaidFee()).divide(new BigDecimal(split[0]),
+							2,BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(split[1]),2,BigDecimal.ROUND_HALF_UP);
+					subOrdOdFeeProd.setJfAmount(JfAmout.multiply(new BigDecimal(1000)).longValue());//积分对应的金额,并元转厘
+				}
+			}else if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
+				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+				subOrdOdFeeProd.setPaidFee(subOrdOdFeeProd.getPaidFee()+ordOdProd.getCouponFee());//优惠券
+			}else {
+				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+				subOrdOdFeeProd.setPaidFee(subOrdOdFeeProd.getPaidFee()+ordOdProd.getAdjustFee());//运费不涉及
+			}
+    		subOrdOdFeeProd.setOrderId(subOrderId);
+    		ordOdFeeProdAtomSV.insertSelective(subOrdOdFeeProd);
+		}
+    	
     }
     
     /**
