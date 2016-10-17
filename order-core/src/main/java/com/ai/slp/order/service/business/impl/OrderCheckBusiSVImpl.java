@@ -27,7 +27,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderCheckBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
-import com.ai.slp.order.util.CommonCheckUtils;
+import com.ai.slp.order.util.ValidateUtils;
 
 @Service
 @Transactional
@@ -46,12 +46,8 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 
 	@Override
 	public void check(OrderCheckRequest request) throws BusinessException, SystemException {
-		/* 租户非空校验*/
-		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
-		/* 订单id非空检验*/
-		if(request.getOrderId()==0) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
-		}
+		/* 参数校验*/
+		ValidateUtils.validateOrderCheckRequest(request);
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(ordOrder==null) {
 			logger.error("未能查询到相对应的订单信息[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
@@ -75,6 +71,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 			String chgDesc=OrdOdStateChg.ChgDesc.ORDER_BUYERS_TO_RETURN;
 			ordOrder.setState(newState);
 	        ordOrder.setStateChgTime(DateUtil.getSysDate());
+	        ordOrder.setOperId(request.getOperId());//审核工号
 	        ordOrderAtomSV.updateById(ordOrder);
 	        // 写入订单状态变化轨迹表
 			this.updateOrderState(ordOrder, orgState,transitionState, transitionChgDesc, request);
@@ -95,6 +92,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 			ordOrder.setState(newState);
 	        ordOrder.setStateChgTime(DateUtil.getSysDate());
 	        ordOrder.setRemark(remark);
+	        ordOrder.setOperId(request.getOperId());
 	        ordOrderAtomSV.updateById(ordOrder);
 			this.updateOrderState(ordOrder, orgState,newState, chgDesc, request);
 		}
