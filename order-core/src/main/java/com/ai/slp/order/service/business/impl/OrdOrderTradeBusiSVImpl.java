@@ -320,7 +320,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	long prodCouponFee=(rate.multiply(new BigDecimal(totalCouponFee))).longValue();
         	long prodJfAmount=(rate.multiply(new BigDecimal(totallJfAmount))).longValue();
         	long prodDiscountFee=(rate.multiply(new BigDecimal(shopDiscountFee))).longValue();
-        	long prodAdjustFee= totalFee-(prodCouponFee+prodJfAmount+prodDiscountFee);
+        	long prodAdjustFee= ordOdProd.getTotalFee()-(prodCouponFee+prodJfAmount+prodDiscountFee);
         	ordOdProd.setJfFee(prodJfFee);
         	ordOdProd.setCouponFee(prodCouponFee);
         	ordOdProd.setDiscountFee(prodCouponFee+prodJfAmount+prodDiscountFee);
