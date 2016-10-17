@@ -19,7 +19,7 @@ public class OrderCheckRequest extends BaseInfo{
 	 * 订单Id
 	 */
 	@NotNull(message = "订单ID不能为空")
-	private long orderId;
+	private Long orderId;
 	
 	/**
 	 * 审核结果
@@ -38,11 +38,11 @@ public class OrderCheckRequest extends BaseInfo{
 	@NotBlank(message="审核工号不能为空")
 	private String operId;
 
-	public long getOrderId() {
+	public Long getOrderId() {
 		return orderId;
 	}
 
-	public void setOrderId(long orderId) {
+	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
 
