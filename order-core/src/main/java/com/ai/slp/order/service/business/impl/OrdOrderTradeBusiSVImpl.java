@@ -121,28 +121,28 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	/* 1.创建业务订单,并返回订单Id*/
         	long orderId = this.createOrder(ordBaseInfo,accountId,beforSubmitOrder,
         			request.getTenantId(),sysDate,remark);
-        	/* 3.创建商品明细,费用明细信息 */
+        	/* 2.创建商品明细,费用明细信息 */
         	Map<String, Object> mapProduct = this.createProdInfo(request,ordProductDetailInfo, sysDate, orderId,client);
         	ordProductResList = (List<OrdProductResInfo>) mapProduct.get("ordProductResList");
         	long totalFee = (long) mapProduct.get("totalFee");
-        	/* 4.费用信息及费用明细处理 */
+        	/* 3.费用信息及费用明细处理 */
         	this.createFeeInfo(request,ordProductDetailInfo, sysDate, orderId,totalFee);
-        	/* 5.创建发票信息 */
+        	/* 4.创建发票信息 */
         	this.createOrderFeeInvoice(request,ordProductDetailInfo, sysDate, orderId);
-        	/* 6. 处理配送信息，存在则写入 */
+        	/* 5. 处理配送信息，存在则写入 */
         	this.createOrderLogistics(request, sysDate, orderId);
-        	/* 7. 记录一条订单创建轨迹记录 */
+        	/* 6. 记录一条订单创建轨迹记录 */
         	this.writeOrderCreateStateChg(request, sysDate, orderId);
-        	/* 8. 更新订单状态 */
+        	/* 7. 更新订单状态 */
         	this.updateOrderState(request.getTenantId(), sysDate, orderId);
-        	/* 9.订单提交成功后监控服务*/
+        	/* 8.订单提交成功后监控服务*/
         	orderMonitorSV.afterSubmitOrder(monitorRequest);
-        	/* 10.封装返回参数*/
+        	/* 9.封装返回参数*/
         	orderResInfo.setOrderId(orderId);
         	orderResInfo.setOrdProductResList(ordProductResList);
         	orderResInfos.add(orderResInfo);
 		}
-        /* 11.返回费用总金额*/
+        /* 10.返回费用总金额*/
         OrdFeeInfo ordFeeInfo = this.buildFeeInfo(request);
         response.setOrdFeeInfo(ordFeeInfo);
         response.setOrderResInfos(orderResInfos);
