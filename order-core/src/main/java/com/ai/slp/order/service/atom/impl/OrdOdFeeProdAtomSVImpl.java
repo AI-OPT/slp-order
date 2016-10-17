@@ -47,4 +47,13 @@ public class OrdOdFeeProdAtomSVImpl implements IOrdOdFeeProdAtomSV {
 		return MapperFactory.getOrdOdFeeProdMapper().selectByExample(example);
 	}
 
+	@Override
+	public int updateByExample(OrdOdFeeProd record, long orderId, String payStyle) {
+		OrdOdFeeProdCriteria example = new OrdOdFeeProdCriteria();
+		OrdOdFeeProdCriteria.Criteria param = example.createCriteria();
+		param.andOrderIdEqualTo(orderId);
+		param.andPayStyleEqualTo(payStyle);
+		return MapperFactory.getOrdOdFeeProdMapper().updateByExample(record, example);
+	}
+
 }
