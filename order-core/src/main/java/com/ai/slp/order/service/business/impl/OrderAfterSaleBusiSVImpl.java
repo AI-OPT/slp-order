@@ -45,11 +45,11 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.CommonCheckUtils;
+import com.ai.slp.order.util.JfAndAmountExchangeUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.OFCAfterSaleOrderCreateRequest;
 import com.ai.slp.order.vo.OrderAfterSaleApplyItemsVo;
-import com.ai.slp.order.vo.OrderAfterSaleApplyVo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -109,6 +109,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		backOrder.setOperId(request.getOperId());//受理工号 
 		backOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//是否售后标识
 		backOrder.setOrigOrderId(order.getOrderId());
+		backOrder.setRemark("");
 		this.insertOrderState(sysDate, backOrder);
 		//更新商品为售后标识
 		ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
@@ -124,14 +125,17 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		BigDecimal JfFeeRate=BigDecimal.valueOf(ordOdProd.getJfFee()).divide(new BigDecimal(ordOdProd.getBuySum()),2,BigDecimal.ROUND_HALF_UP);
 		BigDecimal giveJfRate=BigDecimal.valueOf(ordOdProd.getJf()).divide(new BigDecimal(ordOdProd.getBuySum()),2,BigDecimal.ROUND_HALF_UP);
 		BigDecimal operDiscountFeeRate=BigDecimal.valueOf(ordOdProd.getOperDiscountFee()).divide(new BigDecimal(ordOdProd.getBuySum()),2,BigDecimal.ROUND_HALF_UP);
+		BigDecimal discountFeeRate=BigDecimal.valueOf(ordOdProd.getDiscountFee()).divide(new BigDecimal(ordOdProd.getBuySum()),2,BigDecimal.ROUND_HALF_UP);
 		long backCouponFee=(couponFeeRate.multiply(new BigDecimal(prodSum))).longValue();  //该商品数目下的退款优惠券
 		long backJfFee=(JfFeeRate.multiply(new BigDecimal(prodSum))).longValue();      //该商品数目下的退款消费积分
 		long backGiveJf=(giveJfRate.multiply(new BigDecimal(prodSum))).longValue();	//该商品数目下的退款赠送积分
 		long backOperDiscountFee=(operDiscountFeeRate.multiply(new BigDecimal(prodSum))).longValue();	//该商品数目下的减免费用 
+		long discountFee=(discountFeeRate.multiply(new BigDecimal(prodSum))).longValue();	//该商品数目下的优惠金额
 		backOrdOdProd.setCouponFee(backCouponFee);
 		backOrdOdProd.setJfFee(backJfFee); 
 		backOrdOdProd.setJf(backGiveJf);
 		backOrdOdProd.setOperDiscountFee(backOperDiscountFee);
+		backOrdOdProd.setDiscountFee(discountFee);
 		OrdOdFeeProd feeProd = ordOdFeeProdAtomSV.selectByOrdAndStyle(order.getParentOrderId(), 
 				OrdersConstants.OrdOdFeeProd.PayStyle.JF);
 		long jfAmount=0;
@@ -169,6 +173,29 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		rdOrdOdFeeTotal.setFreight(0);
 		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
+		/* 生成退款费用明细表*/
+		List<OrdOdFeeProd> feeProdList = ordOdFeeProdAtomSV.selectByOrderId(order.getOrderId());
+		for (OrdOdFeeProd ordOdFeeProd : feeProdList) {
+			OrdOdFeeProd subOrdOdFeeProd=new OrdOdFeeProd();
+			subOrdOdFeeProd.setOrderId(backOrderId);
+			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
+				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+				subOrdOdFeeProd.setPaidFee(backJfFee);
+				String rate = JfAndAmountExchangeUtil.getRate(order.getAccountId());
+				if(!StringUtil.isBlank(rate)) {
+					String[] split = rate.split(":");
+					BigDecimal JfAmout=BigDecimal.valueOf(backJfFee).divide(new BigDecimal(split[0]),
+							2,BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(split[1]),2,BigDecimal.ROUND_HALF_UP);
+					subOrdOdFeeProd.setJfAmount(JfAmout.multiply(new BigDecimal(1000)).longValue());//积分对应的金额,并元转厘
+				}
+			}else if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
+				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+				subOrdOdFeeProd.setPaidFee(backCouponFee);//优惠券
+			}else {
+				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+				subOrdOdFeeProd.setPaidFee(backTotalFee-backOrdOdProd.getDiscountFee());
+			}
+		}
 		/* 7.生成退款订单支付机构接口*/
 		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
 				order.getTenantId(), order.getParentOrderId());
@@ -226,6 +253,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		exOrder.setOperId(request.getOperId());//受理工号 
 		exOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//是否售后标识
 		exOrder.setOrigOrderId(order.getOrderId());
+		exOrder.setRemark("");
 		this.insertOrderState(sysDate, exOrder);
 		//更新商品为售后标识
 		ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
@@ -264,6 +292,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		rdOrder.setOrderId(rdOrderId); //退款单id
 		rdOrder.setOperId(request.getOperId());// 受理工号 
 		rdOrder.setOrigOrderId(order.getOrderId());
+		rdOrder.setRemark("");
 		this.insertOrderState(sysDate, rdOrder);
 		//更新商品为售后标识
 		ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
