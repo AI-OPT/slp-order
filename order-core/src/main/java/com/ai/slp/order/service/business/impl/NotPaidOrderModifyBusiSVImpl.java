@@ -37,7 +37,10 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 		}
 		long updateAmount = request.getUpdateAmount();
 		if(updateAmount>odFeeTotal.getAdjustFee()) {
-			throw new BusinessException("", "修改金额不能大于之前的金额");
+			throw new BusinessException("", "修改金额不能大于应付金额!");
+		}
+		if(updateAmount<odFeeTotal.getFreight()) {
+			throw new BusinessException("", "修改金额不能小于运费!");
 		}
 		//总减免费用 
 		long operDiscountFee=odFeeTotal.getAdjustFee()-updateAmount;
