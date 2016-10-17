@@ -887,6 +887,9 @@ public final class OrdersConstants {
     /**OFCAPPKEY**/
     private static final String OFC_APPKEY_KEY = "ofc.appkey";  
     public static final String OFC_APPKEY = loader.getProperty(OFC_APPKEY_KEY);  
+    /**OFCSIGN**/
+    private static final String OFC_SIGN_KEY = "ofc.sign";  
+    public static final String OFC_SIGN = loader.getProperty(OFC_SIGN_KEY);  
     /**OFC查询URL**/
     private static final String OFC_QUERY_URL_KEY = "ofc.query.url";  
     public static final String OFC_QUERY_URL = loader.getProperty(OFC_QUERY_URL_KEY);  
@@ -896,16 +899,14 @@ public final class OrdersConstants {
     /**OFC退换单创建URL**/
     private static final String OFC_RETURN_CREATE_URL_KEY = "ofc.return.create.url";  
     public static final String OFC_RETURN_CREATE_URL = loader.getProperty(OFC_RETURN_CREATE_URL_KEY);  
-    /**
-     * 用户信息KEY
-     */
-    private static final String USER_APPKEY_KEY = "user.appkey";  
-    public static final String USER_APPKEY = loader.getProperty(USER_APPKEY_KEY);  
-    /**
-     * 用户信息url
-     */
+    /** 用户信息url*/
     private static final String USER_URL_KEY = "user.query.url";  
     public static final String USER_URL = loader.getProperty(USER_URL_KEY); 
+    /** OFC积分与人民币的兑换比例*/
+    private static final String INTEGRAL_RATE_URL_KEY = "integral.rate.url";  
+    public static final String INTEGRAL_RATE_URL = loader.getProperty(INTEGRAL_RATE_URL_KEY); 
+    
+    
     
     
     /**
