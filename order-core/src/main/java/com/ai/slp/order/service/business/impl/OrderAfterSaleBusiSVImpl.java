@@ -136,19 +136,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		backOrdOdProd.setJf(backGiveJf);
 		backOrdOdProd.setOperDiscountFee(backOperDiscountFee);
 		backOrdOdProd.setDiscountFee(discountFee);
-		OrdOdFeeProd feeProd = ordOdFeeProdAtomSV.selectByOrdAndStyle(order.getParentOrderId(), 
-				OrdersConstants.OrdOdFeeProd.PayStyle.JF);
-		long jfAmount=0;
-		long jfPaidFee=0;
-		if(feeProd!=null) {
-			jfAmount = feeProd.getJfAmount();
-			jfPaidFee = feeProd.getPaidFee(); 
-			BigDecimal rate=BigDecimal.valueOf(backJfFee).divide(new BigDecimal(jfPaidFee),2,BigDecimal.ROUND_HALF_UP);
-			long backJfAmount=(rate.multiply(new BigDecimal(jfAmount))).longValue();
-			backOrdOdProd.setDiscountFee(backJfAmount+backCouponFee+backOperDiscountFee); 
-		}else{
-			backOrdOdProd.setDiscountFee(backCouponFee+backOperDiscountFee); 
-		}
 		backOrdOdProd.setAdjustFee(backTotalFee-backOrdOdProd.getDiscountFee());
 		backOrdOdProd.setState(OrdersConstants.OrdOdProd.State.RETURN);
 		backOrdOdProd.setUpdateTime(DateUtil.getSysDate());
@@ -170,7 +157,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		rdOrdOdFeeTotal.setDiscountFee(backOrdOdProd.getDiscountFee());
 		rdOrdOdFeeTotal.setOperDiscountFee(backOrdOdProd.getOperDiscountFee());
 		rdOrdOdFeeTotal.setPaidFee(0);
-		rdOrdOdFeeTotal.setFreight(0);
+		rdOrdOdFeeTotal.setFreight(0);//运费暂不做运算
 		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 		/* 生成退款费用明细表*/
