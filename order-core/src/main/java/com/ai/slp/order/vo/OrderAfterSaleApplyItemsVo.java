@@ -2,6 +2,8 @@ package com.ai.slp.order.vo;
 
 import java.io.Serializable;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class OrderAfterSaleApplyItemsVo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -9,16 +11,19 @@ public class OrderAfterSaleApplyItemsVo implements Serializable{
 	/**
 	 * 产品名称
 	 */
+	@JSONField(name="ProductName")
 	private String productName;
 	
 	/**
 	 * 产品编码
 	 */
+	@JSONField(name="ProductCode")
 	private String productCode;
 	
 	/**
 	 * 申请数量
 	 */
+	@JSONField(name="ApplyQuanlity")
 	private long applyQuanlity;
 
 	public String getProductName() {
