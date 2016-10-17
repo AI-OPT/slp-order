@@ -19,7 +19,7 @@ public  class ChUserUtil {
 		   params.put("openId", id);
 	       String param=JSON.toJSONString(params);
 	       Map<String,String> mapHeader = new HashMap<String,String>();
-	       mapHeader.put("appkey", OrdersConstants.USER_APPKEY);
+	       mapHeader.put("appkey", OrdersConstants.OFC_APPKEY);
 	       String result ="";
 			try {
 				result = HttpClientUtil.sendPost(OrdersConstants.USER_URL, param,mapHeader);
