@@ -152,7 +152,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo.setOrderType(orderAttach.getOrderType());
             ordOrderVo.setBusiCode(orderAttach.getBusiCode());
             SysParam sysParamBusiCode = InfoTranslateUtil.translateInfo(orderAttach.getTenantId(), "ORD_ORDER", "BUSI_CODE", 
-            		orderAttach.getState(), iCacheSV);
+            		orderAttach.getBusiCode(), iCacheSV);
             ordOrderVo.setBusiCodeName(sysParamBusiCode == null ? "" : sysParamBusiCode.getColumnDesc());
             ordOrderVo.setState(orderAttach.getState());
             SysParam sysParamState = InfoTranslateUtil.translateInfo(orderAttach.getTenantId(), "ORD_ORDER", "STATE", 
@@ -423,6 +423,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo.setOperId(order.getOperId());
             ordOrderVo.setAcctId(order.getAcctId()); 
             ordOrderVo.setOrderTime(order.getOrderTime());
+            //获取业务类型
+            SysParam sysParamBusiCode = InfoTranslateUtil.translateInfo(order.getTenantId(), "ORD_ORDER", "BUSI_CODE", 
+            		order.getBusiCode(), iCacheSV);
+            ordOrderVo.setBusiCodeName(sysParamBusiCode == null ? "" : sysParamBusiCode.getColumnDesc());
             /* 2.订单费用信息查询 */
             List<OrdOdFeeTotal> orderFeeTotalList = this.getOrderFeeTotalList(order.getTenantId(),
                     order.getOrderId(), "");
