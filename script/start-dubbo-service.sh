@@ -43,6 +43,9 @@ sed -i "s%ofc.appkey=.*%ofc.appkey=${OFC_APPKEY}%g" ${APP_HOME}/config/remote_ur
 sed -i "s%ofc.query.url=.*%ofc.query.url=${OFC_QUERY_URL}%g" ${APP_HOME}/config/remote_url.properties
 sed -i "s%ofc.order.create.url=.*%ofc.order.create.url=${OFC_ORDER_CREATE_URL}%g" ${APP_HOME}/config/remote_url.properties
 sed -i "s%ofc.return.create.url=.*%ofc.return.create.url=${OFC_RETURN_CREATE_URL}%g" ${APP_HOME}/config/remote_url.properties
+#积分比率
+sed -i "s%ofc.sign=.*%ofc.sign=${OFC_SIGN}%g" ${APP_HOME}/config/remote_url.properties
+sed -i "s%integral.rate.url=.*%integral.rate.url=${INTEGRAL_RATE_URL}%g" ${APP_HOME}/config/remote_url.properties
 
 
 
