@@ -488,8 +488,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	}else {
     		/* 2.2.同一个routeId的情况下,订单合并*/
     		subOrderId = map.get(routeId);
-    		ordOdProd = this.createTableInfo(subOrderId, parentOrdOrder, parentOrdOdProd, routeId,null);
-    		this.updateFeeTotal(subOrderId, parentOrdOrder, ordOdProd);
+    		ordOdProd = this.updateFeeTotal(subOrderId, parentOrdOrder, parentOrdOdProd, routeId);
     	}
     	/* 3.写入订单状态变化轨迹表 */
     	String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DISTRIBUTION;
@@ -638,7 +637,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ordOdProd.setSellerId(supplyProduct.getSellerId());
         ordOdProd.setCostPrice(supplyProduct.getCostPrice());
         ordOdProdAtomSV.updateById(ordOdProd);
-        //TODO
         if(OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(orderType)) {
         	return;
         }
@@ -730,6 +728,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		String routeId,Long parentProdDetalId) {
     	OrdOdProd ordOdProd=null;
     	long prodDetailId = SequenceUtil.createProdDetailId();
+    	long logisticsId=SequenceUtil.genLogisticsId();
     	if(OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(
     			parentOrdOrder.getOrderType())) {
     		/* 创建子订单-商品明细信息 */
@@ -746,6 +745,14 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     			BeanUtils.copyProperties(invoice, odInvoice);
     			invoice.setOrderId(subOrderId);
     		}
+    		/*创建子订单-配送信息 */
+    		OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(parentOrdOrder.getTenantId(), 
+    				parentOrdOrder.getOrderId());
+    		OrdOdLogistics newLogistics=new OrdOdLogistics();
+    		BeanUtils.copyProperties(newLogistics, odLogistics);
+    		newLogistics.setOrderId(subOrderId);
+    		newLogistics.setLogisticsId(logisticsId);
+    		ordOdLogisticsAtomSV.insertSelective(newLogistics);
     	}else {
 	        OrdOdProdCriteria example = new OrdOdProdCriteria();
 	        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
@@ -827,7 +834,15 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     /**
      * 更新费用总表信息(同一个routeId的情况下,订单费用总表合并)
      */
-    private void updateFeeTotal(long subOrderId,OrdOrder parentOrdOrder,OrdOdProd ordOdProd) {
+    private OrdOdProd updateFeeTotal(long subOrderId,OrdOrder parentOrdOrder,OrdOdProd parentOrdOdProd,String routeId) {
+    	/* 创建子订单-商品明细信息*/ 
+    	long prodDetailId = SequenceUtil.createProdDetailId();
+		OrdOdProd ordOdProd = new OrdOdProd();
+		BeanUtils.copyProperties(ordOdProd, parentOrdOdProd);
+		ordOdProd.setProdDetalId(prodDetailId);
+		ordOdProd.setOrderId(subOrderId);
+		ordOdProd.setRouteId(routeId);
+		ordOdProdAtomSV.insertSelective(ordOdProd);
     	/* 创建子订单-费用汇总表*/
     	OrdOdFeeTotal pOrdOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(parentOrdOrder.getTenantId(), 
     			subOrderId);
@@ -872,7 +887,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		subOrdOdFeeProd.setOrderId(subOrderId);
     		ordOdFeeProdAtomSV.updateByExample(subOrdOdFeeProd, subOrderId, ordOdFeeProd.getPayStyle());
 		}
-    	
+    	return ordOdProd;
     }
     
     /**
