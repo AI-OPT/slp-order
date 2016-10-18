@@ -64,11 +64,11 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 			}
 		}
 		/* 查询父订单对应的配送信息*/
-		OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getParentOrderId());
+		OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
 		if(ordOdLogistics==null) {
-			logger.error("未能查询到指定的配送信息[父订单id:"+ordOrder.getParentOrderId()+" ,租户id:"+ordOrder.getTenantId()+"]");
+			logger.error("未能查询到指定的配送信息[订单id:"+ ordOrder.getOrderId()+" ,租户id:"+ordOrder.getTenantId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"未能查询到指定的配送信息[订单id:"+ordOrder.getParentOrderId()+" ,租户id:"+ordOrder.getTenantId()+"]");
+					"未能查询到指定的配送信息[订单id:"+ ordOrder.getOrderId()+" ,租户id:"+ordOrder.getTenantId()+"]");
 		}
 		if(!StringUtil.isBlank(ordOdLogistics.getExpressOddNumber())) {
 			throw new BusinessException("", "订单不能重复发货");
