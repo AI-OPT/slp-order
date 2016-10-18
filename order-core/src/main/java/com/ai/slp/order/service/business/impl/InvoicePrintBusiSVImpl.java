@@ -186,10 +186,10 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "订单信息不存在[订单id:"+orderId+
 					",租户id:"+tenantId+"]");
 		}
-		OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, order.getParentOrderId());
+		OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, order.getOrderId());
 		if(odLogistics==null) {
-			logger.error("订单配送信息不存在[父订单id:"+order.getParentOrderId()+",租户id:"+tenantId+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "订单配送信息不存在[父订单id:"+order.getParentOrderId()+
+			logger.error("订单配送信息不存在[订单id:"+order.getOrderId()+",租户id:"+tenantId+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "订单配送信息不存在[订单id:"+order.getOrderId()+
 					",租户id:"+tenantId+"]");
 		}
 		OrdOdInvoice invoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
