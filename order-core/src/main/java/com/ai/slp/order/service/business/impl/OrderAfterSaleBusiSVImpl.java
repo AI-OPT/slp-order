@@ -182,6 +182,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
 				subOrdOdFeeProd.setPaidFee(backTotalFee-backOrdOdProd.getDiscountFee());
 			}
+			ordOdFeeProdAtomSV.insertSelective(subOrdOdFeeProd);
 		}
 		/* 7.生成退款订单支付机构接口*/
 		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
