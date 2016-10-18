@@ -94,7 +94,7 @@ public class OrdOrderSqlProvider {
       
         String userId = param.containsKey("userId") ? (String) param.get("userId") : null;
         if (!StringUtil.isBlank(userId))
-            seqBuffer.append(" and oo.user_id = " + userId);
+        	seqBuffer.append(" and oo.user_id = '" + userId+"'");
         String contactTel = param.containsKey("contactTel") ? (String) param.get("contactTel") : null;
         if (!StringUtil.isBlank(contactTel))
         	seqBuffer.append(" and ol.contact_tel like '" + "%"+contactTel+"%"+"'");
@@ -157,7 +157,7 @@ public class OrdOrderSqlProvider {
             seqBuffer.append(" and oo.chl_id = " + chlId);
         String userId = param.containsKey("userId") ? (String) param.get("userId") : null;
         if (!StringUtil.isBlank(userId))
-            seqBuffer.append(" and oo.user_id = " + userId);
+            seqBuffer.append(" and oo.user_id = '" + userId+"'");
         String contactTel = param.containsKey("contactTel") ? (String) param.get("contactTel") : null;
         if (!StringUtil.isBlank(contactTel))
         	seqBuffer.append(" and ol.contact_tel like '" + "%"+contactTel+"%"+"'");
