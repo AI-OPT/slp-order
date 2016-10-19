@@ -125,7 +125,7 @@ public class OrdOrderSqlProvider {
                 			+ param.get("pageCount") + "," + param.get("pageSize"));
         		}
         }else if (!StringUtil.isBlank(states) && (OrdersConstants.OrdOrder.State.WAIT_PAY.equals(states)||
-        		OrdersConstants.OrdOrder.State.COMPLETED.equals(states)||
+        		//OrdersConstants.OrdOrder.State.COMPLETED.equals(states)||
         		OrdersConstants.OrdOrder.State.CANCEL.equals(states))){   //父状态
         	seqBuffer.append(" and oo.state in(" + states + ")");
         	seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id"
@@ -184,7 +184,7 @@ public class OrdOrderSqlProvider {
                 	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id");
         		}
         }else if (!StringUtil.isBlank(states) && (OrdersConstants.OrdOrder.State.WAIT_PAY.equals(states)||
-        		OrdersConstants.OrdOrder.State.COMPLETED.equals(states)||
+        		//OrdersConstants.OrdOrder.State.COMPLETED.equals(states)||
         		OrdersConstants.OrdOrder.State.CANCEL.equals(states))){   //父状态
         	seqBuffer.append(" and oo.state in(" + states + ")");
         	seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id");
