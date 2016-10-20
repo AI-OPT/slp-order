@@ -46,4 +46,20 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 	     example.createCriteria().andTenantIdEqualTo(tenantId).andParentOrderIdEqualTo(parentId);
 	     return MapperFactory.getOrdOrderMapper().selectByExample(example);
 	}
+
+	@Override
+	public void updateStateByOrderId(String tenantId, Long orderId,String state) {
+		OrdOrder record = new OrdOrder();
+		//
+		record.setState(state);
+		record.setOrderId(orderId);
+		//
+//		OrdOrderCriteria example = new OrdOrderCriteria();
+//		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+//		criteria.andTenantIdEqualTo(tenantId);
+//		criteria.andOrderIdEqualTo(orderId);
+		//
+		MapperFactory.getOrdOrderMapper().updateByPrimaryKeySelective(record);
+	}
+	
 }
