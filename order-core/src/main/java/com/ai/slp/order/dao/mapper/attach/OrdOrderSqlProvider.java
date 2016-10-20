@@ -115,7 +115,7 @@ public class OrdOrderSqlProvider {
         String routeId = param.containsKey("routeId") ? (String) param.get("routeId") : null;
         if(StringUtil.isBlank(states)) {  //空
         		if(StringUtil.isBlank(routeId)) {
-        			seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id"
+        			seqBuffer.append(" and oo.order_id=ol.order_id and oo.PARENT_ORDER_ID=0 and oo.order_id=of.order_id"
         					+ " order by oo.order_time desc limit "
         					+ param.get("pageCount") + "," + param.get("pageSize"));
         		}else {
@@ -178,7 +178,7 @@ public class OrdOrderSqlProvider {
         String routeId = param.containsKey("routeId") ? (String) param.get("routeId") : null;
         if(StringUtil.isBlank(states)) {  //空
         		if(StringUtil.isBlank(routeId)) {
-        			seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id");
+        			seqBuffer.append(" and oo.PARENT_ORDER_ID=0 and oo.order_id=ol.order_id and oo.order_id=of.order_id");
         		}else {
         			seqBuffer.append(" and od.route_id = '" + routeId+"'");
                 	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id");
