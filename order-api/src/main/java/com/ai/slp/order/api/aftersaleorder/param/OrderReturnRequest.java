@@ -1,9 +1,5 @@
 package com.ai.slp.order.api.aftersaleorder.param;
 
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.ai.opt.base.vo.BaseInfo;
 
 public class OrderReturnRequest extends BaseInfo{
@@ -13,14 +9,12 @@ public class OrderReturnRequest extends BaseInfo{
 	/**
 	 * 订单id
 	 */
-	@NotNull(message = "订单ID不能为空")
-	private long orderId;
+	private Long orderId;
 	
 	/**
 	 * 商品明细id
 	 */
-	@NotNull(message = "商品明细ID不能为空")
-	private long prodDetalId;
+	private Long prodDetalId;
 	
 	/**
 	 * 商品数量
@@ -30,22 +24,21 @@ public class OrderReturnRequest extends BaseInfo{
 	/**
 	 * 受理工号
 	 */
-	@NotBlank(message="受理工号不能为空")
 	private String operId;
 
-	public long getOrderId() {
+	public Long getOrderId() {
 		return orderId;
 	}
 
-	public void setOrderId(long orderId) {
+	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
 	}
 
-	public long getProdDetalId() {
+	public Long getProdDetalId() {
 		return prodDetalId;
 	}
 
-	public void setProdDetalId(long prodDetalId) {
+	public void setProdDetalId(Long prodDetalId) {
 		this.prodDetalId = prodDetalId;
 	}
 
