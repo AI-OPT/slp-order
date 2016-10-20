@@ -18,4 +18,6 @@ public interface IOrdOrderAtomSV {
     int updateById(OrdOrder ordOrder);
     
     List<OrdOrder> selectChildOrder(String tenantId,long parentId);
+    
+    public void updateStateByOrderId(String tenantId,Long orderId,String state);
 }
