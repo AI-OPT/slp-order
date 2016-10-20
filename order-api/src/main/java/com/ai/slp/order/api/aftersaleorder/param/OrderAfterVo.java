@@ -1,7 +1,5 @@
 package com.ai.slp.order.api.aftersaleorder.param;
 
-import java.io.Serializable;
-
 import com.ai.opt.base.vo.BaseInfo;
 
 public class OrderAfterVo extends BaseInfo{
@@ -11,6 +9,8 @@ public class OrderAfterVo extends BaseInfo{
 	private long orderId; //售后订单id
 
 	private String busiCode; //业务类型
+	
+	private String state;  //售后订单状态
 
 	public long getOrderId() {
 		return orderId;
@@ -26,5 +26,13 @@ public class OrderAfterVo extends BaseInfo{
 
 	public void setBusiCode(String busiCode) {
 		this.busiCode = busiCode;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 }
