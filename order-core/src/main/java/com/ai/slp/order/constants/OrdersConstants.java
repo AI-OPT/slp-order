@@ -282,6 +282,11 @@ public final class OrdersConstants {
              * 212 审核失败
              */
             public static final String  AUDIT_FAILURE  = "212";
+            
+            /**
+             * 213 审核失败(第二次审核失败)
+             */
+            public static final String  AUDIT_AGAIN_FAILURE  = "213";
 
             /**
              * 22待商家确认/待买家退货
