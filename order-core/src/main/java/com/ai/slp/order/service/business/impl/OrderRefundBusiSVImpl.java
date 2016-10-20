@@ -82,28 +82,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 			ordOdFeeTotal.setUpdateOperId(request.getOperId());
 		}
 		ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
-		String orgState = ordOrder.getState();
-		String newState;
-		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode())) {  //退货审核第二步
-			String transitionState= OrdersConstants.OrdOrder.State.RECEIPT_CONFIRMATION;
-			String transitionChgDesc=OrdOdStateChg.ChgDesc.ORDER_SELLER_CONFIRMED_WAIT_PAY;
-			newState=OrdersConstants.OrdOrder.State.WAIT_REPAY;
-			String chgDesc = OrdOdStateChg.ChgDesc.ORDER_REVOKE_WAIT_PAY;
-			this.updateOrderState(ordOrder, orgState, transitionState, transitionChgDesc, request.getOperId());
-			this.updateOrderState(ordOrder, transitionState, newState, chgDesc, request.getOperId());
-		}else {
-			/* 更新订单状态和写入订单轨迹*/
-			newState = OrdersConstants.OrdOrder.State.WAIT_REPAY; //待退费,等待支付中心真正退费
-			String transitionState=OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED;
-			String transitionChgDesc=OrdOdStateChg.ChgDesc.ORDER_AUDITED;
-			String chgDesc = OrdOdStateChg.ChgDesc.ORDER_AUDITED_WAIT_REPAY;
-			this.updateOrderState(ordOrder, orgState, transitionState, transitionChgDesc, request.getOperId());
-			this.updateOrderState(ordOrder, transitionState, newState, chgDesc, request.getOperId());
-		}
-		Timestamp sysDate=DateUtil.getSysDate();
 		ordOrder.setReasonDesc(request.getUpdateReason());
-		ordOrder.setState(newState);
-		ordOrder.setStateChgTime(sysDate);
 		ordOrder.setOperId(request.getOperId());
 		ordOrderAtomSV.updateById(ordOrder);
 		/* 根据业务类型判断是否退回库存*/
@@ -119,9 +98,9 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	            this.backStorageNum(ordOdProd.getTenantId(), ordOdProd.getSkuId(), storageNum);
 	        }
 		}
-		//TODO
-		/*退款到指定的账户中 */
 		
+		/* 查看该订单下的其它订单状态*/
+		//TODO
 	}
 	
 	@Override
@@ -137,7 +116,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		this.updateProdCusServiceFlag(ordOrder);
 		/* 更新订单状态和写入订单轨迹*/
 		String orgState = ordOrder.getState();
-		String newState=OrdersConstants.OrdOrder.State.AUDIT_FAILURE;
+		String newState=OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE;
 		String chgDesc=OrdOdStateChg.ChgDesc.ORDER_AUDIT_NOT_PASS;
 		Timestamp sysDate=DateUtil.getSysDate();
         ordOrder.setReasonDesc(request.getRefuseReason());
