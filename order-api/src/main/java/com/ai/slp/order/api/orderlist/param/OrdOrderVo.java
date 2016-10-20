@@ -197,6 +197,11 @@ public class OrdOrderVo extends BaseInfo {
     private String invoiceContent;
     
     /**
+     * 发票打印状态
+     */
+    private String invoiceStatus;
+    
+    /**
      * 物流单号
      */
     private String expressOddNumber;
@@ -716,5 +721,13 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setBuyerBankAccount(String buyerBankAccount) {
 		this.buyerBankAccount = buyerBankAccount;
+	}
+
+	public String getInvoiceStatus() {
+		return invoiceStatus;
+	}
+
+	public void setInvoiceStatus(String invoiceStatus) {
+		this.invoiceStatus = invoiceStatus;
 	}
 }
