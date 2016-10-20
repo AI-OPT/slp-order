@@ -449,13 +449,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                         order.getOrderId());
                 ordOrderVo.setPhoneCount(phoneCount);*/
                 /* 3.订单发票信息查询*/
-                OrdOdInvoice ordOdInvoice =null;
-                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())||
-                		OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())) {
-                	 ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
-                }else {
-                	 ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getParentOrderId());
-                }
+                OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
                 if(ordOdInvoice !=null) {
                 	ordOrderVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
                 	ordOrderVo.setInvoiceType(ordOdInvoice.getInvoiceType());
