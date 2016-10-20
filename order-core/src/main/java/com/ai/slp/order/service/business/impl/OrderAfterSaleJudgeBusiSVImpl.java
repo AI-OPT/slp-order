@@ -61,9 +61,12 @@ public class OrderAfterSaleJudgeBusiSVImpl implements IOrderAfterSaleJudgeBusiSV
 			List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
 			if(!CollectionUtil.isEmpty(prodList)) {
 				OrdOdProd ordOdProd = prodList.get(0);
+				OrdOrder order = ordOrderAtomSV.selectByOrderId(ordOdProd.getTenantId(),
+						ordOdProd.getOrderId());
 				OrderAfterVo afterVo=new OrderAfterVo();
 				BeanUtils.copyProperties(afterVo, ordOdProd);
 				afterVo.setBusiCode(ordOrder.getBusiCode());
+				afterVo.setState(order.getState());
 				response.setAfterVo(afterVo);
 				return response;
 			}
