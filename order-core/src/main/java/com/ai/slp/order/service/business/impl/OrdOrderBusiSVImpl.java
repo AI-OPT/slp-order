@@ -466,15 +466,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 	ordOrderVo.setBuyerTaxpayerNumber(ordOdInvoice.getBuyerTaxpayerNumber());
                 	ordOrderVo.setBuyerBankName(ordOdInvoice.getBuyerBankName());
                 	ordOrderVo.setBuyerBankAccount(ordOdInvoice.getBuyerBankAccount());
+                	ordOrderVo.setInvoiceStatus(ordOdInvoice.getInvoiceStatus());
                 }
                 /* 4.订单配送信息查询*/
                 OrdOdLogistics ordOdLogistics =null;
-                if(OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())||
-                		OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())) {
-                	ordOdLogistics =ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
-                }else {
-                	ordOdLogistics =ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getParentOrderId());
-                }
+                ordOdLogistics =ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
                 if(ordOdLogistics!=null) {
                 	ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
                 	ordOrderVo.setContactCompany(ordOdLogistics.getContactCompany());
