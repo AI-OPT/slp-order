@@ -744,6 +744,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     			OrdOdInvoice invoice=new OrdOdInvoice();
     			BeanUtils.copyProperties(invoice, odInvoice);
     			invoice.setOrderId(subOrderId);
+    			ordOdInvoiceAtomSV.insertSelective(invoice);
     		}
     		/*创建子订单-配送信息 */
     		OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(parentOrdOrder.getTenantId(), 
