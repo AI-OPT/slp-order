@@ -511,6 +511,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 if(!CollectionUtil.isEmpty(ordBalacneIfs)) {
                 	OrdBalacneIf ordBalacneIf = ordBalacneIfs.get(0);
                 	ordOrderVo.setBalacneIfId(ordBalacneIf.getBalacneIfId());
+                	ordOrderVo.setExternalId(ordBalacneIf.getExternalId());
                 }
             }
         }
