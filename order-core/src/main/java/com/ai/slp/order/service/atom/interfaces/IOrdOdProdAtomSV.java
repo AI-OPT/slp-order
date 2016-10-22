@@ -18,5 +18,4 @@ public interface IOrdOdProdAtomSV {
     
     List<OrdOdProd> selectByProdName(String tenantId,String prodName);
     
-    
 }

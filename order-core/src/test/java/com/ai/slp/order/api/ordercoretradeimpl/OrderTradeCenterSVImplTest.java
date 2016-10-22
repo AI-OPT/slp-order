@@ -52,20 +52,20 @@ public class OrderTradeCenterSVImplTest {
         OrdProductInfo ordProductInfo = new OrdProductInfo();
         ordProductInfo.setBuySum(1);
         ordProductInfo.setSkuId("0000000000000194");
-      //  ordProductInfo.setSupplierId(-1l);
+        //ordProductInfo.setSupplierId(-1l);
         ordProductInfo.setGiveJF(100);
         ordProductInfoList.add(ordProductInfo);
         
         OrdProductInfo ordProductInfo1 = new OrdProductInfo();
         ordProductInfo1.setBuySum(5);
-     //   ordProductInfo1.setSupplierId(-1l);
+        //ordProductInfo1.setSupplierId(-1l);
         ordProductInfo1.setSkuId("0000000000000194");  //两个商品同一销售商 不同仓库
         ordProductInfo.setGiveJF(10);
         ordProductInfoList.add(ordProductInfo1);
         
         OrdProductInfo ordProductInfo2 = new OrdProductInfo();
         ordProductInfo2.setBuySum(2);
-      //  ordProductInfo2.setSupplierId(-1l);
+       // ordProductInfo2.setSupplierId(-1l);
         ordProductInfo2.setSkuId("0000000000000194");  //两个商品同一销售商 不同仓库
         ordProductInfo2.setGiveJF(3000);
         ordProductInfoList.add(ordProductInfo2);
@@ -113,7 +113,7 @@ public class OrderTradeCenterSVImplTest {
         OrdProductInfo ordProductInfo3 = new OrdProductInfo();
         ordProductInfo3.setBuySum(1);
         ordProductInfo3.setSkuId("0000000000000194");
-       // ordProductInfo3.setSupplierId(-1l);
+        //ordProductInfo3.setSupplierId(-1l);
         ordProductInfo3.setGiveJF(20);
         ordProductInfoList1.add(ordProductInfo3);
         //发票信息2

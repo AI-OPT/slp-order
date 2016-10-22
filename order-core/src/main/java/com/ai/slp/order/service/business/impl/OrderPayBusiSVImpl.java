@@ -754,6 +754,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		newLogistics.setOrderId(subOrderId);
     		newLogistics.setLogisticsId(logisticsId);
     		ordOdLogisticsAtomSV.insertSelective(newLogistics);
+    		/* 创建子订单-支付机构接口*/ //TODO
+    		
+    		
     	}else {
 	        OrdOdProdCriteria example = new OrdOdProdCriteria();
 	        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
