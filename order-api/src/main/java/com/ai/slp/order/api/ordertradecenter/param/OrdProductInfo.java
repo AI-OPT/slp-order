@@ -14,11 +14,6 @@ public class OrdProductInfo implements Serializable {
     private String skuId;
     
     /**
-     * 销售商id
-     */
-    private Long supplierId;
-
-    /**
      * 购买数量
      */
     private int buySum;
@@ -82,14 +77,6 @@ public class OrdProductInfo implements Serializable {
     public void setChargeFee(String chargeFee) {
         this.chargeFee = chargeFee;
     }
-
-	public Long getSupplierId() {
-		return supplierId;
-	}
-
-	public void setSupplierId(Long supplierId) {
-		this.supplierId = supplierId;
-	}
 
 	public long getGiveJF() {
 		return giveJF;
