@@ -344,13 +344,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				subOrdOdFeeProd.setOrderId(afterOrderId);
 				ordOdFeeProdAtomSV.insertSelective(subOrdOdFeeProd);
 			}
-			/* 4.生成退款订单支付机构接口*/
-			OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
-					order.getTenantId(), order.getParentOrderId());
-			OrdBalacneIf balacneIf=new OrdBalacneIf();
-			BeanUtils.copyProperties(balacneIf, ordBalacneIf);
-			Long balacneIfId = SequenceUtil.createBalacneIfId();
-			balacneIf.setBalacneIfId(balacneIfId);
     	}else {
     		/* 5.创建售后商品明细信息*/
     		afterOrdOdProd =new OrdOdProd();
