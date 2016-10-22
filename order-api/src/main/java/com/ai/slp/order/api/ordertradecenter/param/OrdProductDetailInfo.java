@@ -29,6 +29,11 @@ public class OrdProductDetailInfo extends BaseInfo{
     private String remark;
     
     /**
+     * 销售商Id
+     */
+    private String supplierId;
+    
+    /**
      * 商品信息
      */
     private List<OrdProductInfo> ordProductInfoList;
@@ -98,5 +103,13 @@ public class OrdProductDetailInfo extends BaseInfo{
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public String getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(String supplierId) {
+		this.supplierId = supplierId;
 	}
 }
