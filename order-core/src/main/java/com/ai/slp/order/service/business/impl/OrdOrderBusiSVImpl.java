@@ -715,7 +715,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		SysParam sysParamDf = InfoTranslateUtil.translateInfo(behindOrdOrderAttach.getTenantId(), 
         				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
         		pOrderVo.setDeliveryFlagName(sysParamDf==null?"":sysParamDf.getColumnDesc());
-        		String arr="21,212,22,23,31,92,93,94";  //售后状态
+        		String arr="21,212,213,22,23,31,92,93,94";  //售后状态
         		boolean flag=arr.equals(states);
         		if(!flag) {
         			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
@@ -878,6 +878,14 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				afterOrdOrder.getOrigOrderId());
 		List<OrdOdProd> prodList = ordOdProdAtomSV.selectByOrd(request.getTenantId(), 
 				afterOrdOrder.getOrigOrderId());
+		boolean cusFlag=false;
+		for (OrdOdProd ordOdProd : prodList) {
+			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+				cusFlag=true;
+			}else {
+				cusFlag=false;
+			}
+		}
 		/* 获取子订单下的所有售后订单*/
 		OrdOrderCriteria example=new OrdOrderCriteria();
 		OrdOrderCriteria.Criteria criteria = example.createCriteria();
@@ -899,27 +907,21 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				flag=false;
 			}
 		}
-		//未发货状态时子订单下商品为1或者没有售后订单或者有售后订单且状态为审核失败和完成,改变状态
+		//未发货状态时
 		if(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION.equals(order.getState())||
 				 OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(order.getState())||
 				 OrdersConstants.OrdOrder.State.WAIT_SEND.equals(order.getState())) {
-			  // 商品数量=售后订单数量+1
-			 if(!CollectionUtil.isEmpty(orderList)&&(prodList.size()==orderList.size()+1)) {
-				if(flag) {
+			 if(!CollectionUtil.isEmpty(orderList)) { //有售后订单 
+				 //TODO
+				if(flag&&cusFlag) {
 					order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 					ordOrderAtomSV.updateById(order);
 					parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-					ordOrderAtomSV.updateById(parentOrder); // 前提:  商品数量=售后订单数量+1       商品数量>售后订单+1  
+					ordOrderAtomSV.updateById(parentOrder); 
 				} 
 			 }
-			/* if((prodList.size()==1)||flag||CollectionUtil.isEmpty(orderList)) { 
-				 order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-				 ordOrderAtomSV.updateById(order);
-				 parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-				 ordOrderAtomSV.updateById(parentOrder); // 前提:  商品数量=售后订单数量+1       商品数量>售后订单+1  
-			 }*/
 		 }else { //已发货状态
-			 if(flag||CollectionUtil.isEmpty(orderList)) {
+			 if(!CollectionUtil.isEmpty(orderList)&&flag) {
 				 order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 				 ordOrderAtomSV.updateById(order);
 				 parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
