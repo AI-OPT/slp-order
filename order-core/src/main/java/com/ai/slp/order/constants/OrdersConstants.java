@@ -249,19 +249,19 @@ public final class OrdersConstants {
             public static final String CANCEL = "91";
 
             /**
-             * 已退货
+             * 92退货完成
              */
             public static final String FINISH_REFUND = "92";
 
             /**
-             * 93退货审核不通过
+             * 93换货完成
              */
-            public static final String REFUND_AUDIT_NO_PASS = "93";
+            public static final String REFUND_AUDIT = "93";
 
             /**
-             * 94换货审核不通过
+             * 94退费完成
              */
-            public static final String EXCHANGE_AUDIT_NO_PASS = "94";
+            public static final String EXCHANGE_AUDIT = "94";
 
             /**
              * 20申请撤单
