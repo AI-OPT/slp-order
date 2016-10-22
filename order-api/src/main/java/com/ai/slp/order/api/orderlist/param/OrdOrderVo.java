@@ -13,427 +13,430 @@ import com.ai.opt.base.vo.BaseInfo;
  */
 public class OrdOrderVo extends BaseInfo {
 
-    private static final long serialVersionUID = 1L;
-    
-    /**
-     * 订单来源  受理渠道
-     */
-    private String chlId;
-    
-    /**
-     * 仓库ID
-     */
-    private String routeId;
-    
-    /**
-     * 仓库信息
-     */
-    private String routeName;
-    
-    /**
-     * 父订单id
-     */
-    private Long parentOrderId;
-    
-    /**
-     * 支付流水号
-     */
-    private Long balacneIfId;
-    
-    /**
-     * 买家帐号      userid
-     */
-    private String userId;
-    
-    /**
-     * 用户姓名
-     */
-    private String userName;
-    
-    /**
-     * 支付帐号
-     */
-    private Long acctId;
-    
-    /**
-     * 买家留言  订单备注
-     */
-    private String remark;
-    
-    /**
-     * 业务订单ID
-     */
-    private Long orderId;
-    
-    /**
-     * 原始订单号
-     */
-    private Long origOrderId;
-    
-    /**
-     * 积分账户id
-     */
-    private String accountId;
-    
-    /**
-     * 积分中心返回的id
-     */
-    private String downstreamOrderId;
-    
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * 业务类型
-     */
-    private String busiCode;
-    
-    /**
-     * 业务类型展示名称
-     */
-    private String busiCodeName;
-    
-    /**
-     * 订单类型
-     */
-    private String orderType;
-    
-    /**
-     * 订单类型展示名称
-     */
-    private String orderTypeName;
+	/**
+	 * 订单来源 受理渠道
+	 */
+	private String chlId;
 
-    /**
-     * 订单状态(后厂)
-     */
-    private String state;
+	/**
+	 * 仓库ID
+	 */
+	private String routeId;
 
-    /**
-     * 订单状态展示
-     */
-    private String stateName;
+	/**
+	 * 仓库信息
+	 */
+	private String routeName;
 
-    /**
-     * 支付方式
-     */
-    private String payStyle;
+	/**
+	 * 父订单id
+	 */
+	private Long parentOrderId;
 
-    /**
-     * 支付方式显示值
-     */
-    private String payStyleName;
+	/**
+	 * 支付流水号
+	 */
+	private Long balacneIfId;
+	/**
+	 * 外部流水号
+	 */
+	private String externalId;
 
-    /**
-     * 支付时间
-     */
-    private Timestamp payTime;
+	/**
+	 * 买家帐号 userid
+	 */
+	private String userId;
 
-    /**
-     * 下单时间
-     */
-    private Timestamp orderTime;
+	/**
+	 * 用户姓名
+	 */
+	private String userName;
 
-    /**
-     * 手机个数
-     */
-    private Integer phoneCount;
+	/**
+	 * 支付帐号
+	 */
+	private Long acctId;
 
-    /**
-     * 总费用
-     */
-    private Long totalFee;
+	/**
+	 * 买家留言 订单备注
+	 */
+	private String remark;
 
-    /**
-     * 总优惠金额
-     */
-    private Long discountFee;
+	/**
+	 * 业务订单ID
+	 */
+	private Long orderId;
 
-    /**
-     * 减免金额
-     */
-    private long operDiscountFee;
-    
-    /**
-     * 减免原因
-     */
-    private String operDiscountDesc;
+	/**
+	 * 原始订单号
+	 */
+	private Long origOrderId;
 
-    /**
-     * 总应收费用
-     */
-    private Long adjustFee;
+	/**
+	 * 积分账户id
+	 */
+	private String accountId;
 
-    /**
-     * 总实收费用
-     */
-    private Long paidFee;
+	/**
+	 * 积分中心返回的id
+	 */
+	private String downstreamOrderId;
 
-    /**
-     * 总待收费用
-     */
-    private Long payFee;
-    
-    /**
-     * 运费
-     */
-    private Long freight;
-    
-    /**
-     * 发票类型
-     */
-    private String invoiceType;
-    
-    /**
-     * 发票类型展示名称
-     */
-    private String InvoiceTypeName;
-    
-    /**
-     * 发票抬头
-     */
-    private String invoiceTitle;
-    
-    /**
-     * 登记打印内容
-     */
-    private String invoiceContent;
-    
-    /**
-     * 发票打印状态
-     */
-    private String invoiceStatus;
-    
-    /**
-     * 物流单号
-     */
-    private String expressOddNumber;
-    
-    /**
-     * 到件方公司
-     */
-    private String contactCompany;
-    
-    /**
-     * 收件人姓名
-     */
-    private String contactName;
-    
-    /**
-     * 收件人电话
-     */
-    private String contactTel;
-    
-    /**
-     * 配送方式
-     */
-    private String logisticsType;
-    
-    /**
-     * 收件人省份
-     */
-    private String provinceCode;
-    
-    /**
-     * 收件人地市
-     */
-    private String cityCode;
-    
-    /**
-     * 收件人区县
-     */
-    private String countyCode;
-    
-    /**
-     * 收件人邮编
-     */
-    private String postCode;
-    
-    /**
-     * 收件人末级区域
-     */
-    private String areaCode;
-    
-    /**
-     * 详细地址(自提地址)
-     */
-    private String address;
-    
-    /**
-     * 物流公司ID
-     */
-    private String expressId;
-    
-    /**
-     * 受理工号
-     */
-    private String operId;
-    
-    /**
-     * 纳税人识别号
-     */
-    private String buyerTaxpayerNumber;
-    
-    /**
-     * 购货方开户行名称
-     */
-    private String buyerBankName;
-    
-    /**
-     * 购货方开户行帐号
-     */
-    private String buyerBankAccount;
+	/**
+	 * 业务类型
+	 */
+	private String busiCode;
 
-    /**
-     * 支付信息(订单费用总表信息)
-     */
-    private List<OrderPayVo> payDataList;
+	/**
+	 * 业务类型展示名称
+	 */
+	private String busiCodeName;
 
-    /**
-     * 商品集合
-     */
-    private List<OrdProductVo> productList;
+	/**
+	 * 订单类型
+	 */
+	private String orderType;
 
-    public Long getOrderId() {
-        return orderId;
-    }
+	/**
+	 * 订单类型展示名称
+	 */
+	private String orderTypeName;
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
+	/**
+	 * 订单状态(后厂)
+	 */
+	private String state;
 
-    public String getBusiCode() {
-        return busiCode;
-    }
+	/**
+	 * 订单状态展示
+	 */
+	private String stateName;
 
-    public void setBusiCode(String busiCode) {
-        this.busiCode = busiCode;
-    }
+	/**
+	 * 支付方式
+	 */
+	private String payStyle;
 
-    public String getOrderType() {
-        return orderType;
-    }
+	/**
+	 * 支付方式显示值
+	 */
+	private String payStyleName;
 
-    public void setOrderType(String orderType) {
-        this.orderType = orderType;
-    }
+	/**
+	 * 支付时间
+	 */
+	private Timestamp payTime;
 
-    public String getState() {
-        return state;
-    }
+	/**
+	 * 下单时间
+	 */
+	private Timestamp orderTime;
 
-    public void setState(String state) {
-        this.state = state;
-    }
+	/**
+	 * 手机个数
+	 */
+	private Integer phoneCount;
 
-    public Timestamp getOrderTime() {
-        return orderTime;
-    }
+	/**
+	 * 总费用
+	 */
+	private Long totalFee;
 
-    public void setOrderTime(Timestamp orderTime) {
-        this.orderTime = orderTime;
-    }
+	/**
+	 * 总优惠金额
+	 */
+	private Long discountFee;
 
-    public Long getTotalFee() {
-        return totalFee;
-    }
+	/**
+	 * 减免金额
+	 */
+	private long operDiscountFee;
 
-    public void setTotalFee(Long totalFee) {
-        this.totalFee = totalFee;
-    }
+	/**
+	 * 减免原因
+	 */
+	private String operDiscountDesc;
 
-    public Long getDiscountFee() {
-        return discountFee;
-    }
+	/**
+	 * 总应收费用
+	 */
+	private Long adjustFee;
 
-    public void setDiscountFee(Long discountFee) {
-        this.discountFee = discountFee;
-    }
+	/**
+	 * 总实收费用
+	 */
+	private Long paidFee;
 
-    public Long getAdjustFee() {
-        return adjustFee;
-    }
+	/**
+	 * 总待收费用
+	 */
+	private Long payFee;
 
-    public void setAdjustFee(Long adjustFee) {
-        this.adjustFee = adjustFee;
-    }
+	/**
+	 * 运费
+	 */
+	private Long freight;
 
-    public List<OrdProductVo> getProductList() {
-        return productList;
-    }
+	/**
+	 * 发票类型
+	 */
+	private String invoiceType;
 
-    public void setProductList(List<OrdProductVo> productList) {
-        this.productList = productList;
-    }
+	/**
+	 * 发票类型展示名称
+	 */
+	private String InvoiceTypeName;
 
-    public String getStateName() {
-        return stateName;
-    }
+	/**
+	 * 发票抬头
+	 */
+	private String invoiceTitle;
 
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
-    }
+	/**
+	 * 登记打印内容
+	 */
+	private String invoiceContent;
 
-    public String getPayStyle() {
-        return payStyle;
-    }
+	/**
+	 * 发票打印状态
+	 */
+	private String invoiceStatus;
 
-    public void setPayStyle(String payStyle) {
-        this.payStyle = payStyle;
-    }
+	/**
+	 * 物流单号
+	 */
+	private String expressOddNumber;
 
-    public String getPayStyleName() {
-        return payStyleName;
-    }
+	/**
+	 * 到件方公司
+	 */
+	private String contactCompany;
 
-    public void setPayStyleName(String payStyleName) {
-        this.payStyleName = payStyleName;
-    }
+	/**
+	 * 收件人姓名
+	 */
+	private String contactName;
 
-    public Timestamp getPayTime() {
-        return payTime;
-    }
+	/**
+	 * 收件人电话
+	 */
+	private String contactTel;
 
-    public void setPayTime(Timestamp payTime) {
-        this.payTime = payTime;
-    }
+	/**
+	 * 配送方式
+	 */
+	private String logisticsType;
 
-    public Long getPaidFee() {
-        return paidFee;
-    }
+	/**
+	 * 收件人省份
+	 */
+	private String provinceCode;
 
-    public void setPaidFee(Long paidFee) {
-        this.paidFee = paidFee;
-    }
+	/**
+	 * 收件人地市
+	 */
+	private String cityCode;
 
-    public Long getPayFee() {
-        return payFee;
-    }
+	/**
+	 * 收件人区县
+	 */
+	private String countyCode;
 
-    public void setPayFee(Long payFee) {
-        this.payFee = payFee;
-    }
+	/**
+	 * 收件人邮编
+	 */
+	private String postCode;
 
-    public List<OrderPayVo> getPayDataList() {
-        return payDataList;
-    }
+	/**
+	 * 收件人末级区域
+	 */
+	private String areaCode;
 
-    public void setPayDataList(List<OrderPayVo> payDataList) {
-        this.payDataList = payDataList;
-    }
+	/**
+	 * 详细地址(自提地址)
+	 */
+	private String address;
 
-    public Integer getPhoneCount() {
-        return phoneCount;
-    }
+	/**
+	 * 物流公司ID
+	 */
+	private String expressId;
 
-    public void setPhoneCount(Integer phoneCount) {
-        this.phoneCount = phoneCount;
-    }
+	/**
+	 * 受理工号
+	 */
+	private String operId;
 
-    public long getOperDiscountFee() {
-        return operDiscountFee;
-    }
+	/**
+	 * 纳税人识别号
+	 */
+	private String buyerTaxpayerNumber;
 
-    public void setOperDiscountFee(long operDiscountFee) {
-        this.operDiscountFee = operDiscountFee;
-    }
+	/**
+	 * 购货方开户行名称
+	 */
+	private String buyerBankName;
+
+	/**
+	 * 购货方开户行帐号
+	 */
+	private String buyerBankAccount;
+
+	/**
+	 * 支付信息(订单费用总表信息)
+	 */
+	private List<OrderPayVo> payDataList;
+
+	/**
+	 * 商品集合
+	 */
+	private List<OrdProductVo> productList;
+
+	public Long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getBusiCode() {
+		return busiCode;
+	}
+
+	public void setBusiCode(String busiCode) {
+		this.busiCode = busiCode;
+	}
+
+	public String getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(String orderType) {
+		this.orderType = orderType;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public Timestamp getOrderTime() {
+		return orderTime;
+	}
+
+	public void setOrderTime(Timestamp orderTime) {
+		this.orderTime = orderTime;
+	}
+
+	public Long getTotalFee() {
+		return totalFee;
+	}
+
+	public void setTotalFee(Long totalFee) {
+		this.totalFee = totalFee;
+	}
+
+	public Long getDiscountFee() {
+		return discountFee;
+	}
+
+	public void setDiscountFee(Long discountFee) {
+		this.discountFee = discountFee;
+	}
+
+	public Long getAdjustFee() {
+		return adjustFee;
+	}
+
+	public void setAdjustFee(Long adjustFee) {
+		this.adjustFee = adjustFee;
+	}
+
+	public List<OrdProductVo> getProductList() {
+		return productList;
+	}
+
+	public void setProductList(List<OrdProductVo> productList) {
+		this.productList = productList;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public String getPayStyle() {
+		return payStyle;
+	}
+
+	public void setPayStyle(String payStyle) {
+		this.payStyle = payStyle;
+	}
+
+	public String getPayStyleName() {
+		return payStyleName;
+	}
+
+	public void setPayStyleName(String payStyleName) {
+		this.payStyleName = payStyleName;
+	}
+
+	public Timestamp getPayTime() {
+		return payTime;
+	}
+
+	public void setPayTime(Timestamp payTime) {
+		this.payTime = payTime;
+	}
+
+	public Long getPaidFee() {
+		return paidFee;
+	}
+
+	public void setPaidFee(Long paidFee) {
+		this.paidFee = paidFee;
+	}
+
+	public Long getPayFee() {
+		return payFee;
+	}
+
+	public void setPayFee(Long payFee) {
+		this.payFee = payFee;
+	}
+
+	public List<OrderPayVo> getPayDataList() {
+		return payDataList;
+	}
+
+	public void setPayDataList(List<OrderPayVo> payDataList) {
+		this.payDataList = payDataList;
+	}
+
+	public Integer getPhoneCount() {
+		return phoneCount;
+	}
+
+	public void setPhoneCount(Integer phoneCount) {
+		this.phoneCount = phoneCount;
+	}
+
+	public long getOperDiscountFee() {
+		return operDiscountFee;
+	}
+
+	public void setOperDiscountFee(long operDiscountFee) {
+		this.operDiscountFee = operDiscountFee;
+	}
 
 	public String getInvoiceType() {
 		return invoiceType;
@@ -730,4 +733,13 @@ public class OrdOrderVo extends BaseInfo {
 	public void setInvoiceStatus(String invoiceStatus) {
 		this.invoiceStatus = invoiceStatus;
 	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
+
 }
