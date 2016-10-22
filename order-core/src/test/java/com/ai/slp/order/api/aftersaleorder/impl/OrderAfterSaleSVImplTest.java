@@ -23,7 +23,7 @@ public class OrderAfterSaleSVImplTest {
 		try {
 			OrderReturnRequest req=new OrderReturnRequest();
 			req.setOrderId(3334570391232l);
-			req.setProdDetalId(535345122);
+			//req.setProdDetalId(535345122);
 			req.setProdSum(2l);
 			req.setTenantId("changhong");
 			req.setOperId("");
@@ -44,7 +44,7 @@ public class OrderAfterSaleSVImplTest {
 		try {
 			OrderReturnRequest req=new OrderReturnRequest();
 			req.setOrderId(2000000978713235l);
-			req.setProdDetalId(32342614);
+			//req.setProdDetalId(32342614);
 			req.setTenantId("changhong");
 			req.setOperId("");
 			System.out.println(JSON.toJSONString(req));
@@ -64,7 +64,7 @@ public class OrderAfterSaleSVImplTest {
 		try {
 			OrderReturnRequest req=new OrderReturnRequest();
 			req.setOrderId(2000000978713235l);
-			req.setProdDetalId(32342614);
+			//req.setProdDetalId(32342614);
 			req.setTenantId("changhong");
 			req.setOperId("");
 			System.out.println(JSON.toJSONString(req));
