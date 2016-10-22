@@ -66,13 +66,13 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 					BeanUtils.copyProperties(staticProdVo, prod);
 					parentProdList.add(staticProdVo);
 				}
-				//获取绑定手机号
+				/*//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
 		        Object phone =dataJson.get("phone");
 				parentOrderVo.setUserTel(phone==null?null:phone.toString());
 				//获取用户名
         		Object userName =dataJson.get("userName");
-        		parentOrderVo.setUserName(userName==null?null:userName.toString()); 
+        		parentOrderVo.setUserName(userName==null?null:userName.toString()); */
 				//获取子订单
 				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
 				int totalProdSize=0;

@@ -37,7 +37,7 @@ public class StasticsOrderSVImplTest {
        // query.setSupplierIdList(suList);
         //query.setState("11");
         //query.setProdName("test22");
-        query.setUserId("7048d255c62e4511");
+       // query.setUserId("7048d255c62e4511");
         StasticOrderResponse info=iStasticsOrderSV.queryStasticOrdPage(query);
         System.out.println("info="+JSON.toJSONString(info.getPageInfo()));
         
