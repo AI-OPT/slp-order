@@ -429,14 +429,13 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     	balacneIf.setCreateTime(DateUtil.getSysDate());
     	ordBalacneIfAtomSV.insertSelective(balacneIf);
     	/* 10.生成售后配送信息*/
-    	OrdOdLogistics logistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+ /*   	OrdOdLogistics logistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
     	OrdOdLogistics afterLogistics=new OrdOdLogistics();
     	BeanUtils.copyProperties(afterLogistics, logistics);
     	afterLogistics.setOrderId(afterOrderId);
     	afterLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
-    	balacneIf.setOrderId(afterOrderId);
-    	balacneIf.setCreateTime(DateUtil.getSysDate());
-    	ordBalacneIfAtomSV.insertSelective(balacneIf);
+    	afterLogistics.setOrderId(afterOrderId);
+    	ordOdLogisticsAtomSV.insertSelective(afterLogistics);*/
 		return afterTotalFee;
     }
     
