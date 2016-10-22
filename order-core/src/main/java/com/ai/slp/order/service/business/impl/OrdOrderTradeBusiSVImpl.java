@@ -118,11 +118,13 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	//积分账户id
         	String accountId = ordProductDetailInfo.getAccountId();
         	String remark = ordProductDetailInfo.getRemark();
+        	String supplierId = ordProductDetailInfo.getSupplierId();
         	/* 1.创建业务订单,并返回订单Id*/
         	long orderId = this.createOrder(ordBaseInfo,accountId,beforSubmitOrder,
-        			request.getTenantId(),sysDate,remark);
+        			request.getTenantId(),sysDate,remark,supplierId);
         	/* 2.创建商品明细,费用明细信息 */
-        	Map<String, Object> mapProduct = this.createProdInfo(request,ordProductDetailInfo, sysDate, orderId,client);
+        	Map<String, Object> mapProduct = this.createProdInfo(request,ordProductDetailInfo, sysDate, 
+        			orderId,client,supplierId);
         	ordProductResList = (List<OrdProductResInfo>) mapProduct.get("ordProductResList");
         	long totalFee = (long) mapProduct.get("totalFee");
         	/* 3.费用信息及费用明细处理 */
@@ -160,7 +162,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private long createOrder(OrdBaseInfo ordBaseInfo,String accountId,OrderMonitorBeforResponse beforSubmitOrder,
-    		String tenantId,Timestamp sysDate,String remark) {
+    		String tenantId,Timestamp sysDate,String remark,String supplierId) {
         OrdOrder ordOrder = new OrdOrder();
         long orderId = SequenceUtil.createOrderId();
         ordOrder.setOrderId(orderId);
@@ -185,6 +187,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setOrderDesc(ordBaseInfo.getOrderDesc());
         ordOrder.setKeywords(ordBaseInfo.getKeywords());
         ordOrder.setRemark(remark);
+        ordOrder.setSupplierId(supplierId);
         ordOrder.setIfWarning(beforSubmitOrder.getIfWarning());
         ordOrder.setWarningType(beforSubmitOrder.getWarningType());
         ordOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
@@ -203,8 +206,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @param client 
      * @ApiDocMethod
      */
-    private Map<String,Object> createProdInfo(OrderTradeCenterRequest request,
-    		OrdProductDetailInfo ordProductDetailInfo,Timestamp sysDate, long orderId, IDSSClient client) {
+    private Map<String,Object> createProdInfo(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
+    		Timestamp sysDate, long orderId, IDSSClient client,String supplierId) {
         LOG.debug("开始处理订单商品明细[" + orderId + "]和订单费用明细资料信息..");
         OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
         String orderType = ordBaseInfo.getOrderType();
@@ -237,7 +240,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setSkuStorageId(JSON.toJSONString(storageNum));
             ordOdProd.setValidTime(sysDate);
             ordOdProd.setInvalidTime(DateUtil.getFutureTime());
-            ordOdProd.setSupplierId(String.valueOf(ordProductInfo.getSupplierId()));
+            ordOdProd.setSupplierId(supplierId);
             ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
             ordOdProd.setBuySum(ordProductInfo.getBuySum());
             ordOdProd.setSalePrice(storageNumRes.getSalePrice());
