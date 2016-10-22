@@ -134,9 +134,6 @@ public class ValidateUtils {
 				if(StringUtil.isBlank(ordProductInfo.getSkuId())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "单品id不能为空");
 				}
-				if(ordProductInfo.getSupplierId()==null) {
-					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "销售商id不能为空");
-				}
 				if(ordProductInfo.getBuySum()==0) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "购买数量不能为空");
 				}
