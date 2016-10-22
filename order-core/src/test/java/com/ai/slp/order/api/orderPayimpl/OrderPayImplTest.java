@@ -1,6 +1,10 @@
 package com.ai.slp.order.api.orderPayimpl;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +13,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
+import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.orderpay.interfaces.IOrderPaySV;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.alibaba.fastjson.JSON;
@@ -24,11 +30,11 @@ public class OrderPayImplTest {
     public void orderPayTest() {
         OrderPayRequest request = new OrderPayRequest();
         ArrayList<Long> arrayList = new ArrayList<Long>();
-        arrayList.add(2000001001015022l); //100000
-        arrayList.add(2000001001149911l);//40000
+        arrayList.add(2000001027247128l); //100000
+      //  arrayList.add(2000001004391043l);//40000
         request.setOrderIds(arrayList);
         request.setExternalId("123456");
-        request.setPayFee(-98000l);
+        request.setPayFee(96485l);
         request.setPayType("21");
         request.setTenantId("changhong");
         System.out.println(JSON.toJSONString(request));

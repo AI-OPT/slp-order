@@ -24,8 +24,9 @@ public class NotPaidOrderModifySVImplTest {
 	public void test() {
         OrderModifyRequest request=new OrderModifyRequest();
         request.setOrderId(3345703912l);
-		request.setUpdateAmount(6000l);
+		request.setUpdateAmount(3600l);
 		request.setTenantId("changhong");
+		request.setOperId("1212");
 		request.setUpdateRemark("测试.....");
 		System.out.println(JSON.toJSONString(request));
 		BaseResponse response = notPaidOrderModifySV.modify(request);

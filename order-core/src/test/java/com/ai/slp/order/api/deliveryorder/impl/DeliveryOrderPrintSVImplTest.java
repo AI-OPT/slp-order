@@ -52,5 +52,16 @@ public class DeliveryOrderPrintSVImplTest {
 		deliveryOrderPrintSV.display(request);
 		//System.out.println(response);
 	}
+	
+	@Test
+	public void testNoMergePrint() {
+		DeliveryOrderPrintRequest request=new DeliveryOrderPrintRequest();
+		request.setOrderId(2000001011472557l);
+		request.setUserId("1");
+		request.setTenantId("changhong");
+		System.out.println(JSON.toJSONString(request));
+		deliveryOrderPrintSV.noMergePrint(request);
+		//System.out.println(response);
+	}
 
 }

@@ -20,8 +20,8 @@ public class OrderCancelSVImplTest {
 	@Test
 	public void test() {
 		OrderCancelRequest cancelRequest=new OrderCancelRequest();
-		cancelRequest.setTenantId("SLP");
-		cancelRequest.setOrderId(20000003786534741l);
+		cancelRequest.setTenantId("changhong");
+		cancelRequest.setOrderId(2000001000333539l);
 		orderCancelSVImpl.handCancelNoPayOrder(cancelRequest);
 	}
 

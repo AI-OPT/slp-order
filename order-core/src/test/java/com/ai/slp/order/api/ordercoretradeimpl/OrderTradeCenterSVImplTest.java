@@ -52,20 +52,20 @@ public class OrderTradeCenterSVImplTest {
         OrdProductInfo ordProductInfo = new OrdProductInfo();
         ordProductInfo.setBuySum(1);
         ordProductInfo.setSkuId("0000000000000194");
-        ordProductInfo.setSupplierId(-1l);
+      //  ordProductInfo.setSupplierId(-1l);
         ordProductInfo.setGiveJF(100);
         ordProductInfoList.add(ordProductInfo);
         
         OrdProductInfo ordProductInfo1 = new OrdProductInfo();
         ordProductInfo1.setBuySum(5);
-        ordProductInfo1.setSupplierId(-1l);
+     //   ordProductInfo1.setSupplierId(-1l);
         ordProductInfo1.setSkuId("0000000000000194");  //两个商品同一销售商 不同仓库
         ordProductInfo.setGiveJF(10);
         ordProductInfoList.add(ordProductInfo1);
         
         OrdProductInfo ordProductInfo2 = new OrdProductInfo();
         ordProductInfo2.setBuySum(2);
-        ordProductInfo2.setSupplierId(-1l);
+      //  ordProductInfo2.setSupplierId(-1l);
         ordProductInfo2.setSkuId("0000000000000194");  //两个商品同一销售商 不同仓库
         ordProductInfo2.setGiveJF(3000);
         ordProductInfoList.add(ordProductInfo2);
@@ -113,19 +113,19 @@ public class OrderTradeCenterSVImplTest {
         OrdProductInfo ordProductInfo3 = new OrdProductInfo();
         ordProductInfo3.setBuySum(1);
         ordProductInfo3.setSkuId("0000000000000194");
-        ordProductInfo3.setSupplierId(-1l);
+       // ordProductInfo3.setSupplierId(-1l);
         ordProductInfo3.setGiveJF(20);
         ordProductInfoList1.add(ordProductInfo3);
         //发票信息2
-        OrdInvoiceInfo ordInvoiceInfo1=new OrdInvoiceInfo();
-        ordInvoiceInfo1.setInvoiceType("0");//0 电子发票;1.纸质发票
-        ordInvoiceInfo1.setInvoiceTitle("亚信科技(中国)公司");
-        ordInvoiceInfo1.setInvoiceContent("交通费919");
-        ordInvoiceInfo1.setBuyerBankAccount("");
-        ordInvoiceInfo1.setBuyerBankCode("");
-        ordInvoiceInfo1.setBuyerBankName("");
-        ordInvoiceInfo1.setBuyerTaxpayerNumber("");
-        ordInvoiceInfo1.setInvoiceKind("002");//001  增值税专用发票  002  增值税电子普通发票   003  增值税普通发票   004  废旧物资发票   005  增值税电子专用发票
+//        OrdInvoiceInfo ordInvoiceInfo1=new OrdInvoiceInfo();
+//        ordInvoiceInfo1.setInvoiceType("0");//0 电子发票;1.纸质发票
+//        ordInvoiceInfo1.setInvoiceTitle("亚信科技(中国)公司");
+//        ordInvoiceInfo1.setInvoiceContent("交通费919");
+//        ordInvoiceInfo1.setBuyerBankAccount("");
+//        ordInvoiceInfo1.setBuyerBankCode("");
+//        ordInvoiceInfo1.setBuyerBankName("");
+//        ordInvoiceInfo1.setBuyerTaxpayerNumber("");
+//        ordInvoiceInfo1.setInvoiceKind("002");//001  增值税专用发票  002  增值税电子普通发票   003  增值税普通发票   004  废旧物资发票   005  增值税电子专用发票
         
         //订单费用明细信息2
         List<OrdFeeTotalProdInfo> ordFeeTotalProdInfo5=new ArrayList<OrdFeeTotalProdInfo>();
@@ -150,7 +150,7 @@ public class OrderTradeCenterSVImplTest {
         detailInfo1.setDiscountFee(300);
         detailInfo1.setRemark("买家留言信息信息信息信息信息信息");
         detailInfo1.setOrdProductInfoList(ordProductInfoList1);
-        detailInfo1.setOrdInvoiceInfo(ordInvoiceInfo1);
+   //     detailInfo1.setOrdInvoiceInfo(ordInvoiceInfo1);
         detailInfo1.setOrdFeeTotalProdInfo(ordFeeTotalProdInfo5);
         ordProductDetailInfos.add(detailInfo1);
         

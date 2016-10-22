@@ -27,7 +27,7 @@ public class InvoicePrintTest {
 		request.setPageNo(1);
 		request.setPageSize(5);
 		request.setTenantId("changhong");
-		//request.setOrderId(334570392323l);
+		request.setOrderId(2000001004919206l);
 		//request.setInvoiceTitle("在线");
 		//request.setInvoiceStatus("1");
 		InvoicePrintResponse response = invoicePrintSV.queryList(request);
@@ -36,15 +36,16 @@ public class InvoicePrintTest {
 	
 	@Test
 	public void testUpdate() {
+		
 		InvoiceNoticeRequest request=new InvoiceNoticeRequest();
-		request.setInvoiceId("1212");
+		request.setInvoiceId("5211251320");
 		request.setCompanyId(-1l);
-		request.setInvoiceNum("1212");
+		request.setInvoiceNum("06171770");
 		request.setInvoiceStatus("1");
-		request.setInvoiceTime("2016-10-090");
-		request.setInvoiceTotalFee(0l);
-		request.setOrderId(334570392323l);
-		request.setProofItemNum("222");
+		request.setInvoiceTime("2016-10-09");
+		request.setInvoiceTotalFee(12.87);
+		request.setOrderId(2000001004919206l);
+		request.setProofItemNum("5335");
 		request.setInvoiceStatus("3");
 		System.out.println(JSON.toJSON(request));
 		invoicePrintSV.updateInvoiceStatus(request);
@@ -53,7 +54,7 @@ public class InvoicePrintTest {
 	@Test
 	public void testInvoiceSubmit() {
 		InvoiceSubmitRequest request=new InvoiceSubmitRequest();
-		request.setOrderId(2000001003796151l);
+		request.setOrderId(2000001004919206l);
 		request.setTenantId("changhong");
 		InvoiceSumbitResponse response = invoicePrintSV.invoiceSubmit(request);
 		System.out.println(JSON.toJSON(response));

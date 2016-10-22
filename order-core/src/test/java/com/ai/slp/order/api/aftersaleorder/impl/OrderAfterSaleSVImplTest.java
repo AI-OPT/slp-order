@@ -22,11 +22,11 @@ public class OrderAfterSaleSVImplTest {
 	public void testBack() {
 		try {
 			OrderReturnRequest req=new OrderReturnRequest();
-			req.setOrderId(3334570391232l);
-			//req.setProdDetalId(535345122);
-			req.setProdSum(2l);
+			req.setOrderId(2000001034573975l);
+			req.setProdDetalId(5698l);
+			req.setProdSum(1l);
 			req.setTenantId("changhong");
-			req.setOperId("");
+			req.setOperId("11");
 			System.out.println(JSON.toJSONString(req));
 			orderAfterSaleSV.back(req);
 			System.out.println(11);
