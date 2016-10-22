@@ -779,11 +779,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     									OrdersConstants.OFCDeliveryState.ALREADY_RECEIVE_GOODS.equals(state)||
     									OrdersConstants.OFCDeliveryState.PART_DELIVER_GOODS.equals(state)) {
     								OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(ordOrder.getTenantId(), 
-    										ordOrder.getParentOrderId());
+    										ordOrder.getOrderId());
     								if(ordOdLogistics==null) {
     									logger.error("配送信息不存在");
     									throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-    											"配送信息不存在[父订单id:"+ordOrder.getParentOrderId()+"]");
+    											"配送信息不存在[订单id:"+ordOrder.getOrderId()+"]");
     								}
     								ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_CONFIRM);
     								ordOdLogistics.setExpressOddNumber(logisticsNo);
@@ -861,7 +861,71 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 
 	@Override
 	public int updateOrder(OrdOrder request) throws BusinessException, SystemException {
-		return ordOrderAtomSV.updateById(request);
+		/* 获取售后订单*/
+		OrdOrder afterOrdOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(),request.getOrderId());
+		if(afterOrdOrder==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"订单信息不存在[订单id:"+afterOrdOrder.getOrigOrderId()+"]");
+		}
+		//设置售后订单状态
+		afterOrdOrder.setState(request.getState()); 
+		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(afterOrdOrder.getBusiCode())) {
+			afterOrdOrder.setState(OrdersConstants.OrdOrder.State.FINISH_REFUND); //退货完成
+		}
+		/* 获取子订单信息及子订单下的商品明细信息*/
+		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
+				afterOrdOrder.getOrigOrderId());
+		List<OrdOdProd> prodList = ordOdProdAtomSV.selectByOrd(request.getTenantId(), 
+				afterOrdOrder.getOrigOrderId());
+		/* 获取子订单下的所有售后订单*/
+		OrdOrderCriteria example=new OrdOrderCriteria();
+		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		criteria.andOrigOrderIdEqualTo(afterOrdOrder.getOrigOrderId());
+		criteria.andOrderIdNotEqualTo(request.getOrderId());
+		List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(example);
+		OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
+				 order.getParentOrderId()); //父订单
+		boolean flag=false;
+		for (OrdOrder ordOrder : orderList) {  //表示有售后订单存在
+			String state = ordOrder.getState();
+			if(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(state)||
+					OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(state)||
+					OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(state)||
+					OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(state)||
+					OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(state)) { //表示售后订单为已完成状态或者审核失败
+				flag=true;
+			}else {
+				flag=false;
+			}
+		}
+		//未发货状态时子订单下商品为1或者没有售后订单或者有售后订单且状态为审核失败和完成,改变状态
+		if(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION.equals(order.getState())||
+				 OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(order.getState())||
+				 OrdersConstants.OrdOrder.State.WAIT_SEND.equals(order.getState())) {
+			  // 商品数量=售后订单数量+1
+			 if(!CollectionUtil.isEmpty(orderList)&&(prodList.size()==orderList.size()+1)) {
+				if(flag) {
+					order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+					ordOrderAtomSV.updateById(order);
+					parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+					ordOrderAtomSV.updateById(parentOrder); // 前提:  商品数量=售后订单数量+1       商品数量>售后订单+1  
+				} 
+			 }
+			/* if((prodList.size()==1)||flag||CollectionUtil.isEmpty(orderList)) { 
+				 order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+				 ordOrderAtomSV.updateById(order);
+				 parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+				 ordOrderAtomSV.updateById(parentOrder); // 前提:  商品数量=售后订单数量+1       商品数量>售后订单+1  
+			 }*/
+		 }else { //已发货状态
+			 if(flag||CollectionUtil.isEmpty(orderList)) {
+				 order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+				 ordOrderAtomSV.updateById(order);
+				 parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+				 ordOrderAtomSV.updateById(parentOrder);
+			 }
+		 }
+		return ordOrderAtomSV.updateById(afterOrdOrder);
 	}
 	
 	/**
