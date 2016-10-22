@@ -63,7 +63,7 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 				throw new BusinessException("", "订单下商品处于售后状态,不可打印");
 			}
 		}
-		/* 查询父订单对应的配送信息*/
+		/* 查询订单对应的配送信息*/
 		OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
 		if(ordOdLogistics==null) {
 			logger.error("未能查询到指定的配送信息[订单id:"+ ordOrder.getOrderId()+" ,租户id:"+ordOrder.getTenantId()+"]");
