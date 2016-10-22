@@ -131,6 +131,10 @@ public class OrdProductVo extends BaseInfo{
      * 商品编码
      */
     private String prodCode;
+    /**
+     * 库存ID
+     */
+    private String storageId;
 
 	public Long getOrderId() {
 		return orderId;
@@ -323,4 +327,13 @@ public class OrdProductVo extends BaseInfo{
 	public void setProdCode(String prodCode) {
 		this.prodCode = prodCode;
 	}
+
+	public String getStorageId() {
+		return storageId;
+	}
+
+	public void setStorageId(String storageId) {
+		this.storageId = storageId;
+	}
+	
 }
