@@ -86,6 +86,7 @@ import com.ai.slp.route.api.routemanage.param.RouteResponse;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mysql.jdbc.Buffer;
 
 
 @Service
@@ -465,11 +466,22 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 }
                 /* 4.订单配送信息查询*/
                 OrdOdLogistics ordOdLogistics =null;
+                OrdOdLogistics afterLogistics =null;
                 if(!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(order.getBusiCode())) {
-                	ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrigOrderId());//售后单获取子订单配送信息
-                }else {
-                	ordOdLogistics =ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+                	//售后单获取子订单配送信息
+                	afterLogistics=ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrigOrderId());
+                	StringBuffer sbf=new StringBuffer();
+                	sbf.append(afterLogistics.getProvinceCode()==null?"":iCacheSV.
+                			getAreaName(afterLogistics.getProvinceCode()));
+                	sbf.append(afterLogistics.getCityCode()==null?"":iCacheSV.
+                			getAreaName(afterLogistics.getCityCode()));
+                	sbf.append(afterLogistics.getCountyCode()==null?"":iCacheSV.
+                			getAreaName(afterLogistics.getCountyCode()));
+                	sbf.append(afterLogistics.getAddress());
+                	ordOrderVo.setAftercontactTel(afterLogistics.getContactTel());
+                	ordOrderVo.setAftercontactInfo(sbf.toString());
                 }
+                ordOdLogistics=ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
                 if(ordOdLogistics!=null) {
                 	ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
                 	ordOrderVo.setContactCompany(ordOdLogistics.getContactCompany());
@@ -720,7 +732,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		SysParam sysParamDf = InfoTranslateUtil.translateInfo(behindOrdOrderAttach.getTenantId(), 
         				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
         		pOrderVo.setDeliveryFlagName(sysParamDf==null?"":sysParamDf.getColumnDesc());
-        		String arr="21,212,213,22,23,31,92,93,94";  //售后状态
+        		String arr="21,212,213,312,22,23,31,92,93,94";  //售后状态
         		boolean flag=arr.equals(states);
         		if(!flag) {
         			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
