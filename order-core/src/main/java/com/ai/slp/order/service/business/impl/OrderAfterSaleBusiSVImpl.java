@@ -275,7 +275,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     	String orgState = ordOrder.getState();
     	String newState=null;
     	String chgDesc=null;
-    	if(OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(ordOrder.getBusiCode())) {  //待配货,待出库状态
+    	if(OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(ordOrder.getBusiCode())) {  
     		newState=OrdersConstants.OrdOrder.State.WAIT_REPAY;
     		chgDesc=OrdOdStateChg.ChgDesc.ORDER_SELLER_CONFIRMED_WAIT_PAY;
     	}else{
