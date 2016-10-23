@@ -878,8 +878,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(afterOrdOrder.getBusiCode())) {
 			afterOrdOrder.setState(OrdersConstants.OrdOrder.State.FINISH_REFUND); //退货完成
 			//TODO
-			
-			
 		}
 		/* 获取子订单信息及子订单下的商品明细信息*/
 		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
