@@ -396,7 +396,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	Map<String, Long> map=new HashMap<String,Long>();
         	for (OrdOdProd ordOdProd : ordOdProdList) {
         		//单个商品费用占总费用的比例
-            	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee-freight),2,BigDecimal.ROUND_HALF_UP);
+            	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee-freight),3,BigDecimal.ROUND_HALF_UP);
             	long prodOperDiscountFee=(rate.multiply(new BigDecimal(operDiscountFee))).longValue();//商品的减免费用
         		ordOdProd.setOperDiscountFee(prodOperDiscountFee+ordOdProd.getOperDiscountFee()); //减免费用
         		ordOdProd.setDiscountFee(prodOperDiscountFee+ordOdProd.getDiscountFee()); //优惠费用
@@ -800,10 +800,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setOrderId(subOrderId);
     	ordOdFeeTotal.setTotalFee(ordOdProd.getTotalFee());
     	ordOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
-    	long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee()+ordOdFeeTotal.getFreight();
+    	long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
     	ordOdFeeTotal.setAdjustFee(apaidFee);
     	ordOdFeeTotal.setPaidFee(apaidFee);
     	ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
+    	ordOdFeeTotal.setFreight(0);//TODO
+    	ordOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
     	ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
     	/* 创建子订单-费用明细信息*/
     	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(parentOrderId);
@@ -817,11 +819,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
 				subOrdOdFeeProd.setPaidFee(ordOdProd.getJfFee());
-				String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
+				//String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
+				String rate = "100:1";
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(ordOdProd.getJfFee()).divide(new BigDecimal(split[0]),
-							2,BigDecimal.ROUND_HALF_UP);
+							3,BigDecimal.ROUND_HALF_UP);
 					subOrdOdFeeProd.setJfAmount(JfAmout.multiply(new BigDecimal(1000)).longValue());//积分对应的金额,并元转厘
 				}
 			}else if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
@@ -862,6 +865,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setAdjustFee(pOrdOdFeeTotal.getAdjustFee()+apaidFee);
     	ordOdFeeTotal.setPaidFee(pOrdOdFeeTotal.getPaidFee()+apaidFee);
     	ordOdFeeTotal.setTotalJf(pOrdOdFeeTotal.getTotalJf()+ordOdProd.getJf());
+    	ordOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
     	ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
     	/* 创建子订单-费用明细信息*/
     	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(subOrderId);
@@ -874,12 +878,14 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
 				subOrdOdFeeProd.setPaidFee(ordOdFeeProd.getPaidFee()+ordOdProd.getJfFee());
-				String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
+				//String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
+				String rate = "100:1";
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(subOrdOdFeeProd.getPaidFee()).divide(new BigDecimal(split[0]),
-							2,BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(split[1]),2,BigDecimal.ROUND_HALF_UP);
-					subOrdOdFeeProd.setJfAmount(JfAmout.multiply(new BigDecimal(1000)).longValue());//积分对应的金额,并元转厘
+							3,BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(split[1]),3,BigDecimal.ROUND_HALF_UP);
+					long jfAmount=(JfAmout.multiply(new BigDecimal(1000))).longValue();
+					subOrdOdFeeProd.setJfAmount(jfAmount);//积分对应的金额,并元转厘
 				}
 			}else if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
