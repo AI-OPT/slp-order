@@ -275,9 +275,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     	String orgState = ordOrder.getState();
     	String newState=null;
     	String chgDesc=null;
-    	if(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION.equals(ordOrder.getState())||
-    			OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(ordOrder.getState())||
-    			OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(ordOrder.getBusiCode())) {  //待配货,待出库状态
+    	if(OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(ordOrder.getBusiCode())) {  //待配货,待出库状态
     		newState=OrdersConstants.OrdOrder.State.WAIT_REPAY;
     		chgDesc=OrdOdStateChg.ChgDesc.ORDER_SELLER_CONFIRMED_WAIT_PAY;
     	}else{
@@ -314,13 +312,15 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		long afterTotalFee=0;
 		OrdOdProd afterOrdOdProd=null;
 		OrdOdFeeTotal rdOrdOdFeeTotal=null;
+		//待配货,待出库,退款订单的时候按照全部数量
     	if(orderState==null||(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION.equals(orderState)||
-				OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(orderState))) {
+				OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(orderState)||
+				OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(busiCode))) {
 			/* 2.生成商品明细信息*/
 			afterOrdOdProd =new OrdOdProd();
 			BeanUtils.copyProperties(afterOrdOdProd, ordOdProd);
 			afterTotalFee = afterOrdOdProd.getTotalFee();
-			afterOrdOdProd.setState(busiCode);
+			afterOrdOdProd.setState(prodState);
 			afterOrdOdProd.setUpdateTime(DateUtil.getSysDate());
 			afterOrdOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 			afterOrdOdProd.setOrderId(afterOrderId);
