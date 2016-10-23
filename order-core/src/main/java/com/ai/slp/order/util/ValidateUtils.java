@@ -361,8 +361,8 @@ public class ValidateUtils {
 		if(condition.getProdDetalId()==null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细Id不能为空");
 		}
-		if(condition.getProdSum()==0) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "售后数量不能为空");
+		if(condition.getProdSum()<=0) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "售后数量不能小于等于0");
 		}
 	}
 }
