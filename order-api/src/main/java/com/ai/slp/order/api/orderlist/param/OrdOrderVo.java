@@ -218,6 +218,16 @@ public class OrdOrderVo extends BaseInfo {
 	 * 收件人姓名
 	 */
 	private String contactName;
+	
+	/**
+	 * 售后页面客户手机
+	 */
+	private String aftercontactTel;
+	
+	/**
+	 * 售后页面收货信息
+	 */
+	private String aftercontactInfo;
 
 	/**
 	 * 收件人电话
@@ -742,4 +752,19 @@ public class OrdOrderVo extends BaseInfo {
 		this.externalId = externalId;
 	}
 
+	public String getAftercontactTel() {
+		return aftercontactTel;
+	}
+
+	public void setAftercontactTel(String aftercontactTel) {
+		this.aftercontactTel = aftercontactTel;
+	}
+
+	public String getAftercontactInfo() {
+		return aftercontactInfo;
+	}
+
+	public void setAftercontactInfo(String aftercontactInfo) {
+		this.aftercontactInfo = aftercontactInfo;
+	}
 }
