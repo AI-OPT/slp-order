@@ -39,7 +39,9 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		String expressId = request.getExpressId();
 		String expressOddNumber = request.getExpressOddNumber();
 		//
-		this.ordOrderAtomSV.updateStateByOrderId(tenantId, orderId, OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
+		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+		ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
+		this.ordOrderAtomSV.updateById(ordOrder);
 		//
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
@@ -67,7 +69,9 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 					"订单信息不存在");
 		}
 		if(OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER.equals(ordOrder.getBusiCode())) {
-			this.ordOrderAtomSV.updateStateByOrderId(tenantId, orderId, OrdersConstants.OrdOrder.State.REFUND_AUDIT);
+			ordOrder.setState( OrdersConstants.OrdOrder.State.REFUND_AUDIT);
+			ordOrderAtomSV.updateById(ordOrder);
+		//	this.ordOrderAtomSV.updateStateByOrderId(tenantId, orderId, OrdersConstants.OrdOrder.State.REFUND_AUDIT);
 			//换货完成之后判断子订单下的信息
 			/* 获取子订单下的所有售后订单*/
 			OrdOrderCriteria example=new OrdOrderCriteria();
@@ -99,7 +103,9 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 				ordOrderAtomSV.updateById(parentOrder);
 			}
 		}else {
-			this.ordOrderAtomSV.updateStateByOrderId(tenantId, orderId, OrdersConstants.OrdOrder.State.WAIT_REPAY);
+			ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_REPAY);
+			ordOrderAtomSV.updateById(ordOrder);
+			//this.ordOrderAtomSV.updateStateByOrderId(tenantId, orderId, OrdersConstants.OrdOrder.State.WAIT_REPAY);
 		}
 		return response;
 	}
