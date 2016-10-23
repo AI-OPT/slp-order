@@ -56,13 +56,13 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				OrderWarmVo orderVo = new OrderWarmVo();
 				List<ProductInfo> prodinfoList = new ArrayList<ProductInfo>();
 				BeanUtils.copyProperties(orderVo, ord);
-				//获取绑定手机号
+				/*//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(ord.getUserId());
 		        Object phone =dataJson.get("phone");
 		        orderVo.setUserTel(phone==null?null:phone.toString());
 				//获取用户名
         		Object userName =dataJson.get("userName");
-        		orderVo.setUserName(userName==null?null:userName.toString()); 
+        		orderVo.setUserName(userName==null?null:userName.toString()); */
 				//获取商品信息
 				if(orderVo.getOrderId()!=null){
 					List<OrdOdProd>  proList = iOrdOdProdAtomSV.selectByOrd(ord.getTenantId(), ord.getOrderId());
@@ -123,13 +123,13 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				orderWarmVo.setLogisticsType(logistics.getLogisticsType());
 				orderWarmVo.setContactName(logistics.getContactName());
 			}
-			//获取绑定手机号
+			/*//获取绑定手机号
 			JSONObject dataJson = ChUserUtil.getUserInfo(orderWarmVo.getUserId());
 	        Object phone =dataJson.get("phone");
 	        orderWarmVo.setUserTel(phone==null?null:phone.toString());
 			//获取用户名
     		Object userName =dataJson.get("userName");
-    		orderWarmVo.setUserName(userName==null?null:userName.toString()); 
+    		orderWarmVo.setUserName(userName==null?null:userName.toString()); */
 			if(!CollectionUtil.isEmpty(prodinfoList)){
 				orderWarmVo.setProdInfo(prodinfoList);
 			}
