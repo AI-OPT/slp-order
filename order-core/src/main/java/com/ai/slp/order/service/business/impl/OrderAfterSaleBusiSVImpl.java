@@ -277,6 +277,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		//待配货,待出库,退款订单的时候按照全部数量
     	if(orderState==null||(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION.equals(orderState)||
 				OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(orderState)||
+				OrdersConstants.OrdOrder.State.WAIT_SEND.equals(orderState)||
 				OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(busiCode))) {
 			/* 2.生成商品明细信息*/
 			afterOrdOdProd =new OrdOdProd();
@@ -305,7 +306,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 			ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 			/* 4.生成退款费用明细表*/
-			this.createAfterProdFee(afterOrderId, afterOrder, afterOrdOdProd);
+			this.createAfterProdFee(afterOrderId, order, afterOrdOdProd);
     	}else {
     		/* 5.创建售后商品明细信息*/
     		afterOrdOdProd =new OrdOdProd();
@@ -386,7 +387,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
 				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getJfFee());
-				String rate = JfAndAmountExchangeUtil.getRate(order.getAccountId());
+				//String rate = JfAndAmountExchangeUtil.getRate(order.getAccountId());
+				String rate ="100:1";
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(afterOrdOdProd.getJfFee()).divide(new BigDecimal(split[0]),
