@@ -54,8 +54,15 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"未能查询到相对应的订单信息[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
 		}
+		OrdOrder subOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), ordOrder.getOrigOrderId());
+		if(subOrdOrder==null) {
+			logger.error("未能查询到相对应的子订单信息[订单id:"+ordOrder.getOrigOrderId()+"租户id:"+ordOrder.getTenantId()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"未能查询到相对应的子订单信息[订单id:"+ordOrder.getOrigOrderId()+"租户id:"+ordOrder.getTenantId()+"]");
+		}
 		/* 审核结果STATE检验*/
 		String state = request.getState();
+		String subState = subOrdOrder.getState();//子订单状态
 		if(!OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED.equals(state)
 				&&!OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(state)) {
 			throw new BusinessException("", "订单审核结果入参有误");
@@ -66,9 +73,18 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 		}
 		if(OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED.equals(state)) {//表示审核通过
 			String transitionState=OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED; //订单轨迹记录状态
-			String newState=OrdersConstants.OrdOrder.State.REVOKE_WAIT_CONFIRM;
 			String transitionChgDesc=OrdOdStateChg.ChgDesc.ORDER_AUDITED;
-			String chgDesc=OrdOdStateChg.ChgDesc.ORDER_BUYERS_TO_RETURN;
+			String newState=null;
+			String chgDesc=null;
+			if(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION.equals(subState)||
+					OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(subState)||
+					OrdersConstants.OrdOrder.State.WAIT_SEND.equals(subState)) {
+				newState=OrdersConstants.OrdOrder.State.WAIT_REPAY;
+				chgDesc=OrdOdStateChg.ChgDesc.ORDER_SELLER_CONFIRMED_WAIT_PAY;
+			}else {
+				newState=OrdersConstants.OrdOrder.State.REVOKE_WAIT_CONFIRM;
+				chgDesc=OrdOdStateChg.ChgDesc.ORDER_BUYERS_TO_RETURN;
+			}
 			ordOrder.setState(newState);
 	        ordOrder.setStateChgTime(DateUtil.getSysDate());
 	        ordOrder.setOperId(request.getOperId());//审核工号
