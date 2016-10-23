@@ -464,7 +464,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 }
                 /* 4.订单配送信息查询*/
                 OrdOdLogistics ordOdLogistics =null;
-                ordOdLogistics =ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+                if(!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(order.getBusiCode())) {
+                	ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrigOrderId());//售后单获取子订单配送信息
+                }else {
+                	ordOdLogistics =ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+                }
                 if(ordOdLogistics!=null) {
                 	ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
                 	ordOrderVo.setContactCompany(ordOdLogistics.getContactCompany());
@@ -872,6 +876,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		afterOrdOrder.setState(request.getState()); 
 		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(afterOrdOrder.getBusiCode())) {
 			afterOrdOrder.setState(OrdersConstants.OrdOrder.State.FINISH_REFUND); //退货完成
+			//TODO
+			
+			
 		}
 		/* 获取子订单信息及子订单下的商品明细信息*/
 		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
