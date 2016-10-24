@@ -34,6 +34,7 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdRule;
 import com.ai.slp.order.service.atom.interfaces.IDeliveryOrderPrintAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
@@ -44,6 +45,7 @@ import com.ai.slp.order.service.business.interfaces.IDeliveryOrderPrintBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.util.ValidateUtils;
 
 @Service
 @Transactional
@@ -72,15 +74,38 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	@Override
 	public DeliveryOrderQueryResponse query(DeliveryOrderPrintRequest request) {
 		DeliveryOrderQueryResponse response=new DeliveryOrderQueryResponse();
-		/* 参数校验及判断是否存在提货单打印信息*/
-		OrdOrder order = this.checkParamAndQueryOrder(request.getOrderId(),request.getTenantId());
+		/* 参数校验*/
+		OrdOrder order = this.checkParamAndQueryOrder(request);
 		/* 获取订单下的商品信息*/
-		List<OrdOdProd> ordOdProds = getOrdOdProds(request);
+		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByOrd(request.getTenantId(), request.getOrderId());
+		if(CollectionUtil.isEmpty(ordOdProds)) {
+			logger.warn("未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+		}
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
-				//该商品为售后标识 不可打印
-				response.setMark(OrdersConstants.printMark.NOT_PRINT);
-				return response;
+				/* 判断该商品对应的售后订单状态*/
+				OrdOrderCriteria example=new OrdOrderCriteria();
+				OrdOrderCriteria.Criteria criteria = example.createCriteria();
+				criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
+				criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
+				List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+				if(CollectionUtil.isEmpty(ordOrderList)) {
+					logger.error("没有查询到相应的售后订单详情[原始订单id:"+request.getOrderId()+"]");
+					throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+							"没有查询到相应的售后订单详情[原始订单id:"+request.getOrderId()+"]");
+				}
+				for (OrdOrder ordOrder : ordOrderList) {
+					if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(ordOrder.getState())||
+							OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(ordOrder.getState())||
+							OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(ordOrder.getState())||
+							OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
+						//该商品为售后标识 不可打印
+						response.setMark(OrdersConstants.printMark.NOT_PRINT);
+						return response;
+					}
+				}
 			}
 		}
 		/* 根据订单规则获取合并时间*/
@@ -115,7 +140,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			throws BusinessException, SystemException {
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
 		/* 参数校验及判断是否存在提货单打印信息*/
-		OrdOrder order = this.checkParamAndQueryOrder(request.getOrderId(),request.getTenantId());
+		OrdOrder order = this.checkParamAndQueryOrder(request);
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
 		long sum = 0;
 		/* 获取订单下的商品信息*/
@@ -211,17 +236,13 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	/**
 	 * 参数检验及获取订单信息
 	 */
-	private OrdOrder checkParamAndQueryOrder(long orderId,String tenantId) {
-		CommonCheckUtils.checkTenantId(tenantId, "");
-		if(orderId==0) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
-		}
-		
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+	private OrdOrder checkParamAndQueryOrder(DeliveryOrderPrintRequest request) {
+		ValidateUtils.validateDeliveryOrderPrintRequest(request);
+		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(order==null) {
-			logger.warn("未能查询到指定的订单信息[订单id:"+orderId+"]");
+			logger.warn("未能查询到指定的订单信息[订单id:"+ request.getOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单信息[订单id:"+orderId+"]");
+					"未能查询到指定的订单信息[订单id:"+request.getTenantId()+"]");
 		} 
 		return order;
 	}
@@ -235,6 +256,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		OrdOdProdCriteria.Criteria criteria = example.createCriteria();
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrderId());
+		criteria.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO);
 		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByExample(example);
 		if(CollectionUtil.isEmpty(ordOdProds)) {
 			logger.warn("未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
