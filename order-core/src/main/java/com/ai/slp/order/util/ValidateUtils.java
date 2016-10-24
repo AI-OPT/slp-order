@@ -9,6 +9,7 @@ import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
+import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
@@ -365,4 +366,23 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "售后数量不能小于等于0");
 		}
 	}
+	
+	/**
+	 * 提货单打印参数校验
+	 */
+	public static void validateDeliveryOrderPrintRequest(DeliveryOrderPrintRequest condition) {
+		if(condition==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if(condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
+		}
+		if(StringUtil.isBlank(condition.getUserId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户Id不能为空");
+		}
+	}
+	
 }
