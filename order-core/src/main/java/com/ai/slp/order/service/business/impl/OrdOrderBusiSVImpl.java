@@ -86,7 +86,6 @@ import com.ai.slp.route.api.routemanage.param.RouteResponse;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mysql.jdbc.Buffer;
 
 
 @Service
@@ -416,9 +415,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo.setUserId(order.getUserId());//买家帐号(用户号)
             ordOrderVo.setAccountId(order.getAccountId());
             ordOrderVo.setDownstreamOrderId(order.getDownstreamOrderId());
-            JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
+          /*  JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
             //获取用户名
-            Object userName =dataJson.get("userName");
+            Object userName =dataJson.get("userName");*/
+            String userName=null;
             ordOrderVo.setUserName(userName==null?null:userName.toString()); 
             ordOrderVo.setRemark(order.getRemark());//买家留言(订单备注)
             ordOrderVo.setOrigOrderId(order.getOrigOrderId()); //原始订单号
@@ -721,13 +721,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		pOrderVo.setChlIdName(sysParamChlId==null?"":sysParamChlId.getColumnDesc());
         		pOrderVo.setContactTel(behindOrdOrderAttach.getContactTel());
         		pOrderVo.setUserId(behindOrdOrderAttach.getUserId());
-        		JSONObject dataJson = ChUserUtil.getUserInfo(behindOrdOrderAttach.getUserId());
+        		/*JSONObject dataJson = ChUserUtil.getUserInfo(behindOrdOrderAttach.getUserId());
         		//获取用户名
         		Object userName =dataJson.get("userName");
         		pOrderVo.setUserName(userName==null?null:userName.toString()); 
         		//获取绑定手机号
        	        Object phone =dataJson.get("phone");
-       	        pOrderVo.setUserTel(phone==null?null:phone.toString());
+       	        pOrderVo.setUserTel(phone==null?null:phone.toString());*/
         		pOrderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
         		SysParam sysParamDf = InfoTranslateUtil.translateInfo(behindOrdOrderAttach.getTenantId(), 
         				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
