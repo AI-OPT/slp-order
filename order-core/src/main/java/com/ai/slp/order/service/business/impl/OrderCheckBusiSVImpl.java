@@ -2,6 +2,7 @@ package com.ai.slp.order.service.business.impl;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.util.StringUtil;
@@ -28,6 +31,10 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderCheckBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.ValidateUtils;
+import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
+import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
+import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
+import com.alibaba.fastjson.JSON;
 
 @Service
 @Transactional
@@ -81,6 +88,34 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 					OrdersConstants.OrdOrder.State.WAIT_SEND.equals(subState)) {
 				newState=OrdersConstants.OrdOrder.State.WAIT_REPAY;
 				chgDesc=OrdOdStateChg.ChgDesc.ORDER_SELLER_CONFIRMED_WAIT_PAY;
+				// 减少商品销售量
+				List<OrdOdProd> prodList = ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
+				if(CollectionUtil.isEmpty(prodList)) {
+					throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+							"未能查询到相关商品信息[订单id:"+ordOrder.getOrderId()+"]");
+				}
+				IStorageNumSV iStorageNumSV = DubboConsumerFactory.getService(IStorageNumSV.class);
+				for (OrdOdProd prod : prodList) {
+					StorageNumUserReq storageReq = new StorageNumUserReq();
+					storageReq.setSkuId(prod.getSkuId());
+					storageReq.setSkuNum(new Long(prod.getBuySum()).intValue());
+					storageReq.setTenantId(prod.getTenantId());
+					BaseResponse baseResponse = iStorageNumSV.backSaleNumOfProduct(storageReq);
+					//增加库存量
+					StorageNumBackReq backReq = new StorageNumBackReq();
+					backReq.setSkuId(prod.getSkuId());
+					 Map<String, Integer> storageNum = JSON.parseObject(prod.getSkuStorageId(),
+			                    new com.alibaba.fastjson.TypeReference<Map<String, Integer>>(){});
+					backReq.setTenantId(prod.getTenantId());
+					backReq.setStorageNum(storageNum);
+					BaseResponse backResponse = iStorageNumSV.backStorageNum(backReq);
+					if (baseResponse.getResponseHeader().getIsSuccess() == false) {
+						throw new BusinessException("", "减少商品销量失败");
+					}
+					if (backResponse.getResponseHeader().getIsSuccess() == false) {
+						throw new BusinessException("", "增加库存失败");
+					}
+				}
 			}else {
 				newState=OrdersConstants.OrdOrder.State.REVOKE_WAIT_CONFIRM;
 				chgDesc=OrdOdStateChg.ChgDesc.ORDER_BUYERS_TO_RETURN;
