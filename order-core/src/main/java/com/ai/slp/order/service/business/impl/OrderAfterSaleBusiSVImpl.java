@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -314,6 +315,12 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		afterTotalFee=afterOrdOdProd.getSalePrice()*prodSum;
     		afterOrdOdProd.setBuySum(prodSum);
     		afterOrdOdProd.setTotalFee(afterTotalFee);
+    		Map<String, Integer> storageNum  = (Map<String, Integer>) JSON.parse(ordOdProd.getSkuStorageId());
+    		Set<String> keySet = storageNum.keySet();
+    		for (String key : keySet) {
+    			storageNum.put(key, (int) prodSum);
+			}
+    		afterOrdOdProd.setSkuStorageId(JSON.toJSONString(storageNum));
     		/* 6.设置优惠券 消费积分 赠送积分比例*/
     		BigDecimal couponFeeRate=BigDecimal.valueOf(ordOdProd.getCouponFee()).divide(new BigDecimal(ordOdProd.getBuySum()),3,BigDecimal.ROUND_HALF_UP);
     		BigDecimal JfFeeRate=BigDecimal.valueOf(ordOdProd.getJfFee()).divide(new BigDecimal(ordOdProd.getBuySum()),3,BigDecimal.ROUND_HALF_UP);
