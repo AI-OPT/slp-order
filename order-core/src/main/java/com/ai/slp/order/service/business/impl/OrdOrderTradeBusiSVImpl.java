@@ -403,6 +403,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 			ordInvoice.setTenantId(request.getTenantId());
 			ordInvoice.setInvoiceTitle(ordInvoiceInfo.getInvoiceTitle());
 			ordInvoice.setInvoiceType(ordInvoiceInfo.getInvoiceType());
+			ordInvoice.setInvoiceStatus(OrdersConstants.ordOdInvoice.invoiceStatus.ONE);//发票未打印
 			ordInvoice.setInvoiceContent(ordInvoiceInfo.getInvoiceContent());
 			ordInvoice.setInvoiceKind(ordInvoiceInfo.getInvoiceKind());
 			ordInvoice.setBuyerTaxpayerNumber(ordInvoiceInfo.getBuyerTaxpayerNumber());
