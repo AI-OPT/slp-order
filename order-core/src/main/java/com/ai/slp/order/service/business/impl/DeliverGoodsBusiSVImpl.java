@@ -60,7 +60,7 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
 				//该商品为售后标识 不可打印
-				throw new BusinessException("", "订单下商品处于售后状态,不可打印");
+				throw new BusinessException("", "订单下商品处于售后状态,不可进行发货");
 			}
 		}
 		/* 查询订单对应的配送信息*/
