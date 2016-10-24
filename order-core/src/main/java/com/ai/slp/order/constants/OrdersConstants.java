@@ -262,6 +262,11 @@ public final class OrdersConstants {
              * 94退费完成
              */
             public static final String EXCHANGE_AUDIT = "94";
+            
+            /**
+             * 退款失败
+             */
+            public static final String REFUND_FAILD="95";
 
             /**
              * 20申请撤单
@@ -317,6 +322,11 @@ public final class OrdersConstants {
              * 311已退款
              */
             public static final String FINISH_REPAY = "311";
+            
+            /**
+             * 312处理中
+             */
+            public static final String IN_PROCESS = "312";
 
             /**
              * 撤销完成
