@@ -86,21 +86,12 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
 				/* 判断该商品对应的售后订单状态*/
-				OrdOrderCriteria example=new OrdOrderCriteria();
-				OrdOrderCriteria.Criteria criteria = example.createCriteria();
-				criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
-				criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
-				List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
-				if(CollectionUtil.isEmpty(ordOrderList)) {
-					logger.error("没有查询到相应的售后订单详情[原始订单id:"+request.getOrderId()+"]");
-					throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-							"没有查询到相应的售后订单详情[原始订单id:"+request.getOrderId()+"]");
-				}
+				List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
 				for (OrdOrder ordOrder : ordOrderList) {
 					if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(ordOrder.getState())||
-							OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(ordOrder.getState())||
-							OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(ordOrder.getState())||
-							OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
+						OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(ordOrder.getState())||
+						OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(ordOrder.getState())||
+						OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
 						//该商品为售后标识 不可打印
 						response.setMark(OrdersConstants.printMark.NOT_PRINT);
 						return response;
@@ -139,7 +130,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	public DeliveryOrderPrintResponse display(DeliveryOrderPrintRequest request)
 			throws BusinessException, SystemException {
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
-		/* 参数校验及判断是否存在提货单打印信息*/
+		/* 参数校验*/
 		OrdOrder order = this.checkParamAndQueryOrder(request);
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
 		long sum = 0;
@@ -397,8 +388,17 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 					/* 2.商品包含筛选*/
 					for (OrdOdProd ordOdProd : ordOdProds) {
 						if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
-							it.remove();
-							break;
+							/* 判断该商品对应的售后订单状态*/
+							List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
+							for (OrdOrder ordOrder : ordOrderList) {
+								if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(ordOrder.getState())||
+										OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(ordOrder.getState())||
+										OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(ordOrder.getState())||
+										OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
+									it.remove();
+									break;
+								}
+							}
 						}else {
 							OrdOrderProdAttach oPAttach=new OrdOrderProdAttach();
 							oPAttach.setSkuId(ordOdProd.getSkuId());
@@ -416,5 +416,22 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			    }
 		  }
 		return orderList;
+	  }
+	  
+	  /**
+	   * 获取商品对应的售后订单状态
+	   */
+	  public List<OrdOrder> createAfterOrder(OrdOdProd ordOdProd) {
+		  OrdOrderCriteria example=new OrdOrderCriteria();
+		  OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		  criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
+		  criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
+		  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+		  if(CollectionUtil.isEmpty(ordOrderList)) {
+			  logger.error("没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+			  throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					  "没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+		  }
+		return ordOrderList;
 	  }
 }
