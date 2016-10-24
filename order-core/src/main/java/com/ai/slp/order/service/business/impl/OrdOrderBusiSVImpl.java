@@ -888,7 +888,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		//设置售后订单状态
 		afterOrdOrder.setState(request.getState()); 
 		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(afterOrdOrder.getBusiCode())) {
-			afterOrdOrder.setState(OrdersConstants.OrdOrder.State.FINISH_REFUND); //退货完成
+			if(OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(request.getState())) {
+				afterOrdOrder.setState(OrdersConstants.OrdOrder.State.FINISH_REFUND); //退货完成
+			}
 		}
 		/* 获取子订单信息及子订单下的商品明细信息*/
 		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
