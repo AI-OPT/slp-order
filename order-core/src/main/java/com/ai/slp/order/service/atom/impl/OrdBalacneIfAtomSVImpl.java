@@ -28,4 +28,9 @@ public class OrdBalacneIfAtomSVImpl implements IOrdBalacneIfAtomSV {
                 .selectByExample(example);
         return OrdBalacneIfs == null || OrdBalacneIfs.isEmpty() ? null : OrdBalacneIfs.get(0);
     }
+
+	@Override
+	public int updateByPrimaryKey(OrdBalacneIf record) {
+		return MapperFactory.getOrdBalacneIfMapper().updateByPrimaryKey(record);
+	}
 }
