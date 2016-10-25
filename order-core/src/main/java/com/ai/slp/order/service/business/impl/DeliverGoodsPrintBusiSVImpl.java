@@ -125,18 +125,30 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 			List<DeliverInfoProd> deliverInfoProds = deliveryOrderPrintAtomSV.selectByExample(exampleInfo);
 			if(!CollectionUtil.isEmpty(deliverInfoProds)) {
 				DeliverInfoProd deliverInfoProd = deliverInfoProds.get(0);
-				for(String prodSku:prodSkuList) {
-					if(!prodSku.equals(deliverInfoProd.getSkuId())) {
-						DeliverGoodsPrintVo invoicePrintVo=new DeliverGoodsPrintVo();
-						invoicePrintVo.setSkuId(deliverInfoProd.getSkuId());
-						invoicePrintVo.setProdName(deliverInfoProd.getProdName());
-						invoicePrintVo.setExtendInfo(deliverInfoProd.getExtendInfo());
-						invoicePrintVo.setBuySum(deliverInfoProd.getBuySum());
-						invoicePrintVo.setSalePrice(String.valueOf(deliverInfoProd.getSalePrice()/1000));//厘转元
-						invoicePrintVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
-						sum+=deliverInfoProd.getBuySum();
-						list.add(invoicePrintVo);
+				if(!CollectionUtil.isEmpty(prodSkuList)) {
+					for(String prodSku:prodSkuList) {
+						if(!prodSku.equals(deliverInfoProd.getSkuId())) {
+							DeliverGoodsPrintVo invoicePrintVo=new DeliverGoodsPrintVo();
+							invoicePrintVo.setSkuId(deliverInfoProd.getSkuId());
+							invoicePrintVo.setProdName(deliverInfoProd.getProdName());
+							invoicePrintVo.setExtendInfo(deliverInfoProd.getExtendInfo());
+							invoicePrintVo.setBuySum(deliverInfoProd.getBuySum());
+							invoicePrintVo.setSalePrice(String.valueOf(deliverInfoProd.getSalePrice()/1000));//厘转元
+							invoicePrintVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
+							sum+=deliverInfoProd.getBuySum();
+							list.add(invoicePrintVo);
+						}
 					}
+				}else {
+					DeliverGoodsPrintVo invoicePrintVo=new DeliverGoodsPrintVo();
+					invoicePrintVo.setSkuId(deliverInfoProd.getSkuId());
+					invoicePrintVo.setProdName(deliverInfoProd.getProdName());
+					invoicePrintVo.setExtendInfo(deliverInfoProd.getExtendInfo());
+					invoicePrintVo.setBuySum(deliverInfoProd.getBuySum());
+					invoicePrintVo.setSalePrice(String.valueOf(deliverInfoProd.getSalePrice()/1000));//厘转元
+					invoicePrintVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
+					sum+=deliverInfoProd.getBuySum();
+					list.add(invoicePrintVo);
 				}
 			}
 		}
