@@ -21,6 +21,7 @@ import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
@@ -59,8 +60,16 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 		List<OrdOdProd> ordOdProds = this.getOrdOdProds(request);
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
-				//该商品为售后标识 不可打印
-				throw new BusinessException("", "订单下商品处于售后状态,不可进行发货");
+				List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
+				for (OrdOrder order : ordOrderList) {
+					if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(order.getState())||
+						OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(order.getState())||
+						OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(order.getState())||
+						OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(order.getState()))) {
+						//该商品为售后标识 不可打印
+						throw new BusinessException("", "订单下商品未售后完成,不可进行发货");
+					}
+				}
 			}
 		}
 		/* 查询订单对应的配送信息*/
@@ -109,4 +118,21 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 		}
 		return ordOdProds;
 	}
+	
+	  /**
+	   * 获取商品对应的售后订单状态
+	   */
+	  public List<OrdOrder> createAfterOrder(OrdOdProd ordOdProd) {
+		  OrdOrderCriteria example=new OrdOrderCriteria();
+		  OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		  criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
+		  criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
+		  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+		  if(CollectionUtil.isEmpty(ordOrderList)) {
+			  logger.error("没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+			  throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					  "没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+		  }
+		return ordOrderList;
+	  }
 }
