@@ -138,6 +138,9 @@ public class ValidateUtils {
 				if(ordProductInfo.getBuySum()==0) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "购买数量不能为空");
 				}
+				if(StringUtil.isBlank(ordProductInfo.getStandard())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品规格不能为空");
+				}
 			}
 		}
 		if(logisticsInfo==null) {
@@ -166,9 +169,6 @@ public class ValidateUtils {
 		}
 		if(StringUtil.isBlank(logisticsInfo.getPostCode())) {
     		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人邮编不能为空");
-    	}
-    	if(StringUtil.isBlank(logisticsInfo.getExpressId())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流公司ID不能为空");
     	}
 	}
 	
