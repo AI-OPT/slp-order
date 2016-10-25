@@ -2,9 +2,6 @@ package com.ai.slp.order.api.ordertradecenter.param;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.hibernate.validator.constraints.NotBlank;
-@JsonIgnoreProperties(ignoreUnknown = true) 
 public class OrdLogisticsInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -13,11 +10,6 @@ public class OrdLogisticsInfo implements Serializable {
      * 配送方式
      */
     private String logisticsType;
-    
-    /**
-     * 物流单号
-     */
-    private String expressOddNumber;
     
     /**
      * 到件方公司
@@ -68,11 +60,6 @@ public class OrdLogisticsInfo implements Serializable {
      * 详细地址(自提地址)
      */
     private String address;
-    
-    /**
-     * 物流公司ID
-     */
-    private String expressId;
     
     /**
      * 快递自提点编码
@@ -177,14 +164,6 @@ public class OrdLogisticsInfo implements Serializable {
 		this.address = address;
 	}
 
-	public String getExpressId() {
-		return expressId;
-	}
-
-	public void setExpressId(String expressId) {
-		this.expressId = expressId;
-	}
-
 	public String getExpressSelfId() {
 		return expressSelfId;
 	}
@@ -207,13 +186,5 @@ public class OrdLogisticsInfo implements Serializable {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
-	}
-
-	public String getExpressOddNumber() {
-		return expressOddNumber;
-	}
-
-	public void setExpressOddNumber(String expressOddNumber) {
-		this.expressOddNumber = expressOddNumber;
 	}
 }
