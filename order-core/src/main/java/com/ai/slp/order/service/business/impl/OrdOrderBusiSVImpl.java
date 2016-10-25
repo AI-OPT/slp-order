@@ -887,77 +887,49 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		}
 		//设置售后订单状态
 		afterOrdOrder.setState(request.getState()); 
-		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(afterOrdOrder.getBusiCode())) {
-			if(OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(request.getState())) {
-				afterOrdOrder.setState(OrdersConstants.OrdOrder.State.FINISH_REFUND); //退货完成
-			}
-		}
-		/* 获取子订单信息及子订单下的商品明细信息*/
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
-				afterOrdOrder.getOrigOrderId());
-		List<OrdOdProd> prodList = ordOdProdAtomSV.selectByOrd(request.getTenantId(), 
-				afterOrdOrder.getOrigOrderId());
-		boolean cusFlag=false;
-		for (OrdOdProd ordOdProd : prodList) {
-			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
-				cusFlag=true;
-			}else {
-				cusFlag=false;
-				break;
-			}
-		}
-		/* 获取子订单下的所有售后订单*/
-		OrdOrderCriteria example=new OrdOrderCriteria();
-		OrdOrderCriteria.Criteria criteria = example.createCriteria();
-		criteria.andOrigOrderIdEqualTo(afterOrdOrder.getOrigOrderId());
-		criteria.andOrderIdNotEqualTo(request.getOrderId());
-		List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(example);
-		OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
-				 order.getParentOrderId()); //父订单
-		if(cusFlag) { 
-			if(CollectionUtil.isEmpty(orderList)) {
-				//一个商品时.没有售后订单,商品售后标识Y
-				//1.无Y --无售后订单 商品Y标识
-				order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-				ordOrderAtomSV.updateById(order);
-				parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);  
-				ordOrderAtomSV.updateById(parentOrder); 
-			}else {
-				//2.有Y --有售后订单,商品标识Y
-				//判断售后订单为已完成状态或者审核失败则改变状态
-				for (OrdOrder ordOrder : orderList) {  
-					String state = ordOrder.getState();
-					if(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(state)||
-							OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(state)||
-							OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(state)||
-							OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(state)||
-							OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(state)) { 
-						order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-						ordOrderAtomSV.updateById(order);
-						parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-						ordOrderAtomSV.updateById(parentOrder); 
-					}
+		//处理中 退款失败状态 不修改子父订单状态
+		if(!(OrdersConstants.OrdOrder.State.IN_PROCESS.equals(request.getState())||
+				OrdersConstants.OrdOrder.State.REFUND_FAILD.equals(request.getState()))) {
+			if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(afterOrdOrder.getBusiCode())) {
+				if(OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(request.getState())) {
+					afterOrdOrder.setState(OrdersConstants.OrdOrder.State.FINISH_REFUND); //退货完成
 				}
 			}
-		}else if(!cusFlag) { 
-			//发货后状态
-			if(!(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION.equals(order.getState())||
-					OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(order.getState())||
-					OrdersConstants.OrdOrder.State.WAIT_SEND.equals(order.getState()))) {
-				//1.无N --无售后订单,存在商品标识N
-				//发货后改变状态
+			/* 获取子订单信息及子订单下的商品明细信息*/
+			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
+					afterOrdOrder.getOrigOrderId());
+			List<OrdOdProd> prodList = ordOdProdAtomSV.selectByOrd(request.getTenantId(), 
+					afterOrdOrder.getOrigOrderId());
+			boolean cusFlag=false;
+			for (OrdOdProd ordOdProd : prodList) {
+				if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+					cusFlag=true;
+				}else {
+					cusFlag=false;
+					break;
+				}
+			}
+			/* 获取子订单下的所有售后订单*/
+			OrdOrderCriteria example=new OrdOrderCriteria();
+			OrdOrderCriteria.Criteria criteria = example.createCriteria();
+			criteria.andOrigOrderIdEqualTo(afterOrdOrder.getOrigOrderId());
+			criteria.andOrderIdNotEqualTo(request.getOrderId());
+			List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(example);
+			OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
+					order.getParentOrderId()); //父订单
+			if(cusFlag) { 
 				if(CollectionUtil.isEmpty(orderList)) {
+					//一个商品时.没有售后订单,商品售后标识Y
+					//1.无Y --无售后订单 商品Y标识
 					order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 					ordOrderAtomSV.updateById(order);
-					parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+					parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);  
 					ordOrderAtomSV.updateById(parentOrder); 
-				//4.有N --有售后订单 存在商品标识N
-				//发货后状态 
-				//判断售后订单为已完成状态或者审核失败则 改变状态
 				}else {
+					//2.有Y --有售后订单,商品标识Y
+					//判断售后订单为已完成状态或者审核失败则改变状态
 					for (OrdOrder ordOrder : orderList) {  
 						String state = ordOrder.getState();
-						//表示售后订单为已完成状态或者审核失败
 						if(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(state)||
 								OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(state)||
 								OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(state)||
@@ -967,6 +939,38 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 							ordOrderAtomSV.updateById(order);
 							parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 							ordOrderAtomSV.updateById(parentOrder); 
+						}
+					}
+				}
+			}else if(!cusFlag) { 
+				//发货后状态
+				if(!(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION.equals(order.getState())||
+						OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(order.getState())||
+						OrdersConstants.OrdOrder.State.WAIT_SEND.equals(order.getState()))) {
+					//1.无N --无售后订单,存在商品标识N
+					//发货后改变状态
+					if(CollectionUtil.isEmpty(orderList)) {
+						order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+						ordOrderAtomSV.updateById(order);
+						parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+						ordOrderAtomSV.updateById(parentOrder); 
+						//4.有N --有售后订单 存在商品标识N
+						//发货后状态 
+						//判断售后订单为已完成状态或者审核失败则 改变状态
+					}else {
+						for (OrdOrder ordOrder : orderList) {  
+							String state = ordOrder.getState();
+							//表示售后订单为已完成状态或者审核失败
+							if(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(state)||
+									OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(state)||
+									OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(state)||
+									OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(state)||
+									OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(state)) { 
+								order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+								ordOrderAtomSV.updateById(order);
+								parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+								ordOrderAtomSV.updateById(parentOrder); 
+							}
 						}
 					}
 				}
