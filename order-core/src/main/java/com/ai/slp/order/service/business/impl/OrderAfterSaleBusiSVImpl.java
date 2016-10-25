@@ -399,8 +399,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
 				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getJfFee());
-				//String rate = JfAndAmountExchangeUtil.getRate(order.getAccountId());
-				String rate="100:1";
+				String rate = JfAndAmountExchangeUtil.getRate(order.getAccountId());
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(afterOrdOdProd.getJfFee()).divide(new BigDecimal(split[0]),
