@@ -754,9 +754,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		newLogistics.setOrderId(subOrderId);
     		newLogistics.setLogisticsId(logisticsId);
     		ordOdLogisticsAtomSV.insertSelective(newLogistics);
-    		/* 创建子订单-支付机构接口*/ //TODO
-    		
-    		
     	}else {
 	        OrdOdProdCriteria example = new OrdOdProdCriteria();
 	        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
@@ -807,6 +804,21 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setFreight(0);//TODO
     	ordOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
     	ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
+    	/* 创建子订单-支付机构接口*/
+    	OrdBalacneIf balacneIf = ordBalacneIfAtomSV.selectByOrderId(parentOrdOrder.getTenantId(), 
+    			parentOrderId);
+    	if(balacneIf==null) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+    				"订单支付机构信息不存在[父订单Id:"+parentOrderId+"]");
+    	}
+    	OrdBalacneIf subBalacneIf=new OrdBalacneIf();
+    	long balacneIfId = SequenceUtil.createBalacneIfId();
+    	BeanUtils.copyProperties(subBalacneIf, balacneIf);
+    	subBalacneIf.setBalacneIfId(balacneIfId);
+    	subBalacneIf.setCreateTime(DateUtil.getSysDate());
+    	subBalacneIf.setOrderId(subOrderId);
+    	subBalacneIf.setPayFee(apaidFee);
+    	ordBalacneIfAtomSV.insertSelective(subBalacneIf);
     	/* 创建子订单-费用明细信息*/
     	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(parentOrderId);
     	if(CollectionUtil.isEmpty(OrdOdFeeProds)) {
@@ -867,6 +879,15 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setTotalJf(pOrdOdFeeTotal.getTotalJf()+ordOdProd.getJf());
     	ordOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
     	ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
+    	/* 更新子订单-支付机构接口*/
+    	OrdBalacneIf balacneIf = ordBalacneIfAtomSV.selectByOrderId(parentOrdOrder.getTenantId(), 
+    			subOrderId);
+    	if(balacneIf==null) {
+    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+    				"订单支付机构信息不存在[订单Id:"+subOrderId+"]");
+    	}
+    	balacneIf.setPayFee(balacneIf.getPayFee()+apaidFee);
+    	ordBalacneIfAtomSV.updateByPrimaryKey(balacneIf);
     	/* 创建子订单-费用明细信息*/
     	List<OrdOdFeeProd> OrdOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(subOrderId);
     	if(CollectionUtil.isEmpty(OrdOdFeeProds)) {
