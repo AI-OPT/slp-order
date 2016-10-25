@@ -57,7 +57,6 @@ import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
-import com.ai.slp.order.vo.ProdAttrInfoVo;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumRes;
 import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
@@ -248,12 +247,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             prodTotalFee=totalFee+prodTotalFee;
             ordOdProd.setTotalFee(totalFee);
             ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
-           /* ProdAttrInfoVo vo = new ProdAttrInfoVo();
-            vo.setBasicOrgId(ordProductInfo.getBasicOrgId());
-            vo.setProvinceCode(ordProductInfo.getProvinceCode());
-            vo.setChargeFee(ordProductInfo.getChargeFee());
-            ordOdProd.setProdDesc("");
-            ordOdProd.setExtendInfo(JSON.toJSONString(vo));*/
+            ordOdProd.setExtendInfo(ordProductInfo.getStandard());
             ordOdProd.setUpdateTime(sysDate);
             ordOdProd.setJf(ordProductInfo.getGiveJF()); //赠送积分
             ordOdProd.setProdCode(""); //商品编码 TODO 必填
@@ -444,7 +438,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	logistics.setPostcode(ordLogisticsInfo.getPostCode());
     	logistics.setAreaCode(ordLogisticsInfo.getAreaCode());
     	logistics.setAddress(ordLogisticsInfo.getAddress());
-    	logistics.setExpressId(ordLogisticsInfo.getExpressId());
     	logistics.setExpressSelfId(ordLogisticsInfo.getExpressSelfId());
     	logistics.setLogisticsTimeId(ordLogisticsInfo.getLogisticsTime());
     	logistics.setRemark(ordLogisticsInfo.getRemark());
