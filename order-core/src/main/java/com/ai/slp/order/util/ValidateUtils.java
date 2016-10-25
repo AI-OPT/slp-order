@@ -15,6 +15,8 @@ import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
 import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
+import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
+import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
@@ -385,4 +387,48 @@ public class ValidateUtils {
 		}
 	}
 	
+	/**
+	 * 同意退款参数校验
+	 */
+	public static void validateOrderRefundRequest(OrderRefundRequest condition) {
+		if(condition==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if(condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
+		}
+		if(StringUtil.isBlank(condition.getOperId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "受理工号不能为空");
+		}
+		if(condition.getUpdateMoney()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额不能为空");
+		}else {
+			if(condition.getUpdateMoney()<=0) {
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额不能小于等于0");
+			}
+		}
+	}
+	/**
+	 * 拒绝退款参数校验
+	 */
+	public static void validateOrderRefuseRefundRequest(OrderRefuseRefundRequest condition) {
+		if(condition==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if(condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
+		}
+		if(StringUtil.isBlank(condition.getOperId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "受理工号不能为空");
+		}
+		if(StringUtil.isBlank(condition.getRefuseReason())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "拒绝理由不能为空");
+		}
+	}
 }
