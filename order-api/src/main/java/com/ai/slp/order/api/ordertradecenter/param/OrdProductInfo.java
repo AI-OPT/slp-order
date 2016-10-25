@@ -2,8 +2,6 @@ package com.ai.slp.order.api.ordertradecenter.param;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 public class OrdProductInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -22,6 +20,12 @@ public class OrdProductInfo implements Serializable {
      * 赠送积分
      */
     private long giveJF;
+    
+    
+    /**
+     * 商品规格
+     */
+    private String standard;
 
     /**
      * 运营商
@@ -84,5 +88,13 @@ public class OrdProductInfo implements Serializable {
 
 	public void setGiveJF(long giveJF) {
 		this.giveJF = giveJF;
+	}
+
+	public String getStandard() {
+		return standard;
+	}
+
+	public void setStandard(String standard) {
+		this.standard = standard;
 	}
 }
