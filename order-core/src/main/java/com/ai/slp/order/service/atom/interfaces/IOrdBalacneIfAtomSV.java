@@ -11,4 +11,6 @@ public interface IOrdBalacneIfAtomSV {
     List<OrdBalacneIf> selectByExample(OrdBalacneIfCriteria example);
 
 	OrdBalacneIf selectByOrderId(String tenantId, long orderId);
+	
+	 int updateByPrimaryKey(OrdBalacneIf record);;
 }
