@@ -243,7 +243,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         for (OrdOdFeeTotal bean : payFeeList) {
             total = total + bean.getPayFee();
         }
-        return total;
+        BigDecimal balance = BigDecimal.valueOf(total).divide(new BigDecimal(1000L),2,BigDecimal.ROUND_HALF_UP);
+    	BigDecimal decimal = balance.multiply(new BigDecimal(1000));
+        return decimal.longValue();
     }
 
     /**
@@ -396,11 +398,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	Map<String, Long> map=new HashMap<String,Long>();
         	for (OrdOdProd ordOdProd : ordOdProdList) {
         		//单个商品费用占总费用的比例
+        		long discountFee = ordOdProd.getDiscountFee();
             	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee-freight),3,BigDecimal.ROUND_HALF_UP);
             	long prodOperDiscountFee=(rate.multiply(new BigDecimal(operDiscountFee))).longValue();//商品的减免费用
         		ordOdProd.setOperDiscountFee(prodOperDiscountFee+ordOdProd.getOperDiscountFee()); //减免费用
-        		ordOdProd.setDiscountFee(prodOperDiscountFee+ordOdProd.getDiscountFee()); //优惠费用
-        		ordOdProd.setAdjustFee(ordOdProd.getTotalFee()-ordOdProd.getDiscountFee()); //应收费用
+        		ordOdProd.setDiscountFee(prodOperDiscountFee+discountFee); //优惠费用
+        		ordOdProd.setAdjustFee(ordOdProd.getTotalFee()-(prodOperDiscountFee+discountFee)); //应收费用
         		ordOdProdAtomSV.updateById(ordOdProd);
         		/* 2.生成子订单*/
         		subOrder = this.createEntitySubOrder(tenantId, ordOrder,ordOdProd,map,request,sysdate);
