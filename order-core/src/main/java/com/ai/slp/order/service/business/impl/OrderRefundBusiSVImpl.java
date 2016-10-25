@@ -18,16 +18,12 @@ import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
-import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
-import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria.Criteria;
-import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
@@ -53,12 +49,6 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	@Autowired
 	private IOrdOdFeeTotalAtomSV  ordOdFeeTotalAtomSV;
 	
-	@Autowired
-	private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
-	
-	@Autowired
-	private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
-	 
 	public void partRefund(OrderRefundRequest request) throws BusinessException, SystemException {
 		/* 参数检验*/
 		ValidateUtils.validateOrderRefundRequest(request);
@@ -76,37 +66,10 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 			logger.error("输入的费用不能大于实际应收的费用,实际应收费用为:"+ordOdFeeTotal.getAdjustFee());
 			throw new BusinessException("", "输入的费用不能大于实际应收的费用");
 		}
-		//减免费用 优惠费用
-		long reduceFee=ordOdFeeTotal.getAdjustFee()-updateMoney;
-		long discountFee=ordOdFeeTotal.getDiscountFee()+reduceFee;
-		List<OrdOdProd> ordProdList = ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), 
-				ordOrder.getOrderId());
-		if(CollectionUtil.isEmpty(ordProdList)) {
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"未能查询到相关商品信息[订单id:"+ordOrder.getOrderId()+"]");
-		}
-		OrdOdProd odProd = ordProdList.get(0);//售后商品和订单主表一对一
-		//修改支付机构接口
-		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
-				ordOrder.getTenantId(), ordOrder.getOrderId());
-		//修改商品表信息
-		odProd.setAdjustFee(updateMoney);
-		odProd.setDiscountFee(discountFee);
-		odProd.setOperDiscountFee(odProd.getOperDiscountFee()+reduceFee);
-		odProd.setOperDiscountDesc(request.getUpdateReason());
-		//修改费用总表信息
-		ordOdFeeTotal.setAdjustFee(updateMoney);
-		ordOdFeeTotal.setDiscountFee(discountFee);
-		ordOdFeeTotal.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee()+reduceFee);
 		ordOdFeeTotal.setOperDiscountDesc(request.getUpdateReason());
-		ordOdFeeTotal.setPayFee(updateMoney);
+		ordOdFeeTotal.setPaidFee(updateMoney);
 		ordOdFeeTotal.setUpdateOperId(request.getOperId());
-		//修改费用明细信息
-		this.createAfterProdFee(ordOrder.getOrderId(),updateMoney);
-		ordBalacneIf.setPayFee(updateMoney);
-		ordOdProdAtomSV.updateById(odProd);
 		ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
-		ordBalacneIfAtomSV.updateByPrimaryKey(ordBalacneIf);
 		ordOrder.setReasonDesc(request.getUpdateReason());
 		ordOrder.setOperId(request.getOperId());
 		ordOrderAtomSV.updateById(ordOrder);
@@ -230,21 +193,5 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		OrdOdProd prod = origProdList.get(0);  //单个订单对应单个商品(售后)
 		prod.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
 		ordOdProdAtomSV.updateById(prod);
-    }
-    
-    
-    /**
-     * 	修改售后费用明细表
-     */
-    public void createAfterProdFee(long orderId,long updateMoney) {
-		List<OrdOdFeeProd> feeProdList = ordOdFeeProdAtomSV.selectByOrderId(orderId);
-		for (OrdOdFeeProd ordOdFeeProd : feeProdList) {
-			if(!(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())||
-					OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle()))) {
-				ordOdFeeProd.setPaidFee(updateMoney);
-			}
-			ordOdFeeProdAtomSV.updateByExample(ordOdFeeProd, ordOdFeeProd.getOrderId(), 
-					ordOdFeeProd.getPayStyle());
-		}
     }
 }
