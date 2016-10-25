@@ -355,7 +355,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		rdOrdOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
     		rdOrdOdFeeTotal.setTotalFee(afterTotalFee);
     		rdOrdOdFeeTotal.setAdjustFee(afterTotalFee-afterOrdOdProd.getDiscountFee());
-    		rdOrdOdFeeTotal.setPaidFee(0);
     		rdOrdOdFeeTotal.setPayFee(afterTotalFee-afterOrdOdProd.getDiscountFee());
     		rdOrdOdFeeTotal.setDiscountFee(afterOrdOdProd.getDiscountFee());
     		rdOrdOdFeeTotal.setOperDiscountFee(afterOrdOdProd.getOperDiscountFee());
@@ -371,7 +370,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     			order.getTenantId(), order.getOrderId());
     	if(ordBalacneIf==null) {
     		throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
-    				"订单支付机构接口不存在[订单id:"+order.getOrderId()+"]");
+    				"订单支付机构信息不存在[订单id:"+order.getOrderId()+"]");
     	}
     	OrdBalacneIf balacneIf=new OrdBalacneIf();
     	BeanUtils.copyProperties(balacneIf, ordBalacneIf);
