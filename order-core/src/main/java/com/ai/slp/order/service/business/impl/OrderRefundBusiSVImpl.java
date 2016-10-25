@@ -2,7 +2,6 @@ package com.ai.slp.order.service.business.impl;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,31 +11,29 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
-import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
+import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria.Criteria;
+import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderRefundBusiSV;
-import com.ai.slp.order.util.CommonCheckUtils;
-import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
-import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
+import com.ai.slp.order.util.ValidateUtils;
 
 @Service
 @Transactional
@@ -55,9 +52,16 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	
 	@Autowired
 	private IOrdOdFeeTotalAtomSV  ordOdFeeTotalAtomSV;
+	
+	@Autowired
+	private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
+	
+	@Autowired
+	private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
 	 
 	public void partRefund(OrderRefundRequest request) throws BusinessException, SystemException {
-		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
+		/* 参数检验*/
+		ValidateUtils.validateOrderRefundRequest(request);
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(ordOrder==null) {
 			logger.error("订单信息不存在[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
@@ -66,54 +70,58 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		}
 		OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(ordOrder.getTenantId(), 
 				ordOrder.getOrderId());
-		long updateMoney = request.getUpdateMoney();
+		long updateMoney = request.getUpdateMoney()*1000;
 		/*判断输入费用是否大于之前存在的费用*/
 		if(updateMoney>ordOdFeeTotal.getAdjustFee()) {
 			logger.error("输入的费用不能大于实际应收的费用,实际应收费用为:"+ordOdFeeTotal.getAdjustFee());
 			throw new BusinessException("", "输入的费用不能大于实际应收的费用");
 		}
-		if(updateMoney>0 && updateMoney<ordOdFeeTotal.getAdjustFee()) {
-			ordOdFeeTotal.setTotalFee(updateMoney);
-			ordOdFeeTotal.setAdjustFee(updateMoney);
-			ordOdFeeTotal.setDiscountFee(0);
-			ordOdFeeTotal.setOperDiscountFee(0);
-			ordOdFeeTotal.setOperDiscountDesc("");
-			ordOdFeeTotal.setPaidFee(0);
-			ordOdFeeTotal.setPayFee(updateMoney);
-			ordOdFeeTotal.setUpdateOperId(request.getOperId());
+		//减免费用 优惠费用
+		long reduceFee=ordOdFeeTotal.getAdjustFee()-updateMoney;
+		long discountFee=ordOdFeeTotal.getDiscountFee()+reduceFee;
+		List<OrdOdProd> ordProdList = ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), 
+				ordOrder.getOrderId());
+		if(CollectionUtil.isEmpty(ordProdList)) {
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"未能查询到相关商品信息[订单id:"+ordOrder.getOrderId()+"]");
 		}
+		OrdOdProd odProd = ordProdList.get(0);//售后商品和订单主表一对一
+		//修改支付机构接口
+		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
+				ordOrder.getTenantId(), ordOrder.getOrderId());
+		//修改商品表信息
+		odProd.setAdjustFee(updateMoney);
+		odProd.setDiscountFee(discountFee);
+		odProd.setOperDiscountFee(odProd.getOperDiscountFee()+reduceFee);
+		odProd.setOperDiscountDesc(request.getUpdateReason());
+		//修改费用总表信息
+		ordOdFeeTotal.setAdjustFee(updateMoney);
+		ordOdFeeTotal.setDiscountFee(discountFee);
+		ordOdFeeTotal.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee()+reduceFee);
+		ordOdFeeTotal.setOperDiscountDesc(request.getUpdateReason());
+		ordOdFeeTotal.setPayFee(updateMoney);
+		ordOdFeeTotal.setUpdateOperId(request.getOperId());
+		//修改费用明细信息
+		this.createAfterProdFee(ordOrder.getOrderId(),updateMoney);
+		ordBalacneIf.setPayFee(updateMoney);
+		ordOdProdAtomSV.updateById(odProd);
 		ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
+		ordBalacneIfAtomSV.updateByPrimaryKey(ordBalacneIf);
 		ordOrder.setReasonDesc(request.getUpdateReason());
 		ordOrder.setOperId(request.getOperId());
 		ordOrderAtomSV.updateById(ordOrder);
-		/* 根据业务类型判断是否退回库存*/
-		if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode())) {
-			 /* 库存回退 */
-	        List<OrdOdProd> ordOdProds = this.getOrdOdProds(ordOrder.getOrderId());
-	        if (CollectionUtil.isEmpty(ordOdProds))
-	            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息["
-	                    + ordOrder.getOrderId() + "]");
-	        for (OrdOdProd ordOdProd : ordOdProds) {
-	            Map<String, Integer> storageNum = JSON.parseObject(ordOdProd.getSkuStorageId(),
-	                    new TypeReference<Map<String, Integer>>(){});
-	            this.backStorageNum(ordOdProd.getTenantId(), ordOdProd.getSkuId(), storageNum);
-	        }
-		}
-		
-		/* 查看该订单下的其它订单状态*/
-		//TODO
 	}
 	
 	@Override
 	public void refuseRefund(OrderRefuseRefundRequest request) throws BusinessException, SystemException {
-		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
+		/* 参数校验*/
+		ValidateUtils.validateOrderRefuseRefundRequest(request);
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(ordOrder==null) {
-			logger.error("");
+			logger.error("订单信息不存在[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"订单信息不存在[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
 		}
-		
 		/* 更新订单状态和写入订单轨迹*/
 		String orgState = ordOrder.getState();
 		String newState=OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE;
@@ -189,34 +197,6 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
         this.updateOrderState(ordOrder, orgState, newState, chgDesc, request.getOperId());
 	}
 	
-	
-	
-    /**
-     * 获取商品明细
-     */
-    private List<OrdOdProd> getOrdOdProds(Long orderId) throws BusinessException, SystemException {
-        OrdOdProdCriteria example = new OrdOdProdCriteria();
-        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-        criteria.andOrderIdEqualTo(orderId);
-        return ordOdProdAtomSV.selectByExample(example);
-    }
-    
-    /**
-     * 库存回退
-     */
-    private void backStorageNum(String tenantId, String skuId, Map<String, Integer> storageNum) {
-        StorageNumBackReq storageNumBackReq = new StorageNumBackReq();
-        storageNumBackReq.setTenantId(tenantId);
-        storageNumBackReq.setSkuId(skuId);
-        storageNumBackReq.setStorageNum(storageNum);
-        IStorageNumSV iStorageNumSV = DubboConsumerFactory.getService(IStorageNumSV.class);
-        BaseResponse response = iStorageNumSV.backStorageNum(storageNumBackReq);
-        boolean success = response.getResponseHeader().isSuccess();
-        String resultMessage = response.getResponseHeader().getResultMessage();
-        if (!success)
-            throw new BusinessException("", "调用回退库存异常:" + skuId + "错误信息如下:" + resultMessage + "]");
-    }
-    
     /**
      * 更新订单状态
      */
@@ -250,5 +230,21 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		OrdOdProd prod = origProdList.get(0);  //单个订单对应单个商品(售后)
 		prod.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
 		ordOdProdAtomSV.updateById(prod);
+    }
+    
+    
+    /**
+     * 	修改售后费用明细表
+     */
+    public void createAfterProdFee(long orderId,long updateMoney) {
+		List<OrdOdFeeProd> feeProdList = ordOdFeeProdAtomSV.selectByOrderId(orderId);
+		for (OrdOdFeeProd ordOdFeeProd : feeProdList) {
+			if(!(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())||
+					OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle()))) {
+				ordOdFeeProd.setPaidFee(updateMoney);
+			}
+			ordOdFeeProdAtomSV.updateByExample(ordOdFeeProd, ordOdFeeProd.getOrderId(), 
+					ordOdFeeProd.getPayStyle());
+		}
     }
 }
