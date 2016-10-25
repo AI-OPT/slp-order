@@ -834,8 +834,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
 				subOrdOdFeeProd.setPaidFee(ordOdProd.getJfFee());
-				//String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
-				String rate = "100:1";
+				String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(ordOdProd.getJfFee()).divide(new BigDecimal(split[0]),
@@ -902,8 +901,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
 				subOrdOdFeeProd.setPaidFee(ordOdFeeProd.getPaidFee()+ordOdProd.getJfFee());
-				//String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
-				String rate = "100:1";
+				String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(subOrdOdFeeProd.getPaidFee()).divide(new BigDecimal(split[0]),
