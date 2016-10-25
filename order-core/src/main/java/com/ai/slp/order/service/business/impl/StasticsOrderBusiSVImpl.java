@@ -3,6 +3,7 @@ package com.ai.slp.order.service.business.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,8 @@ import com.alibaba.fastjson.JSONObject;
 @Service
 @Transactional
 public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
+	
+	private static final Logger LOG = Logger.getLogger(StasticsOrderBusiSVImpl.class);
 	@Autowired
     private IStasticsOrderAtomSV iStasticsOrderAtomSV;
     @Autowired
@@ -43,10 +46,16 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 	IOrdOdLogisticsAtomSV iOrdOdLogisticsAtomSV;
 	@Override
 	public PageInfo<StasticParentOrderVo> getStasticOrdPage(StasticsOrderRequest request) {
+		long dubboStart=System.currentTimeMillis();
+    	LOG.error("开始执行IStasticsOrderSV中的订单查询dubbo服务，当前时间戳："+dubboStart);
 		//获取父订单信息
 		PageInfo<StasticParentOrderVo> pageResult = new PageInfo<StasticParentOrderVo>();
+		long queryStart=System.currentTimeMillis();
+    	LOG.error("开始执行IStasticsOrderSV中的查询服务，当前时间戳："+queryStart);
 		List<StasticOrdOrderAttach> parentOrderList = iStasticsOrderAtomSV.getStasticOrd(request);
-		List<StasticParentOrderVo> orderVoList = new ArrayList<StasticParentOrderVo>();
+		long queryEnd=System.currentTimeMillis();
+    	LOG.error("开始执行IStasticsOrderSV中的查询服务，当前时间戳："+queryEnd+",用时:"+(queryEnd-queryStart)+"毫秒");
+    	List<StasticParentOrderVo> orderVoList = new ArrayList<StasticParentOrderVo>();
 		if(!CollectionUtil.isEmpty(parentOrderList)){
 			for(StasticOrdOrderAttach order:parentOrderList){
 				//返回的子订单
@@ -66,13 +75,13 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 					BeanUtils.copyProperties(staticProdVo, prod);
 					parentProdList.add(staticProdVo);
 				}
-				/*//获取绑定手机号
+				//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
 		        Object phone =dataJson.get("phone");
 				parentOrderVo.setUserTel(phone==null?null:phone.toString());
 				//获取用户名
         		Object userName =dataJson.get("userName");
-        		parentOrderVo.setUserName(userName==null?null:userName.toString()); */
+        		parentOrderVo.setUserName(userName==null?null:userName.toString()); 
 				//获取子订单
 				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
 				int totalProdSize=0;
@@ -111,6 +120,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 						//将父级订单号存入子订单中
 						childOrderVo.setParentOrderId(order.getOrderId());
 						//翻译订单状态
+						long cacheStart=System.currentTimeMillis();
+				    	LOG.error("开始执行IStasticsOrderSV中的缓存dubbo服务，当前时间戳："+cacheStart);
 						ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 						SysParamSingleCond param = new SysParamSingleCond();
 		        		param = new SysParamSingleCond();
@@ -122,6 +133,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 		        		if(stateOrder!=null){
 		        			childOrderVo.setStateName(stateOrder.getColumnDesc());
 		        		}
+		        		long cacheEnd=System.currentTimeMillis();
+		            	LOG.error("开始执行IStasticsOrderSV中的缓存dubbo服务，当前时间戳："+cacheEnd+",用时:"+(cacheEnd-cacheStart)+"毫秒");
 						//获取子订单的商品信息
 						List<OrdOdProd>  childProList = iOrdOdProdAtomSV.selectByOrd(child.getTenantId(), child.getOrderId());
 						for(OrdOdProd prod:childProList){
@@ -142,7 +155,11 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				orderVoList.add(parentOrderVo);
 			}
 		}
+		long countStart=System.currentTimeMillis();
+    	LOG.error("开始执行IStasticsOrderSV中的获取订单数量，当前时间戳："+countStart);
 		int count=iStasticsOrderAtomSV.queryCount(request);
+		long countEnd=System.currentTimeMillis();
+    	LOG.error("开始执行IStasticsOrderSV中的获取订单数量，当前时间戳："+countEnd+",用时:"+(countEnd-countStart)+"毫秒");
 		pageResult.setPageSize(request.getPageSize());
 		pageResult.setCount(count);
 		pageResult.setPageNo(request.getPageNo());
