@@ -1,9 +1,4 @@
 package com.ai.slp.order.api.orderrefund.param;
-
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.ai.opt.base.vo.BaseInfo;
 
 /**
@@ -18,19 +13,16 @@ public class OrderRefuseRefundRequest extends BaseInfo {
 	/**
 	 *订单id 
 	 */
-	@NotNull(message="订单id不能为空")
 	private Long orderId;
 	
 	/**
 	 * 拒绝理由
 	 */
-	@NotBlank(message="拒绝退款理由不能为空")
 	private String refuseReason;
 	
 	/**
 	 * 受理工号
 	 */
-	@NotBlank(message="受理工号不能为空")
 	private String operId;
 
 	public Long getOrderId() {
