@@ -2,9 +2,7 @@ package com.ai.slp.order.service.business.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +79,17 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 		List<OrdOdProd> ordOdProds = this.getOrdOdProds(request);
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
-				//该商品为售后标识 不可打印
-				throw new BusinessException("", "订单下商品处于售后状态,不可打印");
+				/* 判断该商品对应的售后订单状态*/
+				List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
+				for (OrdOrder ordOrder : ordOrderList) {
+					if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(ordOrder.getState())||
+						OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(ordOrder.getState())||
+						OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(ordOrder.getState())||
+						OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
+						//该商品为售后标识 不可打印
+						throw new BusinessException("", "订单下商品处于售后状态,不可打印");
+					}
+				}
 			}
 		}
 		if(CollectionUtil.isEmpty(infos)) {
@@ -94,17 +101,17 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 		criteria.andOrigOrderIdEqualTo(order.getOrderId());
 		criteria.andTenantIdEqualTo(order.getTenantId());
 		List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
-		Map<String,Long> prodMap=new HashMap<String,Long>();
+		List<String> prodSkuList=new ArrayList<String>();
 		if(!CollectionUtil.isEmpty(ordOrderList)) {
 			for (OrdOrder ordOrder : ordOrderList) {
 				OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
 				OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
 				prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
-				prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId()); //售后商品明细表对应订单主表 一对一
+				prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId()); 
 				List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
 				if(!CollectionUtil.isEmpty(prodList)) {
 					OrdOdProd ordOdProd = prodList.get(0);
-					prodMap.put(ordOdProd.getSkuId(), ordOdProd.getBuySum());
+					prodSkuList.add(ordOdProd.getSkuId());
 				}
 			}
 		}
@@ -118,24 +125,27 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 			List<DeliverInfoProd> deliverInfoProds = deliveryOrderPrintAtomSV.selectByExample(exampleInfo);
 			if(!CollectionUtil.isEmpty(deliverInfoProds)) {
 				DeliverInfoProd deliverInfoProd = deliverInfoProds.get(0);
-				DeliverGoodsPrintVo invoicePrintVo=new DeliverGoodsPrintVo();
-				invoicePrintVo.setSkuId(deliverInfoProd.getSkuId());
-				invoicePrintVo.setProdName(deliverInfoProd.getProdName());
-				invoicePrintVo.setExtendInfo(deliverInfoProd.getExtendInfo());
-				Long afterSaleBuySum = prodMap.get(deliverInfoProd.getSkuId());
-				invoicePrintVo.setBuySum(deliverInfoProd.getBuySum()-(afterSaleBuySum==null?0:afterSaleBuySum));
-				invoicePrintVo.setSalePrice(String.valueOf(deliverInfoProd.getSalePrice()/1000));//厘转元
-				invoicePrintVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
-				sum+=deliverInfoProd.getBuySum()-(afterSaleBuySum==null?0:afterSaleBuySum);
-				list.add(invoicePrintVo);
+				for(String prodSku:prodSkuList) {
+					if(!prodSku.equals(deliverInfoProd.getSkuId())) {
+						DeliverGoodsPrintVo invoicePrintVo=new DeliverGoodsPrintVo();
+						invoicePrintVo.setSkuId(deliverInfoProd.getSkuId());
+						invoicePrintVo.setProdName(deliverInfoProd.getProdName());
+						invoicePrintVo.setExtendInfo(deliverInfoProd.getExtendInfo());
+						invoicePrintVo.setBuySum(deliverInfoProd.getBuySum());
+						invoicePrintVo.setSalePrice(String.valueOf(deliverInfoProd.getSalePrice()/1000));//厘转元
+						invoicePrintVo.setHorOrderId(ordOdDeliverInfo.getHorOrderId());
+						sum+=deliverInfoProd.getBuySum();
+						list.add(invoicePrintVo);
+					}
+				}
 			}
 		}
 		/* 查询订单配送信息 父订单对应配送信息*/
-		List<OrdOdLogistics> logistics = getOrdOdLogistics(order.getParentOrderId(), order.getTenantId());
+		List<OrdOdLogistics> logistics = getOrdOdLogistics(order.getOrderId(), order.getTenantId());
 		if(CollectionUtil.isEmpty(logistics)) {
-			logger.warn("未能查询到指定的订单配送信息[订单id:"+order.getParentOrderId()+",租户id:"+order.getTenantId()+"]");
+			logger.warn("未能查询到指定的订单配送信息[订单id:"+order.getOrderId()+",租户id:"+order.getTenantId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
-					"未能查询到指定的订单配送信息[订单id:"+order.getParentOrderId()+",租户id:"+order.getTenantId()+"]");
+					"未能查询到指定的订单配送信息[订单id:"+order.getOrderId()+",租户id:"+order.getTenantId()+"]");
 		}
 		OrdOdLogistics ordOdLogistics = logistics.get(0);
 		ICacheSV iCacheSv = DubboConsumerFactory.getService("iCacheSV");
@@ -254,5 +264,24 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 			}
 			return ordOdProds;
 		}
+		
+		
+		
+		  /**
+		   * 获取商品对应的售后订单状态
+		   */
+		  public List<OrdOrder> createAfterOrder(OrdOdProd ordOdProd) {
+			  OrdOrderCriteria example=new OrdOrderCriteria();
+			  OrdOrderCriteria.Criteria criteria = example.createCriteria();
+			  criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
+			  criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
+			  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+			  if(CollectionUtil.isEmpty(ordOrderList)) {
+				  logger.error("没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+				  throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+						  "没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+			  }
+			return ordOrderList;
+		  }
 
 }

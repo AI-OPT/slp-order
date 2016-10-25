@@ -263,10 +263,12 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	private List<OrdOrderProdAttach> createOriginalAttachs(List<OrdOdProd> ordOdProds) {
 		List<OrdOrderProdAttach> originalAttachs=new ArrayList<OrdOrderProdAttach>();
 		for (OrdOdProd ordOdProd : ordOdProds) {
-			OrdOrderProdAttach attach=new OrdOrderProdAttach();
-			attach.setSkuId(ordOdProd.getSkuId());
-			attach.setRouteId(ordOdProd.getRouteId());
-			originalAttachs.add(attach);
+			if(OrdersConstants.OrdOrder.cusServiceFlag.NO.equals(ordOdProd.getCusServiceFlag())) {
+				OrdOrderProdAttach attach=new OrdOrderProdAttach();
+				attach.setSkuId(ordOdProd.getSkuId());
+				attach.setRouteId(ordOdProd.getRouteId());
+				originalAttachs.add(attach);
+			}
 		}
 		return originalAttachs;
 	}
