@@ -79,10 +79,14 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				LOG.info("开始执行dubbo后场IStasticsOrderSV中的订单查询服务,通过O2p获取用户信息，当前时间戳："+userStart);
 				//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
-		        Object phone =dataJson.get("phone");
+				Object userName=null;
+        		Object phone=null;
+                if(dataJson!=null) {
+                  	//获取用户名,绑定手机号
+                  	userName =dataJson.get("userName");
+                  	phone =dataJson.get("phone");
+                 }
 				parentOrderVo.setUserTel(phone==null?null:phone.toString());
-				//获取用户名
-        		Object userName =dataJson.get("userName");
         		parentOrderVo.setUserName(userName==null?null:userName.toString()); 
         		long userEnd=System.currentTimeMillis();
         		LOG.info("开始执行dubbo后场IStasticsOrderSV中的订单查询服务,通过O2p获取用户信息，当前时间戳："+userEnd+

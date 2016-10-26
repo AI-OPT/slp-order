@@ -416,8 +416,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo.setAccountId(order.getAccountId());
             ordOrderVo.setDownstreamOrderId(order.getDownstreamOrderId());
             JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
-            //获取用户名
-            Object userName =dataJson.get("userName");
+            Object userName=null;
+            if(dataJson!=null) {
+            	//获取用户名
+            	userName =dataJson.get("userName");
+            }
             ordOrderVo.setUserName(userName==null?null:userName.toString()); 
             ordOrderVo.setRemark(order.getRemark());//买家留言(订单备注)
             ordOrderVo.setOrigOrderId(order.getOrigOrderId()); //原始订单号
@@ -733,15 +736,18 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		long userStart=System.currentTimeMillis();
         		logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList,通过O2p获取用户信息，当前时间戳："+userStart);
         		JSONObject dataJson = ChUserUtil.getUserInfo(behindOrdOrderAttach.getUserId());
-        		//获取用户名
-        		Object userName =dataJson.get("userName");
+        		Object userName=null;
+        		Object phone=null;
+                if(dataJson!=null) {
+                  	//获取用户名,绑定手机号
+                  	userName =dataJson.get("userName");
+                  	phone =dataJson.get("phone");
+                 }
         		pOrderVo.setUserName(userName==null?null:userName.toString()); 
-        		//获取绑定手机号
-       	        Object phone =dataJson.get("phone");
+       	        pOrderVo.setUserTel(phone==null?null:phone.toString());
        	        long userEnd=System.currentTimeMillis();
        	        logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList,通过O2p获取用户信息，当前时间戳："+userEnd+
        	        		",用时:"+(userEnd-userStart)+"毫秒");
-       	        pOrderVo.setUserTel(phone==null?null:phone.toString());
         		pOrderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
         		SysParam sysParamDf = InfoTranslateUtil.translateInfo(behindOrdOrderAttach.getTenantId(), 
         				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);

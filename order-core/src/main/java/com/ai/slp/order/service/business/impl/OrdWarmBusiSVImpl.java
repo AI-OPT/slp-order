@@ -71,10 +71,14 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,通过O2p获取用户信息，当前时间戳："+userStart);
 				//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(ord.getUserId());
-		        Object phone =dataJson.get("phone");
+				Object userName=null;
+        		Object phone=null;
+                if(dataJson!=null) {
+                  	//获取用户名,绑定手机号
+                  	userName =dataJson.get("userName");
+                  	phone =dataJson.get("phone");
+                 }
 		        orderVo.setUserTel(phone==null?null:phone.toString());
-				//获取用户名
-        		Object userName =dataJson.get("userName");
         		orderVo.setUserName(userName==null?null:userName.toString()); 
         		long userEnd=System.currentTimeMillis();
         		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,通过O2p获取用户信息，当前时间戳："+userEnd+
@@ -141,10 +145,14 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 			}
 			//获取绑定手机号
 			JSONObject dataJson = ChUserUtil.getUserInfo(orderWarmVo.getUserId());
-	        Object phone =dataJson.get("phone");
+			Object userName=null;
+    		Object phone=null;
+            if(dataJson!=null) {
+              	//获取用户名,绑定手机号
+              	userName =dataJson.get("userName");
+              	phone =dataJson.get("phone");
+             }
 	        orderWarmVo.setUserTel(phone==null?null:phone.toString());
-			//获取用户名
-    		Object userName =dataJson.get("userName");
     		orderWarmVo.setUserName(userName==null?null:userName.toString());
 			if(!CollectionUtil.isEmpty(prodinfoList)){
 				orderWarmVo.setProdInfo(prodinfoList);
