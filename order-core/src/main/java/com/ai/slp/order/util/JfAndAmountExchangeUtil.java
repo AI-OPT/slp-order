@@ -37,14 +37,20 @@ public class JfAndAmountExchangeUtil {
 			}
 	     //将返回结果，转换为JSON对象 
 		 JSONObject dataJson=null;
+		 JSONObject data=null;
 		 Object rate=null;
 	     JSONObject json=JSON.parseObject(result);
 	     String reqResultCode=json.getString("resultCode");
 	     if("000000".equals(reqResultCode)){
 	         String dataStr=(String)json.get("data");
 	         dataJson=JSON.parseObject(dataStr);
-     		//获取比例
-     		 rate =dataJson.get("rate");
+	         data = (JSONObject) dataJson.get("data");
+	         if(data==null) {
+	        	 rate=null; 
+	         }else {
+	        	 //获取比例
+	        	 rate =data.get("rate");
+	         }
 	     }else{
 	     	//请求过程失败
 	    	 LOG.info("请求失败,请求错误码:"+reqResultCode);
@@ -58,7 +64,7 @@ public class JfAndAmountExchangeUtil {
 			String[] split = rate.split(":");
 			String s = split[0];
 			String s1 = split[1];
-			BigDecimal JfAmout=BigDecimal.valueOf(1000).divide(new BigDecimal(s),2,BigDecimal.ROUND_HALF_UP);
+			BigDecimal JfAmout=BigDecimal.valueOf(983).divide(new BigDecimal(s),5,BigDecimal.ROUND_HALF_UP);
 			System.out.println(JfAmout.divide(new BigDecimal(s1),2,BigDecimal.ROUND_HALF_UP));
 		}
 	}
