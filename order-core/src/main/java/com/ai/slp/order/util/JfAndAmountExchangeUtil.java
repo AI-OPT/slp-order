@@ -1,6 +1,5 @@
 package com.ai.slp.order.util;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
-import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -58,7 +56,7 @@ public class JfAndAmountExchangeUtil {
 		return rate==null?null:rate.toString();
 	}
 	
-	public static void main(String[] args) {
+/*	public static void main(String[] args) {
 		String rate = getRate("jfat1.201609256101549914_0001");
 		if(!StringUtil.isBlank(rate)) {
 			String[] split = rate.split(":");
@@ -67,5 +65,5 @@ public class JfAndAmountExchangeUtil {
 			BigDecimal JfAmout=BigDecimal.valueOf(983).divide(new BigDecimal(s),5,BigDecimal.ROUND_HALF_UP);
 			System.out.println(JfAmout.divide(new BigDecimal(s1),2,BigDecimal.ROUND_HALF_UP));
 		}
-	}
+	}*/
 }
