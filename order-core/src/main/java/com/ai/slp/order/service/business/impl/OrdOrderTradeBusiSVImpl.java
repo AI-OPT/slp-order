@@ -312,7 +312,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         /* 更新商品明细信息*/
         for (OrdOdProd ordOdProd : ordOdProds) {
         	//积分 积分金额 优惠券 优惠金额,按比例划分
-        	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee),3,BigDecimal.ROUND_HALF_UP);
+        	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee),5,BigDecimal.ROUND_HALF_UP);
         	long prodJfFee=(rate.multiply(new BigDecimal(totalJfFee))).longValue();
         	long prodCouponFee=(rate.multiply(new BigDecimal(totalCouponFee))).longValue();
         	long prodJfAmount=(rate.multiply(new BigDecimal(totallJfAmount))).longValue();
