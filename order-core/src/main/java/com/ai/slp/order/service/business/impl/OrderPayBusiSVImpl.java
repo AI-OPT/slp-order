@@ -399,7 +399,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	for (OrdOdProd ordOdProd : ordOdProdList) {
         		//单个商品费用占总费用的比例
         		long discountFee = ordOdProd.getDiscountFee();
-            	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee-freight),3,BigDecimal.ROUND_HALF_UP);
+            	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee-freight),5,BigDecimal.ROUND_HALF_UP);
             	long prodOperDiscountFee=(rate.multiply(new BigDecimal(operDiscountFee))).longValue();//商品的减免费用
         		ordOdProd.setOperDiscountFee(prodOperDiscountFee+ordOdProd.getOperDiscountFee()); //减免费用
         		ordOdProd.setDiscountFee(prodOperDiscountFee+discountFee); //优惠费用
@@ -838,7 +838,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(ordOdProd.getJfFee()).divide(new BigDecimal(split[0]),
-							3,BigDecimal.ROUND_HALF_UP);
+							5,BigDecimal.ROUND_HALF_UP);
 					subOrdOdFeeProd.setJfAmount(JfAmout.multiply(new BigDecimal(1000)).longValue());//积分对应的金额,并元转厘
 				}
 			}else if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
@@ -905,7 +905,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(subOrdOdFeeProd.getPaidFee()).divide(new BigDecimal(split[0]),
-							3,BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(split[1]),3,BigDecimal.ROUND_HALF_UP);
+							5,BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(split[1]),5,BigDecimal.ROUND_HALF_UP);
 					long jfAmount=(JfAmout.multiply(new BigDecimal(1000))).longValue();
 					subOrdOdFeeProd.setJfAmount(jfAmount);//积分对应的金额,并元转厘
 				}
