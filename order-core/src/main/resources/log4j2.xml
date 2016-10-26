@@ -4,8 +4,8 @@
     <Console name="STDOUT" target="SYSTEM_OUT">
       <PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
     </Console>
-    <RollingFile name="RollingFile" fileName="logs/slp-order.log"
-                     filePattern="logs/$${date:yyyy-MM}/slp-order-%d{yyyy-MM-dd}-%i.log.gz">
+    <RollingFile name="RollingFile" fileName="logs/baas-amc.log"
+                     filePattern="logs/$${date:yyyy-MM}/baas-amc-%d{yyyy-MM-dd}-%i.log.gz">
        <PatternLayout>
          <Pattern>%d %-5p [%t] %C{2} (%F:%L) - %m%n</Pattern>
        </PatternLayout>
@@ -21,18 +21,18 @@
     </Async>
   </Appenders>
   <Loggers>
-    <logger name="com.ai.opt.sdk" level="debug" additivity="false">
+    <logger name="com.ai.opt.sdk" level="info" additivity="false">
          <AppenderRef ref="RollingFile" />
          <AppenderRef ref="STDOUT" />
     </logger>
 	<logger name="com.mybatis" additivity="true">
-		<level value="debug" />
+		<level value="DEBUG" />
 	</logger>
 	<logger name="java.sql.ResultSet" additivity="true">
-		<level value="debug" />
+		<level value="info" />
 	</logger>
 	<logger name="org.apache" additivity="true">
-		<level value="debug" />
+		<level value="info" />
 	</logger>
 	<logger name="java.sql.Connection" additivity="true">
 		<level value="debug" />
@@ -43,7 +43,11 @@
 	<logger name="java.sql.PreparedStatement" additivity="true">
 		<level value="debug" />
 	</logger>    
-    <Root level="debug">
+	<logger name="com.ai.slp.order.dao.mapper" level="debug" additivity="true">
+          <AppenderRef ref="RollingFile" />
+	      <AppenderRef ref="STDOUT" />
+      </logger>
+    <Root level="info">
       <AppenderRef ref="RollingFile" />
       <AppenderRef ref="STDOUT" />
     </Root>
