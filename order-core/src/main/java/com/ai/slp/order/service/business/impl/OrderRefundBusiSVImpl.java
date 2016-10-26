@@ -60,7 +60,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		}
 		OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(ordOrder.getTenantId(), 
 				ordOrder.getOrderId());
-		long updateMoney = request.getUpdateMoney()*1000;
+		long updateMoney = request.getUpdateMoney();
 		/*判断输入费用是否大于之前存在的费用*/
 		if(updateMoney>ordOdFeeTotal.getAdjustFee()) {
 			logger.error("输入的费用不能大于实际应收的费用,实际应收费用为:"+ordOdFeeTotal.getAdjustFee());
