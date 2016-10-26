@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.platform.common.api.cache.param.SysParamSingleCond;
-import com.ai.slp.order.service.business.impl.OrdOrderBusiSVImpl;
 
 public class InfoTranslateUtil {
 	
