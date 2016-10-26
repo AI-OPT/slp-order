@@ -47,14 +47,14 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 	@Override
 	public PageInfo<StasticParentOrderVo> getStasticOrdPage(StasticsOrderRequest request) {
 		long dubboStart=System.currentTimeMillis();
-    	LOG.error("开始执行IStasticsOrderSV中的订单查询dubbo服务，当前时间戳："+dubboStart);
+    	LOG.error("开始执行dubbo后场IStasticsOrderSV中的订单查询服务，当前时间戳："+dubboStart);
 		//获取父订单信息
 		PageInfo<StasticParentOrderVo> pageResult = new PageInfo<StasticParentOrderVo>();
 		long queryStart=System.currentTimeMillis();
-    	LOG.error("开始执行IStasticsOrderSV中的查询服务，当前时间戳："+queryStart);
+    	LOG.error("开始执行dubbo后场IStasticsOrderSV中的订单查询服务，当前时间戳："+queryStart);
 		List<StasticOrdOrderAttach> parentOrderList = iStasticsOrderAtomSV.getStasticOrd(request);
 		long queryEnd=System.currentTimeMillis();
-    	LOG.error("开始执行IStasticsOrderSV中的查询服务，当前时间戳："+queryEnd+",用时:"+(queryEnd-queryStart)+"毫秒");
+    	LOG.error("开始执行dubbo后场IStasticsOrderSV中的订单查询服务，当前时间戳："+queryEnd+",用时:"+(queryEnd-queryStart)+"毫秒");
     	List<StasticParentOrderVo> orderVoList = new ArrayList<StasticParentOrderVo>();
 		if(!CollectionUtil.isEmpty(parentOrderList)){
 			for(StasticOrdOrderAttach order:parentOrderList){
@@ -75,6 +75,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 					BeanUtils.copyProperties(staticProdVo, prod);
 					parentProdList.add(staticProdVo);
 				}
+				long userStart=System.currentTimeMillis();
+				LOG.info("开始执行dubbo后场IStasticsOrderSV中的订单查询服务,通过O2p获取用户信息，当前时间戳："+userStart);
 				//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
 		        Object phone =dataJson.get("phone");
@@ -82,6 +84,9 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 				//获取用户名
         		Object userName =dataJson.get("userName");
         		parentOrderVo.setUserName(userName==null?null:userName.toString()); 
+        		long userEnd=System.currentTimeMillis();
+        		LOG.info("开始执行dubbo后场IStasticsOrderSV中的订单查询服务,通过O2p获取用户信息，当前时间戳："+userEnd+
+						",用时:"+(userEnd-userStart)+"毫秒");
 				//获取子订单
 				List<OrdOrder> childList = iOrdOrderAtomSV.selectChildOrder(parentOrderVo.getTenantId(),parentOrderVo.getOrderId());
 				int totalProdSize=0;
@@ -89,6 +94,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 					//将父级菜单信息存入子订单中方便前台展示
 					List<StasticOrderVo> childsList = new ArrayList<StasticOrderVo>();
 					StasticOrderVo childVo = new StasticOrderVo();
+					long cacheStart=System.currentTimeMillis();
+			    	LOG.info("开始执行dubbo后场IStasticsOrderSV中的订单查询服务，获取公共中心缓存服务,当前时间戳："+cacheStart);
 					//翻译订单状态
 					ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 					SysParamSingleCond param = new SysParamSingleCond();
@@ -98,6 +105,8 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 	        		param.setTypeCode(OrdersConstants.Sate.TYPE_CODE);
 	        		param.setParamCode(OrdersConstants.Sate.ORD_STATE);
 	        		SysParam stateOrder = iCacheSV.getSysParamSingle(param);
+	        		long cacheEnd=System.currentTimeMillis();
+	            	LOG.info("开始dubbo后场IStasticsOrderSV中的订单查询服务，获取公共中心缓存服务,当前时间戳："+cacheEnd+",用时:"+(cacheEnd-cacheStart)+"毫秒");
 	        		if(stateOrder!=null){
 	        			childVo.setStateName(stateOrder.getColumnDesc());
 	        		}
@@ -121,7 +130,7 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 						childOrderVo.setParentOrderId(order.getOrderId());
 						//翻译订单状态
 						long cacheStart=System.currentTimeMillis();
-				    	LOG.error("开始执行IStasticsOrderSV中的缓存dubbo服务，当前时间戳："+cacheStart);
+				    	LOG.error("开始执行后场dubbo中IStasticsOrderSV中的缓存dubbo服务，当前时间戳："+cacheStart);
 						ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 						SysParamSingleCond param = new SysParamSingleCond();
 		        		param = new SysParamSingleCond();
@@ -134,7 +143,7 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 		        			childOrderVo.setStateName(stateOrder.getColumnDesc());
 		        		}
 		        		long cacheEnd=System.currentTimeMillis();
-		            	LOG.error("开始执行IStasticsOrderSV中的缓存dubbo服务，当前时间戳："+cacheEnd+",用时:"+(cacheEnd-cacheStart)+"毫秒");
+		            	LOG.error("开始执行后场dubbo中IStasticsOrderSV中的缓存dubbo服务，当前时间戳："+cacheEnd+",用时:"+(cacheEnd-cacheStart)+"毫秒");
 						//获取子订单的商品信息
 						List<OrdOdProd>  childProList = iOrdOdProdAtomSV.selectByOrd(child.getTenantId(), child.getOrderId());
 						for(OrdOdProd prod:childProList){
@@ -159,7 +168,7 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
     	LOG.error("开始执行IStasticsOrderSV中的获取订单数量，当前时间戳："+countStart);
 		int count=iStasticsOrderAtomSV.queryCount(request);
 		long countEnd=System.currentTimeMillis();
-    	LOG.error("开始执行IStasticsOrderSV中的获取订单数量，当前时间戳："+countEnd+",用时:"+(countEnd-countStart)+"毫秒");
+    	LOG.error("开始执行后场dubbo中IStasticsOrderSV中的获取订单数量，当前时间戳："+countEnd+",用时:"+(countEnd-countStart)+"毫秒");
 		pageResult.setPageSize(request.getPageSize());
 		pageResult.setCount(count);
 		pageResult.setPageNo(request.getPageNo());

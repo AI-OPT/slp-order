@@ -3,6 +3,7 @@ package com.ai.slp.order.service.business.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,9 @@ import com.alibaba.fastjson.JSONObject;
 @Service
 @Transactional
 public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
+	
+	private static final Logger LOG = Logger.getLogger(OrdWarmBusiSVImpl.class);
+	
 	@Autowired
     private IOrdWarmAtomSV iOrdWarmAtomSV;
 	@Autowired
@@ -45,8 +49,15 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 	IOrdOdFeeProdAtomSV iOrdOdFeeProdAtomSV;
 	@Override
 	public PageInfo<OrderWarmVo> selectWarmOrdPage(OrderWarmRequest request) {
+		long start=System.currentTimeMillis();
+		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage，当前时间戳："+start);
 		PageInfo<OrderWarmVo> pageResult=new PageInfo<OrderWarmVo>();
+		long dubboStart=System.currentTimeMillis();
+		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,获取预警订单列表信息，当前时间戳："+dubboStart);
         PageInfo<OrdOrder> pageInfo = iOrdWarmAtomSV.selectWarmOrdPage(request);
+        long dubboEnd=System.currentTimeMillis();
+		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage，获取预警订单列表信息,"
+				+ "当前时间戳："+dubboEnd+",用时:"+(dubboEnd-dubboStart)+"毫秒");
         pageResult.setCount(pageInfo.getCount());
 		pageResult.setPageSize(pageInfo.getPageSize());
 		pageResult.setPageNo(pageInfo.getPageNo());
@@ -56,13 +67,18 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				OrderWarmVo orderVo = new OrderWarmVo();
 				List<ProductInfo> prodinfoList = new ArrayList<ProductInfo>();
 				BeanUtils.copyProperties(orderVo, ord);
-				/*//获取绑定手机号
+				long userStart=System.currentTimeMillis();
+				LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,通过O2p获取用户信息，当前时间戳："+userStart);
+				//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(ord.getUserId());
 		        Object phone =dataJson.get("phone");
 		        orderVo.setUserTel(phone==null?null:phone.toString());
 				//获取用户名
         		Object userName =dataJson.get("userName");
-        		orderVo.setUserName(userName==null?null:userName.toString()); */
+        		orderVo.setUserName(userName==null?null:userName.toString()); 
+        		long userEnd=System.currentTimeMillis();
+        		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,通过O2p获取用户信息，当前时间戳："+userEnd+
+        				",用时:"+(userEnd-userStart)+"毫秒");
 				//获取商品信息
 				if(orderVo.getOrderId()!=null){
 					List<OrdOdProd>  proList = iOrdOdProdAtomSV.selectByOrd(ord.getTenantId(), ord.getOrderId());
@@ -123,13 +139,13 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				orderWarmVo.setLogisticsType(logistics.getLogisticsType());
 				orderWarmVo.setContactName(logistics.getContactName());
 			}
-			/*//获取绑定手机号
+			//获取绑定手机号
 			JSONObject dataJson = ChUserUtil.getUserInfo(orderWarmVo.getUserId());
 	        Object phone =dataJson.get("phone");
 	        orderWarmVo.setUserTel(phone==null?null:phone.toString());
 			//获取用户名
     		Object userName =dataJson.get("userName");
-    		orderWarmVo.setUserName(userName==null?null:userName.toString()); */
+    		orderWarmVo.setUserName(userName==null?null:userName.toString());
 			if(!CollectionUtil.isEmpty(prodinfoList)){
 				orderWarmVo.setProdInfo(prodinfoList);
 			}

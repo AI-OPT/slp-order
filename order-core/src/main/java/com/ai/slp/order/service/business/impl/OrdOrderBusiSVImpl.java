@@ -606,6 +606,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     @Override
     public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
             throws BusinessException, SystemException {
+    	long start=System.currentTimeMillis();
+    	logger.info("开始执行dubbo订单列表查询behindQueryOrderList，当前时间戳："+start);
         logger.debug("开始运营后台订单列表查询..");
         /* 参数校验*/
         if(orderListRequest==null) {
@@ -625,7 +627,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             states = sb.toString();
             states = states.substring(0, sb.length() - 1);
         }
+        long countStart=System.currentTimeMillis();
+    	logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList，获取订单列表数量,当前时间戳："+countStart);
         int count=ordOrderAttachAtomSV.behindQueryCount(orderListRequest, states);
+        long countEnd=System.currentTimeMillis();
+    	logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList，获取订单列表数量,当前时间戳："+countEnd+",用时:"+(countEnd-countStart)+"毫秒");
         List<BehindParentOrdOrderVo> orderVoList = 
         		this.getBehindOrdOrderVos(orderListRequest, states, iCacheSV);
         pageInfo.setPageNo(orderListRequest.getPageNo());
@@ -707,8 +713,12 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     private List<BehindParentOrdOrderVo> getBehindOrdOrderVos(BehindQueryOrderListRequest orderListRequest,
     		String states,ICacheSV iCacheSV) {
     	List<BehindParentOrdOrderVo> orderVoList=new ArrayList<BehindParentOrdOrderVo>();
+    	long infoStart=System.currentTimeMillis();
+     	logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList，获取订单列表信息,当前时间戳："+infoStart);
     	List<BehindOrdOrderAttach> parentList = 
     			ordOrderAttachAtomSV.behindQueryOrderBySearch(orderListRequest, states);
+    	long infoEnd=System.currentTimeMillis();
+     	logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList，获取订单列表信息,当前时间戳："+infoEnd+",用时:"+(infoEnd-infoStart)+"毫秒");
         if(!CollectionUtil.isEmpty(parentList)) {
         	for (BehindOrdOrderAttach behindOrdOrderAttach : parentList) {
         		BehindParentOrdOrderVo pOrderVo=new BehindParentOrdOrderVo();
@@ -720,12 +730,17 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		pOrderVo.setChlIdName(sysParamChlId==null?"":sysParamChlId.getColumnDesc());
         		pOrderVo.setContactTel(behindOrdOrderAttach.getContactTel());
         		pOrderVo.setUserId(behindOrdOrderAttach.getUserId());
+        		long userStart=System.currentTimeMillis();
+        		logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList,通过O2p获取用户信息，当前时间戳："+userStart);
         		JSONObject dataJson = ChUserUtil.getUserInfo(behindOrdOrderAttach.getUserId());
         		//获取用户名
         		Object userName =dataJson.get("userName");
         		pOrderVo.setUserName(userName==null?null:userName.toString()); 
         		//获取绑定手机号
        	        Object phone =dataJson.get("phone");
+       	        long userEnd=System.currentTimeMillis();
+       	        logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList,通过O2p获取用户信息，当前时间戳："+userEnd+
+       	        		",用时:"+(userEnd-userStart)+"毫秒");
        	        pOrderVo.setUserTel(phone==null?null:phone.toString());
         		pOrderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
         		SysParam sysParamDf = InfoTranslateUtil.translateInfo(behindOrdOrderAttach.getTenantId(), 
