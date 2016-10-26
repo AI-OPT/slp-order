@@ -43,7 +43,7 @@
 	<logger name="java.sql.PreparedStatement" additivity="true">
 		<level value="debug" />
 	</logger>    
-	<logger name="com.ai.slp.order.dao.mapper" level="debug" additivity="true">
+	<logger name="com.ai.slp.order.dao.mapper" level="debug" additivity="false">
           <AppenderRef ref="RollingFile" />
 	      <AppenderRef ref="STDOUT" />
       </logger>
