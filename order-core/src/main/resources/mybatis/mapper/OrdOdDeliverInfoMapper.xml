@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo" >
     <id column="DELIVER_INFO_ID" property="deliverInfoId" jdbcType="BIGINT" />
     <result column="ORDER_ID" property="orderId" jdbcType="BIGINT" />
-    <result column="HOR_ORDER_ID" property="horOrderId" jdbcType="BIGINT" />
+    <result column="HOR_ORDER_ID" property="horOrderId" jdbcType="VARCHAR" />
     <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="PRINT_INFO" property="printInfo" jdbcType="VARCHAR" />
   </resultMap>
@@ -106,7 +106,7 @@
   <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo" >
     insert into ord_od_deliver_info (DELIVER_INFO_ID, ORDER_ID, HOR_ORDER_ID, 
       UPDATE_TIME, PRINT_INFO)
-    values (#{deliverInfoId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{horOrderId,jdbcType=BIGINT}, 
+    values (#{deliverInfoId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{horOrderId,jdbcType=VARCHAR}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{printInfo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo" >
@@ -114,7 +114,9 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       DELIVER_INFO_ID,
       ORDER_ID,
-      HOR_ORDER_ID,
+      <if test="horOrderId != null" >
+        HOR_ORDER_ID,
+      </if>
       <if test="updateTime != null" >
         UPDATE_TIME,
       </if>
@@ -125,7 +127,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{deliverInfoId,jdbcType=BIGINT},
       #{orderId,jdbcType=BIGINT},
-      #{horOrderId,jdbcType=BIGINT},
+      <if test="horOrderId != null" >
+        #{horOrderId,jdbcType=VARCHAR},
+      </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -150,7 +154,7 @@
         ORDER_ID = #{record.orderId,jdbcType=BIGINT},
       </if>
       <if test="record.horOrderId != null" >
-        HOR_ORDER_ID = #{record.horOrderId,jdbcType=BIGINT},
+        HOR_ORDER_ID = #{record.horOrderId,jdbcType=VARCHAR},
       </if>
       <if test="record.updateTime != null" >
         UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -167,7 +171,7 @@
     update ord_od_deliver_info
     set DELIVER_INFO_ID = #{record.deliverInfoId,jdbcType=BIGINT},
       ORDER_ID = #{record.orderId,jdbcType=BIGINT},
-      HOR_ORDER_ID = #{record.horOrderId,jdbcType=BIGINT},
+      HOR_ORDER_ID = #{record.horOrderId,jdbcType=VARCHAR},
       UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
       PRINT_INFO = #{record.printInfo,jdbcType=VARCHAR}
     <if test="_parameter != null" >
@@ -181,7 +185,7 @@
         ORDER_ID = #{orderId,jdbcType=BIGINT},
       </if>
       <if test="horOrderId != null" >
-        HOR_ORDER_ID = #{horOrderId,jdbcType=BIGINT},
+        HOR_ORDER_ID = #{horOrderId,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null" >
         UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
@@ -195,7 +199,7 @@
   <update id="updateByPrimaryKey" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo" >
     update ord_od_deliver_info
     set ORDER_ID = #{orderId,jdbcType=BIGINT},
-      HOR_ORDER_ID = #{horOrderId,jdbcType=BIGINT},
+      HOR_ORDER_ID = #{horOrderId,jdbcType=VARCHAR},
       UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
       PRINT_INFO = #{printInfo,jdbcType=VARCHAR}
     where DELIVER_INFO_ID = #{deliverInfoId,jdbcType=BIGINT}
