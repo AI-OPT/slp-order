@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,33 +108,27 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 				invoicePrintVo.setProdName(deliverInfoProd.getProdName());
 				invoicePrintVo.setExtendInfo(deliverInfoProd.getExtendInfo());
 				if(!prodSkuMap.isEmpty()) {
-					long remainSum = 0;
-					for (String key : prodSkuMap.keySet())  {
-						if(key.equals(deliverInfoProd.getSkuId())) {
-							Long afterBuySum = prodSkuMap.get(key);
-							remainSum=deliverInfoProd.getBuySum()-afterBuySum;
-							if(remainSum==0) {
-								break; //跳出内层循环
-							}
-							sum+=(deliverInfoProd.getBuySum()-afterBuySum);
-							invoicePrintVo.setBuySum(deliverInfoProd.getBuySum()-afterBuySum);
-						}else {
-							invoicePrintVo.setBuySum(deliverInfoProd.getBuySum());
-							sum+=deliverInfoProd.getBuySum();
+					Set<String> keySet = prodSkuMap.keySet();
+					String skuId = deliverInfoProd.getSkuId();
+					if(keySet.contains(skuId)) {
+						Long afterBuySum = prodSkuMap.get(skuId);
+						long remainSum=deliverInfoProd.getBuySum()-afterBuySum;
+						if(remainSum==0) {
+							continue; //执行下一个循环
 						}
-					}
-					if(remainSum==0) {
-						continue; //执行下一个循环
+						sum+=remainSum;
+						invoicePrintVo.setBuySum(remainSum);
+						this.invoiceInfos(deliverInfoProd, invoicePrintVo, ordOdDeliverInfo, list);
+					}else {
+						invoicePrintVo.setBuySum(deliverInfoProd.getBuySum());
+						sum+=deliverInfoProd.getBuySum();
+						this.invoiceInfos(deliverInfoProd, invoicePrintVo, ordOdDeliverInfo, list);
 					}
 				}else {
 					invoicePrintVo.setBuySum(deliverInfoProd.getBuySum());
 					sum+=deliverInfoProd.getBuySum();
+					this.invoiceInfos(deliverInfoProd, invoicePrintVo, ordOdDeliverInfo, list);
 				}
-				invoicePrintVo.setSalePrice(String.valueOf(deliverInfoProd.getSalePrice()/1000));//厘转元
-				//TODO
-				List<Long> parseLong = (List<Long>) JSON.parse(ordOdDeliverInfo.getHorOrderId());
-				invoicePrintVo.setHorOrderId(parseLong);
-				list.add(invoicePrintVo);
 			}
 		 }
 		/* 查询订单配送信息 父订单对应配送信息*/
@@ -334,4 +329,16 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 				}
 			  return prodSkuMap;
 		}
+		  
+		  
+	/**
+	 * 封装发货单打印信息
+	 */
+	private void invoiceInfos(DeliverInfoProd deliverInfoProd,DeliverGoodsPrintVo invoicePrintVo
+			,OrdOdDeliverInfo ordOdDeliverInfo,List<DeliverGoodsPrintVo> list){ 
+		invoicePrintVo.setSalePrice(String.valueOf(deliverInfoProd.getSalePrice()/1000));//厘转元
+		List<Long> parseLong = (List<Long>) JSON.parse(ordOdDeliverInfo.getHorOrderId());
+		invoicePrintVo.setHorOrderId(parseLong);
+		list.add(invoicePrintVo);
+	}
 }
