@@ -20,4 +20,6 @@ public interface IOrdOrderAtomSV {
     List<OrdOrder> selectChildOrder(String tenantId,long parentId);
     
     public void updateStateByOrderId(String tenantId,Long orderId,String state);
+    
+    List<OrdOrder> selectByBatchNo(long orderId,String tenantId,long batchNo);
 }
