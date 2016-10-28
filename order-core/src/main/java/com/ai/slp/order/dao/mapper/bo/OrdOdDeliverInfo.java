@@ -7,7 +7,7 @@ public class OrdOdDeliverInfo {
 
     private long orderId;
 
-    private long horOrderId;
+    private String horOrderId;
 
     private Timestamp updateTime;
 
@@ -29,12 +29,12 @@ public class OrdOdDeliverInfo {
         this.orderId = orderId;
     }
 
-    public long getHorOrderId() {
+    public String getHorOrderId() {
         return horOrderId;
     }
 
-    public void setHorOrderId(long horOrderId) {
-        this.horOrderId = horOrderId;
+    public void setHorOrderId(String horOrderId) {
+        this.horOrderId = horOrderId == null ? null : horOrderId.trim();
     }
 
     public Timestamp getUpdateTime() {

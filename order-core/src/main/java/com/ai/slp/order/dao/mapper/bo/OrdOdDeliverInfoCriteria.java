@@ -255,52 +255,62 @@ public class OrdOdDeliverInfoCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdEqualTo(long value) {
+        public Criteria andHorOrderIdEqualTo(String value) {
             addCriterion("HOR_ORDER_ID =", value, "horOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdNotEqualTo(long value) {
+        public Criteria andHorOrderIdNotEqualTo(String value) {
             addCriterion("HOR_ORDER_ID <>", value, "horOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdGreaterThan(long value) {
+        public Criteria andHorOrderIdGreaterThan(String value) {
             addCriterion("HOR_ORDER_ID >", value, "horOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdGreaterThanOrEqualTo(long value) {
+        public Criteria andHorOrderIdGreaterThanOrEqualTo(String value) {
             addCriterion("HOR_ORDER_ID >=", value, "horOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdLessThan(long value) {
+        public Criteria andHorOrderIdLessThan(String value) {
             addCriterion("HOR_ORDER_ID <", value, "horOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdLessThanOrEqualTo(long value) {
+        public Criteria andHorOrderIdLessThanOrEqualTo(String value) {
             addCriterion("HOR_ORDER_ID <=", value, "horOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdIn(List<Long> values) {
+        public Criteria andHorOrderIdLike(String value) {
+            addCriterion("HOR_ORDER_ID like", value, "horOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHorOrderIdNotLike(String value) {
+            addCriterion("HOR_ORDER_ID not like", value, "horOrderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHorOrderIdIn(List<String> values) {
             addCriterion("HOR_ORDER_ID in", values, "horOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdNotIn(List<Long> values) {
+        public Criteria andHorOrderIdNotIn(List<String> values) {
             addCriterion("HOR_ORDER_ID not in", values, "horOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdBetween(long value1, long value2) {
+        public Criteria andHorOrderIdBetween(String value1, String value2) {
             addCriterion("HOR_ORDER_ID between", value1, value2, "horOrderId");
             return (Criteria) this;
         }
 
-        public Criteria andHorOrderIdNotBetween(long value1, long value2) {
+        public Criteria andHorOrderIdNotBetween(String value1, String value2) {
             addCriterion("HOR_ORDER_ID not between", value1, value2, "horOrderId");
             return (Criteria) this;
         }
