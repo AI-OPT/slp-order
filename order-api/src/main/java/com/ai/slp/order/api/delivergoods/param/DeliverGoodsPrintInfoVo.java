@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.delivergoods.param;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class DeliverGoodsPrintInfoVo implements Serializable{
 	
@@ -34,7 +35,7 @@ public class DeliverGoodsPrintInfoVo implements Serializable{
    /**
     * 合并id
     */
-   private long horOrderId;
+   private List<Long> horOrderId;
 
 	public String getSkuId() {
 		return skuId;
@@ -75,14 +76,12 @@ public class DeliverGoodsPrintInfoVo implements Serializable{
 	public void setBuySum(long buySum) {
 		this.buySum = buySum;
 	}
-	
-	public long getHorOrderId() {
+
+	public List<Long> getHorOrderId() {
 		return horOrderId;
 	}
-	
-	public void setHorOrderId(long horOrderId) {
+
+	public void setHorOrderId(List<Long> horOrderId) {
 		this.horOrderId = horOrderId;
 	}
-   
-
 }
