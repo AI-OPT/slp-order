@@ -17,6 +17,8 @@ public final class SequenceUtil {
      * 属性定义标识序列
      */
     private static final String ORD_ORDER$ORDER_ID$SEQ = "ORD_ORDER$ORDER_ID$SEQ";
+    
+    private static final String ORD_ORDER$BATCH_NO$SEQ = "ORD_ORDER$BATCH_NO$SEQ";
 
     private static final String ORD_OD_PROD$PROD_DETAL_ID$SEQ = "ORD_OD_PROD$PROD_DETAL_ID$SEQ";
 
@@ -94,5 +96,9 @@ public final class SequenceUtil {
     
     public static Long createdeliverInfoId() {
     	return SeqUtil.getNewId(ORD_OD_DELIVER_INFO$REGION_ID$SEQ);
+    }
+    
+    public static Long createBatchNo() {
+    	return SeqUtil.getNewId(ORD_ORDER$BATCH_NO$SEQ);
     }
 }
