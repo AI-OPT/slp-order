@@ -903,7 +903,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		OrdOrder afterOrdOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(),request.getOrderId());
 		if(afterOrdOrder==null) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"订单信息不存在[订单id:"+afterOrdOrder.getOrigOrderId()+"]");
+					"订单信息不存在[订单id:"+request.getOrderId()+"]");
 		}
 		//设置售后订单状态
 		afterOrdOrder.setState(request.getState()); 
