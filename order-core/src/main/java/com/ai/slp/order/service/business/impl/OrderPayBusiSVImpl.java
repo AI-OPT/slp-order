@@ -239,12 +239,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     private Long caluOrdersTotalPayFee(List<OrdOdFeeTotal> payFeeList) throws BusinessException,
             SystemException {
-        long total = 0;
+    	BigDecimal total = new BigDecimal(0);
         for (OrdOdFeeTotal bean : payFeeList) {
-            total = total + bean.getPayFee();
+        	BigDecimal singelFee = BigDecimal.valueOf(bean.getPayFee()).divide(new BigDecimal(1000L),2,BigDecimal.ROUND_HALF_UP);
+            total = total.add(singelFee);
         }
-        BigDecimal balance = BigDecimal.valueOf(total).divide(new BigDecimal(1000L),2,BigDecimal.ROUND_HALF_UP);
-    	BigDecimal decimal = balance.multiply(new BigDecimal(1000));
+    	BigDecimal decimal = total.multiply(new BigDecimal(1000));
         return decimal.longValue();
     }
 
