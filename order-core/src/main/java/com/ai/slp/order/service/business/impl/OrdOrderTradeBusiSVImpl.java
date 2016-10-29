@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +67,7 @@ import com.alibaba.fastjson.JSONObject;
 @Transactional
 public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 
-    private static final Log LOG = LogFactory.getLog(OrdOrderTradeBusiSVImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrdOrderTradeBusiSVImpl.class);
 
     @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
