@@ -291,7 +291,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 								  OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(ordOrder.getState())||
 								  OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
 							  //该商品为售后标识 不可打印
-							  throw new BusinessException("", "订单下商品处于售后状态,不可打印");
+							  throw new BusinessException("", "订单下商品处于售后未完成状态,不可打印");
 						  }
 					  }
 				  }
@@ -313,13 +313,12 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 							long buySum = ordOdProd.getBuySum();
 							String skuId = ordOdProd.getSkuId();
 							if(!prodSkuMap.isEmpty()) {
-								for (String key : prodSkuMap.keySet()) {
-									if(key.equals(skuId)){
-										Long mergeBuySum = prodSkuMap.get(key)+buySum;
-										prodSkuMap.put(key, mergeBuySum);
-									}else {
-										prodSkuMap.put(ordOdProd.getSkuId(), buySum);
-									}
+								Set<String> keySet = prodSkuMap.keySet();
+								if(keySet.contains(skuId)) {
+									Long mergeBuySum = prodSkuMap.get(skuId)+buySum;
+									prodSkuMap.put(skuId, mergeBuySum);
+								}else {
+									prodSkuMap.put(skuId, buySum);
 								}
 							}else {
 								prodSkuMap.put(ordOdProd.getSkuId(), buySum);
