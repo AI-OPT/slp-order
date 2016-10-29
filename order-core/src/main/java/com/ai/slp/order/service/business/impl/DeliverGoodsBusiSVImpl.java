@@ -57,7 +57,12 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"未能查询到指定的订单主表信息[订单id:"+request.getOrderId()+" ,租户id:"+request.getTenantId()+"]");
 		}
-		List<OrdOdProd> ordOdProds = this.getOrdOdProds(request);
+		if(!OrdersConstants.OrdOrder.State.WAIT_SEND.equals(ordOrder.getState())) {
+			logger.error("请确认该订单是否已经打印发货单[订单状态:"+ordOrder.getState()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"请确认该订单是否已经打印发货单!");
+		}
+		List<OrdOdProd> ordOdProds = this.getOrdOdProds(request.getTenantId(), request.getOrderId());
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
 				List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
@@ -72,7 +77,37 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 				}
 			}
 		}
-		/* 查询订单对应的配送信息*/
+		/* 获取子订单下的合并订单*/
+		List<OrdOrder> mergeOrders = ordOrderAtomSV.selectMergeOrderByBatchNo(ordOrder.getOrderId(),
+				ordOrder.getTenantId(), ordOrder.getBatchNo(),OrdersConstants.OrdOrder.State.WAIT_SEND);
+		for	 (OrdOrder mergeOrder : mergeOrders) {
+			List<OrdOdProd> mergeOrdOdProds = this.getOrdOdProds(request.getTenantId(), request.getOrderId());
+			for (OrdOdProd ordOdProd : mergeOrdOdProds) {
+				if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+					List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
+					for (OrdOrder order : ordOrderList) {
+						if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(order.getState())||
+							OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(order.getState())||
+							OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(order.getState())||
+							OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(order.getState()))) {
+							//该商品为售后标识 不可打印
+							throw new BusinessException("", "合并订单下商品未售后完成,不可进行发货");
+						}
+					}
+				}
+			}
+			/* 更新合并订单对应的配送信息*/
+			this.updateLogistics(mergeOrder, request);
+		}
+		/* 更新订单对应的配送信息*/
+		this.updateLogistics(ordOrder, request);
+	}
+	
+	
+	/**
+	 * 更新订单对应配送信息
+	 */
+	private void updateLogistics(OrdOrder ordOrder,DeliverGoodsRequest request) {
 		OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
 		if(ordOdLogistics==null) {
 			logger.error("未能查询到指定的配送信息[订单id:"+ ordOrder.getOrderId()+" ,租户id:"+ordOrder.getTenantId()+"]");
@@ -109,12 +144,12 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
     /**
 	  * 获取订单下的商品信息
 	  */
-	private List<OrdOdProd> getOrdOdProds(DeliverGoodsRequest request) {
-		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByOrd(request.getTenantId(), request.getOrderId());
+	private List<OrdOdProd> getOrdOdProds(String tenantId,long orderId) {
+		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByOrd(tenantId, orderId);
 		if(CollectionUtil.isEmpty(ordOdProds)) {
-			logger.warn("未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+			logger.warn("未能查询到指定的订单商品明细信息[订单id:"+orderId+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+					"未能查询到指定的订单商品明细信息[订单id:"+orderId+"]");
 		}
 		return ordOdProds;
 	}
