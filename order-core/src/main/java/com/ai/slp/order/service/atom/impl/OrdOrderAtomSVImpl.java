@@ -64,4 +64,12 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
         return MapperFactory.getOrdOrderMapper().selectByExample(example);
 	}
 	
+	@Override
+	public List<OrdOrder> selectMergeOrderByBatchNo(long orderId,String tenantId, long batchNo,String state) {
+		OrdOrderCriteria example = new OrdOrderCriteria();
+		example.createCriteria().andTenantIdEqualTo(tenantId).andBatchNoEqualTo(batchNo).andOrderIdNotEqualTo(orderId)
+		.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO).andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_SEND);
+		return MapperFactory.getOrdOrderMapper().selectByExample(example);
+	}
+	
 }

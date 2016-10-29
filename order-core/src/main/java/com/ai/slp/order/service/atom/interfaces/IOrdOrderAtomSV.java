@@ -22,4 +22,6 @@ public interface IOrdOrderAtomSV {
     public void updateStateByOrderId(String tenantId,Long orderId,String state);
     
     List<OrdOrder> selectByBatchNo(long orderId,String tenantId,long batchNo);
+    
+    List<OrdOrder> selectMergeOrderByBatchNo(long orderId,String tenantId, long batchNo,String state) ;
 }
