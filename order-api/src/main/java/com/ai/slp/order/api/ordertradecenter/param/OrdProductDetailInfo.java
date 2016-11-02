@@ -14,6 +14,11 @@ public class OrdProductDetailInfo extends BaseInfo{
     private String accountId;
     
     /**
+     * 积分令牌ID 
+     */
+    private String tokenId;
+    
+    /**
      * 运费
      */
     private long freight;
@@ -111,5 +116,13 @@ public class OrdProductDetailInfo extends BaseInfo{
 
 	public void setSupplierId(String supplierId) {
 		this.supplierId = supplierId;
+	}
+
+	public String getTokenId() {
+		return tokenId;
+	}
+
+	public void setTokenId(String tokenId) {
+		this.tokenId = tokenId;
 	}
 }
