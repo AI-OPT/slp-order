@@ -91,6 +91,8 @@ public class OrdOrder {
 
     private String flag;
 
+    private String tokenId;
+
     public long getOrderId() {
         return orderId;
     }
@@ -441,5 +443,13 @@ public class OrdOrder {
 
     public void setFlag(String flag) {
         this.flag = flag == null ? null : flag.trim();
+    }
+
+    public String getTokenId() {
+        return tokenId;
+    }
+
+    public void setTokenId(String tokenId) {
+        this.tokenId = tokenId == null ? null : tokenId.trim();
     }
 }

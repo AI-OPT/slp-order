@@ -3084,6 +3084,76 @@ public class OrdOrderCriteria {
             addCriterion("FLAG not between", value1, value2, "flag");
             return (Criteria) this;
         }
+
+        public Criteria andTokenIdIsNull() {
+            addCriterion("TOKEN_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdIsNotNull() {
+            addCriterion("TOKEN_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdEqualTo(String value) {
+            addCriterion("TOKEN_ID =", value, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdNotEqualTo(String value) {
+            addCriterion("TOKEN_ID <>", value, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdGreaterThan(String value) {
+            addCriterion("TOKEN_ID >", value, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdGreaterThanOrEqualTo(String value) {
+            addCriterion("TOKEN_ID >=", value, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdLessThan(String value) {
+            addCriterion("TOKEN_ID <", value, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdLessThanOrEqualTo(String value) {
+            addCriterion("TOKEN_ID <=", value, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdLike(String value) {
+            addCriterion("TOKEN_ID like", value, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdNotLike(String value) {
+            addCriterion("TOKEN_ID not like", value, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdIn(List<String> values) {
+            addCriterion("TOKEN_ID in", values, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdNotIn(List<String> values) {
+            addCriterion("TOKEN_ID not in", values, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdBetween(String value1, String value2) {
+            addCriterion("TOKEN_ID between", value1, value2, "tokenId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTokenIdNotBetween(String value1, String value2) {
+            addCriterion("TOKEN_ID not between", value1, value2, "tokenId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
