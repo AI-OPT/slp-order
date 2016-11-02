@@ -116,11 +116,13 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	OrderResInfo orderResInfo=new OrderResInfo();
         	//积分账户id
         	String accountId = ordProductDetailInfo.getAccountId();
+        	//积分令牌id
+        	String tokenId=ordProductDetailInfo.getTokenId();
         	String remark = ordProductDetailInfo.getRemark();
         	String supplierId = ordProductDetailInfo.getSupplierId();
         	/* 1.创建业务订单,并返回订单Id*/
         	long orderId = this.createOrder(ordBaseInfo,accountId,beforSubmitOrder,
-        			request.getTenantId(),sysDate,remark,supplierId);
+        			request.getTenantId(),sysDate,remark,supplierId,tokenId);
         	/* 2.创建商品明细,费用明细信息 */
         	Map<String, Object> mapProduct = this.createProdInfo(request,ordProductDetailInfo, sysDate, 
         			orderId,client,supplierId);
@@ -161,7 +163,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private long createOrder(OrdBaseInfo ordBaseInfo,String accountId,OrderMonitorBeforResponse beforSubmitOrder,
-    		String tenantId,Timestamp sysDate,String remark,String supplierId) {
+    		String tenantId,Timestamp sysDate,String remark,String supplierId,String tokenId) {
         OrdOrder ordOrder = new OrdOrder();
         long orderId = SequenceUtil.createOrderId();
         ordOrder.setOrderId(orderId);
@@ -174,6 +176,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setIpAddress(ordBaseInfo.getIpAddress());
         ordOrder.setAcctId(ordBaseInfo.getAcctId());
         ordOrder.setAccountId(accountId);
+        ordOrder.setTokenId(tokenId);// 积分令牌Id
         ordOrder.setProvinceCode(ordBaseInfo.getProvinceCode());
         ordOrder.setCityCode(ordBaseInfo.getCityCode());
         ordOrder.setChlId(ordBaseInfo.getChlId()); 
