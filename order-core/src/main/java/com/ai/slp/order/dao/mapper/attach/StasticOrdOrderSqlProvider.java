@@ -28,7 +28,7 @@ public class StasticOrdOrderSqlProvider {
         seqBuffer.append(" and oo.sub_flag = '" + "N"+"'");
         String supplierId = param.containsKey("supplierId") ? (String) param.get("supplierId") : null;
         if (!StringUtil.isBlank(supplierId)){
-        	seqBuffer.append(" and oo.supplier_id = " + supplierId);
+        	seqBuffer.append(" and oo.supplier_id = '" + supplierId+"'");
         }
         if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") == null) {
             seqBuffer.append(" and oo.order_time >= '" + param.get("orderTimeBegin")+ "'");
@@ -77,7 +77,7 @@ public class StasticOrdOrderSqlProvider {
          }
          String supplierId = param.containsKey("supplierId") ? (String) param.get("supplierId") : null;
          if (!StringUtil.isBlank(supplierId)){
-        	 seqBuffer.append(" and oo.supplier_id = " + supplierId);
+        	 seqBuffer.append(" and oo.supplier_id = '" + supplierId+"'");
          }
          seqBuffer.append(" and oo.sub_flag = '" + "N"+"'");
          if (param.get("orderTimeBegin") != null && param.get("orderTimeEnd") == null) {
