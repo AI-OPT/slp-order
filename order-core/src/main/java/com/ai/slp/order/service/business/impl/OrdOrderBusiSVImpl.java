@@ -756,14 +756,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		String[] str = arr.split(",");
         		List<String> list = Arrays.asList(str);
         		boolean flag=arr.equals(states);
-        		if(!(list.contains(states)||flag)) { //true  false    false true     false false 
+        		if(!(list.contains(states)||flag)) { 
         			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
         			pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());//优惠金额
         		}
-        	/*	if(!flag) {
-        			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
-        			pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());//优惠金额
-        		}*/
     			OrdOrderCriteria exampleOrder=new OrdOrderCriteria();
     			OrdOrderCriteria.Criteria criteriaOrder = exampleOrder.createCriteria();
     			criteriaOrder.andParentOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
