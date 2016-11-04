@@ -742,7 +742,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                   	//获取用户名,绑定手机号
                   	userName =dataJson.get("userName");
                   	phone =dataJson.get("phone");
-                 }
+                }
         		pOrderVo.setUserName(userName==null?null:userName.toString()); 
        	        pOrderVo.setUserTel(phone==null?null:phone.toString());
        	        long userEnd=System.currentTimeMillis();
@@ -753,11 +753,17 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         				"ORD_ORDER", "ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
         		pOrderVo.setDeliveryFlagName(sysParamDf==null?"":sysParamDf.getColumnDesc());
         		String arr="21,212,213,312,22,23,31,92,93,94,95";  //售后状态
+        		String[] str = arr.split(",");
+        		List<String> list = Arrays.asList(str);
         		boolean flag=arr.equals(states);
-        		if(!flag) {
+        		if(list.contains(states)&&flag) { 
         			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
         			pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());//优惠金额
         		}
+        	/*	if(!flag) {
+        			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
+        			pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());//优惠金额
+        		}*/
     			OrdOrderCriteria exampleOrder=new OrdOrderCriteria();
     			OrdOrderCriteria.Criteria criteriaOrder = exampleOrder.createCriteria();
     			criteriaOrder.andParentOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
@@ -770,7 +776,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             		List<String> asList = Arrays.asList(strState); 
     				criteriaOrder.andStateIn(asList);
     			}
-    			if(!flag) {
+    			if(list.contains(states)&&flag) {
     				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO);
     			}else {
     				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.YES); 
@@ -845,25 +851,20 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     				}
     				pOrderVo.setOrderList(orderList);
     			}
-        		if(!flag) {
+        		if(list.contains(states)&&flag) {
         			OrdOdFeeProdCriteria exampleFeeProd = new OrdOdFeeProdCriteria();
         			OrdOdFeeProdCriteria.Criteria criteriaFeeProd = exampleFeeProd.createCriteria();
         			criteriaFeeProd.andOrderIdEqualTo(behindOrdOrderAttach.getOrderId()); //父订单id
         			List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByExample(exampleFeeProd);
         			long points = 0; //积分
-        			//long totalCouponFee=0;//优惠券
         			if (!CollectionUtil.isEmpty(orderFeeProdList)) {
         				for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) { 
         					if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
         						points+=ordOdFeeProd.getPaidFee();
         					}
-        				/*	if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
-        						totalCouponFee+=ordOdFeeProd.getPaidFee();
-        					}*/
         				}
         			}
         			pOrderVo.setPoints(points);
-        			//pOrderVo.setTotalCouponFee(totalCouponFee);
         		}
         	pOrderVo.setTotalProdSize(totalProdSize);
     		orderVoList.add(pOrderVo);
