@@ -756,7 +756,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
         		String[] str = arr.split(",");
         		List<String> list = Arrays.asList(str);
         		boolean flag=arr.equals(states);
-        		if(list.contains(states)&&flag) { 
+        		if(!(list.contains(states)||flag)) { //true  false    false true     false false 
         			pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
         			pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());//优惠金额
         		}
@@ -776,7 +776,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             		List<String> asList = Arrays.asList(strState); 
     				criteriaOrder.andStateIn(asList);
     			}
-    			if(list.contains(states)&&flag) {
+    			if(!(list.contains(states)||flag)) {
     				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO);
     			}else {
     				criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.YES); 
@@ -851,7 +851,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
     				}
     				pOrderVo.setOrderList(orderList);
     			}
-        		if(list.contains(states)&&flag) {
+        		if(!(list.contains(states)||flag)) {
         			OrdOdFeeProdCriteria exampleFeeProd = new OrdOdFeeProdCriteria();
         			OrdOdFeeProdCriteria.Criteria criteriaFeeProd = exampleFeeProd.createCriteria();
         			criteriaFeeProd.andOrderIdEqualTo(behindOrdOrderAttach.getOrderId()); //父订单id
