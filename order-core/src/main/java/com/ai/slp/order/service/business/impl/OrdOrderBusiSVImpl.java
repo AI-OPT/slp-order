@@ -280,6 +280,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
                 ordProductVo.setSkuStorageId(ordOdProd.getSkuStorageId());//倉庫ID
                 ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
                 ordProductVo.setProductImage(productImage);
+                ordProductVo.setImageUrl(ordOdProd.getProdDesc()); //图片id
+                ordProductVo.setProdExtendInfo(ordOdProd.getProdSn()); //图片类型
                /* ordProductVo.setProdExtendInfo(this.getProdExtendInfo(tenantId, orderId,
                         ordOdProd.getProdDetalId()));*/
                 productList.add(ordProductVo);
@@ -414,6 +416,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
             ordOrderVo.setParentOrderId(order.getParentOrderId());
             ordOrderVo.setUserId(order.getUserId());//买家帐号(用户号)
             ordOrderVo.setAccountId(order.getAccountId());
+            ordOrderVo.setToken(order.getTokenId());//积分令牌
             ordOrderVo.setDownstreamOrderId(order.getDownstreamOrderId());
             JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
             Object userName=null;
