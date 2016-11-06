@@ -367,6 +367,18 @@ public class ValidateUtils {
 		if(condition.getProdSum()<=0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "售后数量不能小于等于0");
 		}
+		String imageId = condition.getImageId();
+		String afterSaleReason = condition.getAfterSaleReason();
+		if(!StringUtil.isBlank(imageId)) {
+			if(imageId.length()>64) {
+				throw new BusinessException("", "图片id位数不能超过64位");
+			}
+		}
+		if(!StringUtil.isBlank(afterSaleReason)) {
+			if(afterSaleReason.length()>200) {
+				throw new BusinessException("", "退款理由不能超过200字");
+			}
+		}
 	}
 	
 	/**
