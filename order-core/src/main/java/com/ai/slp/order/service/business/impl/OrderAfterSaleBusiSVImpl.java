@@ -269,7 +269,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		afterOrder.setOperId(request.getOperId());
 		afterOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//设置售后标识 Y
 		afterOrder.setOrigOrderId(order.getOrderId());
-		afterOrder.setRemark("");
+		afterOrder.setRemark(request.getAfterSaleReason()); //退款理由 
 		this.insertOrderState(sysDate, afterOrder);
 		OrdOdFeeTotal odFeeTotal =null;
 		long afterTotalFee=0;
@@ -289,6 +289,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			afterOrdOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 			afterOrdOdProd.setOrderId(afterOrderId);
 			afterOrdOdProd.setUpdateOperId(request.getOperId());//变更工号
+			afterOrdOdProd.setProdDesc(request.getImageId()); //图片id
+			afterOrdOdProd.setProdSn(request.getImageType()); //图片类型
 			ordOdProdAtomSV.insertSelective(afterOrdOdProd);
 			odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
 					order.getOrderId());
@@ -343,6 +345,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		afterOrdOdProd.setUpdateTime(DateUtil.getSysDate());
     		afterOrdOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
     		afterOrdOdProd.setOrderId(afterOrderId);
+    		afterOrdOdProd.setProdDesc(request.getImageId()); //图片id
+			afterOrdOdProd.setProdSn(request.getImageType()); //图片类型
     		afterOrdOdProd.setUpdateOperId(request.getOperId());
     		ordOdProdAtomSV.insertSelective(afterOrdOdProd);
     		/* 7.生成售后订单费用总表*/
