@@ -119,7 +119,20 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         
         //更新概览
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
-        sendCartProdMds(odCartProd);
+      //  sendCartProdMds(odCartProd);
+        //若商品数量为空或零,删除购物车中商品
+        if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
+            cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
+        }else {
+            OrdOdCartProd cartProd0 = cartProdAtomSV.queryByProdOfCart(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
+            //若没有添加商品,则直接添加
+            if (cartProd0 ==null){
+                cartProdAtomSV.installCartProd(odCartProd);
+            }else {
+                cartProd0.setBuySum(odCartProd.getBuySum());
+                cartProdAtomSV.updateCartProdById(cartProd0);
+            }
+        }
 
         cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
