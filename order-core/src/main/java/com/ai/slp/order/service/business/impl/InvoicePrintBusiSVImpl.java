@@ -152,7 +152,8 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		BigDecimal b2 = BigDecimal.valueOf(invoiceAmount).divide(new BigDecimal(1000));
 		double totalMoney=b1.add(b2).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue(); 
 		if( totalMoney!=request.getInvoiceTotalFee()) {
-			throw new BusinessException("", "发票总额和商品获取的额度不一致");
+			throw new BusinessException("", "发票总额和商品获取的额度不一致,实际发票金额:"+
+					totalMoney+",传入的金额:"+request.getInvoiceTotalFee());
 		}
 		OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
 		if(ordOdInvoice==null) {
@@ -162,7 +163,11 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		ordOdInvoice.setInvoiceId(request.getInvoiceId());
 		ordOdInvoice.setInvoiceNum(request.getInvoiceNum());
 		String invoiceTime = request.getInvoiceTime();
-		ordOdInvoice.setInvoiceTime(DateUtil.getTimestamp(DateUtil.str2Date(invoiceTime).getTime()));
+		if(StringUtil.isBlank(invoiceTime)) {
+			ordOdInvoice.setInvoiceTime(null);
+		}else {
+			ordOdInvoice.setInvoiceTime(DateUtil.getTimestamp(DateUtil.str2Date(invoiceTime).getTime()));
+		}
 		ordOdInvoice.setInvoiceStatus(request.getInvoiceStatus());
 		ordOdInvoiceAtomSV.updateByPrimaryKey(ordOdInvoice);
 	}
