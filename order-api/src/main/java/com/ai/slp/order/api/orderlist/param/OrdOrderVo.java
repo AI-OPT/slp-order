@@ -78,6 +78,11 @@ public class OrdOrderVo extends BaseInfo {
 	 * 积分账户id
 	 */
 	private String accountId;
+	
+	/**
+	 * 积分令牌
+	 */
+	private String token;
 
 	/**
 	 * 积分中心返回的id
@@ -766,5 +771,13 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setAftercontactInfo(String aftercontactInfo) {
 		this.aftercontactInfo = aftercontactInfo;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 }
