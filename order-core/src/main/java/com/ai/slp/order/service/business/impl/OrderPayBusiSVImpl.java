@@ -680,6 +680,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ProductInfoQuery productInfoQuery = new ProductInfoQuery();
         productInfoQuery.setTenantId(tenantId);
         productInfoQuery.setProductId(productId);
+        //TODO
+        if(supplierId==2000) {
+        	supplierId=-1;
+        }
         productInfoQuery.setSupplierId(String.valueOf(supplierId));
         IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
         ProductRoute productRoute = iProductServerSV.queryRouteGroupOfProd(productInfoQuery);
