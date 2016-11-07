@@ -280,9 +280,12 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 		 * @return 
 		   */
 		  public Map<String, Long> getAfterOrderInfos(OrdOrder order,Map<String,Long> prodSkuMap) {
+			  boolean flag=false;
 			  List<OrdOdProd> ordOdProds = this.getOrdOdProds(order.getTenantId(),order.getOrderId());
 			  for (OrdOdProd ordOdProd : ordOdProds) {
 				  if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+					  //判断该订单下的商品是否存在售后商品
+					  flag=true; 
 					  /* 判断该商品对应的售后订单状态*/
 					  List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
 					  for (OrdOrder ordOrder : ordOrderList) {
@@ -296,36 +299,38 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 					  }
 				  }
 			  }
-			  OrdOrderCriteria example=new OrdOrderCriteria();
-			  OrdOrderCriteria.Criteria criteria = example.createCriteria();
-			  criteria.andOrigOrderIdEqualTo(order.getOrderId());
-			  criteria.andTenantIdEqualTo(order.getTenantId());
-			  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
-			  if(!CollectionUtil.isEmpty(ordOrderList)) {
-					for (OrdOrder ordOrder : ordOrderList) {
-						OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
-						OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
-						prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
-						prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId()); 
-						List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
-						if(!CollectionUtil.isEmpty(prodList)) {
-							OrdOdProd ordOdProd = prodList.get(0);
-							long buySum = ordOdProd.getBuySum();
-							String skuId = ordOdProd.getSkuId();
-							if(!prodSkuMap.isEmpty()) {
-								Set<String> keySet = prodSkuMap.keySet();
-								if(keySet.contains(skuId)) {
-									Long mergeBuySum = prodSkuMap.get(skuId)+buySum;
-									prodSkuMap.put(skuId, mergeBuySum);
-								}else {
-									prodSkuMap.put(skuId, buySum);
-								}
-							}else {
-								prodSkuMap.put(ordOdProd.getSkuId(), buySum);
-							}
-						}
-					}
-				}
+			  if(flag) {
+				  OrdOrderCriteria example=new OrdOrderCriteria();
+				  OrdOrderCriteria.Criteria criteria = example.createCriteria();
+				  criteria.andOrigOrderIdEqualTo(order.getOrderId());
+				  criteria.andTenantIdEqualTo(order.getTenantId());
+				  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+				  if(!CollectionUtil.isEmpty(ordOrderList)) {
+					  for (OrdOrder ordOrder : ordOrderList) {
+						  OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
+						  OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
+						  prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
+						  prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId()); 
+						  List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
+						  if(!CollectionUtil.isEmpty(prodList)) {
+							  OrdOdProd ordOdProd = prodList.get(0);
+							  long buySum = ordOdProd.getBuySum();
+							  String skuId = ordOdProd.getSkuId();
+							  if(!prodSkuMap.isEmpty()) {
+								  Set<String> keySet = prodSkuMap.keySet();
+								  if(keySet.contains(skuId)) {
+									  Long mergeBuySum = prodSkuMap.get(skuId)+buySum;
+									  prodSkuMap.put(skuId, mergeBuySum);
+								  }else {
+									  prodSkuMap.put(skuId, buySum);
+								  }
+							  }else {
+								  prodSkuMap.put(ordOdProd.getSkuId(), buySum);
+							  }
+						  }
+					  }
+				  }
+			  }
 			  return prodSkuMap;
 		}
 		  
