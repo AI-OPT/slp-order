@@ -243,23 +243,18 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			respVo.setSpecification(""); 
 			respVo.setMaterialName(ordOdProd.getProdName());
 			BigDecimal salePrice = BigDecimal.valueOf(ordOdProd.getSalePrice()).divide(new BigDecimal(1000));
-		//	String salePrice = String.valueOf(ordOdProd.getSalePrice()/1000);
 			respVo.setPrice(salePrice.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
 			respVo.setQuantity(String.valueOf(ordOdProd.getBuySum()));
 			respVo.setUnit("");
 			respVo.setDiscountAmount("0.00");
 			respVo.setRate("0.17");
-			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(1000));
-			BigDecimal b1 =taxValue.multiply(new BigDecimal(0.17));
-			BigDecimal b2 = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000));
-		//	String taxValue = String.valueOf((ordOdProd.getTotalFee()/1000)*0.17);
-		//	String amoutValue = String.valueOf(ordOdProd.getAdjustFee()/1000);
-		//	BigDecimal b1 = new BigDecimal(taxValue);
-		//	BigDecimal b2 = new BigDecimal(amoutValue);
-			respVo.setTax(b1.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
-			respVo.setAmount(b2.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
-			String s=b1.add(b2).setScale(2,BigDecimal.ROUND_HALF_UP).toString(); 
-			respVo.setTaxAmount(s);
+			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000));
+			BigDecimal b1 =taxValue.multiply(new BigDecimal(0.17));  //税金
+			BigDecimal b2 = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000)); //含税金额
+			String s=b2.subtract(b1).setScale(2,BigDecimal.ROUND_HALF_UP).toString(); 
+			respVo.setTax(b1.setScale(2,BigDecimal.ROUND_HALF_UP).toString());//税金
+			respVo.setAmount(s); //不含税金额
+			respVo.setTaxAmount(b2.setScale(2,BigDecimal.ROUND_HALF_UP).toString()); //含税金额
 			respVo.setRemark(order.getRemark()==null?"":order.getRemark());
 			invoiceList.add(respVo);
 		}
