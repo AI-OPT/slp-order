@@ -140,17 +140,14 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		String supplierId = null;
 		//计算发票金额
 		for (OrdOdProd ordOdProd : prods) {
-			invoiceTotal=ordOdProd.getTotalFee()+invoiceTotal;
 			invoiceAmount=ordOdProd.getAdjustFee()+invoiceAmount;
 			supplierId = ordOdProd.getSupplierId();
 		}
 		if((request.getCompanyId().equals(supplierId))) {
 			throw new BusinessException("", "公司代码(销售方id)和商品中的销售方id不一致");
 		}
-		BigDecimal taxValue = BigDecimal.valueOf(invoiceTotal).divide(new BigDecimal(1000));
-		BigDecimal b1 =taxValue.multiply(new BigDecimal(0.17));
-		BigDecimal b2 = BigDecimal.valueOf(invoiceAmount).divide(new BigDecimal(1000));
-		double totalMoney=b1.add(b2).setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue(); 
+		BigDecimal b2 = BigDecimal.valueOf(invoiceAmount).divide(new BigDecimal(1000)); //含税金额
+		double totalMoney=b2.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue(); 
 		if( totalMoney!=request.getInvoiceTotalFee()) {
 			throw new BusinessException("", "发票总额和商品获取的额度不一致,实际发票金额:"+
 					totalMoney+",传入的金额:"+request.getInvoiceTotalFee());
