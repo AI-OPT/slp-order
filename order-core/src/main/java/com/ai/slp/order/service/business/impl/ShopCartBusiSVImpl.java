@@ -179,7 +179,21 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         pointsVo.setProdTotal(pointsVo.getProdTotal()+addNum);//更新商品总数量
         //更新概览
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
-        sendCartProdMds(odCartProd);
+     //   sendCartProdMds(odCartProd);
+        //若商品数量为空或零,删除购物车中商品
+        if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
+            cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
+        }else {
+            OrdOdCartProd cartProd0 = cartProdAtomSV.queryByProdOfCart(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
+            //若没有添加商品,则直接添加
+            if (cartProd0 ==null){
+                cartProdAtomSV.installCartProd(odCartProd);
+            }else {
+                cartProd0.setBuySum(odCartProd.getBuySum());
+                cartProdAtomSV.updateCartProdById(cartProd0);
+            }
+        }
+
 
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
@@ -222,7 +236,21 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             delSuccessNum++;
 
             prod.setBuySum(0l);//商品数为零,表示删除
-            sendCartProdMds(prod);
+           // sendCartProdMds(prod);
+            //若商品数量为空或零,删除购物车中商品
+            if (prod.getBuySum()==null || new Long(0l).equals(prod.getBuySum())){
+                cartProdAtomSV.deleteByProdId(prod.getTenantId(),prod.getUserId(),prod.getSkuId());
+            }else {
+                OrdOdCartProd cartProd0 = cartProdAtomSV.queryByProdOfCart(prod.getTenantId(),prod.getUserId(),prod.getSkuId());
+                //若没有添加商品,则直接添加
+                if (cartProd0 ==null){
+                    cartProdAtomSV.installCartProd(prod);
+                }else {
+                    cartProd0.setBuySum(prod.getBuySum());
+                    cartProdAtomSV.updateCartProdById(cartProd0);
+                }
+            }
+
         }
         CartProdOptRes optRes = new CartProdOptRes();
         ShopCartCachePointsVo cachePointsVo = queryCartPoints(iCacheClient,tenantId,userId);
