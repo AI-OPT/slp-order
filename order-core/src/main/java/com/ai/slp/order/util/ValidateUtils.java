@@ -373,6 +373,9 @@ public class ValidateUtils {
 			if(imageId.length()>64) {
 				throw new BusinessException("", "图片id位数不能超过64位");
 			}
+			if(StringUtil.isBlank(condition.getImageType())) {
+				throw new BusinessException("", "图片id存在的情况下图片类型不能为空");
+			}
 		}
 		if(!StringUtil.isBlank(afterSaleReason)) {
 			if(afterSaleReason.length()>200) {
