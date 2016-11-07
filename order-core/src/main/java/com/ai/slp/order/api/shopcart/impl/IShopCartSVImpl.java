@@ -38,6 +38,9 @@ public class IShopCartSVImpl implements IShopCartSV {
         CartProdOptRes optRes = null;
         try {
             optRes = shopCartBusiSV.addCartProd(cartProd);
+            ResponseHeader responseHeader = new ResponseHeader(true,
+                    ExceptCodeConstants.Special.SUCCESS, "成功");
+            optRes.setResponseHeader(responseHeader);
         }catch (BusinessException|SystemException e){
             optRes = new CartProdOptRes();
             optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
@@ -62,7 +65,7 @@ public class IShopCartSVImpl implements IShopCartSV {
         try {
             List<CartProdInfo> prodInfos = shopCartBusiSV.queryCartProdOfUser(userInfo.getTenantId(),userInfo.getUserId());
             prodList.setProdInfoList(prodInfos);
-            prodList.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"OK"));
+            prodList.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
         }catch (BusinessException|SystemException e){
             prodList.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
         }
@@ -86,6 +89,7 @@ public class IShopCartSVImpl implements IShopCartSV {
         CartProdOptRes optRes = null;
         try {
             optRes = shopCartBusiSV.updateCartProd(cartProd);
+            optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
         }catch (BusinessException|SystemException e){
             optRes = new CartProdOptRes();
             optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
@@ -109,6 +113,7 @@ public class IShopCartSVImpl implements IShopCartSV {
         CartProdOptRes optRes = null;
         try {
             optRes = shopCartBusiSV.deleteCartProd(multiCartProd.getTenantId(),multiCartProd.getUserId(),multiCartProd.getSkuIdList());
+            optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
         }catch (BusinessException|SystemException e){
             optRes = new CartProdOptRes();
             optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
@@ -132,6 +137,7 @@ public class IShopCartSVImpl implements IShopCartSV {
         CartProdOptRes optRes = null;
         try {
             optRes = shopCartBusiSV.queryCartOptions(userInfo.getTenantId(),userInfo.getUserId());
+            optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
         }catch (BusinessException|SystemException e){
             optRes = new CartProdOptRes();
             optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
