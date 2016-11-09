@@ -88,10 +88,12 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 		/* 获取子订单下的售后订单商品数量*/
 		prodSkuMap = this.getAfterOrderInfos(order,prodSkuMap);
 		/* 获取子订单下的合并订单*/
-		List<OrdOrder> mergeOrders = ordOrderAtomSV.selectByBatchNo(order.getOrderId(),
-				order.getTenantId(), order.getBatchNo());
-		for (OrdOrder mergeOrder : mergeOrders) {
-			prodSkuMap = this.getAfterOrderInfos(mergeOrder,prodSkuMap);
+		if(order.getBatchNo()!=0) {
+			List<OrdOrder> mergeOrders = ordOrderAtomSV.selectByBatchNo(order.getOrderId(),
+					order.getTenantId(), order.getBatchNo());
+			for (OrdOrder mergeOrder : mergeOrders) {
+				prodSkuMap = this.getAfterOrderInfos(mergeOrder,prodSkuMap);
+			}
 		}
 		List<DeliverGoodsPrintVo> list=new ArrayList<DeliverGoodsPrintVo>();
 		long sum=0;
@@ -326,6 +328,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 				  OrdOrderCriteria.Criteria criteria = example.createCriteria();
 				  criteria.andOrigOrderIdEqualTo(order.getOrderId());
 				  criteria.andTenantIdEqualTo(order.getTenantId());
+				  criteria.andStateNotEqualTo( OrdersConstants.OrdOrder.State.AUDIT_FAILURE);
 				  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
 				  if(!CollectionUtil.isEmpty(ordOrderList)) {
 					  for (OrdOrder ordOrder : ordOrderList) {
