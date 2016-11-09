@@ -1,6 +1,8 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -365,7 +367,12 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 	 */
 	private void invoiceInfos(DeliverInfoProd deliverInfoProd,DeliverGoodsPrintVo invoicePrintVo
 			,OrdOdDeliverInfo ordOdDeliverInfo,List<DeliverGoodsPrintVo> list){ 
-		invoicePrintVo.setSalePrice(String.valueOf(deliverInfoProd.getSalePrice()/1000));//厘转元
+		if(deliverInfoProd.getSalePrice() == 0){
+			invoicePrintVo.setSalePrice("0.00");;
+        }else {
+        	BigDecimal balance = BigDecimal.valueOf(deliverInfoProd.getSalePrice()).divide(new BigDecimal(1000L),2,BigDecimal.ROUND_HALF_UP);
+        	invoicePrintVo.setSalePrice(new DecimalFormat(",###,##0.00").format(balance));//厘转元
+        }
 		List<Long> parseLong = (List<Long>) JSON.parse(ordOdDeliverInfo.getHorOrderId());
 		invoicePrintVo.setHorOrderId(parseLong);
 		list.add(invoicePrintVo);
