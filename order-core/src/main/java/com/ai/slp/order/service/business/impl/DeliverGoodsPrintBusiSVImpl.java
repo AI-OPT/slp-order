@@ -334,6 +334,11 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 				  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
 				  if(!CollectionUtil.isEmpty(ordOrderList)) {
 					  for (OrdOrder ordOrder : ordOrderList) {
+						  //退费单 审核失败(213)情况下
+						  if(OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(ordOrder.getBusiCode())&&
+								  OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState())) {
+							  continue;
+						  }
 						  OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
 						  OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
 						  prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
