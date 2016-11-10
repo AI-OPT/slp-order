@@ -16,5 +16,11 @@ public interface IOrdOdInvoiceAtomSV {
 	int countByExample(OrdOdInvoiceCriteria example);
 	
 	int updateByPrimaryKey(OrdOdInvoice record);
+	
+	List<OrdOdInvoice> selectByCondition(String subFlag,Integer pageNo,Integer pageSize,Long orderId,
+            String tenantId, String invoiceTitle, String invoiceStatus);
+	
+	int count(String subFlag,Long orderId,String tenantId, 
+			String invoiceTitle, String invoiceStatus);
 
 }
