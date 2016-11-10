@@ -85,26 +85,33 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 			}
 		}
 		/* 获取子订单下的合并订单*/
-		List<OrdOrder> mergeOrders = ordOrderAtomSV.selectMergeOrderByBatchNo(ordOrder.getOrderId(),
-				ordOrder.getTenantId(), ordOrder.getBatchNo(),OrdersConstants.OrdOrder.State.WAIT_SEND);
-		for	 (OrdOrder mergeOrder : mergeOrders) {
-			List<OrdOdProd> mergeOrdOdProds = this.getOrdOdProds(request.getTenantId(), request.getOrderId());
-			for (OrdOdProd ordOdProd : mergeOrdOdProds) {
-				if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
-					List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
-					for (OrdOrder order : ordOrderList) {
-						if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(order.getState())||
-							OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(order.getState())||
-							OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(order.getState())||
-							OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(order.getState()))) {
-							//该商品为售后标识 不可打印
-							throw new BusinessException("", "合并订单下商品未售后完成,不可进行发货");
+		if(ordOrder.getBatchNo()!=0) {
+			List<OrdOrder> mergeOrders = ordOrderAtomSV.selectMergeOrderByBatchNo(ordOrder.getOrderId(),
+					ordOrder.getTenantId(), ordOrder.getBatchNo(),OrdersConstants.OrdOrder.State.WAIT_SEND);
+			for	 (OrdOrder mergeOrder : mergeOrders) {
+				List<OrdOdProd> mergeOrdOdProds = this.getOrdOdProds(request.getTenantId(), request.getOrderId());
+				for (OrdOdProd ordOdProd : mergeOrdOdProds) {
+					if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+						List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
+						for (OrdOrder order : ordOrderList) {
+							if(ordOrderList.size()>1) { //多个售后订单 可能存在多个第一次审核失败的情况
+								if(OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(order.getState())) {
+									continue;
+								}
+							}
+							if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(order.getState())||
+									OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(order.getState())||
+									OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(order.getState())||
+									OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(order.getState()))) {
+								//该商品为售后标识 不可打印
+								throw new BusinessException("", "合并订单下商品未售后完成,不可进行发货");
+							}
 						}
 					}
 				}
+				/* 更新合并订单对应的配送信息*/
+				this.updateLogistics(mergeOrder, request);
 			}
-			/* 更新合并订单对应的配送信息*/
-			this.updateLogistics(mergeOrder, request);
 		}
 		/* 更新订单对应的配送信息*/
 		this.updateLogistics(ordOrder, request);
