@@ -17,7 +17,8 @@ public class OrdOdInvoiceSqlProvider {
         StringBuffer seqBuffer = new StringBuffer();
         seqBuffer.append("select oi.* from ord_order oo,ord_od_invoice oi where oo.SUB_FLAG= '" + param.get("subFlag")
         + "' and oo.tenant_id= '"+ param.get("tenantId") + "'");
-        if (param.get("orderId") != null)
+        Long orderId = (Long) param.get("orderId");
+        if (orderId!= null && orderId !=0)
             seqBuffer.append(" and oo.order_id = " + param.get("orderId"));
         String invoiceTitle = param.containsKey("invoiceTitle") ? (String) param.get("invoiceTitle") : null;
         if (!StringUtil.isBlank(invoiceTitle))
@@ -37,7 +38,8 @@ public class OrdOdInvoiceSqlProvider {
     	 StringBuffer seqBuffer = new StringBuffer();
          seqBuffer.append("select count(*) from ord_order oo,ord_od_invoice oi where oo.SUB_FLAG='" + param.get("subFlag")
          + "' and oo.TENANT_ID= '"+ param.get("tenantId") + "'");
-         if (param.get("orderId") != null)
+         Long orderId = (Long) param.get("orderId");
+         if (orderId!= null && orderId !=0)
              seqBuffer.append(" and oo.order_id = " + param.get("orderId"));
          String invoiceTitle = param.containsKey("invoiceTitle") ? (String) param.get("invoiceTitle") : null;
          if (!StringUtil.isBlank(invoiceTitle))
