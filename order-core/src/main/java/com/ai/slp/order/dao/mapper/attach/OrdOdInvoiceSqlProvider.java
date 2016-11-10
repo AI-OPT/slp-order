@@ -16,7 +16,7 @@ public class OrdOdInvoiceSqlProvider {
     public String queryInvoice(Map<String, Object> param) {
         StringBuffer seqBuffer = new StringBuffer();
         seqBuffer.append("select oi.order_id,oi.tenant_id,oi.invoice_content,oi.invoice_type,"
-        		+ "oi.invoice_status,oi.invoice_type,oi.invoice_id,oi.invoice_num from ord_order oo,ord_od_invoice oi where oo.SUB_FLAG= '" + param.get("subFlag")
+        		+ "oi.invoice_title,oi.invoice_status,oi.invoice_type,oi.invoice_id,oi.invoice_num from ord_order oo,ord_od_invoice oi where oo.SUB_FLAG= '" + param.get("subFlag")
         + "' and oo.tenant_id= '"+ param.get("tenantId") + "'");
         Long orderId = (Long) param.get("orderId");
         if (orderId!= null && orderId !=0)
