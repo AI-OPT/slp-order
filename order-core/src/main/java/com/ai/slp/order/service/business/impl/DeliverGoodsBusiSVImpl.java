@@ -70,7 +70,7 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 				List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
 				 for (OrdOrder order : ordOrderList) {
 				    if(ordOrderList.size()>1) { //多个售后订单 可能存在多个第一次审核失败的情况
-					   if(OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(ordOrder.getState())) {
+					   if(OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(order.getState())) {
 						   continue;
 					   }
 				    }
