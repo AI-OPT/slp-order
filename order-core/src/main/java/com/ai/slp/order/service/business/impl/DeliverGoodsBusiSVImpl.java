@@ -1,6 +1,7 @@
 package com.ai.slp.order.service.business.impl;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
+import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
@@ -66,7 +68,12 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
 				List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
-				for (OrdOrder order : ordOrderList) {
+				 for (OrdOrder order : ordOrderList) {
+				    if(ordOrderList.size()>1) { //多个售后订单 可能存在多个第一次审核失败的情况
+					   if(OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(ordOrder.getState())) {
+						   continue;
+					   }
+				    }
 					if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(order.getState())||
 						OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(order.getState())||
 						OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(order.getState())||
@@ -158,16 +165,33 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 	   * 获取商品对应的售后订单状态
 	   */
 	  public List<OrdOrder> createAfterOrder(OrdOdProd ordOdProd) {
-		  OrdOrderCriteria example=new OrdOrderCriteria();
-		  OrdOrderCriteria.Criteria criteria = example.createCriteria();
-		  criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
-		  criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
-		  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
-		  if(CollectionUtil.isEmpty(ordOrderList)) {
-			  logger.error("没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
-			  throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					  "没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
-		  }
-		return ordOrderList;
+		  	List<OrdOrder> orderList=new ArrayList<>();
+		  	//获取售后订单
+			OrdOrderCriteria example=new OrdOrderCriteria();
+			OrdOrderCriteria.Criteria criteria = example.createCriteria();
+			criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
+			criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
+			List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+			if(CollectionUtil.isEmpty(ordOrderList)) {
+				logger.error("没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+				throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+						"没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+			}
+			for (OrdOrder ordOrder : ordOrderList) {
+				//获取skuid对应的售后商品信息
+				OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
+				OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
+				prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
+				prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId());
+				prodCriteria.andSkuIdEqualTo(ordOdProd.getSkuId());
+				List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
+				if(!CollectionUtil.isEmpty(prodList)) {
+					OrdOdProd prod = prodList.get(0);
+					OrdOrder order = ordOrderAtomSV.selectByOrderId(prod.getTenantId(),
+							prod.getOrderId());
+					orderList.add(order);
+				}
+			}
+		return orderList;
 	  }
 }
