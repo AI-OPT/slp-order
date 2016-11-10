@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +135,6 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 					"商品信息不存在[订单id:"+orderId+"]");
 		}
 		long invoiceAmount=0;
-		long invoiceTotal=0;
 		String supplierId = null;
 		//计算发票金额
 		for (OrdOdProd ordOdProd : prods) {
@@ -216,7 +214,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			respVo.setBuyerTaxpayerNumber(
 					invoice.getBuyerTaxpayerNumber()==null?"":invoice.getBuyerTaxpayerNumber());
 			respVo.setBuyerCode(order.getUserId());
-			respVo.setBuyerName(odLogistics.getContactName());
+			respVo.setBuyerName(invoice.getInvoiceTitle()); //发票抬头
 			st.append(odLogistics.getProvinceCode()==null?"":iCacheSV.
         			getAreaName(odLogistics.getProvinceCode()));
 			st.append(odLogistics.getCityCode()==null?"":iCacheSV.
@@ -262,23 +260,15 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	
 	 private PageInfo<InvoicePrintVo> queryForPage(Integer pageNo,Integer pageSize,Long orderId,
 	            String tenantId, String invoiceTitle, String invoiceStatus) {
-		 	OrdOdInvoiceCriteria example = new OrdOdInvoiceCriteria();
-		 	List<InvoicePrintVo> invoicePrintVos=new ArrayList<InvoicePrintVo>();
-	        example.setOrderByClause("INVOICE_TIME DESC");//顺序号正序
-	        OrdOdInvoiceCriteria.Criteria criteria = example.createCriteria();
-	        criteria.andTenantIdEqualTo(tenantId);
-	        if (null!=orderId && 0!=orderId)
-	            criteria.andOrderIdEqualTo(orderId);
-	        if (StringUtils.isNotBlank(invoiceTitle))
-	            criteria.andInvoiceTitleLike("%"+invoiceTitle+"%");
-	        if (StringUtils.isNotBlank(invoiceStatus))
-	        	criteria.andInvoiceStatusEqualTo(invoiceStatus);
+		 String subFlag=OrdersConstants.OrdOrder.SubFlag.YES;
+		 int count = ordOdInvoiceAtomSV.count(subFlag,orderId,tenantId, 
+				 invoiceTitle, invoiceStatus);
+		 List<OrdOdInvoice> invoiceList = ordOdInvoiceAtomSV.selectByCondition(subFlag,pageNo, 
+				 pageSize, orderId,tenantId, invoiceTitle, invoiceStatus);
+		 List<InvoicePrintVo> invoicePrintVos=new ArrayList<InvoicePrintVo>();
 	        PageInfo<InvoicePrintVo> pageInfo = new PageInfo<InvoicePrintVo>();
 	        //设置总数
-	        pageInfo.setCount(ordOdInvoiceAtomSV.countByExample(example));
-	        example.setLimitStart((pageNo - 1) * pageSize);
-	        example.setLimitEnd(pageSize);
-	        List<OrdOdInvoice> invoiceList = ordOdInvoiceAtomSV.selectByExample(example);
+	        pageInfo.setCount(count);
 			if(!CollectionUtil.isEmpty(invoiceList)) {
 				for (OrdOdInvoice ordOdInvoice : invoiceList) {
 					InvoicePrintVo printVo=new InvoicePrintVo();
