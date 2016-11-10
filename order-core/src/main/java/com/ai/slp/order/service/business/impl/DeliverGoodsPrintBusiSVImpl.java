@@ -376,7 +376,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 			invoicePrintVo.setSalePrice("0.00");;
         }else {
         	BigDecimal balance = BigDecimal.valueOf(deliverInfoProd.getSalePrice()).divide(new BigDecimal(1000L),2,BigDecimal.ROUND_HALF_UP);
-        	invoicePrintVo.setSalePrice(new DecimalFormat(",###,##0.00").format(balance));//厘转元
+        	invoicePrintVo.setSalePrice(balance.toString());//厘转元
         }
 		List<Long> parseLong = (List<Long>) JSON.parse(ordOdDeliverInfo.getHorOrderId());
 		invoicePrintVo.setHorOrderId(parseLong);
