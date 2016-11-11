@@ -8,8 +8,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
-import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterResponse;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 
@@ -41,7 +39,7 @@ public interface IOrderTradeCenterSV {
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException;
 
-    /**
+  /*  *//**
      * 订单提交
      * 
      * @param request
@@ -52,10 +50,10 @@ public interface IOrderTradeCenterSV {
      * @ApiDocMethod
      * @ApiCode ORDER_APPLY_002
      * @RestRelativeURL ordertrade/apiApply
-     */
+     *//*
     @POST
     @Path("/apiApply")
     public OrderApiTradeCenterResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
-            SystemException;
+            SystemException;*/
 
 }
