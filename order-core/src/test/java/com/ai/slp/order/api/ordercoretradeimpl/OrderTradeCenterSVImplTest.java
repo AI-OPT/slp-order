@@ -56,30 +56,30 @@ public class OrderTradeCenterSVImplTest {
         ordProductInfo.setGiveJF(100);
         ordProductInfoList.add(ordProductInfo);
         
-        OrdProductInfo ordProductInfo1 = new OrdProductInfo();
+  /*    OrdProductInfo ordProductInfo1 = new OrdProductInfo();
         ordProductInfo1.setBuySum(5);
         //ordProductInfo1.setSupplierId(-1l);
         ordProductInfo1.setSkuId("0000000000000194");  //两个商品同一销售商 不同仓库
         ordProductInfo.setGiveJF(10);
-        ordProductInfoList.add(ordProductInfo1);
+        ordProductInfoList.add(ordProductInfo1);*/
         
-        OrdProductInfo ordProductInfo2 = new OrdProductInfo();
+  /*     OrdProductInfo ordProductInfo2 = new OrdProductInfo();
         ordProductInfo2.setBuySum(2);
        // ordProductInfo2.setSupplierId(-1l);
         ordProductInfo2.setSkuId("0000000000000194");  //两个商品同一销售商 不同仓库
         ordProductInfo2.setGiveJF(3000);
-        ordProductInfoList.add(ordProductInfo2);
+        ordProductInfoList.add(ordProductInfo2);*/
         
         //发票信息1
         OrdInvoiceInfo ordInvoiceInfo=new OrdInvoiceInfo();
-        ordInvoiceInfo.setInvoiceType("1");//0 电子发票;1.纸质发票
+        ordInvoiceInfo.setInvoiceType("0");//0 电子发票;1.纸质发票
         ordInvoiceInfo.setInvoiceTitle("亚信科技(中国)公司");
         ordInvoiceInfo.setInvoiceContent("交通费923");
         ordInvoiceInfo.setBuyerBankAccount("622191231232321");
         ordInvoiceInfo.setBuyerBankCode("");
         ordInvoiceInfo.setBuyerBankName("中国工商银行");
         ordInvoiceInfo.setBuyerTaxpayerNumber("11111112222333");
-        ordInvoiceInfo.setInvoiceKind("001");//001  增值税专用发票  002  增值税电子普通发票   003  增值税普通发票   004  废旧物资发票   005  增值税电子专用发票
+        ordInvoiceInfo.setInvoiceKind("002");//001  增值税专用发票  002  增值税电子普通发票   003  增值税普通发票   004  废旧物资发票   005  增值税电子专用发票
         
         //订单费用明细信息1
         List<OrdFeeTotalProdInfo> ordFeeTotalProdInfo=new ArrayList<OrdFeeTotalProdInfo>();
@@ -100,6 +100,7 @@ public class OrderTradeCenterSVImplTest {
         
         detailInfo.setFreight(10000);
         detailInfo.setDiscountFee(500);
+        detailInfo.setSupplierId("-1");
         detailInfo.setRemark("A买家留言信息信息信息信息信息信息");
         detailInfo.setOrdInvoiceInfo(ordInvoiceInfo);
         detailInfo.setOrdProductInfoList(ordProductInfoList);
@@ -109,7 +110,7 @@ public class OrderTradeCenterSVImplTest {
         
         
         //商品信息2
-        List<OrdProductInfo> ordProductInfoList1 = new ArrayList<OrdProductInfo>();
+       List<OrdProductInfo> ordProductInfoList1 = new ArrayList<OrdProductInfo>();
         OrdProductInfo ordProductInfo3 = new OrdProductInfo();
         ordProductInfo3.setBuySum(1);
         ordProductInfo3.setSkuId("0000000000000194");
@@ -117,15 +118,15 @@ public class OrderTradeCenterSVImplTest {
         ordProductInfo3.setGiveJF(20);
         ordProductInfoList1.add(ordProductInfo3);
         //发票信息2
-//        OrdInvoiceInfo ordInvoiceInfo1=new OrdInvoiceInfo();
-//        ordInvoiceInfo1.setInvoiceType("0");//0 电子发票;1.纸质发票
-//        ordInvoiceInfo1.setInvoiceTitle("亚信科技(中国)公司");
-//        ordInvoiceInfo1.setInvoiceContent("交通费919");
-//        ordInvoiceInfo1.setBuyerBankAccount("");
-//        ordInvoiceInfo1.setBuyerBankCode("");
-//        ordInvoiceInfo1.setBuyerBankName("");
-//        ordInvoiceInfo1.setBuyerTaxpayerNumber("");
-//        ordInvoiceInfo1.setInvoiceKind("002");//001  增值税专用发票  002  增值税电子普通发票   003  增值税普通发票   004  废旧物资发票   005  增值税电子专用发票
+        OrdInvoiceInfo ordInvoiceInfo1=new OrdInvoiceInfo();
+        ordInvoiceInfo1.setInvoiceType("0");//0 电子发票;1.纸质发票
+        ordInvoiceInfo1.setInvoiceTitle("亚信科技(中国)公司");
+        ordInvoiceInfo1.setInvoiceContent("交通费919");
+        ordInvoiceInfo1.setBuyerBankAccount("622191231232321");
+        ordInvoiceInfo1.setBuyerBankCode("");
+        ordInvoiceInfo1.setBuyerBankName("中国建设银行");
+        ordInvoiceInfo1.setBuyerTaxpayerNumber("11111112222333");
+        ordInvoiceInfo1.setInvoiceKind("002");//001  增值税专用发票  002  增值税电子普通发票   003  增值税普通发票   004  废旧物资发票   005  增值税电子专用发票
         
         //订单费用明细信息2
         List<OrdFeeTotalProdInfo> ordFeeTotalProdInfo5=new ArrayList<OrdFeeTotalProdInfo>();
@@ -148,6 +149,7 @@ public class OrderTradeCenterSVImplTest {
         OrdProductDetailInfo detailInfo1=new OrdProductDetailInfo();
         detailInfo1.setFreight(60000);
         detailInfo1.setDiscountFee(300);
+        detailInfo1.setSupplierId("-1");
         detailInfo1.setRemark("买家留言信息信息信息信息信息信息");
         detailInfo1.setOrdProductInfoList(ordProductInfoList1);
    //     detailInfo1.setOrdInvoiceInfo(ordInvoiceInfo1);
@@ -175,7 +177,7 @@ public class OrderTradeCenterSVImplTest {
         ordLogisticsInfo.setPostCode("1");
         ordLogisticsInfo.setAreaCode("21");
         ordLogisticsInfo.setAddress("中关村软件园二期亚信大厦");
-        ordLogisticsInfo.setExpressId("1100011");
+       // ordLogisticsInfo.setExpressId("1100011");
         
         request.setOrdBaseInfo(ordBaseInfo);
         request.setOrdExtendInfo(ordExtendInfo);
@@ -185,28 +187,5 @@ public class OrderTradeCenterSVImplTest {
         request.setTenantId("changhong");
         System.out.println(JSON.toJSON(request));
         OrderTradeCenterResponse apply = orderTradeCenterSV.apply(request);
-    }
-
-    @Test
-    public void orderApiTradeTest() { 	
-       OrderApiTradeCenterRequest request = new OrderApiTradeCenterRequest();
-        request.setTenantId("SLP");
-        request.setUserId("000000000000001203");
-        request.setUserType("11");
-        request.setOrderType("100010");
-        request.setChargeFee("70MB");
-        request.setSkuId("1000000000002455");
-        request.setAcctId(11272);
-        request.setLockTime("20160630143723");
-        request.setPayStyle("1");
-        request.setSalePrice(10);
-        request.setDownstreamOrderId("7251537");
-        request.setInfoJson("13552496249");
-        request.setTenantId("SLP");
-        request.setBuySum(1);
-        OrderApiTradeCenterResponse apiApply = orderTradeCenterSV.apiApply(request);
-        System.out.println(apiApply);
-        System.out.println("11");
- 
     }
 }
