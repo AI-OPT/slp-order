@@ -264,9 +264,9 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		 int count = ordOdInvoiceAtomSV.count(subFlag,orderId,tenantId, 
 				 invoiceTitle, invoiceStatus);
 		 List<OrdOdInvoice> invoiceList = ordOdInvoiceAtomSV.selectByCondition(subFlag,pageNo, 
-				 pageSize, orderId,tenantId, invoiceTitle, invoiceStatus);
+				 pageSize,orderId,tenantId, invoiceTitle, invoiceStatus);
 		 List<InvoicePrintVo> invoicePrintVos=new ArrayList<InvoicePrintVo>();
-	        PageInfo<InvoicePrintVo> pageInfo = new PageInfo<InvoicePrintVo>();
+	     PageInfo<InvoicePrintVo> pageInfo = new PageInfo<InvoicePrintVo>();
 	        //设置总数
 	        pageInfo.setCount(count);
 			if(!CollectionUtil.isEmpty(invoiceList)) {
