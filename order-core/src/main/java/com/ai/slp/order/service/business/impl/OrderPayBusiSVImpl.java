@@ -454,7 +454,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     private Long createEntitySubOrder(String tenantId, OrdOrder parentOrdOrder,
     		OrdOdProd parentOrdOdProd,Map<String, Long> map,OrderPayRequest request,Timestamp sysdate) {
     	/* 1.根据商品信息获取routeId*/
-    	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),Long.parseLong(parentOrdOdProd.getSupplierId()));
+    	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),parentOrdOdProd.getSupplierId());
     	IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
     	OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, parentOrdOrder.getOrderId());
         RouteQueryByGroupIdAndAreaRequest andAreaRequest=new RouteQueryByGroupIdAndAreaRequest();
@@ -610,7 +610,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	/* 1.非实物类的情况下*/
     	if(!OrdersConstants.OrdOrder.OrderType.BUG_MATERIAL_PROD.equals(orderType)) {
     		/* 1.1.获取路由组ID */
-    		String routeGroupId = this.getRouteGroupId(tenantId, ordOdProd.getProdId(),0);
+    		String routeGroupId = this.getRouteGroupId(tenantId, ordOdProd.getProdId(),"0");
     		/* 1.2.路由计算获取路由ID */
     		IRouteCoreService iRouteCoreService = DubboConsumerFactory.getService(IRouteCoreService.class);
     		SaleProductInfo saleProductInfo = new SaleProductInfo();
@@ -676,20 +676,20 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private String getRouteGroupId(String tenantId, String productId,long supplierId) {
+    private static String getRouteGroupId(String tenantId, String productId,String supplierId) {
         ProductInfoQuery productInfoQuery = new ProductInfoQuery();
         productInfoQuery.setTenantId(tenantId);
         productInfoQuery.setProductId(productId);
         //TODO
-        if(supplierId==2000) {
-        	supplierId=-1;
+        if("2000".equals(supplierId)) {
+        	supplierId="-1";
         }
-        productInfoQuery.setSupplierId(String.valueOf(supplierId));
+        productInfoQuery.setSupplierId(supplierId);
         IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
         ProductRoute productRoute = iProductServerSV.queryRouteGroupOfProd(productInfoQuery);
         return productRoute.getRouteGroupId();
     }
-
+    
     /**
      * 获取o2p回调通知url
      * 
