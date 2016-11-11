@@ -40,7 +40,7 @@ import com.ai.slp.order.util.SequenceUtil;
 @Transactional
 public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 	
-	private static final Logger logger =LoggerFactory.getLogger(OrdOrderApiTradeBusiSVImpl.class);
+	private static final Logger logger =LoggerFactory.getLogger(FreightTemplateBusiSVImpl.class);
 	
 	@Autowired
 	private IFreightTemplateAtomSV freightTemplateAtomSV;
