@@ -8,12 +8,8 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.ordertradecenter.interfaces.IOrderTradeCenterSV;
-import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
-import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterResponse;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
-import com.ai.slp.order.constants.ResultCodeConstants;
-import com.ai.slp.order.service.business.interfaces.IOrdOrderApiTradeBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
 
@@ -24,8 +20,8 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     @Autowired
     private IOrdOrderTradeBusiSV ordOrderTradeBusiSV;
 
-    @Autowired
-    private IOrdOrderApiTradeBusiSV ordOrderApiTradeBusiSV;
+   /* @Autowired
+    private IOrdOrderApiTradeBusiSV ordOrderApiTradeBusiSV;*/
 
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
@@ -37,7 +33,7 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
         return response;
     }
 
-    @Override
+  /*  @Override
     public OrderApiTradeCenterResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
             SystemException {
     	OrderApiTradeCenterResponse response;
@@ -50,5 +46,5 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
 			throw new SystemException(ResultCodeConstants.ApiOrder.SYSTEM_ERROR, "系统异常");
 		}
         return response;
-    }
+    }*/
 }
