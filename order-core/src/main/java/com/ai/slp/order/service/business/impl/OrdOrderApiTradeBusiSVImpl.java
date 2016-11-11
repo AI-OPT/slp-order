@@ -1,4 +1,4 @@
-package com.ai.slp.order.service.business.impl;
+/*package com.ai.slp.order.service.business.impl;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -81,26 +81,26 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
     public OrderApiTradeCenterResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
             SystemException {
     	OrderApiTradeCenterResponse response = new OrderApiTradeCenterResponse();
-        /* 1.校验必填项*/
+         1.校验必填项
         this.checkParamRequired(request);
-        /* 2.校验订单 */
+         2.校验订单 
         this.checkOrder(request.getTenantId(), request.getDownstreamOrderId());
-        /* 3.调用商品,使用库存 */
+         3.调用商品,使用库存 
         StorageNumRes querySkuInfo = this.querySkuInfo(request);
-        /* 4.创建业务订单信息 */
+         4.创建业务订单信息 
         long orderId = SequenceUtil.createOrderId();
         logger.debug("开始处理-订单号[" + orderId + "]订单提交..");
         Timestamp sysDate = DateUtil.getSysDate();
         this.createOrder(request, sysDate, orderId);
-        /* 5.创建商品明细信息 */
+         5.创建商品明细信息 
         this.createOrderProd(request, sysDate, orderId, querySkuInfo);
-        /* 6.费用信息处理 */
+         6.费用信息处理 
         long payFee = this.createFeeInfo(request, sysDate, orderId);
-        /* 7. 记录一条订单创建轨迹记录 */
+         7. 记录一条订单创建轨迹记录 
         this.writeOrderCreateStateChg(request, sysDate, orderId);
-        /* 8. 更新订单状态 */
+         8. 更新订单状态 
         this.updateOrderState(request.getTenantId(), sysDate, orderId);
-        /* 9. 订单支付 */
+         9. 订单支付 
         try {
 			this.deductFund(request, payFee, orderId);
 			response.setDownstreamOrderId(request.getDownstreamOrderId());
@@ -123,9 +123,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         return response;
     }
     
-    /**
+    *//**
      * 参数必填项校验
-     */
+     *//*
     private void checkParamRequired(OrderApiTradeCenterRequest request) {
     	logger.info("参数校验...");
     	if (StringUtil.isBlank(request.getUserId())) {
@@ -151,14 +151,14 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         }
     }
     
-    /**
+    *//**
      * 对订单进行校验
      * 
      * @param tenantId
      * @param downstreamOrderId
      * @author zhangxw
      * @ApiDocMethod
-     */
+     *//*
     private void checkOrder(String tenantId, String downstreamOrderId) {
         if(StringUtil.isBlank(tenantId)) {
         	throw new BusinessException(ResultCodeConstants.ApiOrder.REQUIRED_IS_EMPTY, "租户Id为空");
@@ -177,13 +177,13 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         }
     }
 
-    /**
+    *//**
      * 查询SKU单品信息
      * 
      * @param tenantId
      * @param skuId
      * @return
-     */
+     *//*
     private StorageNumRes querySkuInfo(OrderApiTradeCenterRequest request) {
         StorageNumUseReq storageNumUseReq = new StorageNumUseReq();
         storageNumUseReq.setTenantId(request.getTenantId());
@@ -207,7 +207,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
 
     }
 
-    /**
+    *//**
      * 创建订单信息
      * 
      * @param ordOrderInfo
@@ -215,7 +215,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @param orderId
      * @author zhangxw
      * @ApiDocMethod
-     */
+     *//*
     private void createOrder(OrderApiTradeCenterRequest request, Timestamp sysDate, long orderId) {
     	logger.debug("开始处理订单主表[" + orderId + "]资料信息..");
         OrdOrder ordOrder = new OrdOrder();
@@ -243,7 +243,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         ordOrderAtomSV.insertSelective(ordOrder);
     }
 
-    /**
+    *//**
      * 创建商品明细信息
      * 
      * @param request
@@ -252,11 +252,11 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @author zhangxw
      * @param querySkuInfo
      * @ApiDocMethod
-     */
+     *//*
     private void createOrderProd(OrderApiTradeCenterRequest request, Timestamp sysDate,
             long orderId, StorageNumRes storageNumRes) {
     	logger.debug("开始处理订单商品明细[" + orderId + "]资料信息..");
-        /* 1. 创建商品明细 */
+         1. 创建商品明细 
         String infoJson = request.getInfoJson();
         IServiceNumSV serviceNumSV = DubboConsumerFactory.getService(IServiceNumSV.class);
         ServiceNum serviceNumByPhone = serviceNumSV.getServiceNumByPhone(infoJson);
@@ -298,12 +298,12 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         ordOdProd.setExtendInfo(JSON.toJSONString(vo));
         ordOdProd.setUpdateTime(sysDate);
         ordOdProdAtomSV.insertSelective(ordOdProd);
-        /* 3. 创建商品明细扩展表 */
+         3. 创建商品明细扩展表 
         this.createOrdOdProdExtend(prodDetailId, request, orderId, orderType);
 
     }
 
-    /**
+    *//**
      * 创建订单商品明细扩展信息
      * 
      * @param request
@@ -312,7 +312,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @author zhangxw
      * @param prodDetailId
      * @ApiDocMethod
-     */
+     *//*
     private void createOrdOdProdExtend(long prodDetailId, OrderApiTradeCenterRequest request,
             long orderId, String orderType) {
         if (OrdersConstants.OrdOrder.OrderType.BUG_PHONE_FLOWRATE_RECHARGE.equals(orderType)) {
@@ -332,7 +332,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         }
     }
 
-    /**
+    *//**
      * 创建费用信息
      * 
      * @param request
@@ -340,9 +340,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @param orderId
      * @author zhangxw
      * @ApiDocMethod
-     */
+     *//*
     private long createFeeInfo(OrderApiTradeCenterRequest request, Timestamp sysDate, long orderId) {
-        /* 1. 费用入总表 */
+         1. 费用入总表 
         List<OrdOdProd> ordOdProds = this.getOrdOdProds(request.getTenantId(), orderId);
         if (CollectionUtil.isEmpty(ordOdProds)) {
             throw new BusinessException("", "订单商品明细不存在[订单ID:" + orderId + "]");
@@ -374,7 +374,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         return ordOdFeeTotal.getPayFee();
     }
 
-    /**
+    *//**
      * 获取订单商品费用明细
      * 
      * @param orderId
@@ -382,7 +382,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @throws Exception
      * @author zhangxw
      * @ApiDocMethod
-     */
+     *//*
     private List<OrdOdProd> getOrdOdProds(String tenantId, Long orderId) throws BusinessException,
             SystemException {
         OrdOdProdCriteria example = new OrdOdProdCriteria();
@@ -395,7 +395,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         return ordOdProdAtomSV.selectByExample(example);
     }
 
-    /**
+    *//**
      * 写入订单状态变化轨迹
      * 
      * @param request
@@ -403,7 +403,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @param orderId
      * @author zhangxw
      * @ApiDocMethod
-     */
+     *//*
     private void writeOrderCreateStateChg(OrderApiTradeCenterRequest request, Timestamp sysDate,
             long orderId) {
         orderFrameCoreSV.ordOdStateChg(orderId, request.getTenantId(), null,
@@ -411,7 +411,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
                 null, sysDate);
     }
 
-    /**
+    *//**
      * 更新订单状态
      * 
      * @param request
@@ -419,7 +419,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @param orderId
      * @author zhangxw
      * @ApiDocMethod
-     */
+     *//*
     private void updateOrderState(String tenantId, Timestamp sysDate, long orderId) {
         OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
         String orgState = ordOrder.getState();
@@ -432,7 +432,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
                 OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null, null, null, sysDate);
     }
 
-    /**
+    *//**
      * 余额扣款
      * 
      * @param tenantId
@@ -442,9 +442,9 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @param payFee
      * @param orderId
      * @ApiDocMethod
-     */
+     *//*
     private void deductFund(OrderApiTradeCenterRequest request, long payFee, long orderId) {
-        /* 1. 余额扣款 */
+         1. 余额扣款 
         DeductParam deductParam = new DeductParam();
         deductParam.setTenantId(request.getTenantId());
         deductParam.setSystemId("slp-order");
@@ -452,7 +452,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         deductParam.setBusinessCode(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
         deductParam.setAccountId(request.getAcctId());
         deductParam.setSubsId(0);
-        deductParam.setCheckPwd(1);
+     //   deductParam.setCheckPwd(1);
         List<TransSummary> transSummaryList = new ArrayList<TransSummary>();
         TransSummary transSummary = new TransSummary();
         transSummary.setAmount(payFee);
@@ -462,7 +462,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         deductParam.setTotalAmount(payFee);
         logger.info("订单支付：请求参数:" + JSON.toJSONString(deductParam));
         IDeductSV iDeductSV = DubboConsumerFactory.getService(IDeductSV.class);
-        DeductResponse response = iDeductSV.deductFund(deductParam);
+    //    DeductResponse response = iDeductSV.deductFund(deductParam);
         if (response == null)
             throw new BusinessException("", "余额扣款返回值为空[账户ID:" + request.getAcctId() + "]");
         ResponseHeader responseHeader = response.getResponseHeader();
@@ -470,7 +470,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
             throw new BusinessException(ResultCodeConstants.ApiOrder.MONEY_NOT_ENOUGH, responseHeader.getResultMessage());
         }
         logger.info("订单支付：扣款流水:" + response.getSerialNo());
-        /* 2. 调用后台订单支付 */
+         2. 调用后台订单支付 
         try {
             OrderPayRequest payRequest = new OrderPayRequest();
             List<Long> orderIds = new ArrayList<Long>();
@@ -491,14 +491,14 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         }
     }
 
-    /**
+    *//**
      * 转化订单金额为long型
      * 
      * @Description
      * @author Administrator
      * @param num
      * @return
-     */
+     *//*
     private Long parseLong(Double num) {
         if (null == num) {
             return null;
@@ -511,7 +511,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         }
     }
     
-    /**
+    *//**
      * 获取订单商品费用明细
      * 
      * @param orderId
@@ -519,7 +519,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @throws Exception
      * @author zhangxw
      * @ApiDocMethod
-     */
+     *//*
     private List<OrdOdProd> getOrdOdProds(Long orderId) throws BusinessException, SystemException {
         OrdOdProdCriteria example = new OrdOdProdCriteria();
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
@@ -530,7 +530,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
         return ordOdProdAtomSV.selectByExample(example);
     }
     
-    /**
+    *//**
      * 库存回退
      * 
      * @param tenantId
@@ -538,7 +538,7 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
      * @param storageNum
      * @author zhangxw
      * @ApiDocMethod
-     */
+     *//*
     private void backStorageNum(String tenantId, String skuId, Map<String, Integer> storageNum) {
         StorageNumBackReq storageNumBackReq = new StorageNumBackReq();
         storageNumBackReq.setTenantId(tenantId);
@@ -552,3 +552,4 @@ public class OrdOrderApiTradeBusiSVImpl implements IOrdOrderApiTradeBusiSV {
             throw new BusinessException("", "调用回退库存异常:" + skuId + "错误信息如下:" + resultMessage + "]");
     }
 }
+*/
