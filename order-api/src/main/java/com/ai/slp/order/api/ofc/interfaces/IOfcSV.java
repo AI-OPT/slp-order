@@ -35,7 +35,7 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/insertOrdOrder")
-	public BaseResponse insertOrdOrder(OrdOrderOfcVo request)throws BusinessException,SystemException;
+	public void insertOrdOrder(OrdOrderOfcVo request)throws BusinessException,SystemException;
 	
 	/**
 	 * 保存订单出货表
@@ -50,7 +50,7 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/insertOrdOdLogistics")
-	public BaseResponse insertOrdOdLogistics(OrdOdLogisticsVo request)throws BusinessException,SystemException;
+	public void insertOrdOdLogistics(OrdOdLogisticsVo request)throws BusinessException,SystemException;
 	
 	/**
 	 * 保存订单费用表
@@ -65,7 +65,7 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/insertOrdOdFeeTotal")
-	public BaseResponse insertOrdOdFeeTotal(OrdOdFeeTotalVo request)throws BusinessException,SystemException;
+	public void insertOrdOdFeeTotal(OrdOdFeeTotalVo request)throws BusinessException,SystemException;
 	
 	/**
 	 * 保存订单商品表
@@ -80,7 +80,7 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/insertOrdOdProd")
-	public BaseResponse insertOrdOdProd(OrdOdProdVo request)throws BusinessException,SystemException;
+	public void insertOrdOdProd(OrdOdProdVo request)throws BusinessException,SystemException;
 	
 	
 }

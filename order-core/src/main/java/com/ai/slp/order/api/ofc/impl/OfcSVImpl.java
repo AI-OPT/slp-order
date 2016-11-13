@@ -28,7 +28,7 @@ public class OfcSVImpl implements IOfcSV {
 	private IOrdOrderBusiSV orderBusiSV;
 	
 	@Override
-	public BaseResponse insertOrdOrder(OrdOrderOfcVo request) throws BusinessException, SystemException {
+	public void insertOrdOrder(OrdOrderOfcVo request) throws BusinessException, SystemException {
 		BaseResponse response = new BaseResponse();
 		ResponseHeader responseHeader =null;
 		try{
@@ -41,11 +41,11 @@ public class OfcSVImpl implements IOfcSV {
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);
-		return response;
+		return ;
 	}
 
 	@Override
-	public BaseResponse insertOrdOdLogistics(OrdOdLogisticsVo request) throws BusinessException, SystemException {
+	public void insertOrdOdLogistics(OrdOdLogisticsVo request) throws BusinessException, SystemException {
 		BaseResponse response = new BaseResponse();
 		ResponseHeader responseHeader =null;
 		try{
@@ -58,11 +58,11 @@ public class OfcSVImpl implements IOfcSV {
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);
-		return response;
+		return ;
 	}
 
 	@Override
-	public BaseResponse insertOrdOdFeeTotal(OrdOdFeeTotalVo request) throws BusinessException, SystemException {
+	public void insertOrdOdFeeTotal(OrdOdFeeTotalVo request) throws BusinessException, SystemException {
 		BaseResponse response = new BaseResponse();
 		ResponseHeader responseHeader =null;
 		try{
@@ -75,11 +75,11 @@ public class OfcSVImpl implements IOfcSV {
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);
-		return response;
+		return ;
 	}
 
 	@Override
-	public BaseResponse insertOrdOdProd(OrdOdProdVo request) throws BusinessException, SystemException {
+	public void insertOrdOdProd(OrdOdProdVo request) throws BusinessException, SystemException {
 		BaseResponse response = new BaseResponse();
 		ResponseHeader responseHeader =null;
 		try{
@@ -92,7 +92,7 @@ public class OfcSVImpl implements IOfcSV {
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);
-		return response;
+		return ;
 	}
 
 }
