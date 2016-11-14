@@ -18,6 +18,7 @@ import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
+import com.ai.slp.order.api.ordertradecenter.param.OrdFeeTotalProdInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductDetailInfo;
@@ -122,7 +123,21 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "信息列表不能为空");
 		}
 		for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
+			if(!StringUtil.isBlank(ordProductDetailInfo.getAccountId())) {
+				if(StringUtil.isBlank(ordProductDetailInfo.getTokenId())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "积分账户id存在的情况下,积分令牌不能为空");
+				}
+			}
 			List<OrdProductInfo> ordProductInfoList = ordProductDetailInfo.getOrdProductInfoList();
+			//费用明细不为空时,校验支付方式是否存在
+			List<OrdFeeTotalProdInfo> totalProdInfos = ordProductDetailInfo.getOrdFeeTotalProdInfo();
+			if(!CollectionUtil.isEmpty(totalProdInfos)) {
+				for (OrdFeeTotalProdInfo ordFeeTotalProdInfo : totalProdInfos) {
+					if(StringUtil.isBlank(ordFeeTotalProdInfo.getPayStyle())) {
+						throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "支付方式不能为空");
+					}
+				}
+			}
 			/** 判断商品是否允许发票*/
 			OrdInvoiceInfo ordInvoiceInfo = ordProductDetailInfo.getOrdInvoiceInfo();
 			/** 判断是否选择打印发票*/
