@@ -2,6 +2,8 @@ package com.ai.slp.order.service.atom.interfaces;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 
@@ -24,4 +26,6 @@ public interface IOrdOrderAtomSV {
     List<OrdOrder> selectByBatchNo(long orderId,String tenantId,long batchNo);
     
     List<OrdOrder> selectMergeOrderByBatchNo(long orderId,String tenantId, long batchNo,String state) ;
+    
+    int updateByExampleSelective(@Param("record") OrdOrder record, @Param("example") OrdOrderCriteria example);
 }

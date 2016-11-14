@@ -44,4 +44,9 @@ public class OrdOdLogisticsAtomSVImpl implements IOrdOdLogisticsAtomSV {
 		return MapperFactory.getOrdOdLogisticsMapper().updateByPrimaryKey(record);
 	}
 
+	@Override
+	public int updateByExampleSelective(OrdOdLogistics record, OrdOdLogisticsCriteria example) {
+		return MapperFactory.getOrdOdLogisticsMapper().updateByExampleSelective(record, example);
+	}
+
 }

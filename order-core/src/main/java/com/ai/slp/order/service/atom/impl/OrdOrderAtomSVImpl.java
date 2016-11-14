@@ -71,5 +71,10 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 		.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO).andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_SEND);
 		return MapperFactory.getOrdOrderMapper().selectByExample(example);
 	}
+
+	@Override
+	public int updateByExampleSelective(OrdOrder record, OrdOrderCriteria example) {
+		return MapperFactory.getOrdOrderMapper().updateByExampleSelective(record, example);
+	}
 	
 }
