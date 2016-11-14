@@ -67,6 +67,8 @@
 	<dubbo:reference id="iOrderListSV"
 		interface="com.ai.slp.order.api.orderlist.interfaces.IOrderListSV" />
 		
+	<dubbo:reference id="iOfcSV"
+		interface="com.ai.slp.order.api.ofc.interfaces.IOfcSV" />
 	
 	
 </beans>
