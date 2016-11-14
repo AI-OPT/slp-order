@@ -134,21 +134,21 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"商品信息不存在[订单id:"+orderId+"]");
 		}
-		long invoiceAmount=0;
+		double invoiceAmount=0;
 		String supplierId = null;
 		//计算发票金额
 		for (OrdOdProd ordOdProd : prods) {
-			invoiceAmount=ordOdProd.getAdjustFee()+invoiceAmount;
-			supplierId = ordOdProd.getSupplierId();
+		  String amount=BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000))
+					.setScale(2,BigDecimal.ROUND_HALF_UP).toString();//含税金额
+		  invoiceAmount=Double.parseDouble(amount)+invoiceAmount;
+		  supplierId = ordOdProd.getSupplierId();
 		}
 		if((request.getCompanyId().equals(supplierId))) {
 			throw new BusinessException("", "公司代码(销售方id)和商品中的销售方id不一致");
 		}
-		BigDecimal b2 = BigDecimal.valueOf(invoiceAmount).divide(new BigDecimal(1000)); //含税金额
-		double totalMoney=b2.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue(); 
-		if( totalMoney!=request.getInvoiceTotalFee()) {
+		if(invoiceAmount!=request.getInvoiceTotalFee()) {
 			throw new BusinessException("", "发票总额和商品获取的额度不一致,实际发票金额:"+
-					totalMoney+",传入的金额:"+request.getInvoiceTotalFee());
+					invoiceAmount+",传入的金额:"+request.getInvoiceTotalFee());
 		}
 		OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
 		if(ordOdInvoice==null) {
