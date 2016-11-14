@@ -1,5 +1,6 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -62,7 +63,11 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 				ordOrder.getOrderId());
 		long updateMoney = request.getUpdateMoney();
 		/*判断输入费用是否大于之前存在的费用*/
-		if(updateMoney>ordOdFeeTotal.getAdjustFee()) {
+		//实际费用
+		long adjustFee = ordOdFeeTotal.getAdjustFee();
+	    BigDecimal balance = BigDecimal.valueOf(adjustFee).divide(new BigDecimal(1000L),2,BigDecimal.ROUND_HALF_UP);
+        BigDecimal balance1 = balance.multiply(new BigDecimal(1000L));
+		if(updateMoney>balance1.longValue()) {
 			logger.error("输入的费用不能大于实际应收的费用,实际应收费用为:"+ordOdFeeTotal.getAdjustFee());
 			throw new BusinessException("", "输入的费用不能大于实际应收的费用");
 		}
