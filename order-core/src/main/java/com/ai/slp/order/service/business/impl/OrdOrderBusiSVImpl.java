@@ -1052,12 +1052,16 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrderId());
 		List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
+		OrdOrder ordOrder = new OrdOrder();
+		BeanUtils.copyProperties(request, ordOrder);
 		if (list.isEmpty()) {
-			OrdOrder ordOrder = new OrdOrder();
-			BeanUtils.copyProperties(request, ordOrder);
 			return ordOrderAtomSV.insertSelective(ordOrder);
 		} else {
-			return 0;
+			OrdOrderCriteria orderExample = new OrdOrderCriteria();
+			OrdOrderCriteria.Criteria orderCriteria = orderExample.createCriteria();
+			orderCriteria.andTenantIdEqualTo(request.getTenantId());
+			orderCriteria.andOrderIdEqualTo(request.getOrderId());
+			return ordOrderAtomSV.updateByExampleSelective(ordOrder, orderExample);
 		}
 	}
 
@@ -1074,12 +1078,16 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrderId());
 		List<OrdOdFeeTotal> list = ordOdFeeTotalAtomSV.selectByExample(example);
+		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
+		BeanUtils.copyProperties(request, ordOdFeeTotal);
 		if (list.isEmpty()) {
-			OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
-			BeanUtils.copyProperties(request, ordOdFeeTotal);
 			return ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
 		} else {
-			return 0;
+			OrdOdFeeTotalCriteria ordExample = new OrdOdFeeTotalCriteria();
+			OrdOdFeeTotalCriteria.Criteria ordCriteria = ordExample.createCriteria();
+			ordCriteria.andTenantIdEqualTo(request.getTenantId());
+			ordCriteria.andOrderIdEqualTo(request.getOrderId());
+			return ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal,ordExample);
 		}
 	}
 
@@ -1096,12 +1104,16 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrderId());
 		List<OrdOdFeeTotal> list = ordOdFeeTotalAtomSV.selectByExample(example);
+		OrdOdProd ordOdProd = new OrdOdProd();
+		BeanUtils.copyProperties(request, ordOdProd);
 		if (list.isEmpty()) {
-			OrdOdProd ordOdProd = new OrdOdProd();
-			BeanUtils.copyProperties(request, ordOdProd);
 			return ordOdProdAtomSV.insertSelective(ordOdProd);
 		} else {
-			return 0;
+			OrdOdProdCriteria ordExample = new OrdOdProdCriteria();
+			OrdOdProdCriteria.Criteria ordCriteria = ordExample.createCriteria();
+			ordCriteria.andTenantIdEqualTo(request.getTenantId());
+			ordCriteria.andOrderIdEqualTo(request.getOrderId());
+			return ordOdProdAtomSV.updateByExampleSelective(ordOdProd, ordExample);
 		}
 	}
 
@@ -1118,12 +1130,16 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrderId());
 		List<OrdOdLogistics> list = ordOdLogisticsAtomSV.selectByExample(example);
+		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
+		BeanUtils.copyProperties(request, ordOdLogistics);
 		if (list.isEmpty()) {
-			OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
-			BeanUtils.copyProperties(request, ordOdLogistics);
 			return ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		} else {
-			return 0;
+			OrdOdLogisticsCriteria ordExample = new OrdOdLogisticsCriteria();
+			OrdOdLogisticsCriteria.Criteria ordCriteria = ordExample.createCriteria();
+			ordCriteria.andTenantIdEqualTo(request.getTenantId());
+			ordCriteria.andOrderIdEqualTo(request.getOrderId());
+			return ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordExample);
 		}
 	}
 }
