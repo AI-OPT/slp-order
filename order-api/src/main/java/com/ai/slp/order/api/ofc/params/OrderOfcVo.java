@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.ofc.params;
 
+import java.io.Serializable;
+
 import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
 import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;
 import com.ai.slp.order.api.ofc.params.OrdOrderOfcVo;
@@ -11,7 +13,9 @@ import com.ai.slp.order.api.ofc.params.OrdOrderOfcVo;
  * 
  * @author zhangqiang7
  */
-public class OrderOfcVo {
+public class OrderOfcVo implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 订单信息

@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.ofc.params;
 
+import java.io.Serializable;
+
 /**
  * 订单出货表
  * Date: 2016年11月12日 <br>
@@ -7,7 +9,9 @@ package com.ai.slp.order.api.ofc.params;
  * 
  * @author zhangqiang7
  */
-public class OrdOdLogisticsVo {
+public class OrdOdLogisticsVo implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	private long logisticsId;
 

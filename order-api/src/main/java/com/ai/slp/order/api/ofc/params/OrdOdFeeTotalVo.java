@@ -1,5 +1,6 @@
 package com.ai.slp.order.api.ofc.params;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -9,7 +10,9 @@ import java.sql.Timestamp;
  * 
  * @author zhangqiang7
  */
-public class OrdOdFeeTotalVo {
+public class OrdOdFeeTotalVo implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	private long orderId;
 
