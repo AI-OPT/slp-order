@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +25,6 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
-import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
-import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;
-import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
-import com.ai.slp.order.api.ofc.params.OrdOrderOfcVo;
 import com.ai.slp.order.api.orderlist.param.BehindOrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.BehindOrdProductVo;
 import com.ai.slp.order.api.orderlist.param.BehindParentOrdOrderVo;
@@ -60,7 +55,6 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
-import com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
@@ -1037,109 +1031,5 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			throw new SystemException("", "OFC订单查询出现异常");
 		}
 		return object;
-	}
-
-	@Override
-	public int insertOrdOrderOfc(OrdOrderOfcVo request) throws BusinessException, SystemException {
-		if(StringUtil.isBlank(request.getTenantId())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户Id不能为空");
-		}
-		if(StringUtil.isBlank(request.getOrderId()+"")){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单Id不能为空");
-		}
-		OrdOrderCriteria example = new OrdOrderCriteria();
-		OrdOrderCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(request.getTenantId());
-		criteria.andOrderIdEqualTo(request.getOrderId());
-		List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
-		OrdOrder ordOrder = new OrdOrder();
-		BeanUtils.copyProperties(request, ordOrder);
-		if (list.isEmpty()) {
-			return ordOrderAtomSV.insertSelective(ordOrder);
-		} else {
-			OrdOrderCriteria orderExample = new OrdOrderCriteria();
-			OrdOrderCriteria.Criteria orderCriteria = orderExample.createCriteria();
-			orderCriteria.andTenantIdEqualTo(request.getTenantId());
-			orderCriteria.andOrderIdEqualTo(request.getOrderId());
-			return ordOrderAtomSV.updateByExampleSelective(ordOrder, orderExample);
-		}
-	}
-
-	@Override
-	public int insertOrdOdFeeTotalOfc(OrdOdFeeTotalVo request) throws BusinessException, SystemException {
-		if(StringUtil.isBlank(request.getTenantId())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户Id不能为空");
-		}
-		if(StringUtil.isBlank(request.getOrderId()+"")){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单Id不能为空");
-		}
-		OrdOdFeeTotalCriteria example = new OrdOdFeeTotalCriteria();
-		OrdOdFeeTotalCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(request.getTenantId());
-		criteria.andOrderIdEqualTo(request.getOrderId());
-		List<OrdOdFeeTotal> list = ordOdFeeTotalAtomSV.selectByExample(example);
-		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
-		BeanUtils.copyProperties(request, ordOdFeeTotal);
-		if (list.isEmpty()) {
-			return ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
-		} else {
-			OrdOdFeeTotalCriteria ordExample = new OrdOdFeeTotalCriteria();
-			OrdOdFeeTotalCriteria.Criteria ordCriteria = ordExample.createCriteria();
-			ordCriteria.andTenantIdEqualTo(request.getTenantId());
-			ordCriteria.andOrderIdEqualTo(request.getOrderId());
-			return ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal,ordExample);
-		}
-	}
-
-	@Override
-	public int insertOrdOdProdOfc(OrdOdProdVo request) throws BusinessException, SystemException {
-		if(StringUtil.isBlank(request.getTenantId())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户Id不能为空");
-		}
-		if(StringUtil.isBlank(request.getOrderId()+"")){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单Id不能为空");
-		}
-		OrdOdFeeTotalCriteria example = new OrdOdFeeTotalCriteria();
-		OrdOdFeeTotalCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(request.getTenantId());
-		criteria.andOrderIdEqualTo(request.getOrderId());
-		List<OrdOdFeeTotal> list = ordOdFeeTotalAtomSV.selectByExample(example);
-		OrdOdProd ordOdProd = new OrdOdProd();
-		BeanUtils.copyProperties(request, ordOdProd);
-		if (list.isEmpty()) {
-			return ordOdProdAtomSV.insertSelective(ordOdProd);
-		} else {
-			OrdOdProdCriteria ordExample = new OrdOdProdCriteria();
-			OrdOdProdCriteria.Criteria ordCriteria = ordExample.createCriteria();
-			ordCriteria.andTenantIdEqualTo(request.getTenantId());
-			ordCriteria.andOrderIdEqualTo(request.getOrderId());
-			return ordOdProdAtomSV.updateByExampleSelective(ordOdProd, ordExample);
-		}
-	}
-
-	@Override
-	public int insertOrdOdLogisticsOfc(OrdOdLogisticsVo request) throws BusinessException, SystemException {
-		if(StringUtil.isBlank(request.getTenantId())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户Id不能为空");
-		}
-		if(StringUtil.isBlank(request.getOrderId()+"")){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单Id不能为空");
-		}
-		OrdOdLogisticsCriteria example = new OrdOdLogisticsCriteria();
-		OrdOdLogisticsCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(request.getTenantId());
-		criteria.andOrderIdEqualTo(request.getOrderId());
-		List<OrdOdLogistics> list = ordOdLogisticsAtomSV.selectByExample(example);
-		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
-		BeanUtils.copyProperties(request, ordOdLogistics);
-		if (list.isEmpty()) {
-			return ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
-		} else {
-			OrdOdLogisticsCriteria ordExample = new OrdOdLogisticsCriteria();
-			OrdOdLogisticsCriteria.Criteria ordCriteria = ordExample.createCriteria();
-			ordCriteria.andTenantIdEqualTo(request.getTenantId());
-			ordCriteria.andOrderIdEqualTo(request.getOrderId());
-			return ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordExample);
-		}
 	}
 }

@@ -8,11 +8,8 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.base.vo.BaseResponse;
-import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
-import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;
 import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
-import com.ai.slp.order.api.ofc.params.OrdOrderOfcVo;
+import com.ai.slp.order.api.ofc.params.OrderOfcVo;
 
 /**
  * Ofc服务
@@ -35,37 +32,7 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/insertOrdOrder")
-	public void insertOrdOrder(OrdOrderOfcVo request)throws BusinessException,SystemException;
-	
-	/**
-	 * 保存订单出货表
-	 * @param request
-	 * @return
-	 * @throws BusinessException
-	 * @throws SystemException
-	 * @author caofz
-	 * @ApiDocMethod
-	 * @ApiCode Ofc_002
-	 * @RestRelativeURL ofcservice/insertOrdOdLogistics
-	 */
-	@POST
-	@Path("/insertOrdOdLogistics")
-	public void insertOrdOdLogistics(OrdOdLogisticsVo request)throws BusinessException,SystemException;
-	
-	/**
-	 * 保存订单费用表
-	 * @param request
-	 * @return
-	 * @throws BusinessException
-	 * @throws SystemException
-	 * @author caofz
-	 * @ApiDocMethod
-	 * @ApiCode Ofc_003
-	 * @RestRelativeURL ofcservice/insertOrdOdFeeTotal
-	 */
-	@POST
-	@Path("/insertOrdOdFeeTotal")
-	public void insertOrdOdFeeTotal(OrdOdFeeTotalVo request)throws BusinessException,SystemException;
+	public void insertOrdOrder(OrderOfcVo request)throws BusinessException,SystemException;
 	
 	/**
 	 * 保存订单商品表
@@ -75,7 +42,7 @@ public interface IOfcSV {
 	 * @throws SystemException
 	 * @author caofz
 	 * @ApiDocMethod
-	 * @ApiCode Ofc_004
+	 * @ApiCode Ofc_002
 	 * @RestRelativeURL ofcservice/insertOrdOdProd
 	 */
 	@POST
