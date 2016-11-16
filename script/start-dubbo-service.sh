@@ -7,6 +7,9 @@ APP_HOME=/dubbo-service
 APP_NAME="changhong.order"
 APP_PARM="aiopt.order.name=${APP_NAME}"
 
+DTS_APP_NAME="changhong.order.dts"
+DTS_APP_PARM="aiopt.order.name=${DTS_APP_NAME}"
+
 #此处的端口要与dubbo.properties中的端口对应，
 #如，商品中心的为：slp.order.dubbo.port
 PROCESS_PARM="slp.order.dubbo.port=${REST_PORT}"
@@ -17,6 +20,7 @@ done
 
 DUBBO_CONFIG_PATH=${APP_HOME}/config
 LOG_PATH=${APP_HOME}/logs/dubbo-service-${REST_PORT}.log
+DTS_LOG_PATH=${APP_HOME}/logs/dts-service.log
 CLASSPATH="${CP}"
 CLASSPATH="${DUBBO_CONFIG_PATH}:${CLASSPATH}"
 export CLASSPATH
@@ -26,11 +30,15 @@ JAVA_OPTIONS="-Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Dsun.net.in
 
 echo "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
 START_CMD="${MEM_ARGS} -D${APP_PARM} -D${PROCESS_PARM}  ${JAVA_OPTIONS} com.ai.opt.sdk.appserver.DubboServiceStart  >> $LOG_PATH & 2 > 1 &"
+START_DTS_CMD="${MEM_ARGS} -D${DTS_APP_PARM} -D${PROCESS_PARM}  ${JAVA_OPTIONS} com.ai.slp.order.dts.main.SlpOrderDtsMain  >> $DTS_LOG_PATH & 2 > 1 &"
+
+
 
 echo ${JAVA_HOME}
 echo ${CLASSPATH}
 echo ${DUBBO_PORT}
 echo ${START_CMD}
+echo ${START_DTS_CMD}
 
 sed -i "s%paas.sdk.mode=.*%paas.sdk.mode=${SDK_MODE}%g" ${APP_HOME}/config/paas/paas-conf.properties
 sed -i "s%ccs.appname=.*%ccs.appname=${CCS_NAME}%g" ${APP_HOME}/config/paas/paas-conf.properties
@@ -66,4 +74,6 @@ sed -i "s/dubbo.protocol.contextpath=.*/dubbo.protocol.contextpath=${CONTEXT_PAT
 echo "-------------------${APP_NAME} dubbo service start --------------------"
 java ${START_CMD}
 echo "${APP_NAME} dubbo server started!! logs at $LOG_PATH"
-./slp-order-dts.sh start
+
+java ${START_DTS_CMD}
+echo "${DTS_APP_NAME} dts server started!! logs at $DTS_LOG_PATH"
