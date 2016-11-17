@@ -101,6 +101,6 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="slpOrderDtsMain" class="com.ai.slp.order.dts.main.SlpOrderDtsMain" init-method="init">
-	</bean>
+	<!-- <bean id="slpOrderDtsMain" class="com.ai.slp.order.dts.main.SlpOrderDtsMain" init-method="init">
+	</bean> -->
 </beans>
