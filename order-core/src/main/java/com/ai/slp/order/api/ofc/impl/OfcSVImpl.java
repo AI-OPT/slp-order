@@ -15,6 +15,8 @@ import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
 import com.alibaba.dubbo.common.logger.Logger;
 import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
+import com.esotericsoftware.minlog.Log;
 
 @Service(validation = "true")
 @Component
@@ -36,6 +38,7 @@ public class OfcSVImpl implements IOfcSV {
 			log.info("保存订单息服务结束"+System.currentTimeMillis()+"耗时:"+String.valueOf(System.currentTimeMillis()-beginTime)+"毫秒");
 		responseHeader = new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "操作成功");
 		}catch(BusinessException e){
+			Log.info(JSON.toJSONString(e));
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);
@@ -54,6 +57,7 @@ public class OfcSVImpl implements IOfcSV {
 			log.info("保存订单商品信息服务结束"+System.currentTimeMillis()+"耗时:"+String.valueOf(System.currentTimeMillis()-beginTime)+"毫秒");
 		responseHeader = new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "操作成功");
 		}catch(BusinessException e){
+			Log.info(JSON.toJSONString(e));
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);

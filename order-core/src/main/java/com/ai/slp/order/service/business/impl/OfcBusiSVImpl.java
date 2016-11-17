@@ -2,6 +2,8 @@ package com.ai.slp.order.service.business.impl;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,11 +28,14 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
+import com.alibaba.fastjson.JSON;
 
 @Service
 @Transactional
 public class OfcBusiSVImpl implements IOfcBusiSV {
 
+	private static final Log LOG = LogFactory.getLog(OfcBusiSVImpl.class);
+	
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
 	
@@ -59,6 +64,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(orderNumExample);
 		OrdOrder ordOrder = new OrdOrder();
 		BeanUtils.copyProperties(request.getOrOrderOfcVo(), ordOrder);
+		LOG.info(JSON.toJSONString(ordOrder));
 		if (orderList.isEmpty()) {
 			ordOrderAtomSV.insertSelective(ordOrder);
 		} else {
@@ -77,6 +83,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdFeeTotal> ordOdFeeList = ordOdFeeTotalAtomSV.selectByExample(ordOdFeeNumExample);
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
 		BeanUtils.copyProperties(request.getOrdOdFeeTotalVo(), ordOdFeeTotal);
+		LOG.info(JSON.toJSONString(ordOdFeeTotal));
 		if (ordOdFeeList.isEmpty()) {
 			ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
 		} else {
@@ -95,6 +102,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdLogistics> ordOdLogisticsList = ordOdLogisticsAtomSV.selectByExample(OrdOdLogisticsExample);
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
+		LOG.info(JSON.toJSONString(ordOdLogistics));
 		if (ordOdLogisticsList.isEmpty()) {
 			ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		} else {
@@ -124,6 +132,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdFeeTotal> list = ordOdFeeTotalAtomSV.selectByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
+		LOG.info(JSON.toJSONString(ordOdProd));
 		if (list.isEmpty()) {
 			return ordOdProdAtomSV.insertSelective(ordOdProd);
 		} else {
