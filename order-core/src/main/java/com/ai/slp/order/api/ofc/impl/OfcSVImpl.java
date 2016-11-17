@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.ofc.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +14,8 @@ import com.ai.slp.order.api.ofc.interfaces.IOfcSV;
 import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.api.ofc.params.OrderOfcVo;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
-import com.alibaba.dubbo.common.logger.Logger;
-import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
-import com.esotericsoftware.minlog.Log;
 
 @Service(validation = "true")
 @Component
@@ -38,7 +37,7 @@ public class OfcSVImpl implements IOfcSV {
 			log.info("保存订单息服务结束"+System.currentTimeMillis()+"耗时:"+String.valueOf(System.currentTimeMillis()-beginTime)+"毫秒");
 		responseHeader = new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "操作成功");
 		}catch(BusinessException e){
-			Log.info("++++++++++++++++++异常信息+++++++++++++++"+JSON.toJSONString(e));
+			log.info("++++++++++++++++++异常信息+++++++++++++++"+JSON.toJSONString(e));
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);
@@ -57,7 +56,7 @@ public class OfcSVImpl implements IOfcSV {
 			log.info("保存订单商品信息服务结束"+System.currentTimeMillis()+"耗时:"+String.valueOf(System.currentTimeMillis()-beginTime)+"毫秒");
 		responseHeader = new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "操作成功");
 		}catch(BusinessException e){
-			Log.info("++++++++++++++++++异常信息+++++++++++++++"+JSON.toJSONString(e));
+			log.info("++++++++++++++++++异常信息+++++++++++++++"+JSON.toJSONString(e));
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);

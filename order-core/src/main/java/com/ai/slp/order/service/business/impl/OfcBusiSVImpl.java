@@ -2,8 +2,8 @@ package com.ai.slp.order.service.business.impl;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ import com.alibaba.fastjson.JSON;
 @Transactional
 public class OfcBusiSVImpl implements IOfcBusiSV {
 
-	private static final Log LOG = LogFactory.getLog(OfcBusiSVImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OfcBusiSVImpl.class);
 	
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
