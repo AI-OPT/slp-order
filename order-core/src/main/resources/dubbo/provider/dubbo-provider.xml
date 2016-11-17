@@ -32,5 +32,5 @@
 	<dubbo:annotation package="com.ai.slp.order.api" />
 
 	<import resource="../../context/core-context.xml" />
-	<import resource="../../context/elasticjob-context.xml" />
+	<!-- <import resource="../../context/elasticjob-context.xml" /> -->
 </beans>
