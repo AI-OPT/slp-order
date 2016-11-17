@@ -23,12 +23,12 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath:**/*.properties</value>
+				<value>classpath:dubbo/dubbo.properties</value>
 			</list>
 		</property>
 	</bean>
     
-    <context:property-placeholder location="classpath:*/*.properties" />
+    <context:property-placeholder location="classpath:dubbo/dubbo.properties" />
     <!--configure registry center -->
     <reg:zookeeper id="regCenter" server-lists="${dubbo.registry.address}" namespace="order-job" base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3" />
 
