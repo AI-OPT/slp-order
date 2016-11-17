@@ -17,7 +17,7 @@ import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 
-@Service(validation = "true")
+@Service
 @Component
 public class OfcSVImpl implements IOfcSV {
 
