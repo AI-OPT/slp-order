@@ -69,8 +69,11 @@ public class OrderAfterSaleJudgeBusiSVImpl implements IOrderAfterSaleJudgeBusiSV
 			}
 		}
 		for (OrdOrder ordOrder : orderList) {
-			if(orderList.size()>1) { //多个售后订单 可能存在多个第一次审核失败的情况
-			  if(OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(ordOrder.getState())) {
+			if(orderList.size()>1) { 
+			   //多个售后订单 可能存在多个审核失败的情况
+			  if(OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(ordOrder.getState())||
+					  (OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(ordOrder.getBusiCode())&&
+							  OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
 				  continue;
 			  }
 			}
