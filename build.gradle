@@ -27,6 +27,8 @@ allprojects {
 	    exclude group: 'com.sun.jersey', module: 'jersey-core'
         exclude group: 'com.sun.jersey', module: 'jersey-json'
         exclude group: 'com.sun.jersey', module: 'jersey-server'
+        
+        exclude group: 'org.eclipse.jetty.aggregate', module: 'jetty-all-server'
 	}
     group="com.ai.slp.order"
 }
