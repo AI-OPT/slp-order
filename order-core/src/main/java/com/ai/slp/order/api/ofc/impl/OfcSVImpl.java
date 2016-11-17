@@ -38,7 +38,7 @@ public class OfcSVImpl implements IOfcSV {
 			log.info("保存订单息服务结束"+System.currentTimeMillis()+"耗时:"+String.valueOf(System.currentTimeMillis()-beginTime)+"毫秒");
 		responseHeader = new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "操作成功");
 		}catch(BusinessException e){
-			Log.info(JSON.toJSONString(e));
+			Log.info("++++++++++++++++++异常信息+++++++++++++++"+JSON.toJSONString(e));
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);
@@ -57,7 +57,7 @@ public class OfcSVImpl implements IOfcSV {
 			log.info("保存订单商品信息服务结束"+System.currentTimeMillis()+"耗时:"+String.valueOf(System.currentTimeMillis()-beginTime)+"毫秒");
 		responseHeader = new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "操作成功");
 		}catch(BusinessException e){
-			Log.info(JSON.toJSONString(e));
+			Log.info("++++++++++++++++++异常信息+++++++++++++++"+JSON.toJSONString(e));
 			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);

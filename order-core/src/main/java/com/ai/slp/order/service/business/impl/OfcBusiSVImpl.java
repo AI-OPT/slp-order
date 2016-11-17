@@ -64,7 +64,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(orderNumExample);
 		OrdOrder ordOrder = new OrdOrder();
 		BeanUtils.copyProperties(request.getOrOrderOfcVo(), ordOrder);
-		LOG.info(JSON.toJSONString(ordOrder));
+		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOrder));
 		if (orderList.isEmpty()) {
 			ordOrderAtomSV.insertSelective(ordOrder);
 		} else {
@@ -83,7 +83,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdFeeTotal> ordOdFeeList = ordOdFeeTotalAtomSV.selectByExample(ordOdFeeNumExample);
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
 		BeanUtils.copyProperties(request.getOrdOdFeeTotalVo(), ordOdFeeTotal);
-		LOG.info(JSON.toJSONString(ordOdFeeTotal));
+		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdFeeTotal));
 		if (ordOdFeeList.isEmpty()) {
 			ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
 		} else {
@@ -102,7 +102,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdLogistics> ordOdLogisticsList = ordOdLogisticsAtomSV.selectByExample(OrdOdLogisticsExample);
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
-		LOG.info(JSON.toJSONString(ordOdLogistics));
+		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdLogistics));
 		if (ordOdLogisticsList.isEmpty()) {
 			ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		} else {
@@ -132,7 +132,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdFeeTotal> list = ordOdFeeTotalAtomSV.selectByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
-		LOG.info(JSON.toJSONString(ordOdProd));
+		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdProd));
 		if (list.isEmpty()) {
 			return ordOdProdAtomSV.insertSelective(ordOdProd);
 		} else {
