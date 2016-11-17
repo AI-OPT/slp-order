@@ -28,6 +28,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
+import com.ai.slp.order.util.SequenceUtil;
 import com.alibaba.fastjson.JSON;
 
 @Service
@@ -132,6 +133,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdProd> list = ordOdProdAtomSV.selectByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
+		ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdProd));
 		if (list.isEmpty()) {
 			return ordOdProdAtomSV.insertSelective(ordOdProd);
