@@ -133,16 +133,12 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdProd> list = ordOdProdAtomSV.selectByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
-		ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdProd));
 		if (list.isEmpty()) {
+			ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 			return ordOdProdAtomSV.insertSelective(ordOdProd);
 		} else {
-			OrdOdProdCriteria ordExample = new OrdOdProdCriteria();
-			OrdOdProdCriteria.Criteria ordCriteria = ordExample.createCriteria();
-			ordCriteria.andTenantIdEqualTo(request.getTenantId());
-			ordCriteria.andOrderIdEqualTo(request.getOrderId());
-			return ordOdProdAtomSV.updateByExampleSelective(ordOdProd, ordExample);
+			return 0;
 		}
 	}
 
