@@ -10,4 +10,6 @@ public class SlpOrderDtsMain {
         DTSMain.main(args);
         System.out.println("OK");
     }
+    
+    public void init() { SlpOrderDtsMain.main(null);; }
 }
