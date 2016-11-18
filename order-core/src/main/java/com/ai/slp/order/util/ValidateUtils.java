@@ -103,6 +103,9 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(ordBaseInfo.getUserId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户id不能为空");
 		}
+		if (StringUtil.isBlank(ordBaseInfo.getUserType())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户类型不能为空");
+		}
 		if (StringUtil.isBlank(ordBaseInfo.getFlag())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "业务标识不能为空");
 		}
@@ -127,6 +130,9 @@ public class ValidateUtils {
 				if(StringUtil.isBlank(ordProductDetailInfo.getTokenId())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "积分账户id存在的情况下,积分令牌不能为空");
 				}
+			}
+			if(StringUtil.isBlank(ordProductDetailInfo.getSupplierId())) {
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "销售商id不能为空");
 			}
 			List<OrdProductInfo> ordProductInfoList = ordProductDetailInfo.getOrdProductInfoList();
 			//费用明细不为空时,校验支付方式是否存在
