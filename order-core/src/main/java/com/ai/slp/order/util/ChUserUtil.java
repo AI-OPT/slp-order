@@ -38,7 +38,7 @@ public class ChUserUtil {
 	}
 	
 	public static void main(String[] args) {
-		JSONObject object = getUserInfo("7048d255c62e4511");
+		JSONObject object = getUserInfo("3da3109cdb3f4d9e");
 		System.out.println(object);
 	}
 }

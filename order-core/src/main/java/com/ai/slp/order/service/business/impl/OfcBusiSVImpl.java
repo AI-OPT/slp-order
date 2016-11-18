@@ -28,6 +28,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
+import com.ai.slp.order.util.SequenceUtil;
 import com.alibaba.fastjson.JSON;
 
 @Service
@@ -125,22 +126,19 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		if(StringUtil.isBlank(request.getOrderId()+"")){
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单Id不能为空");
 		}
-		OrdOdFeeTotalCriteria example = new OrdOdFeeTotalCriteria();
-		OrdOdFeeTotalCriteria.Criteria criteria = example.createCriteria();
+		OrdOdProdCriteria example = new OrdOdProdCriteria();
+		OrdOdProdCriteria.Criteria criteria = example.createCriteria();
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrderId());
-		List<OrdOdFeeTotal> list = ordOdFeeTotalAtomSV.selectByExample(example);
+		List<OrdOdProd> list = ordOdProdAtomSV.selectByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdProd));
 		if (list.isEmpty()) {
+			ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 			return ordOdProdAtomSV.insertSelective(ordOdProd);
 		} else {
-			OrdOdProdCriteria ordExample = new OrdOdProdCriteria();
-			OrdOdProdCriteria.Criteria ordCriteria = ordExample.createCriteria();
-			ordCriteria.andTenantIdEqualTo(request.getTenantId());
-			ordCriteria.andOrderIdEqualTo(request.getOrderId());
-			return ordOdProdAtomSV.updateByExampleSelective(ordOdProd, ordExample);
+			return 0;
 		}
 	}
 
