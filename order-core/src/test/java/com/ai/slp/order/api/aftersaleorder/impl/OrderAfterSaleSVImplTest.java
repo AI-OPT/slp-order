@@ -22,11 +22,14 @@ public class OrderAfterSaleSVImplTest {
 	public void testBack() {
 		try {
 			OrderReturnRequest req=new OrderReturnRequest();
-			req.setOrderId(2000001034573975l);
-			req.setProdDetalId(5698l);
+			req.setOrderId(2000001028754487l);
+			req.setProdDetalId(5631l);
 			req.setProdSum(1l);
 			req.setTenantId("changhong");
-			req.setOperId("11");
+			req.setOperId("11111");
+			req.setAfterSaleReason("testssssss111");
+			req.setImageType(".jpg");
+			req.setImageId("5804376946e0fb000610ef3b");
 			System.out.println(JSON.toJSONString(req));
 			orderAfterSaleSV.back(req);
 			System.out.println(11);
@@ -43,10 +46,11 @@ public class OrderAfterSaleSVImplTest {
 	public void testExchange() {
 		try {
 			OrderReturnRequest req=new OrderReturnRequest();
-			req.setOrderId(2000000978713235l);
-			//req.setProdDetalId(32342614);
+			req.setOrderId(2000001059646714l);
+			req.setProdDetalId(6023l);
 			req.setTenantId("changhong");
-			req.setOperId("");
+			req.setOperId("1111");
+			req.setProdSum(1);
 			System.out.println(JSON.toJSONString(req));
 			orderAfterSaleSV.exchange(req);
 			System.out.println(11);

@@ -30,11 +30,12 @@ public class OrderPayImplTest {
     public void orderPayTest() {
         OrderPayRequest request = new OrderPayRequest();
         ArrayList<Long> arrayList = new ArrayList<Long>();
-        arrayList.add(2000001027247128l); //100000
-      //  arrayList.add(2000001004391043l);//40000
+        arrayList.add(2000001075298641l);
+        arrayList.add(2000001075178392l);
+        arrayList.add(2000001075056067l);
         request.setOrderIds(arrayList);
         request.setExternalId("123456");
-        request.setPayFee(96485l);
+        request.setPayFee(463500l);
         request.setPayType("21");
         request.setTenantId("changhong");
         System.out.println(JSON.toJSONString(request));

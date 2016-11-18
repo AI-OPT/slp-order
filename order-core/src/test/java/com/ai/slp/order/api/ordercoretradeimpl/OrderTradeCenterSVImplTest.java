@@ -18,8 +18,6 @@ import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductDetailInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
-import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterRequest;
-import com.ai.slp.order.api.ordertradecenter.param.OrderApiTradeCenterResponse;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.alibaba.fastjson.JSON;
@@ -100,16 +98,17 @@ public class OrderTradeCenterSVImplTest {
         
         detailInfo.setFreight(10000);
         detailInfo.setDiscountFee(500);
-        detailInfo.setSupplierId("-1");
+        detailInfo.setSupplierId("2000");
         detailInfo.setRemark("A买家留言信息信息信息信息信息信息");
         detailInfo.setOrdInvoiceInfo(ordInvoiceInfo);
         detailInfo.setOrdProductInfoList(ordProductInfoList);
         detailInfo.setOrdFeeTotalProdInfo(ordFeeTotalProdInfo);
         detailInfo.setAccountId("jfat1.201609256101549914_0001");
+        detailInfo.setTokenId("peter");
         ordProductDetailInfos.add(detailInfo);
         
         
-        //商品信息2
+       /* //商品信息2
        List<OrdProductInfo> ordProductInfoList1 = new ArrayList<OrdProductInfo>();
         OrdProductInfo ordProductInfo3 = new OrdProductInfo();
         ordProductInfo3.setBuySum(1);
@@ -154,7 +153,7 @@ public class OrderTradeCenterSVImplTest {
         detailInfo1.setOrdProductInfoList(ordProductInfoList1);
    //     detailInfo1.setOrdInvoiceInfo(ordInvoiceInfo1);
         detailInfo1.setOrdFeeTotalProdInfo(ordFeeTotalProdInfo5);
-        ordProductDetailInfos.add(detailInfo1);
+        ordProductDetailInfos.add(detailInfo1);*/
         
         OrdExtendInfo ordExtendInfo = new OrdExtendInfo();
         ordExtendInfo.setBatchFlag("1");

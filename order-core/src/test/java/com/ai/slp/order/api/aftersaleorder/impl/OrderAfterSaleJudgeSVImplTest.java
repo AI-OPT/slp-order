@@ -21,8 +21,8 @@ public class OrderAfterSaleJudgeSVImplTest {
 	@Test
 	public void testJudge() {
 		OrderJuageRequest request=new OrderJuageRequest();
-		request.setOrderId(59612492l);
-		request.setSkuId("1000000000002456");
+		request.setOrderId(2000001158766307l);
+		request.setSkuId("0000000000000287");
 		request.setTenantId("changhong");
 		OrderJuageResponse response = orderAfterSaleJudgeSV.judge(request);
 		System.out.println(JSON.toJSON(response));

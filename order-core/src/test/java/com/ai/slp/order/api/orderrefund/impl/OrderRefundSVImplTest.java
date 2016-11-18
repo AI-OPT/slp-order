@@ -33,9 +33,9 @@ public class OrderRefundSVImplTest {
 	public void testPartRefund() {
 		OrderRefundRequest request=new OrderRefundRequest();
 		request.setOperId("1111");
-		request.setOrderId(35913355l);
+		request.setOrderId(2000001064336189l);
 		request.setTenantId("changhong");
-		request.setUpdateMoney(23L);
+		request.setUpdateMoney(100L);
 		request.setUpdateReason("商品吊牌拆毁");
 		System.out.println(JSON.toJSONString(request));
 		orderRefundSV.partRefund(request);

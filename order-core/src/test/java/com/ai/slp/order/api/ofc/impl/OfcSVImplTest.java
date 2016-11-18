@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.ofc.impl;
 
+import java.sql.Timestamp;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,10 @@ import com.ai.opt.sdk.util.UUIDUtil;
 import com.ai.slp.order.api.ofc.interfaces.IOfcSV;
 import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
 import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;
+import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.api.ofc.params.OrdOrderOfcVo;
 import com.ai.slp.order.api.ofc.params.OrderOfcVo;
+import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/context/core-context.xml" })
@@ -96,5 +100,34 @@ public class OfcSVImplTest {
 		order.setOrdOdLogisticsVo(ordOdLogistics);
 
 		ofcSV.insertOrdOrder(order);
+	}
+	
+	
+	@Test
+	public void insertProdOrder(){
+		OrdOdProdVo vo = new OrdOdProdVo();
+		vo.setState("1");
+		vo.setTenantId("changhong");
+		vo.setTotalFee(0);
+		vo.setUpdateTime(DateUtil.getSysDate());
+		vo.setValidTime(DateUtil.getSysDate());
+		vo.setAdjustFee(0);
+		vo.setProdName("销售品");
+		vo.setProdType("1");
+		vo.setSalePrice(1999);
+		vo.setSkuId("1");
+		vo.setProdCode("CH6003686");
+		vo.setProdDetalId(1026011514);
+		vo.setProdId("1");
+		vo.setOperDiscountFee(0);
+		vo.setOrderId(292538);
+		vo.setBuySum(1);
+		vo.setCostPrice(0);
+		vo.setCouponFee(0);
+		vo.setDiscountFee(0);
+		vo.setJf(0);
+		vo.setJfFee(0);
+		
+		ofcSV.insertOrdOdProd(vo);
 	}
 }

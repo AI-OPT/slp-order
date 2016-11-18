@@ -7,6 +7,8 @@ import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.UserInfo;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.util.IPassMcsUtils;
+import com.alibaba.fastjson.JSON;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,11 @@ public class IShopCartSVTest {
     @Test
     public void addProdTest(){
         CartProd cartProd = new CartProd();
-        cartProd.setTenantId("SLP");
-        cartProd.setUserId("000000000000000480");
-        cartProd.setSkuId("6");
-        cartProd.setBuyNum(5l);
+        cartProd.setTenantId("changhong");
+        cartProd.setUserId("3da3109cdb3f4d9e");
+        cartProd.setSkuId("0000000000000286");
+        cartProd.setBuyNum(1l);
+        System.out.println(JSON.toJSON(cartProd));
         shopCartSV.addProd(cartProd);
     }
 

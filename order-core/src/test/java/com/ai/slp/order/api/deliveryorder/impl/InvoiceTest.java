@@ -26,7 +26,7 @@ public class InvoiceTest {
 	@Test
 	public void testQuery() {
 		DeliverGoodsPrintRequest request=new DeliverGoodsPrintRequest();
-		request.setOrderId(59612493l);
+		request.setOrderId(0l);
 		request.setTenantId("changhong");
 		System.out.println(JSON.toJSONString(request));
 		DeliverGoodsPrintResponse response = deliverGoodsPrintSV.query(request);

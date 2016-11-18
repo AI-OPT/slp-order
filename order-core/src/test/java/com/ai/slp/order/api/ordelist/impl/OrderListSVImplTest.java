@@ -70,7 +70,7 @@ public class OrderListSVImplTest {
     @Test
     public void testQueryOrder() {
     	QueryOrderRequest request=new QueryOrderRequest();
-    	request.setOrderId(2000000983614960l);
+    	request.setOrderId(2000001068242407l);
     	request.setTenantId("changhong");
     	QueryOrderResponse response = orderListSV.queryOrder(request);
     	String str = JSON.toJSONString(response);
@@ -81,24 +81,25 @@ public class OrderListSVImplTest {
     public void behindOrderListTest() {
     	BehindQueryOrderListRequest request = new BehindQueryOrderListRequest();
          request.setTenantId("changhong");
-       //  request.setUserId("7048d255c62e4511");
+         request.setUserId("7048d255c62e4511");
          List<String> stateList=new ArrayList<String>();
-        // request.setContactTel("18210680992");
-        stateList.add("21,212,213,22,23,31,92,93,94");
-      /*  stateList.add("13");
-        stateList.add("14");
-         stateList.add("15");*/
-       request.setOrderId(2000001005347671l);
+         request.setContactTel("18210680992");
+     //  stateList.add("21,212,213,312,22,23,31,92,93,94,95");
+         stateList.add("21");
+         stateList.add("13");
+     //   stateList.add("14");
+         stateList.add("15");
+         request.setOrderId(2000001005347671l);
          request.setPageNo(1);
          request.setPageSize(5);
-     request.setStateList(stateList);
-     //    request.setRouteId("0000000000000394");
-         //request.setOrderTimeBegin("2016-07-14 16:15:29");
-         //request.setOrderTimeEnd("2016-08-15 16:16:29");
-         //request.setChlId("9001");
-        // request.setContactTel("");
-      //   request.setDeliveryFlag("Y");
-       //  request.setUserId("7048d255c62e4511");
+         request.setStateList(stateList);
+         request.setRouteId("0000000000000394");
+         request.setOrderTimeBegin("2016-07-14 16:15:29");
+         request.setOrderTimeEnd("2016-08-15 16:16:29");
+         request.setChlId("9001");
+         request.setContactTel("");
+         request.setDeliveryFlag("Y");
+         request.setUserId("7048d255c62e4511");
       	
          
          System.out.println(JSON.toJSON(request));
