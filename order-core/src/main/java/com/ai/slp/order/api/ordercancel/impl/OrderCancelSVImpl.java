@@ -54,6 +54,7 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
         for (OrdOrder ordOrder : orders) {
             try {
             	log.info("存在订单信息,订单id:"+ordOrder.getOrderId());
+            	System.out.println("存在订单信息,订单id:"+ordOrder.getOrderId());
                 orderCancelBusiSV.orderCancel(ordOrder);
             } catch (Exception e) {
                 log.error("订单自动撤单失败", e);
