@@ -23,10 +23,13 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
+import com.ai.slp.order.dao.mapper.bo.OrdParam;
+import com.ai.slp.order.dao.mapper.bo.OrdParamCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdParamAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.alibaba.fastjson.JSON;
@@ -47,6 +50,9 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 	
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
+	
+	@Autowired
+	private IOrdParamAtomSV ordParamAtomSV;
 
 	@Override
 	public void insertOrdOrder(OrderOfcVo request) throws BusinessException, SystemException 
@@ -140,6 +146,19 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		} else {
 			return 0;
 		}
+	}
+
+
+	@Override
+	public String parseOfcCode(String request) throws BusinessException, SystemException {
+		OrdParamCriteria example = new OrdParamCriteria();
+		OrdParamCriteria.Criteria criteria = example.createCriteria();
+		criteria.andOutCodeEqualTo(request.trim());
+		List<OrdParam> list = ordParamAtomSV.selectByExample(example);
+		if(!list.isEmpty()){
+			return list.get(0).getCode();
+		}
+		return null;
 	}
 
 }

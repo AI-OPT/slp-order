@@ -63,5 +63,14 @@ public class OfcSVImpl implements IOfcSV {
 		return ;
 	}
 
+
+	@Override
+	public String parseOfcCode(String request) throws BusinessException, SystemException {
+		
+		return ofcBusiSV.parseOfcCode(request);
+	}
+	
+	
+
 }
 

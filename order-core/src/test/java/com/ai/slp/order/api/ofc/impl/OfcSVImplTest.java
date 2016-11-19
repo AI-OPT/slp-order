@@ -1,7 +1,5 @@
 package com.ai.slp.order.api.ofc.impl;
 
-import java.sql.Timestamp;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;
 import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.api.ofc.params.OrdOrderOfcVo;
 import com.ai.slp.order.api.ofc.params.OrderOfcVo;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/context/core-context.xml" })
@@ -129,5 +126,10 @@ public class OfcSVImplTest {
 		vo.setJfFee(0);
 		
 		ofcSV.insertOrdOdProd(vo);
+	}
+	
+	@Test
+	public void testCode(){
+		System.out.println(ofcSV.parseOfcCode("京东平台"));
 	}
 }

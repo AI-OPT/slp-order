@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ai.slp.order.dao.mapper.interfaces.OrdParamMapper" >
+  <resultMap id="BaseResultMap" type="com.ai.slp.order.dao.mapper.bo.OrdParam" >
+    <result column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="PARAM_CODE" property="paramCode" jdbcType="VARCHAR" />
+    <result column="OUT_CODE" property="outCode" jdbcType="VARCHAR" />
+    <result column="OUT_VALUE" property="outValue" jdbcType="VARCHAR" />
+    <result column="OUT_DESC" property="outDesc" jdbcType="VARCHAR" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="STATE" property="state" jdbcType="VARCHAR" />
+    <result column="TENANT_ID" property="tenantId" jdbcType="VARCHAR" />
+    <result column="SYSTEM_ID" property="systemId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, PARAM_CODE, OUT_CODE, OUT_VALUE, OUT_DESC, CODE, STATE, TENANT_ID, SYSTEM_ID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdParamCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from ord_param
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitStart != null and limitStart>=0" >
+      limit #{limitStart} , #{limitEnd}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdParamCriteria" >
+    delete from ord_param
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ai.slp.order.dao.mapper.bo.OrdParam" >
+    insert into ord_param (ID, PARAM_CODE, OUT_CODE, 
+      OUT_VALUE, OUT_DESC, CODE, 
+      STATE, TENANT_ID, SYSTEM_ID
+      )
+    values (#{id,jdbcType=VARCHAR}, #{paramCode,jdbcType=VARCHAR}, #{outCode,jdbcType=VARCHAR}, 
+      #{outValue,jdbcType=VARCHAR}, #{outDesc,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
+      #{state,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR}, #{systemId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdParam" >
+    insert into ord_param
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="paramCode != null" >
+        PARAM_CODE,
+      </if>
+      <if test="outCode != null" >
+        OUT_CODE,
+      </if>
+      <if test="outValue != null" >
+        OUT_VALUE,
+      </if>
+      <if test="outDesc != null" >
+        OUT_DESC,
+      </if>
+      <if test="code != null" >
+        CODE,
+      </if>
+      <if test="state != null" >
+        STATE,
+      </if>
+      <if test="tenantId != null" >
+        TENANT_ID,
+      </if>
+      <if test="systemId != null" >
+        SYSTEM_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="paramCode != null" >
+        #{paramCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outCode != null" >
+        #{outCode,jdbcType=VARCHAR},
+      </if>
+      <if test="outValue != null" >
+        #{outValue,jdbcType=VARCHAR},
+      </if>
+      <if test="outDesc != null" >
+        #{outDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantId != null" >
+        #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="systemId != null" >
+        #{systemId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ai.slp.order.dao.mapper.bo.OrdParamCriteria" resultType="java.lang.Integer" >
+    select count(*) from ord_param
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update ord_param
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.paramCode != null" >
+        PARAM_CODE = #{record.paramCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outCode != null" >
+        OUT_CODE = #{record.outCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outValue != null" >
+        OUT_VALUE = #{record.outValue,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outDesc != null" >
+        OUT_DESC = #{record.outDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.code != null" >
+        CODE = #{record.code,jdbcType=VARCHAR},
+      </if>
+      <if test="record.state != null" >
+        STATE = #{record.state,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tenantId != null" >
+        TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.systemId != null" >
+        SYSTEM_ID = #{record.systemId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update ord_param
+    set ID = #{record.id,jdbcType=VARCHAR},
+      PARAM_CODE = #{record.paramCode,jdbcType=VARCHAR},
+      OUT_CODE = #{record.outCode,jdbcType=VARCHAR},
+      OUT_VALUE = #{record.outValue,jdbcType=VARCHAR},
+      OUT_DESC = #{record.outDesc,jdbcType=VARCHAR},
+      CODE = #{record.code,jdbcType=VARCHAR},
+      STATE = #{record.state,jdbcType=VARCHAR},
+      TENANT_ID = #{record.tenantId,jdbcType=VARCHAR},
+      SYSTEM_ID = #{record.systemId,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

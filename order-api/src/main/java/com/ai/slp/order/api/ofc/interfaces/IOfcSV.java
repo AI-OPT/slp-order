@@ -50,4 +50,20 @@ public interface IOfcSV {
 	public void insertOrdOdProd(OrdOdProdVo request)throws BusinessException,SystemException;
 	
 	
+	/**
+	 * 解析ofc订单数据编码
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode Ofc_003
+	 * @RestRelativeURL ofcservice/parseOfcCode
+	 */
+	@POST
+	@Path("/parseOfcCode")
+	public String parseOfcCode(String request)throws BusinessException,SystemException;
+	
+	
 }
