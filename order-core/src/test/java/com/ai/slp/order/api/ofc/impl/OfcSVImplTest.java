@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.UUIDUtil;
 import com.ai.slp.order.api.ofc.interfaces.IOfcSV;
+import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
 import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
 import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;
 import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
@@ -89,7 +90,7 @@ public class OfcSVImplTest {
 		// 详细地址
 		ordOdLogistics.setAddress("舒服的暖色调");
 		// 邮编
-		ordOdLogistics.setPostcode("146");
+		ordOdLogistics.setPostcode("");
 		
 		OrderOfcVo order = new OrderOfcVo();
 		order.setOrOrderOfcVo(vo);
@@ -114,7 +115,6 @@ public class OfcSVImplTest {
 		vo.setSalePrice(1999);
 		vo.setSkuId("1");
 		vo.setProdCode("CH6003686");
-		vo.setProdDetalId(1026011514);
 		vo.setProdId("1");
 		vo.setOperDiscountFee(0);
 		vo.setOrderId(292538);
@@ -130,6 +130,10 @@ public class OfcSVImplTest {
 	
 	@Test
 	public void testCode(){
-		System.out.println(ofcSV.parseOfcCode("京东平台"));
+		OfcCodeRequst re = new OfcCodeRequst();
+		re.setTenantId("changhong");
+		re.setSystemId("OFC");
+		re.setOutCode("京东平台");
+		System.out.println(ofcSV.parseOfcCode(re));
 	}
 }

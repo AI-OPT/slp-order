@@ -11,6 +11,7 @@ import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.ofc.interfaces.IOfcSV;
+import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
 import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.api.ofc.params.OrderOfcVo;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
@@ -65,8 +66,7 @@ public class OfcSVImpl implements IOfcSV {
 
 
 	@Override
-	public String parseOfcCode(String request) throws BusinessException, SystemException {
-		
+	public String parseOfcCode(OfcCodeRequst request) throws BusinessException, SystemException {
 		return ofcBusiSV.parseOfcCode(request);
 	}
 	

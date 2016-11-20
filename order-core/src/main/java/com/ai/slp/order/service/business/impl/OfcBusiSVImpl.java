@@ -13,6 +13,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
 import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.api.ofc.params.OrderOfcVo;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -153,10 +154,12 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 
 
 	@Override
-	public String parseOfcCode(String request) throws BusinessException, SystemException {
+	public String parseOfcCode(OfcCodeRequst request) throws BusinessException, SystemException {
 		OrdParamCriteria example = new OrdParamCriteria();
 		OrdParamCriteria.Criteria criteria = example.createCriteria();
-		criteria.andOutCodeEqualTo(request.trim());
+		criteria.andTenantIdEqualTo(request.getTenantId());
+		criteria.andSystemIdEqualTo(request.getSystemId());
+		criteria.andOutCodeEqualTo(request.getOutCode().trim());
 		List<OrdParam> list = ordParamAtomSV.selectByExample(example);
 		if(!list.isEmpty()){
 			return list.get(0).getCode();

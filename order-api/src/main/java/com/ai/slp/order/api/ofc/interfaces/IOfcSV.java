@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
 import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.api.ofc.params.OrderOfcVo;
 
@@ -63,7 +64,7 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/parseOfcCode")
-	public String parseOfcCode(String request)throws BusinessException,SystemException;
+	public String parseOfcCode(OfcCodeRequst request)throws BusinessException,SystemException;
 	
 	
 }
