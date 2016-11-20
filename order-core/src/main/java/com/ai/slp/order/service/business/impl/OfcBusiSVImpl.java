@@ -13,7 +13,6 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.StringUtil;
-import com.ai.opt.sdk.util.UUIDUtil;
 import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.api.ofc.params.OrderOfcVo;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -109,7 +108,6 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdLogistics> ordOdLogisticsList = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
-		ordOdLogistics.setLogisticsId(UUIDUtil.genShortId());
 		if (ordOdLogisticsList.isEmpty()) {
 			ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		} else {
