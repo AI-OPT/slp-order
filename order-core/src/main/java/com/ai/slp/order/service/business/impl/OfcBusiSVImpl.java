@@ -65,6 +65,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单信息订单Id不能为空");
 		}
 		//订单信息
+		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(request));
 		OrdOrderCriteria orderNumExample = new OrdOrderCriteria();
 		OrdOrderCriteria.Criteria orderNumCriteria = orderNumExample.createCriteria();
 		orderNumCriteria.andTenantIdEqualTo(request.getOrOrderOfcVo().getTenantId());
@@ -72,7 +73,6 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(orderNumExample);
 		OrdOrder ordOrder = new OrdOrder();
 		BeanUtils.copyProperties(request.getOrOrderOfcVo(), ordOrder);
-		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOrder));
 		if (orderList.isEmpty()) {
 			ordOrderAtomSV.insertSelective(ordOrder);
 		} else {
@@ -91,7 +91,6 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdFeeTotal> ordOdFeeList = ordOdFeeTotalAtomSV.selectByExample(ordOdFeeNumExample);
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
 		BeanUtils.copyProperties(request.getOrdOdFeeTotalVo(), ordOdFeeTotal);
-		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdFeeTotal));
 		if (ordOdFeeList.isEmpty()) {
 			ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
 		} else {
@@ -103,15 +102,14 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		}
 		
 		//订单出货信息
-		OrdOdLogisticsCriteria OrdOdLogisticsExample = new OrdOdLogisticsCriteria();
-		OrdOdLogisticsCriteria.Criteria criteria = OrdOdLogisticsExample.createCriteria();
+		OrdOdLogisticsCriteria ordOdLogisticsExample = new OrdOdLogisticsCriteria();
+		OrdOdLogisticsCriteria.Criteria criteria = ordOdLogisticsExample.createCriteria();
 		criteria.andTenantIdEqualTo(request.getOrdOdLogisticsVo().getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrdOdLogisticsVo().getOrderId());
-		List<OrdOdLogistics> ordOdLogisticsList = ordOdLogisticsAtomSV.selectByExample(OrdOdLogisticsExample);
+		List<OrdOdLogistics> ordOdLogisticsList = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
 		ordOdLogistics.setLogisticsId(UUIDUtil.genShortId());
-		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdLogistics));
 		if (ordOdLogisticsList.isEmpty()) {
 			ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		} else {
@@ -141,12 +139,17 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdProd> list = ordOdProdAtomSV.selectByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
+		ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdProd));
 		if (list.isEmpty()) {
-			ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 			return ordOdProdAtomSV.insertSelective(ordOdProd);
 		} else {
-			return 0;
+			OrdOdProdCriteria prodExample = new OrdOdProdCriteria();
+			OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
+			prodCriteria.andTenantIdEqualTo(ordOdProd.getTenantId());
+			prodCriteria.andProdDetalIdEqualTo(ordOdProd.getProdDetalId());
+			prodCriteria.andOrderIdEqualTo(ordOdProd.getOrderId());
+			return ordOdProdAtomSV.updateByExampleSelective(ordOdProd, prodExample);
 		}
 	}
 
