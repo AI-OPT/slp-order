@@ -40,32 +40,33 @@ import com.alibaba.fastjson.JSON;
 public class OfcBusiSVImpl implements IOfcBusiSV {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OfcBusiSVImpl.class);
-	
+
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
-	
+
 	@Autowired
 	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
-	
+
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
-	
+
 	@Autowired
 	private IOrdParamAtomSV ordParamAtomSV;
 
 	@Override
-	public void insertOrdOrder(OrderOfcVo request) throws BusinessException, SystemException 
-	{
-		if(StringUtil.isBlank(request.getOrOrderOfcVo().getTenantId()+request.getOrdOdLogisticsVo().getTenantId()+request.getOrdOdFeeTotalVo().getTenantId())){
+	public void insertOrdOrder(OrderOfcVo request) throws BusinessException, SystemException {
+		if (StringUtil.isBlank(request.getOrOrderOfcVo().getTenantId() + request.getOrdOdLogisticsVo().getTenantId()
+				+ request.getOrdOdFeeTotalVo().getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单信息租户Id不能为空");
 		}
-		if(StringUtil.isBlank(""+request.getOrOrderOfcVo().getOrderId()+request.getOrdOdLogisticsVo().getOrderId()+request.getOrOrderOfcVo().getOrderId())){
+		if (StringUtil.isBlank("" + request.getOrOrderOfcVo().getOrderId() + request.getOrdOdLogisticsVo().getOrderId()
+				+ request.getOrOrderOfcVo().getOrderId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单信息订单Id不能为空");
 		}
-		//订单信息
-		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(request));
+		// 订单信息
+		LOG.info("++++++++++++++++++请求数据+++++++++++++++" + JSON.toJSONString(request));
 		OrdOrderCriteria orderNumExample = new OrdOrderCriteria();
 		OrdOrderCriteria.Criteria orderNumCriteria = orderNumExample.createCriteria();
 		orderNumCriteria.andTenantIdEqualTo(request.getOrOrderOfcVo().getTenantId());
@@ -82,8 +83,8 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			orderUpdateCriteria.andOrderIdEqualTo(request.getOrOrderOfcVo().getOrderId());
 			ordOrderAtomSV.updateByExampleSelective(ordOrder, orderUpdateExample);
 		}
-		
-		//订单费用信息
+
+		// 订单费用信息
 		OrdOdFeeTotalCriteria ordOdFeeNumExample = new OrdOdFeeTotalCriteria();
 		OrdOdFeeTotalCriteria.Criteria ordOdFeeNumCriteria = ordOdFeeNumExample.createCriteria();
 		ordOdFeeNumCriteria.andTenantIdEqualTo(request.getOrdOdFeeTotalVo().getTenantId());
@@ -98,10 +99,10 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			OrdOdFeeTotalCriteria.Criteria ordOdFeeupdateCriteria = ordOdFeeupdateExample.createCriteria();
 			ordOdFeeupdateCriteria.andTenantIdEqualTo(request.getOrdOdFeeTotalVo().getTenantId());
 			ordOdFeeupdateCriteria.andOrderIdEqualTo(request.getOrdOdFeeTotalVo().getOrderId());
-			ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal,ordOdFeeupdateExample);
+			ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal, ordOdFeeupdateExample);
 		}
-		
-		//订单出货信息
+
+		// 订单出货信息
 		OrdOdLogisticsCriteria ordOdLogisticsExample = new OrdOdLogisticsCriteria();
 		OrdOdLogisticsCriteria.Criteria criteria = ordOdLogisticsExample.createCriteria();
 		criteria.andTenantIdEqualTo(request.getOrdOdLogisticsVo().getTenantId());
@@ -118,40 +119,41 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			ordOdLogisticsCriteria.andOrderIdEqualTo(request.getOrdOdLogisticsVo().getOrderId());
 			ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordExample);
 		}
-		
-		
+
 	}
-	
 
 	@Override
 	public int insertOrdOdProdOfc(OrdOdProdVo request) throws BusinessException, SystemException {
-		if(StringUtil.isBlank(request.getTenantId())){
+		if (StringUtil.isBlank(request.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户Id不能为空");
 		}
-		if(StringUtil.isBlank(request.getOrderId()+"")){
+		if (StringUtil.isBlank(request.getOrderId() + "")) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单Id不能为空");
+		}
+		if (StringUtil.isBlank(request.getProdCode())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品编码不能为空");
 		}
 		OrdOdProdCriteria example = new OrdOdProdCriteria();
 		OrdOdProdCriteria.Criteria criteria = example.createCriteria();
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrderId());
+		criteria.andProdCodeEqualTo(request.getProdCode());
 		List<OrdOdProd> list = ordOdProdAtomSV.selectByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
 		ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
-		LOG.info("++++++++++++++++++请求数据+++++++++++++++"+JSON.toJSONString(ordOdProd));
+		LOG.info("++++++++++++++++++请求数据+++++++++++++++" + JSON.toJSONString(ordOdProd));
 		if (list.isEmpty()) {
 			return ordOdProdAtomSV.insertSelective(ordOdProd);
 		} else {
 			OrdOdProdCriteria prodExample = new OrdOdProdCriteria();
 			OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
 			prodCriteria.andTenantIdEqualTo(ordOdProd.getTenantId());
-			prodCriteria.andProdDetalIdEqualTo(ordOdProd.getProdDetalId());
+			prodCriteria.andProdCodeEqualTo(ordOdProd.getProdCode());
 			prodCriteria.andOrderIdEqualTo(ordOdProd.getOrderId());
 			return ordOdProdAtomSV.updateByExampleSelective(ordOdProd, prodExample);
 		}
 	}
-
 
 	@Override
 	public String parseOfcCode(OfcCodeRequst request) throws BusinessException, SystemException {
@@ -161,7 +163,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		criteria.andSystemIdEqualTo(request.getSystemId());
 		criteria.andOutCodeEqualTo(request.getOutCode().trim());
 		List<OrdParam> list = ordParamAtomSV.selectByExample(example);
-		if(!list.isEmpty()){
+		if (!list.isEmpty()) {
 			return list.get(0).getCode();
 		}
 		return null;
