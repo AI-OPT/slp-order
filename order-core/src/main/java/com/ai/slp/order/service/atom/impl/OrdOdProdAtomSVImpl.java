@@ -60,4 +60,9 @@ public class OrdOdProdAtomSVImpl implements IOrdOdProdAtomSV {
 		return MapperFactory.getOrdOdProdMapper().updateByExampleSelective(record, example);
 	}
 
+	@Override
+	public int countByExample(OrdOdProdCriteria example) {
+		return MapperFactory.getOrdOdProdMapper().countByExample(example);
+	}
+
 }

@@ -41,4 +41,9 @@ public class OrdOdFeeTotalAtomSVImpl implements IOrdOdFeeTotalAtomSV {
 		return MapperFactory.getOrdOdFeeTotalMapper().updateByExampleSelective(record, example);
 	}
 
+	@Override
+	public int countByExample(OrdOdFeeTotalCriteria example) {
+		return MapperFactory.getOrdOdFeeTotalMapper().countByExample(example);
+	}
+
 }

@@ -8,13 +8,16 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria;
 
 public interface IOrdOdFeeTotalAtomSV {
-    List<OrdOdFeeTotal> selectByExample(OrdOdFeeTotalCriteria example);
+	List<OrdOdFeeTotal> selectByExample(OrdOdFeeTotalCriteria example);
 
-    public OrdOdFeeTotal selectByOrderId(String tenantId, long orderId);
+	public OrdOdFeeTotal selectByOrderId(String tenantId, long orderId);
 
-    int insertSelective(OrdOdFeeTotal record);
+	int countByExample(OrdOdFeeTotalCriteria example);
 
-    int updateByOrderId(OrdOdFeeTotal ordOdFeeTotal);
-    
-    int updateByExampleSelective(@Param("record") OrdOdFeeTotal record, @Param("example") OrdOdFeeTotalCriteria example);
+	int insertSelective(OrdOdFeeTotal record);
+
+	int updateByOrderId(OrdOdFeeTotal ordOdFeeTotal);
+
+	int updateByExampleSelective(@Param("record") OrdOdFeeTotal record,
+			@Param("example") OrdOdFeeTotalCriteria example);
 }

@@ -9,6 +9,8 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria;
 
 public interface IOrdOdLogisticsAtomSV {
 	
+	 int countByExample(OrdOdLogisticsCriteria example);
+	
 	 int insertSelective(OrdOdLogistics record);
 	 
 	 List<OrdOdLogistics> selectByExample(OrdOdLogisticsCriteria example);

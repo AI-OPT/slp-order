@@ -72,10 +72,10 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOrderCriteria.Criteria orderNumCriteria = orderNumExample.createCriteria();
 		orderNumCriteria.andTenantIdEqualTo(request.getOrOrderOfcVo().getTenantId());
 		orderNumCriteria.andOrderIdEqualTo(request.getOrOrderOfcVo().getOrderId());
-		List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(orderNumExample);
+		int orderNum = ordOrderAtomSV.countByExample(orderNumExample);
 		OrdOrder ordOrder = new OrdOrder();
 		BeanUtils.copyProperties(request.getOrOrderOfcVo(), ordOrder);
-		if (orderList.isEmpty()) {
+		if (orderNum==0) {
 			ordOrderAtomSV.insertSelective(ordOrder);
 		} else {
 			OrdOrderCriteria orderUpdateExample = new OrdOrderCriteria();
@@ -90,10 +90,10 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOdFeeTotalCriteria.Criteria ordOdFeeNumCriteria = ordOdFeeNumExample.createCriteria();
 		ordOdFeeNumCriteria.andTenantIdEqualTo(request.getOrdOdFeeTotalVo().getTenantId());
 		ordOdFeeNumCriteria.andOrderIdEqualTo(request.getOrdOdFeeTotalVo().getOrderId());
-		List<OrdOdFeeTotal> ordOdFeeList = ordOdFeeTotalAtomSV.selectByExample(ordOdFeeNumExample);
+		int ordOdFeeNum = ordOdFeeTotalAtomSV.countByExample(ordOdFeeNumExample);
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
 		BeanUtils.copyProperties(request.getOrdOdFeeTotalVo(), ordOdFeeTotal);
-		if (ordOdFeeList.isEmpty()) {
+		if (ordOdFeeNum==0) {
 			ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
 		} else {
 			OrdOdFeeTotalCriteria ordOdFeeupdateExample = new OrdOdFeeTotalCriteria();
@@ -108,11 +108,11 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOdLogisticsCriteria.Criteria criteria = ordOdLogisticsExample.createCriteria();
 		criteria.andTenantIdEqualTo(request.getOrdOdLogisticsVo().getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrdOdLogisticsVo().getOrderId());
-		List<OrdOdLogistics> ordOdLogisticsList = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
+		int ordOdLogisticsLisNumt = ordOdLogisticsAtomSV.countByExample(ordOdLogisticsExample);
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
 		ordOdLogistics.setLogisticsId(UUIDUtil.genShortId());
-		if (ordOdLogisticsList.isEmpty()) {
+		if (ordOdLogisticsLisNumt==0) {
 			ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		} else {
 			OrdOdLogisticsCriteria ordExample = new OrdOdLogisticsCriteria();
@@ -140,12 +140,12 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrderId());
 		criteria.andProdCodeEqualTo(request.getProdCode());
-		List<OrdOdProd> list = ordOdProdAtomSV.selectByExample(example);
+		int num = ordOdProdAtomSV.countByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
 		ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++" + JSON.toJSONString(ordOdProd));
-		if (list.isEmpty()) {
+		if (num==0) {
 			return ordOdProdAtomSV.insertSelective(ordOdProd);
 		} else {
 			OrdOdProdCriteria prodExample = new OrdOdProdCriteria();

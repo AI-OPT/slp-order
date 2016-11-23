@@ -49,4 +49,9 @@ public class OrdOdLogisticsAtomSVImpl implements IOrdOdLogisticsAtomSV {
 		return MapperFactory.getOrdOdLogisticsMapper().updateByExampleSelective(record, example);
 	}
 
+	@Override
+	public int countByExample(OrdOdLogisticsCriteria example) {
+		return MapperFactory.getOrdOdLogisticsMapper().countByExample(example);
+	}
+
 }
