@@ -22,6 +22,7 @@ public interface IOfcSV {
 
 	/**
 	 * 保存订单信息
+	 * 
 	 * @param request
 	 * @return
 	 * @throws BusinessException
@@ -33,10 +34,11 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/insertOrdOrder")
-	public void insertOrdOrder(OrderOfcVo request)throws BusinessException,SystemException;
-	
+	public void insertOrdOrder(OrderOfcVo request) throws Exception;
+
 	/**
 	 * 保存订单商品表
+	 * 
 	 * @param request
 	 * @return
 	 * @throws BusinessException
@@ -48,11 +50,11 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/insertOrdOdProd")
-	public void insertOrdOdProd(OrdOdProdVo request)throws BusinessException,SystemException;
-	
-	
+	public void insertOrdOdProd(OrdOdProdVo request) throws Exception;
+
 	/**
 	 * 解析ofc订单数据编码
+	 * 
 	 * @param request
 	 * @return
 	 * @throws BusinessException
@@ -64,7 +66,6 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/parseOfcCode")
-	public String parseOfcCode(OfcCodeRequst request)throws BusinessException,SystemException;
-	
-	
+	public String parseOfcCode(OfcCodeRequst request) throws BusinessException, SystemException;
+
 }

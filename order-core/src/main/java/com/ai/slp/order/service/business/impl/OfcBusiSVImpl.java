@@ -34,6 +34,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdParamAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
+import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.fastjson.JSON;
 
 @Service
@@ -57,7 +58,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 	private IOrdParamAtomSV ordParamAtomSV;
 
 	@Override
-	public void insertOrdOrder(OrderOfcVo request) throws BusinessException, SystemException {
+	public void insertOrdOrder(OrderOfcVo request) throws RpcException, BusinessException, SystemException {
 		if (StringUtil.isBlank(request.getOrOrderOfcVo().getTenantId() + request.getOrdOdLogisticsVo().getTenantId()
 				+ request.getOrdOdFeeTotalVo().getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单信息租户Id不能为空");
@@ -75,8 +76,13 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		int orderNum = ordOrderAtomSV.countByExample(orderNumExample);
 		OrdOrder ordOrder = new OrdOrder();
 		BeanUtils.copyProperties(request.getOrOrderOfcVo(), ordOrder);
-		if (orderNum==0) {
-			ordOrderAtomSV.insertSelective(ordOrder);
+		if (orderNum == 0) {
+			try {
+				ordOrderAtomSV.insertSelective(ordOrder);
+			} catch (Exception e) {
+				throw new RpcException(RpcException.TIMEOUT_EXCEPTION, "Invoke remote method timeout" + e.getMessage(),
+						e);
+			}
 		} else {
 			OrdOrderCriteria orderUpdateExample = new OrdOrderCriteria();
 			OrdOrderCriteria.Criteria orderUpdateCriteria = orderUpdateExample.createCriteria();
@@ -93,8 +99,13 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		int ordOdFeeNum = ordOdFeeTotalAtomSV.countByExample(ordOdFeeNumExample);
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
 		BeanUtils.copyProperties(request.getOrdOdFeeTotalVo(), ordOdFeeTotal);
-		if (ordOdFeeNum==0) {
-			ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
+		if (ordOdFeeNum == 0) {
+			try {
+				ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
+			} catch (Exception e) {
+				throw new RpcException(RpcException.TIMEOUT_EXCEPTION, "Invoke remote method timeout" + e.getMessage(),
+						e);
+			}
 		} else {
 			OrdOdFeeTotalCriteria ordOdFeeupdateExample = new OrdOdFeeTotalCriteria();
 			OrdOdFeeTotalCriteria.Criteria ordOdFeeupdateCriteria = ordOdFeeupdateExample.createCriteria();
@@ -112,8 +123,13 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
 		ordOdLogistics.setLogisticsId(UUIDUtil.genShortId());
-		if (ordOdLogisticsLisNumt==0) {
-			ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
+		if (ordOdLogisticsLisNumt == 0) {
+			try {
+				ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
+			} catch (Exception e) {
+				throw new RpcException(RpcException.TIMEOUT_EXCEPTION, "Invoke remote method timeout" + e.getMessage(),
+						e);
+			}
 		} else {
 			OrdOdLogisticsCriteria ordExample = new OrdOdLogisticsCriteria();
 			OrdOdLogisticsCriteria.Criteria ordOdLogisticsCriteria = ordExample.createCriteria();
@@ -125,7 +141,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 	}
 
 	@Override
-	public int insertOrdOdProdOfc(OrdOdProdVo request) throws BusinessException, SystemException {
+	public int insertOrdOdProdOfc(OrdOdProdVo request) throws RpcException,BusinessException, SystemException {
 		if (StringUtil.isBlank(request.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户Id不能为空");
 		}
@@ -145,8 +161,13 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		BeanUtils.copyProperties(request, ordOdProd);
 		ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++" + JSON.toJSONString(ordOdProd));
-		if (num==0) {
-			return ordOdProdAtomSV.insertSelective(ordOdProd);
+		if (num == 0) {
+			try {
+				return ordOdProdAtomSV.insertSelective(ordOdProd);
+			} catch (Exception e) {
+				throw new RpcException(RpcException.TIMEOUT_EXCEPTION, "Invoke remote method timeout" + e.getMessage(),
+						e);
+			}
 		} else {
 			OrdOdProdCriteria prodExample = new OrdOdProdCriteria();
 			OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();

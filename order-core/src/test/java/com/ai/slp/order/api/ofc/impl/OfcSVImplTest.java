@@ -7,7 +7,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.opt.sdk.util.DateUtil;
-import com.ai.opt.sdk.util.UUIDUtil;
 import com.ai.slp.order.api.ofc.interfaces.IOfcSV;
 import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
 import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
@@ -24,7 +23,7 @@ public class OfcSVImplTest {
 	private IOfcSV ofcSV;
 
 	@Test
-	public void insertOrder() {
+	public void insertOrder() throws Exception {
 		OrdOrderOfcVo vo = new OrdOrderOfcVo();
 		vo.setOrderId(277362);
 		vo.setOrderTime(DateUtil.getSysDate());
@@ -75,8 +74,6 @@ public class OfcSVImplTest {
 		ordOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 
 		OrdOdLogisticsVo ordOdLogistics = new OrdOdLogisticsVo();
-		// 配送Id,必传
-		ordOdLogistics.setLogisticsId(UUIDUtil.genShortId());
 		// 配送类型,必传
 		ordOdLogistics.setLogisticsType("0");
 		// 租户Id
@@ -102,7 +99,7 @@ public class OfcSVImplTest {
 	
 	
 	@Test
-	public void insertProdOrder(){
+	public void insertProdOrder() throws Exception{
 		OrdOdProdVo vo = new OrdOdProdVo();
 		vo.setState("1");
 		vo.setTenantId("changhong");
@@ -117,7 +114,7 @@ public class OfcSVImplTest {
 		vo.setProdCode("CH6003686");
 		vo.setProdId("1");
 		vo.setOperDiscountFee(0);
-		vo.setOrderId(292538);
+		vo.setOrderId(29253348);
 		vo.setBuySum(1);
 		vo.setCostPrice(0);
 		vo.setCouponFee(0);
