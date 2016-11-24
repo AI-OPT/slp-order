@@ -58,7 +58,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 	private IOrdParamAtomSV ordParamAtomSV;
 
 	@Override
-	public void insertOrdOrder(OrderOfcVo request) throws RpcException, BusinessException, SystemException {
+	public void insertOrdOrder(OrderOfcVo request) throws BusinessException, SystemException {
 		if (StringUtil.isBlank(request.getOrOrderOfcVo().getTenantId() + request.getOrdOdLogisticsVo().getTenantId()
 				+ request.getOrdOdFeeTotalVo().getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单信息租户Id不能为空");
@@ -80,8 +80,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOrderAtomSV.insertSelective(ordOrder);
 			} catch (Exception e) {
-				throw new RpcException(RpcException.TIMEOUT_EXCEPTION, "Invoke remote method timeout" + e.getMessage(),
-						e);
+				throw new SystemException(e.getMessage());
 			}
 		} else {
 			OrdOrderCriteria orderUpdateExample = new OrdOrderCriteria();
@@ -103,8 +102,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
 			} catch (Exception e) {
-				throw new RpcException(RpcException.TIMEOUT_EXCEPTION, "Invoke remote method timeout" + e.getMessage(),
-						e);
+				throw new SystemException(e.getMessage());
 			}
 		} else {
 			OrdOdFeeTotalCriteria ordOdFeeupdateExample = new OrdOdFeeTotalCriteria();
@@ -127,8 +125,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 			} catch (Exception e) {
-				throw new RpcException(RpcException.TIMEOUT_EXCEPTION, "Invoke remote method timeout" + e.getMessage(),
-						e);
+				throw new SystemException(e.getMessage());
 			}
 		} else {
 			OrdOdLogisticsCriteria ordExample = new OrdOdLogisticsCriteria();
@@ -165,8 +162,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				return ordOdProdAtomSV.insertSelective(ordOdProd);
 			} catch (Exception e) {
-				throw new RpcException(RpcException.TIMEOUT_EXCEPTION, "Invoke remote method timeout" + e.getMessage(),
-						e);
+				throw new SystemException(e.getMessage());
 			}
 		} else {
 			OrdOdProdCriteria prodExample = new OrdOdProdCriteria();

@@ -34,7 +34,7 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/insertOrdOrder")
-	public void insertOrdOrder(OrderOfcVo request) throws Exception;
+	public void insertOrdOrder(OrderOfcVo request) throws SystemException;
 
 	/**
 	 * 保存订单商品表
@@ -50,7 +50,7 @@ public interface IOfcSV {
 	 */
 	@POST
 	@Path("/insertOrdOdProd")
-	public void insertOrdOdProd(OrdOdProdVo request) throws Exception;
+	public void insertOrdOdProd(OrdOdProdVo request) throws SystemException;
 
 	/**
 	 * 解析ofc订单数据编码

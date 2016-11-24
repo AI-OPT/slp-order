@@ -41,7 +41,7 @@ public class OfcSVImpl implements IOfcSV {
 	}
 
 	@Override
-	public void insertOrdOdProd(OrdOdProdVo request) throws RpcException, BusinessException, SystemException {
+	public void insertOrdOdProd(OrdOdProdVo request) throws  BusinessException, SystemException {
 		try {
 			Long beginTime = System.currentTimeMillis();
 			log.info("保存订单商品信息服务开始" + beginTime);
@@ -49,8 +49,6 @@ public class OfcSVImpl implements IOfcSV {
 			log.info("保存订单商品信息服务结束" + System.currentTimeMillis() + "耗时:"
 					+ String.valueOf(System.currentTimeMillis() - beginTime) + "毫秒");
 		} catch (BusinessException e) {
-			log.info("++++++++++++++++++异常信息+++++++++++++++" + JSON.toJSONString(e));
-		}catch (SystemException e) {
 			log.info("++++++++++++++++++异常信息+++++++++++++++" + JSON.toJSONString(e));
 		}
 	}
@@ -61,8 +59,6 @@ public class OfcSVImpl implements IOfcSV {
 		try {
 			code = ofcBusiSV.parseOfcCode(request);
 		} catch (BusinessException e) {
-			log.info("++++++++++++++++++异常信息+++++++++++++++" + JSON.toJSONString(e));
-		}catch (SystemException e) {
 			log.info("++++++++++++++++++异常信息+++++++++++++++" + JSON.toJSONString(e));
 		}
 		return code;
