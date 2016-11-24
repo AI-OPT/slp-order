@@ -117,11 +117,11 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOdLogisticsCriteria.Criteria criteria = ordOdLogisticsExample.createCriteria();
 		criteria.andTenantIdEqualTo(request.getOrdOdLogisticsVo().getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrdOdLogisticsVo().getOrderId());
-		int ordOdLogisticsLisNumt = ordOdLogisticsAtomSV.countByExample(ordOdLogisticsExample);
+		int ordOdLogisticsLisNum = ordOdLogisticsAtomSV.countByExample(ordOdLogisticsExample);
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
 		ordOdLogistics.setLogisticsId(UUIDUtil.genShortId());
-		if (ordOdLogisticsLisNumt == 0) {
+		if (ordOdLogisticsLisNum == 0) {
 			try {
 				ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 			} catch (Exception e) {
