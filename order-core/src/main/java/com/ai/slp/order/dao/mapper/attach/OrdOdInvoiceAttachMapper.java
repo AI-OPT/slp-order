@@ -14,7 +14,7 @@ public interface OrdOdInvoiceAttachMapper {
 	@SelectProvider(type = OrdOdInvoiceSqlProvider.class, method = "count")
 	public int count(@Param("subFlag") String subFlag,
 			@Param("orderId") Long orderId, @Param("tenantId") String tenantId,
-			@Param("invoiceTitle") String invoiceTitle, @Param("invoiceStatu") String invoiceStatus);
+			@Param("invoiceTitle") String invoiceTitle, @Param("invoiceStatus") String invoiceStatus);
 	
 	
 	@SelectProvider(type = OrdOdInvoiceSqlProvider.class, method = "queryInvoice")
