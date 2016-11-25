@@ -142,7 +142,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 			String chgDesc=OrdOdStateChg.ChgDesc.ORDER_AUDIT_NOT_PASS;
 			ordOrder.setState(newState);
 	        ordOrder.setStateChgTime(DateUtil.getSysDate());
-	        ordOrder.setRemark(remark);
+	        ordOrder.setOrderDesc(remark); //拒绝理由
 	        ordOrder.setOperId(request.getOperId());
 	        ordOrderAtomSV.updateById(ordOrder);
 			this.updateOrderState(ordOrder, orgState,newState, chgDesc, request);
