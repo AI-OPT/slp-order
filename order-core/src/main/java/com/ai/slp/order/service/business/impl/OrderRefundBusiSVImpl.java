@@ -119,7 +119,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     		OrdOrderCriteria example=new OrdOrderCriteria();
     		OrdOrderCriteria.Criteria criteria = example.createCriteria();
     		criteria.andOrigOrderIdEqualTo(ordOrder.getOrigOrderId());
-    		criteria.andOrderIdNotEqualTo(request.getOrderId());
+    		/*criteria.andOrderIdNotEqualTo(request.getOrderId());*/
     		List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(example);
     		OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
     				 order.getParentOrderId()); //父订单
@@ -145,17 +145,29 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     				if(flag&&cusFlag) {
     					order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
     					ordOrderAtomSV.updateById(order);
-    					parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-    					ordOrderAtomSV.updateById(parentOrder); 
+    					//判断父订单下的其它子订单状态  
+    					// 完成则为 父订单完成,否则父订单不变
+    					boolean stateFlag = this.judgeState(order);
+    					if(stateFlag) {
+    						parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+    						ordOrderAtomSV.updateById(parentOrder); 
+    					}
     				} 
     			 }
     		 }else { //已发货状态
-    			 if(!CollectionUtil.isEmpty(orderList)&&flag) {
-    				 order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-    				 ordOrderAtomSV.updateById(order);
-    				 parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-    				 ordOrderAtomSV.updateById(parentOrder);
-    			 }
+    			 if(!CollectionUtil.isEmpty(orderList)) {
+    				 if(flag&&cusFlag) {
+	    				 order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+	    				 ordOrderAtomSV.updateById(order);
+	 					//判断父订单下的其它子订单状态  
+	 					// 完成则为 父订单完成,否则父订单不变
+	    				boolean stateFlag = this.judgeState(order);
+	 					if(stateFlag) {
+	 						parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+	 						ordOrderAtomSV.updateById(parentOrder); 
+	 					}
+    				 }
+    			}
     		 }
         }else {
         	/* 退款业务类型时  拒绝  改变原始订单的商品售后标识状态*/
@@ -198,5 +210,27 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		OrdOdProd prod = origProdList.get(0);  //单个订单对应单个商品(售后)
 		prod.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
 		ordOdProdAtomSV.updateById(prod);
+    }
+    
+    /**
+     * 判断父订单下面其它子订单状态
+     */
+    private boolean judgeState(OrdOrder order) {
+    	//父订单下的其它子订单
+        OrdOrderCriteria example = new OrdOrderCriteria();
+        OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        criteria.andTenantIdEqualTo(order.getTenantId()).andOrderIdNotEqualTo(order.getOrderId());
+        criteria.andParentOrderIdEqualTo(order.getParentOrderId());
+        criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
+        List<OrdOrder> childOrders = ordOrderAtomSV.selectByExample(example);
+	    if(!CollectionUtil.isEmpty(childOrders)) {
+	    	for (OrdOrder ordOrder : childOrders) {
+	    		//其它子订单状态不是'完成'
+				if(!OrdersConstants.OrdOrder.State.COMPLETED.equals(ordOrder.getState())) {
+					return false;
+				}
+			}
+	    }
+	    return true;
     }
 }
