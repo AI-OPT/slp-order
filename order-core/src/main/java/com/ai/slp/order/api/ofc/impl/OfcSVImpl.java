@@ -13,6 +13,7 @@ import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.api.ofc.params.OrderOfcVo;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.fastjson.JSON;
 
 @Service
@@ -25,27 +26,29 @@ public class OfcSVImpl implements IOfcSV {
 	private IOfcBusiSV ofcBusiSV;
 
 	@Override
-	public void insertOrdOrder(OrderOfcVo request) throws BusinessException, SystemException {
+	public void insertOrdOrder(OrderOfcVo request) throws RpcException,BusinessException, SystemException {
 		try {
 			Long beginTime = System.currentTimeMillis();
 			log.info("保存订单信息服务开始" + beginTime);
 			ofcBusiSV.insertOrdOrder(request);
 			log.info("保存订单息服务结束" + System.currentTimeMillis() + "耗时:"
 					+ String.valueOf(System.currentTimeMillis() - beginTime) + "毫秒");
-		} catch (Exception e) {
+		} catch (BusinessException e) {
+			log.info("++++++++++++++++++异常信息+++++++++++++++" + JSON.toJSONString(e));
+		}catch (SystemException e) {
 			log.info("++++++++++++++++++异常信息+++++++++++++++" + JSON.toJSONString(e));
 		}
 	}
 
 	@Override
-	public void insertOrdOdProd(OrdOdProdVo request) throws BusinessException, SystemException {
+	public void insertOrdOdProd(OrdOdProdVo request) throws  BusinessException, SystemException {
 		try {
 			Long beginTime = System.currentTimeMillis();
 			log.info("保存订单商品信息服务开始" + beginTime);
 			ofcBusiSV.insertOrdOdProdOfc(request);
 			log.info("保存订单商品信息服务结束" + System.currentTimeMillis() + "耗时:"
 					+ String.valueOf(System.currentTimeMillis() - beginTime) + "毫秒");
-		} catch (Exception e) {
+		} catch (BusinessException e) {
 			log.info("++++++++++++++++++异常信息+++++++++++++++" + JSON.toJSONString(e));
 		}
 	}
@@ -55,7 +58,7 @@ public class OfcSVImpl implements IOfcSV {
 		String code = "";
 		try {
 			code = ofcBusiSV.parseOfcCode(request);
-		} catch (Exception e) {
+		} catch (BusinessException e) {
 			log.info("++++++++++++++++++异常信息+++++++++++++++" + JSON.toJSONString(e));
 		}
 		return code;
