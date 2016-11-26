@@ -113,9 +113,14 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 			} catch (Exception e) {
+				List<OrdOdLogistics> reList = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
+				if(!reList.isEmpty()){
+					ordOdLogistics.setLogisticsId(reList.get(0).getLogisticsId());
 					ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
+				}
 			}
 		} else {
+			ordOdLogistics.setLogisticsId(list.get(0).getLogisticsId());
 			ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
 		}
 
@@ -145,9 +150,14 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOdProdAtomSV.insertSelective(ordOdProd);
 			} catch (Exception e) {
+				List<OrdOdProd> reList = ordOdProdAtomSV.selectByExample(example);
+				if(!reList.isEmpty()){
+					ordOdProd.setProdDetalId(reList.get(0).getProdDetalId());
 					ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
+				}
 			}
 		} else {
+			ordOdProd.setProdDetalId(list.get(0).getProdDetalId());
 			ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
 		}
 	}
