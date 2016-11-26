@@ -150,15 +150,8 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOdProdAtomSV.insertSelective(ordOdProd);
 			} catch (Exception e) {
-				List<OrdOdProd> reList = ordOdProdAtomSV.selectByExample(example);
-				if(!reList.isEmpty()){
-					ordOdProd.setProdDetalId(reList.get(0).getProdDetalId());
-					ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
-				}
+				
 			}
-		} else {
-			ordOdProd.setProdDetalId(list.get(0).getProdDetalId());
-			ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
 		}
 	}
 
