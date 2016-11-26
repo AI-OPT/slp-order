@@ -7,6 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.opt.sdk.util.UUIDUtil;
 import com.ai.slp.order.api.ofc.interfaces.IOfcSV;
 import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
 import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
@@ -103,7 +104,7 @@ public class OfcSVImplTest {
 		OrdOdProdVo vo = new OrdOdProdVo();
 		vo.setState("1");
 		vo.setTenantId("changhong");
-		vo.setProdDetalId(1226114128);
+		vo.setProdDetalId(UUIDUtil.genShortId());
 		vo.setTotalFee(0);
 		vo.setUpdateTime(DateUtil.getSysDate());
 		vo.setValidTime(DateUtil.getSysDate());

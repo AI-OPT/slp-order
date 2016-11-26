@@ -13,7 +13,6 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.StringUtil;
-import com.ai.opt.sdk.util.UUIDUtil;
 import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
 import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.api.ofc.params.OrderOfcVo;
@@ -112,14 +111,9 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
 		if (list.isEmpty()) {
 			try {
-				ordOdLogistics.setLogisticsId(UUIDUtil.genShortId());
 				ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 			} catch (Exception e) {
-				List<OrdOdLogistics> reList = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
-				if (!reList.isEmpty()) {
-					ordOdLogistics.setLogisticsId(list.get(0).getLogisticsId());
 					ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
-				}
 			}
 		} else {
 			ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
@@ -149,18 +143,11 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++" + JSON.toJSONString(ordOdProd));
 		if (list.isEmpty()) {
 			try {
-				ordOdProd.setProdDetalId(UUIDUtil.genShortId());
 				ordOdProdAtomSV.insertSelective(ordOdProd);
 			} catch (Exception e) {
-				List<OrdOdProd> reList = ordOdProdAtomSV.selectByExample(example);
-				if (!reList.isEmpty()) {
-					ordOdProd.setProdDetalId(reList.get(0).getProdDetalId());
 					ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
-				}
 			}
 		} else {
-			long prodDetalId = list.get(0).getProdDetalId();
-			ordOdProd.setProdDetalId(prodDetalId);
 			ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
 		}
 	}
