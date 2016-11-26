@@ -89,7 +89,7 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 			List<OrdOrder> mergeOrders = ordOrderAtomSV.selectMergeOrderByBatchNo(ordOrder.getOrderId(),
 					ordOrder.getTenantId(), ordOrder.getBatchNo(),OrdersConstants.OrdOrder.State.WAIT_SEND);
 			for	 (OrdOrder mergeOrder : mergeOrders) {
-				List<OrdOdProd> mergeOrdOdProds = this.getOrdOdProds(request.getTenantId(), request.getOrderId());
+				List<OrdOdProd> mergeOrdOdProds = this.getOrdOdProds(mergeOrder.getTenantId(), mergeOrder.getOrderId());
 				for (OrdOdProd ordOdProd : mergeOrdOdProds) {
 					if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
 						List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
