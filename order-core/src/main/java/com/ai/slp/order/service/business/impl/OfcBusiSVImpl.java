@@ -33,8 +33,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdParamAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
-import com.ai.slp.order.util.SequenceUtil;
-import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.fastjson.JSON;
 
 @Service
@@ -80,14 +78,10 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOrderAtomSV.insertSelective(ordOrder);
 			} catch (Exception e) {
-				throw new SystemException(e.getMessage());
+				ordOrderAtomSV.updateByExampleSelective(ordOrder, orderNumExample);
 			}
 		} else {
-			OrdOrderCriteria orderUpdateExample = new OrdOrderCriteria();
-			OrdOrderCriteria.Criteria orderUpdateCriteria = orderUpdateExample.createCriteria();
-			orderUpdateCriteria.andTenantIdEqualTo(request.getOrOrderOfcVo().getTenantId());
-			orderUpdateCriteria.andOrderIdEqualTo(request.getOrOrderOfcVo().getOrderId());
-			ordOrderAtomSV.updateByExampleSelective(ordOrder, orderUpdateExample);
+			ordOrderAtomSV.updateByExampleSelective(ordOrder, orderNumExample);
 		}
 
 		// 订单费用信息
@@ -102,14 +96,10 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
 			} catch (Exception e) {
-				throw new SystemException(e.getMessage());
+				ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal, ordOdFeeNumExample);
 			}
 		} else {
-			OrdOdFeeTotalCriteria ordOdFeeupdateExample = new OrdOdFeeTotalCriteria();
-			OrdOdFeeTotalCriteria.Criteria ordOdFeeupdateCriteria = ordOdFeeupdateExample.createCriteria();
-			ordOdFeeupdateCriteria.andTenantIdEqualTo(request.getOrdOdFeeTotalVo().getTenantId());
-			ordOdFeeupdateCriteria.andOrderIdEqualTo(request.getOrdOdFeeTotalVo().getOrderId());
-			ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal, ordOdFeeupdateExample);
+			ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal, ordOdFeeNumExample);
 		}
 
 		// 订单出货信息
@@ -125,20 +115,16 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 			} catch (Exception e) {
-				throw new SystemException(e.getMessage());
+				ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
 			}
 		} else {
-			OrdOdLogisticsCriteria ordExample = new OrdOdLogisticsCriteria();
-			OrdOdLogisticsCriteria.Criteria ordOdLogisticsCriteria = ordExample.createCriteria();
-			ordOdLogisticsCriteria.andTenantIdEqualTo(request.getOrdOdLogisticsVo().getTenantId());
-			ordOdLogisticsCriteria.andOrderIdEqualTo(request.getOrdOdLogisticsVo().getOrderId());
-			ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordExample);
+			ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
 		}
 
 	}
 
 	@Override
-	public int insertOrdOdProdOfc(OrdOdProdVo request) throws RpcException,BusinessException, SystemException {
+	public void insertOrdOdProdOfc(OrdOdProdVo request) throws BusinessException, SystemException {
 		if (StringUtil.isBlank(request.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户Id不能为空");
 		}
@@ -156,21 +142,16 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		int num = ordOdProdAtomSV.countByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
-		ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
+		ordOdProd.setProdDetalId(UUIDUtil.genShortId());
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++" + JSON.toJSONString(ordOdProd));
 		if (num == 0) {
 			try {
-				return ordOdProdAtomSV.insertSelective(ordOdProd);
+				 ordOdProdAtomSV.insertSelective(ordOdProd);
 			} catch (Exception e) {
-				throw new SystemException(e.getMessage());
+				ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
 			}
 		} else {
-			OrdOdProdCriteria prodExample = new OrdOdProdCriteria();
-			OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
-			prodCriteria.andTenantIdEqualTo(ordOdProd.getTenantId());
-			prodCriteria.andProdCodeEqualTo(ordOdProd.getProdCode());
-			prodCriteria.andOrderIdEqualTo(ordOdProd.getOrderId());
-			return ordOdProdAtomSV.updateByExampleSelective(ordOdProd, prodExample);
+			 ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
 		}
 	}
 
