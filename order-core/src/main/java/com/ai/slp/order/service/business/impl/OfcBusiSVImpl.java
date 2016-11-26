@@ -115,9 +115,11 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 			} catch (Exception e) {
+				ordOdLogistics.setLogisticsId(0);
 				ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
 			}
 		} else {
+			ordOdLogistics.setLogisticsId(0);
 			ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
 		}
 
@@ -148,9 +150,11 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			try {
 				 ordOdProdAtomSV.insertSelective(ordOdProd);
 			} catch (Exception e) {
+				ordOdProd.setProdDetalId(0);
 				ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
 			}
 		} else {
+			 ordOdProd.setProdDetalId(0);
 			 ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
 		}
 	}

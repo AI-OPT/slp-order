@@ -130,6 +130,7 @@ public class OfcSVImplTest {
 		OfcCodeRequst re = new OfcCodeRequst();
 		re.setTenantId("changhong");
 		re.setSystemId("OFC");
+		re.setParamCode("CHL_ID");
 		re.setOutCode("京东平台");
 		System.out.println(ofcSV.parseOfcCode(re));
 	}
