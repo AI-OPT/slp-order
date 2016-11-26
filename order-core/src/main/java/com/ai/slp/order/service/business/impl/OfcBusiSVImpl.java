@@ -162,6 +162,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andSystemIdEqualTo(request.getSystemId());
 		criteria.andOutCodeEqualTo(request.getOutCode().trim());
+		criteria.andParamCodeEqualTo(request.getParamCode());
 		List<OrdParam> list = ordParamAtomSV.selectByExample(example);
 		if (!list.isEmpty()) {
 			return list.get(0).getCode();

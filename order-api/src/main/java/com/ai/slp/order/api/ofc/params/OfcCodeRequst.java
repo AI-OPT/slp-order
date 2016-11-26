@@ -12,6 +12,16 @@ public class OfcCodeRequst extends BaseInfo {
 
 	private String outCode;
 
+	private String paramCode;
+
+	public String getParamCode() {
+		return paramCode;
+	}
+
+	public void setParamCode(String paramCode) {
+		this.paramCode = paramCode;
+	}
+
 	public String getOutCode() {
 		return outCode;
 	}
