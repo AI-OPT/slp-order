@@ -107,19 +107,21 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOdLogisticsCriteria.Criteria criteria = ordOdLogisticsExample.createCriteria();
 		criteria.andTenantIdEqualTo(request.getOrdOdLogisticsVo().getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrdOdLogisticsVo().getOrderId());
-		int ordOdLogisticsLisNum = ordOdLogisticsAtomSV.countByExample(ordOdLogisticsExample);
+		List<OrdOdLogistics> list = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
-		ordOdLogistics.setLogisticsId(UUIDUtil.genShortId());
-		if (ordOdLogisticsLisNum == 0) {
+		if (list.isEmpty()) {
 			try {
+				ordOdLogistics.setLogisticsId(UUIDUtil.genShortId());
 				ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 			} catch (Exception e) {
-				ordOdLogistics.setLogisticsId(0);
-				ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
+				List<OrdOdLogistics> reList = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
+				if (!reList.isEmpty()) {
+					ordOdLogistics.setLogisticsId(list.get(0).getLogisticsId());
+					ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
+				}
 			}
 		} else {
-			ordOdLogistics.setLogisticsId(0);
 			ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
 		}
 
@@ -141,21 +143,25 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		criteria.andTenantIdEqualTo(request.getTenantId());
 		criteria.andOrderIdEqualTo(request.getOrderId());
 		criteria.andProdCodeEqualTo(request.getProdCode());
-		int num = ordOdProdAtomSV.countByExample(example);
+		List<OrdOdProd> list = ordOdProdAtomSV.selectByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
-		ordOdProd.setProdDetalId(UUIDUtil.genShortId());
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++" + JSON.toJSONString(ordOdProd));
-		if (num == 0) {
+		if (list.isEmpty()) {
 			try {
-				 ordOdProdAtomSV.insertSelective(ordOdProd);
+				ordOdProd.setProdDetalId(UUIDUtil.genShortId());
+				ordOdProdAtomSV.insertSelective(ordOdProd);
 			} catch (Exception e) {
-				ordOdProd.setProdDetalId(0);
-				ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
+				List<OrdOdProd> reList = ordOdProdAtomSV.selectByExample(example);
+				if (!reList.isEmpty()) {
+					ordOdProd.setProdDetalId(reList.get(0).getProdDetalId());
+					ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
+				}
 			}
 		} else {
-			 ordOdProd.setProdDetalId(0);
-			 ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
+			long prodDetalId = list.get(0).getProdDetalId();
+			ordOdProd.setProdDetalId(prodDetalId);
+			ordOdProdAtomSV.updateByExampleSelective(ordOdProd, example);
 		}
 	}
 

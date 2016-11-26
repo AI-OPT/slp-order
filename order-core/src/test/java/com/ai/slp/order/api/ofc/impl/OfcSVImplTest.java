@@ -103,6 +103,7 @@ public class OfcSVImplTest {
 		OrdOdProdVo vo = new OrdOdProdVo();
 		vo.setState("1");
 		vo.setTenantId("changhong");
+		vo.setProdDetalId(1226114128);
 		vo.setTotalFee(0);
 		vo.setUpdateTime(DateUtil.getSysDate());
 		vo.setValidTime(DateUtil.getSysDate());
