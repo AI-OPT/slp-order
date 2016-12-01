@@ -12,7 +12,7 @@ import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.o2pcallback.param.O2pCallBackRequest;
 
 /**
- * O2P充值成功后回调 Date: 2016年6月16日 <br>
+ * O2P充值成功后回调 Date: 2016年6月16日 <br>  (已废弃)
  * Copyright (c) 2016 asiainfo.com <br>
  * 
  * @author zhangxw
