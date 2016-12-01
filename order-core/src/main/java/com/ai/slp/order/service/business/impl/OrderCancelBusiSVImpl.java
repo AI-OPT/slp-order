@@ -89,7 +89,7 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
         OrdOdProdCriteria example = new OrdOdProdCriteria();
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
         // 添加搜索条件
-        if (orderId.intValue() != 0 && orderId != null) {
+        if (orderId != null && orderId.intValue() != 0) {
             criteria.andOrderIdEqualTo(orderId);
         }
         return ordOdProdAtomSV.selectByExample(example);

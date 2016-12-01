@@ -332,7 +332,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
         // 添加搜索条件
-        if (orderId.intValue() != 0 && orderId != null) {
+        if ( orderId != null && orderId.intValue() != 0) {
             criteria.andOrderIdEqualTo(orderId);
         }
         return ordOdProdAtomSV.selectByExample(example);
@@ -462,8 +462,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         andAreaRequest.setRouteGroupId(routeGroupId);
         andAreaRequest.setTenantId(tenantId);
         RouteQueryByGroupIdAndAreaResponse routeResponse = iRouteManageSV.queryRouteInfoByGroupIdAndArea(andAreaRequest);
-        boolean isSuccess = routeResponse.getResponseHeader().getIsSuccess();
-        if(!isSuccess||routeResponse==null){
+        boolean isSuccess = false;
+        if(routeResponse!=null) {
+        	isSuccess = routeResponse.getResponseHeader().getIsSuccess();
+        }else if(!isSuccess||routeResponse==null){
         	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据路由组ID["
                     + routeGroupId + "]省份编码[" + ordOdLogistics.getProvinceCode()+ "]未能找到供货路由");
     	}
@@ -942,8 +944,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         paramsRequest.setOrderNo(String.valueOf(orderId));
         SysParam sysParamChlId = InfoTranslateUtil.translateInfo(request.getTenantId(), 
 				"ORD_ORDER", "CHL_ID", ordOrderVo.getChlId(), iCacheSV);
-       // paramsRequest.setShopName(sysParamChlId==null?"":sysParamChlId.getColumnDesc()); 
-        paramsRequest.setShopName("长虹官方旗舰店"); 
+        paramsRequest.setShopName(sysParamChlId==null?"":sysParamChlId.getColumnDesc()); 
+        //paramsRequest.setShopName("长虹官方旗舰店"); 
         String time = DateUtil.getDateString(ordOrderVo.getOrderTime(), DateUtil.DATETIME_FORMAT);
         paramsRequest.setOrderTime(time);
         paramsRequest.setReceiverContact(ordOrderVo.getContactName());
