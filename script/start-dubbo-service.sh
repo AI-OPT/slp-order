@@ -21,7 +21,7 @@ CLASSPATH="${CP}"
 CLASSPATH="${DUBBO_CONFIG_PATH}:${CLASSPATH}"
 export CLASSPATH
 
-MEM_ARGS="-Xms256m -Xmx1024m -XX:PermSize=64M -XX:MaxPermSize=128M"
+MEM_ARGS="-Xms4096m -Xmx4096m -XX:PermSize=128M -XX:MaxPermSize=256M -XX:-UseGCOverheadLimit   -XX:+UseConcMarkSweepGC -XX:ParallelGCThreads=8 -XX:+PrintCommandLineFlags -XX:+PrintGCDetails -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+HeapDumpOnOutOfMemoryError "
 JAVA_OPTIONS="-Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Dsun.net.inetaddr.ttl=10 -Ddubbo.provider.timeout=20000 -Djava.security.egd=file:/dev/./urandom"
 
 echo "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
