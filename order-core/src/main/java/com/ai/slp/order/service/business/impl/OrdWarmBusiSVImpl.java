@@ -68,7 +68,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				OrderWarmVo orderVo = new OrderWarmVo();
 				List<ProductInfo> prodinfoList = new ArrayList<ProductInfo>();
 				BeanUtils.copyProperties(orderVo, ord);
-				long userStart=System.currentTimeMillis();
+		/*		long userStart=System.currentTimeMillis();
 				LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,通过O2p获取用户信息，当前时间戳："+userStart);
 				//获取绑定手机号
 				JSONObject dataJson = ChUserUtil.getUserInfo(ord.getUserId());
@@ -83,7 +83,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
         		orderVo.setUserName(userName==null?null:userName.toString()); 
         		long userEnd=System.currentTimeMillis();
         		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,通过O2p获取用户信息，当前时间戳："+userEnd+
-        				",用时:"+(userEnd-userStart)+"毫秒");
+        				",用时:"+(userEnd-userStart)+"毫秒");*/
 				//获取商品信息
 				if(orderVo.getOrderId()!=null){
 					List<OrdOdProd>  proList = iOrdOdProdAtomSV.selectByOrd(ord.getTenantId(), ord.getOrderId());
@@ -144,7 +144,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				orderWarmVo.setLogisticsType(logistics.getLogisticsType());
 				orderWarmVo.setContactName(logistics.getContactName());
 			}
-			//获取绑定手机号
+		/*	//获取绑定手机号
 			JSONObject dataJson = ChUserUtil.getUserInfo(orderWarmVo.getUserId());
 			Object userName=null;
     		Object phone=null;
@@ -154,7 +154,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
               	phone =dataJson.get("phone");
              }
 	        orderWarmVo.setUserTel(phone==null?null:phone.toString());
-    		orderWarmVo.setUserName(userName==null?null:userName.toString());
+    		orderWarmVo.setUserName(userName==null?null:userName.toString());*/
 			if(!CollectionUtil.isEmpty(prodinfoList)){
 				orderWarmVo.setProdInfo(prodinfoList);
 			}

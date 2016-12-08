@@ -172,6 +172,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setOrderType(ordBaseInfo.getOrderType());
         ordOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
         ordOrder.setUserId(ordBaseInfo.getUserId());
+        ordOrder.setUserName(ordBaseInfo.getUserName());//用户名称
+        ordOrder.setUserTel(ordBaseInfo.getUserTel()); //用户手机号
         ordOrder.setUserType(ordBaseInfo.getUserType());
         ordOrder.setIpAddress(ordBaseInfo.getIpAddress());
         ordOrder.setAcctId(ordBaseInfo.getAcctId());
@@ -253,7 +255,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setExtendInfo(ordProductInfo.getStandard());
             ordOdProd.setUpdateTime(sysDate);
             ordOdProd.setJf(ordProductInfo.getGiveJF()); //赠送积分
-            ordOdProd.setProdCode(""); //商品编码 TODO 必填
+            ordOdProd.setProdCode(""); //商品编码 TODO 
             ordOdProdAtomSV.insertSelective(ordOdProd);
             /* 2. 封装订单提交商品返回参数 */
             OrdProductResInfo ordProductResInfo = new OrdProductResInfo();
@@ -532,7 +534,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         OrdOdProdCriteria.Criteria criteria = example.createCriteria();
         criteria.andTenantIdEqualTo(tenantId);
         // 添加搜索条件
-        if (orderId.intValue() != 0 && orderId != null) {
+        if (orderId != null && orderId.intValue() != 0) {
             criteria.andOrderIdEqualTo(orderId);
         }
         return ordOdProdAtomSV.selectByExample(example);

@@ -417,13 +417,14 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			ordOrderVo.setAccountId(order.getAccountId());
 			ordOrderVo.setToken(order.getTokenId());// 积分令牌
 			ordOrderVo.setDownstreamOrderId(order.getDownstreamOrderId());
-			JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
+		/*	JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
 			Object userName = null;
 			if (dataJson != null) {
 				// 获取用户名
 				userName = dataJson.get("userName");
 			}
-			ordOrderVo.setUserName(userName == null ? null : userName.toString());
+			ordOrderVo.setUserName(userName == null ? null : userName.toString());*/
+			ordOrderVo.setUserName(order.getUserName());
 			ordOrderVo.setRemark(order.getRemark());// 买家留言(订单备注)
 			ordOrderVo.setOrigOrderId(order.getOrigOrderId()); // 原始订单号
 			ordOrderVo.setOperId(order.getOperId());
@@ -733,7 +734,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				pOrderVo.setChlIdName(sysParamChlId == null ? "" : sysParamChlId.getColumnDesc());
 				pOrderVo.setContactTel(behindOrdOrderAttach.getContactTel());
 				pOrderVo.setUserId(behindOrdOrderAttach.getUserId());
-				long userStart = System.currentTimeMillis();
+				/*	long userStart = System.currentTimeMillis();
 				logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList,通过O2p获取用户信息，当前时间戳：" + userStart);
 				JSONObject dataJson = ChUserUtil.getUserInfo(behindOrdOrderAttach.getUserId());
 				Object userName = null;
@@ -747,7 +748,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				pOrderVo.setUserTel(phone == null ? null : phone.toString());
 				long userEnd = System.currentTimeMillis();
 				logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList,通过O2p获取用户信息，当前时间戳：" + userEnd + ",用时:"
-						+ (userEnd - userStart) + "毫秒");
+						+ (userEnd - userStart) + "毫秒");*/
+				pOrderVo.setUserName(behindOrdOrderAttach.getUserName());
+				pOrderVo.setUserTel(behindOrdOrderAttach.getUserTel());
 				pOrderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
 				SysParam sysParamDf = InfoTranslateUtil.translateInfo(behindOrdOrderAttach.getTenantId(), "ORD_ORDER",
 						"ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
