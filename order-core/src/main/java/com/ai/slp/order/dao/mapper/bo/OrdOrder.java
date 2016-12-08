@@ -93,6 +93,10 @@ public class OrdOrder {
 
     private String tokenId;
 
+    private String userName;
+
+    private String userTel;
+
     public long getOrderId() {
         return orderId;
     }
@@ -451,5 +455,21 @@ public class OrdOrder {
 
     public void setTokenId(String tokenId) {
         this.tokenId = tokenId == null ? null : tokenId.trim();
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName == null ? null : userName.trim();
+    }
+
+    public String getUserTel() {
+        return userTel;
+    }
+
+    public void setUserTel(String userTel) {
+        this.userTel = userTel == null ? null : userTel.trim();
     }
 }
