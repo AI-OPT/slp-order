@@ -47,6 +47,8 @@
     <result column="ACCOUNT_ID" property="accountId" jdbcType="VARCHAR" />
     <result column="FLAG" property="flag" jdbcType="VARCHAR" />
     <result column="TOKEN_ID" property="tokenId" jdbcType="VARCHAR" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="USER_TEL" property="userTel" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -113,7 +115,7 @@
     LOCK_TIME, ORDER_TIME, SELLER_ID, CHL_ID, OPER_ID, WORKFLOW_ID, REASON_TYPE, REASON_DESC, 
     FINISH_TIME, ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID, 
     DOWNSTREAM_ORDER_ID, USER_TYPE, IP_ADDRESS, IF_WARNING, WARNING_TYPE, CUS_SERVICE_FLAG, 
-    ACCOUNT_ID, FLAG, TOKEN_ID
+    ACCOUNT_ID, FLAG, TOKEN_ID, USER_NAME, USER_TEL
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" >
     select
@@ -164,8 +166,8 @@
       REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID, 
       DOWNSTREAM_ORDER_ID, USER_TYPE, IP_ADDRESS, 
       IF_WARNING, WARNING_TYPE, CUS_SERVICE_FLAG, 
-      ACCOUNT_ID, FLAG, TOKEN_ID
-      )
+      ACCOUNT_ID, FLAG, TOKEN_ID, 
+      USER_NAME, USER_TEL)
     values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{busiCode,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{subFlag,jdbcType=VARCHAR}, #{parentOrderId,jdbcType=BIGINT}, 
       #{batchNo,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{acctId,jdbcType=BIGINT}, 
@@ -180,8 +182,8 @@
       #{remark,jdbcType=VARCHAR}, #{externalOrderId,jdbcType=VARCHAR}, #{externalSupplyId,jdbcType=VARCHAR}, 
       #{downstreamOrderId,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR}, 
       #{ifWarning,jdbcType=VARCHAR}, #{warningType,jdbcType=VARCHAR}, #{cusServiceFlag,jdbcType=VARCHAR}, 
-      #{accountId,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR}, #{tokenId,jdbcType=VARCHAR}
-      )
+      #{accountId,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR}, #{tokenId,jdbcType=VARCHAR}, 
+      #{userName,jdbcType=VARCHAR}, #{userTel,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
     insert into ord_order
@@ -307,6 +309,12 @@
       <if test="tokenId != null" >
         TOKEN_ID,
       </if>
+      <if test="userName != null" >
+        USER_NAME,
+      </if>
+      <if test="userTel != null" >
+        USER_TEL,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{orderId,jdbcType=BIGINT},
@@ -429,6 +437,12 @@
       </if>
       <if test="tokenId != null" >
         #{tokenId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userTel != null" >
+        #{userTel,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -576,6 +590,12 @@
       <if test="record.tokenId != null" >
         TOKEN_ID = #{record.tokenId,jdbcType=VARCHAR},
       </if>
+      <if test="record.userName != null" >
+        USER_NAME = #{record.userName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userTel != null" >
+        USER_TEL = #{record.userTel,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -627,7 +647,9 @@
       CUS_SERVICE_FLAG = #{record.cusServiceFlag,jdbcType=VARCHAR},
       ACCOUNT_ID = #{record.accountId,jdbcType=VARCHAR},
       FLAG = #{record.flag,jdbcType=VARCHAR},
-      TOKEN_ID = #{record.tokenId,jdbcType=VARCHAR}
+      TOKEN_ID = #{record.tokenId,jdbcType=VARCHAR},
+      USER_NAME = #{record.userName,jdbcType=VARCHAR},
+      USER_TEL = #{record.userTel,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -767,6 +789,12 @@
       <if test="tokenId != null" >
         TOKEN_ID = #{tokenId,jdbcType=VARCHAR},
       </if>
+      <if test="userName != null" >
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userTel != null" >
+        USER_TEL = #{userTel,jdbcType=VARCHAR},
+      </if>
     </set>
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
@@ -815,7 +843,9 @@
       CUS_SERVICE_FLAG = #{cusServiceFlag,jdbcType=VARCHAR},
       ACCOUNT_ID = #{accountId,jdbcType=VARCHAR},
       FLAG = #{flag,jdbcType=VARCHAR},
-      TOKEN_ID = #{tokenId,jdbcType=VARCHAR}
+      TOKEN_ID = #{tokenId,jdbcType=VARCHAR},
+      USER_NAME = #{userName,jdbcType=VARCHAR},
+      USER_TEL = #{userTel,jdbcType=VARCHAR}
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>
