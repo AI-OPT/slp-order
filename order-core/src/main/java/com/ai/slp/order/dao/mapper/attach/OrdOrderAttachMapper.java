@@ -61,6 +61,8 @@ public interface OrdOrderAttachMapper {
         @Result(property = "deliveryFlag", column = "delivery_flag"),
         @Result(property = "contactTel", column = "contact_tel"),
         @Result(property = "userId", column = "user_id"),
+        @Result(property = "userName", column = "user_name"),
+        @Result(property = "userTel", column = "user_tel"),
         @Result(property = "discountFee", column = "discount_fee"),
         @Result(property = "adjustFee", column = "adjust_fee"),
         @Result(property = "tenantId", column = "tenant_id")})
