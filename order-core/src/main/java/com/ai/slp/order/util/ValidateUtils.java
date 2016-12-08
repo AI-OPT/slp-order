@@ -103,6 +103,12 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(ordBaseInfo.getUserId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户id不能为空");
 		}
+		if (StringUtil.isBlank(ordBaseInfo.getUserName())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户名称不能为空");
+		}
+		if (StringUtil.isBlank(ordBaseInfo.getUserTel())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户手机号不能为空");
+		}
 		if (StringUtil.isBlank(ordBaseInfo.getUserType())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户类型不能为空");
 		}
