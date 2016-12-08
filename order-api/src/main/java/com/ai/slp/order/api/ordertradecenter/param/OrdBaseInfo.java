@@ -13,6 +13,16 @@ public class OrdBaseInfo implements Serializable {
     private String userId;
     
     /**
+     * 用户名称
+     */
+    private String userName;
+    
+    /**
+     * 用户手机号
+     */
+    private String userTel;
+    
+    /**
      * 用户类型
      */
     private String userType;
@@ -175,5 +185,20 @@ public class OrdBaseInfo implements Serializable {
 	public void setFlag(String flag) {
 		this.flag = flag;
 	}
-	
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserTel() {
+		return userTel;
+	}
+
+	public void setUserTel(String userTel) {
+		this.userTel = userTel;
+	}
 }
