@@ -20,7 +20,7 @@
 	<dubbo:registry protocol="${dubbo.registry.protocol}"
 		address="${dubbo.registry.address}" />
 
-	<dubbo:monitor protocol="registry" />
+	<!-- <dubbo:monitor protocol="registry" /> -->
 
 	<!-- <dubbo:consumer timeout="${dubbo.consoumer.timeout}" /> -->
 
