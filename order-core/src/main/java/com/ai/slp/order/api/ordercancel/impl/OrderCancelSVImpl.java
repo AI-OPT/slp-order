@@ -112,6 +112,8 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
         criteria.andOrderTimeLessThan(new Timestamp(calendar.getTimeInMillis()));
         criteria.andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_PAY);
         criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
+        example.setLimitStart(0);
+        example.setLimitEnd(100);
         List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         return list;
     }
