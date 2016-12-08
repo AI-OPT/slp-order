@@ -83,7 +83,8 @@ public class OrdOrderSqlProvider {
      */
     public String behindQueryOrdOrder(Map<String, Object> param) {
         StringBuffer seqBuffer = new StringBuffer();
-        seqBuffer.append("select DISTINCT oo.order_id,oo.state,oo.tenant_id,oo.chl_id,oo.delivery_flag,contact_tel,oo.user_id,discount_fee,adjust_fee "
+        seqBuffer.append("select DISTINCT oo.order_id,oo.state,oo.tenant_id,oo.chl_id,oo.delivery_flag,contact_tel,"
+        		+ "oo.user_id,oo.user_name,oo.user_tel,discount_fee,adjust_fee "
         		+ "from ord_order oo,ord_order od,ord_od_logistics ol,ord_od_fee_total of where"
                 + " oo.tenant_id= '"+ param.get("tenantId") + "'"
         		+" and oo.flag= '"+ OrdersConstants.OrdOrder.Flag.UPPLATFORM + "'");
