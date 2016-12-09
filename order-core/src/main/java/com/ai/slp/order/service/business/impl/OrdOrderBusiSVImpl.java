@@ -29,22 +29,14 @@ import com.ai.slp.order.api.orderlist.param.BehindOrdProductVo;
 import com.ai.slp.order.api.orderlist.param.BehindParentOrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
-import com.ai.slp.order.api.orderlist.param.OrdOrderApiVo;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
-import com.ai.slp.order.api.orderlist.param.OrdProductApiVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
 import com.ai.slp.order.api.orderlist.param.OrderPayVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
-import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
-import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
-import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
-import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
-import com.ai.slp.order.constants.ErrorCodeConstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.attach.BehindOrdOrderAttach;
-import com.ai.slp.order.dao.mapper.attach.OrdOrderAttach;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria.Criteria;
@@ -73,9 +65,6 @@ import com.ai.slp.order.util.ChUserUtil;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.ValidateUtils;
-import com.ai.slp.order.vo.InfoJsonVo;
-import com.ai.slp.order.vo.ProdAttrInfoVo;
-import com.ai.slp.order.vo.ProdExtendInfoVo;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
@@ -118,73 +107,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 
 	@Autowired
 	private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
-
-	@Override
-	public QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest)
-			throws BusinessException, SystemException {
-		logger.debug("开始订单列表查询..");
-		/* 1.订单信息查询 */
-		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
-		QueryOrderListResponse response = new QueryOrderListResponse();
-		PageInfo<OrdOrderVo> pageInfo = new PageInfo<OrdOrderVo>();
-		String states = "";
-		StringBuffer sb = new StringBuffer("");
-		List<String> stateList = orderListRequest.getStateList();
-		if (!CollectionUtil.isEmpty(stateList)) {
-			for (String state : stateList) {
-				sb = sb.append(state).append(",");
-			}
-			states = sb.toString();
-			states = states.substring(0, sb.length() - 1);
-		}
-		/* 2.多表查询订单个数 */
-		int count = ordOrderAttachAtomSV.queryCount(OrdersConstants.OrdOrder.SubFlag.NO, orderListRequest, states);
-		/* 3.多表查询订单信息 */
-		List<OrdOrderAttach> list = ordOrderAttachAtomSV.queryOrderBySearch(OrdersConstants.OrdOrder.SubFlag.NO,
-				orderListRequest, states);
-		List<OrdOrderVo> ordOrderList = new ArrayList<OrdOrderVo>();
-		for (OrdOrderAttach orderAttach : list) {
-			OrdOrderVo ordOrderVo = new OrdOrderVo();
-			ordOrderVo.setOrderId(orderAttach.getOrderId());
-			ordOrderVo.setOrderType(orderAttach.getOrderType());
-			ordOrderVo.setBusiCode(orderAttach.getBusiCode());
-			SysParam sysParamBusiCode = InfoTranslateUtil.translateInfo(orderAttach.getTenantId(), "ORD_ORDER",
-					"BUSI_CODE", orderAttach.getBusiCode(), iCacheSV);
-			ordOrderVo.setBusiCodeName(sysParamBusiCode == null ? "" : sysParamBusiCode.getColumnDesc());
-			ordOrderVo.setState(orderAttach.getState());
-			SysParam sysParamState = InfoTranslateUtil.translateInfo(orderAttach.getTenantId(), "ORD_ORDER", "STATE",
-					orderAttach.getState(), iCacheSV);
-			ordOrderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
-			ordOrderVo.setOrderTime(orderAttach.getOrderTime());
-			ordOrderVo.setAdjustFee(orderAttach.getAdjustFee());
-			ordOrderVo.setDiscountFee(orderAttach.getDiscountFee());
-			ordOrderVo.setPaidFee(orderAttach.getPaidFee());
-			ordOrderVo.setPayFee(orderAttach.getPayFee());
-			ordOrderVo.setPayStyle(orderAttach.getPayStyle());
-			SysParam sysParamPayStyle = InfoTranslateUtil.translateInfo(orderAttach.getTenantId(), "ORD_OD_FEE_TOTAL",
-					"PAY_STYLE", orderAttach.getPayStyle(), iCacheSV);
-			ordOrderVo.setPayStyleName(sysParamPayStyle == null ? "" : sysParamPayStyle.getColumnDesc());
-			ordOrderVo.setPayTime(orderAttach.getPayTime());
-			ordOrderVo.setTotalFee(orderAttach.getTotalFee());
-			int phoneCount = this.getProdExtendInfo(orderListRequest.getTenantId(), orderAttach.getOrderId());
-			ordOrderVo.setPhoneCount(phoneCount);
-			/* 4.订单费用明细查询 */
-			List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV, orderAttach.getOrderId(),
-					orderAttach.getTenantId());
-			ordOrderVo.setPayDataList(orderFeeProdList);
-			/* 5.订单商品明细查询 */
-			List<OrdProductVo> productList = this.getOrdProductList(orderAttach.getTenantId(),
-					orderAttach.getOrderId());
-			ordOrderVo.setProductList(productList);
-			ordOrderList.add(ordOrderVo);
-		}
-		pageInfo.setPageNo(orderListRequest.getPageNo());
-		pageInfo.setPageSize(orderListRequest.getPageSize());
-		pageInfo.setResult(ordOrderList);
-		pageInfo.setCount(count);
-		response.setPageInfo(pageInfo);
-		return response;
-	}
 
 	/**
 	 * 订单费用明细查询
@@ -277,70 +199,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		return productImage;
 	}
 
-	/**
-	 * 获得手机号串
-	 * 
-	 * @param tenantId
-	 * @param orderId
-	 * @param prodDetailId
-	 * @return
-	 * @author zhangxw
-	 * @ApiDocMethod
-	 */
-	private String getProdExtendInfo(String tenantId, long orderId, long prodDetailId) {
-		/* 1.查询商品明细拓展表 */
-		String prodExtendInfo = "";
-		OrdOdProdExtendCriteria example = new OrdOdProdExtendCriteria();
-		OrdOdProdExtendCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(tenantId);
-		criteria.andOrderIdEqualTo(orderId);
-		criteria.andProdDetalIdEqualTo(prodDetailId);
-		List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
-		/* 2.遍历取出值信息 */
-		StringBuffer sb = new StringBuffer();
-		if (!CollectionUtil.isEmpty(ordOdProdExtendList)) {
-			OrdOdProdExtend ordOdProdExtend = ordOdProdExtendList.get(0);
-			String infoJson = ordOdProdExtend.getInfoJson();
-			InfoJsonVo infoJsonVo = JSON.parseObject(infoJson, InfoJsonVo.class);
-			List<ProdExtendInfoVo> prodExtendInfoVoList = infoJsonVo.getProdExtendInfoVoList();
-			for (ProdExtendInfoVo prodExtendInfoVo : prodExtendInfoVoList) {
-				sb.append(prodExtendInfoVo.getProdExtendInfoValue()).append(",");
-			}
-			prodExtendInfo = sb.substring(0, sb.length() - 1);
-		}
-		return prodExtendInfo;
-
-	}
-
-	/**
-	 * 获得手机号数量
-	 * 
-	 * @param tenantId
-	 * @param orderId
-	 * @param prodDetailId
-	 * @return
-	 * @author zhangxw
-	 * @ApiDocMethod
-	 */
-	private int getProdExtendInfo(String tenantId, long orderId) {
-		/* 1.查询商品明细拓展表 */
-		OrdOdProdExtendCriteria example = new OrdOdProdExtendCriteria();
-		OrdOdProdExtendCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(tenantId);
-		criteria.andOrderIdEqualTo(orderId);
-		List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
-		/* 2.遍历取出值信息 */
-		int phoneNum = 0;
-		if (!CollectionUtil.isEmpty(ordOdProdExtendList)) {
-			for (OrdOdProdExtend ordOdProdExtend : ordOdProdExtendList) {
-				String infoJson = ordOdProdExtend.getInfoJson();
-				InfoJsonVo infoJsonVo = JSON.parseObject(infoJson, InfoJsonVo.class);
-				List<ProdExtendInfoVo> prodExtendInfoVoList = infoJsonVo.getProdExtendInfoVoList();
-				phoneNum = prodExtendInfoVoList.size() + phoneNum;
-			}
-		}
-		return phoneNum;
-	}
 
 	@Override
 	public QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException, SystemException {
@@ -498,71 +356,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		return response;
 	}
 
-	@Override
-	public QueryApiOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest)
-			throws BusinessException, SystemException {
-		logger.info("api查询业务...");
-		QueryApiOrderResponse response = new QueryApiOrderResponse();
-		OrdOrderCriteria example = new OrdOrderCriteria();
-		OrdOrderCriteria.Criteria criteria = example.createCriteria();
-		if (StringUtil.isBlank(orderRequest.getTenantId())) {
-			throw new BusinessException(ErrorCodeConstants.REQUIRED_IS_EMPTY, "租户id为空");
-		}
-		criteria.andTenantIdEqualTo(orderRequest.getTenantId());
-		if (StringUtil.isBlank(orderRequest.getDownstreamOrderId())) {
-			throw new BusinessException(ErrorCodeConstants.REQUIRED_IS_EMPTY, "外部订单id(下游)为空");
-		}
-		criteria.andDownstreamOrderIdEqualTo(orderRequest.getDownstreamOrderId());
-		if (StringUtil.isBlank(orderRequest.getUserId())) {
-			throw new BusinessException(ErrorCodeConstants.REQUIRED_IS_EMPTY, "用户id为空");
-		}
-		criteria.andUserIdEqualTo(orderRequest.getUserId());
-		criteria.andSubFlagEqualTo(OrdersConstants.OrdOrder.SubFlag.YES);
-		List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
-		List<OrdOrderApiVo> ordOrderApiVos = null;
-		OrdOrderApiVo orderApiVo = null;
-		if (CollectionUtil.isEmpty(list)) {
-			throw new BusinessException(ErrorCodeConstants.Order.ORDER_NO_EXIST, "订单不存在");
-		} else {
-			try {
-				ordOrderApiVos = new ArrayList<OrdOrderApiVo>();
-				for (OrdOrder ordOrder : list) {
-					/* 1.订单费用信息查询 */
-					OrdOdFeeTotal ordOdFeeTotal=ordOdFeeTotalAtomSV.selectByOrderId(ordOrder.getTenantId(),
-							ordOrder.getOrderId());
-					if (ordOdFeeTotal!=null) {
-						orderApiVo = new OrdOrderApiVo();
-						orderApiVo.setTenantId(ordOrder.getTenantId());
-						orderApiVo.setUserId(ordOrder.getUserId());
-						orderApiVo.setAcctId(ordOrder.getAcctId());
-						orderApiVo.setSubsId(ordOrder.getSubsId());
-						orderApiVo.setOrderType(ordOrder.getOrderType());
-						orderApiVo.setDeliveryFlag(ordOrder.getDeliveryFlag());
-						orderApiVo.setOrderDesc(ordOrder.getOrderDesc());
-						orderApiVo.setKeywords(ordOrder.getKeywords());
-						orderApiVo.setRemark(ordOrder.getRemark());
-						orderApiVo.setState(ordOrder.getState());
-						orderApiVo.setBusiCode(ordOrder.getBusiCode());
-						orderApiVo.setPayStyle(ordOdFeeTotal.getPayStyle());
-						orderApiVo.setTotalFee(ordOdFeeTotal.getTotalFee());
-						orderApiVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
-						orderApiVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
-						orderApiVo.setOperDiscountDesc(ordOdFeeTotal.getOperDiscountDesc());
-						orderApiVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
-						orderApiVo.setPaidFee(ordOdFeeTotal.getPaidFee());
-						/* 2.订单商品明细及扩展信息查询 */
-						this.getOrdProductApiList(ordOrder.getTenantId(), ordOrder.getOrderId(), orderApiVo);
-						ordOrderApiVos.add(orderApiVo);
-					}
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				throw new SystemException(ErrorCodeConstants.SYSTEM_ERROR, "系统异常");
-			}
-		}
-		response.setOrderApiVo(ordOrderApiVos);
-		return response;
-	}
 
 	@Override
 	public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
@@ -601,55 +394,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		pageInfo.setCount(count);
 		response.setPageInfo(pageInfo);
 		return response;
-	}
-
-	/**
-	 * 商品集合API
-	 */
-	private void getOrdProductApiList(String tenantId, long orderId, OrdOrderApiVo orderApiVo) {
-		OrdOdProdCriteria example = new OrdOdProdCriteria();
-		OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(tenantId);
-		criteria.andOrderIdEqualTo(orderId);
-		List<OrdOdProd> ordOdProdApiList = ordOdProdAtomSV.selectByExample(example);
-		if (!CollectionUtil.isEmpty(ordOdProdApiList)) {
-			OrdOdProd ordOdProd = ordOdProdApiList.get(0);
-			OrdProductApiVo ordProductApiVo = new OrdProductApiVo();
-			ordProductApiVo.setProdId(ordOdProd.getProdId());
-			ordProductApiVo.setProdName(ordOdProd.getProdName());
-			ordProductApiVo.setBuySum(ordOdProd.getBuySum());
-			ordProductApiVo.setTotalFee(ordOdProd.getTotalFee());
-			ordProductApiVo.setDiscountFee(ordOdProd.getDiscountFee());
-			ordProductApiVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
-			ordProductApiVo.setOperDiscountDesc(ordOdProd.getOperDiscountDesc());
-			ordProductApiVo.setAdjustFee(ordOdProd.getAdjustFee());
-			// 文档上返回报文体没有的
-			String extendInfo = ordOdProd.getExtendInfo();
-			ProdAttrInfoVo prodAttrInfoVo = JSON.parseObject(extendInfo, ProdAttrInfoVo.class);
-			ordProductApiVo.setBasicOrgId(prodAttrInfoVo.getBasicOrgId());
-			ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
-			SysParam sysParam = InfoTranslateUtil.translateInfo(ordOdProd.getTenantId(), "PRODUCT", "BASIC_ORG_ID",
-					prodAttrInfoVo.getBasicOrgId(), iCacheSV);
-			ordProductApiVo.setBasicOrgName(sysParam == null ? "" : sysParam.getColumnDesc());
-			String provinceName = "";
-			if (!StringUtil.isBlank(prodAttrInfoVo.getProvinceCode())) {
-				provinceName = iCacheSV.getAreaName(prodAttrInfoVo.getProvinceCode());
-			}
-			ordProductApiVo.setProvinceName(provinceName);
-			ordProductApiVo.setProdName(ordOdProd.getProdName());
-			ordProductApiVo.setSkuId(ordOdProd.getSkuId());
-			ordProductApiVo.setChargeFee(prodAttrInfoVo.getChargeFee());
-			ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
-			ordProductApiVo.setProductImage(productImage);
-			orderApiVo.setOrdProductApiVo(ordProductApiVo);
-			// 附加信息
-			List<OrdOdProdExtend> ordOdProdExtendList = this.getOrdOdProdExtendList(tenantId, orderId,
-					ordOdProd.getProdDetalId());
-			if (!CollectionUtil.isEmpty(ordOdProdExtendList)) {
-				OrdOdProdExtend ordOdProdExtend = ordOdProdExtendList.get(0);
-				orderApiVo.setInfoJson(ordOdProdExtend.getInfoJson());
-			}
-		}
 	}
 
 	/**

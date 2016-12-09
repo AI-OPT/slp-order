@@ -30,8 +30,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IStasticsOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IStasticsOrderBusiSV;
-import com.ai.slp.order.util.ChUserUtil;
-import com.alibaba.fastjson.JSONObject;
 @Service
 @Transactional
 public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
