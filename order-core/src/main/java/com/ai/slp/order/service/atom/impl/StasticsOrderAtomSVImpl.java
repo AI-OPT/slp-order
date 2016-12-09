@@ -23,14 +23,14 @@ public class StasticsOrderAtomSVImpl implements IStasticsOrderAtomSV {
 		return stasticOrdOrderAttachMapper.getStaticOrdOrder((request.getPageNo() - 1)* request.getPageSize(), 
 				request.getPageSize(),request.getState(),
 				request.getOrderId(),request.getProdName(),
-				request.getUserId(), 
+				request.getUserName(), 
 				request.getSupplierId(),request.getTenantId(), 
 				request.getOrderTimeStart(),request.getOrderTimeEnd());
 	}
 
 	@Override
 	public int queryCount(StasticsOrderRequest request) {
-		return stasticOrdOrderAttachMapper.getCount(request.getOrderId(), request.getUserId(), 
+		return stasticOrdOrderAttachMapper.getCount(request.getOrderId(), request.getUserName(), 
 				request.getSupplierId(), request.getProdName(), request.getTenantId(), 
 				request.getState(), request.getOrderTimeStart(), request.getOrderTimeEnd()); 
 				
