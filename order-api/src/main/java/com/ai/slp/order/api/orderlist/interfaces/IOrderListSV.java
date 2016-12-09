@@ -10,10 +10,6 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
-import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
-import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
-import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
-import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 
@@ -28,21 +24,6 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
 public interface IOrderListSV {
 
-	/**
-	 * 查询订单列表
-	 * 
-	 * @param orderListRequest
-	 * @return
-	 * @throws BusinessException
-	 * @throws SystemException
-	 * @author zhangqiang7
-	 * @ApiDocMethod
-     * @ApiCode ORDERQUERY_001
-     * @RestRelativeURL orderlist/queryOrderList
-	 */
-	@POST
-	@Path("/queryOrderList")
-	QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest) throws BusinessException, SystemException;
 
 	/**
 	 * 订单详情查询
@@ -50,7 +31,7 @@ public interface IOrderListSV {
 	 * @return
 	 * @throws BusinessException
 	 * @throws SystemException
-	 * @author jiaxs
+	 * @author caofz
 	 * @ApiDocMethod
      * @ApiCode ORDERQUERY_002
      * @RestRelativeURL orderlist/queryOrder
@@ -58,22 +39,6 @@ public interface IOrderListSV {
 	@POST
 	@Path("/queryOrder")
 	QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException, SystemException;
-	
-	/**
-     * 订单单个查询(api)
-     * @param orderRequest
-     * @return
-     * @throws BusinessException
-     * @throws SystemException
-     * @author jiaxs
-     * @ApiDocMethod
-     * @ApiCode ORDERQUERY_003
-     * @RestRelativeURL orderlist/queryApiOrder
-     */
-    @POST
-    @Path("/queryApiOrder")
-    QueryApiOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest) throws BusinessException, SystemException;
-    
 	
 	/**
 	 * 运营后台订单列表查询
