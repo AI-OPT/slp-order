@@ -14,16 +14,17 @@ public class StasticOrdOrderSqlProvider {
 	 */
     public String staticQueryOrdOrder(Map<String, Object> param) {
         StringBuffer seqBuffer = new StringBuffer();
-        seqBuffer.append("select DISTINCT oo.order_id,oo.supplier_id,oo.state,oo.tenant_id,oo.chl_id,oo.delivery_flag,oo.user_id "
-        		+ "from ord_order oo, ord_od_prod prod where"
+        seqBuffer.append("select DISTINCT oo.order_id,oo.supplier_id,oo.state,oo.tenant_id,oo.chl_id,"
+        		+ "oo.delivery_flag,oo.user_name,oo.user_tel"
+        		+ " from ord_order oo, ord_od_prod prod where"
                 + " oo.tenant_id= '"+ param.get("tenantId") + "'");
         if (param.get("orderId") != null){
         	seqBuffer.append(" and oo.order_id =" + param.get("orderId"));
         }
         	
-        String userId = param.containsKey("userId") ? (String) param.get("userId") : null;
-        if (!StringUtil.isBlank(userId)){
-        	 seqBuffer.append(" and oo.user_id = '" + userId+"'");
+        String userName = param.containsKey("userName") ? (String) param.get("userName") : null;
+        if (!StringUtil.isBlank(userName)){
+        	 seqBuffer.append(" and oo.user_name = '" + userName+"'");
         }
         seqBuffer.append(" and oo.sub_flag = '" + "N"+"'");
         String supplierId = param.containsKey("supplierId") ? (String) param.get("supplierId") : null;
@@ -71,9 +72,9 @@ public class StasticOrdOrderSqlProvider {
          if (param.get("orderId") != null){
         	 seqBuffer.append(" and oo.order_id =" + param.get("orderId")); 
          }
-         String userId = param.containsKey("userId") ? (String) param.get("userId") : null;
-         if (!StringUtil.isBlank(userId)){
-        	 seqBuffer.append(" and oo.user_id = '" + userId+ "'"); 
+         String userName = param.containsKey("userName") ? (String) param.get("userName") : null;
+         if (!StringUtil.isBlank(userName)){
+        	 seqBuffer.append(" and oo.user_name = '" + userName+ "'"); 
          }
          String supplierId = param.containsKey("supplierId") ? (String) param.get("supplierId") : null;
          if (!StringUtil.isBlank(supplierId)){

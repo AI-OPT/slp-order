@@ -16,10 +16,15 @@ public class StasticOrdOrderAttach extends BaseInfo{
 	private String chlId;
 
 	/**
-	 * 用户id
+	 * 用户名
 	 */
-	private String userId;
-
+	private String userName;
+	
+	/**
+	 * 用户手机
+	 */
+	private String userTel;
+	
 	/**
 	 * 是否需要物流
 	 */
@@ -55,12 +60,20 @@ public class StasticOrdOrderAttach extends BaseInfo{
 		this.chlId = chlId;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserTel() {
+		return userTel;
+	}
+
+	public void setUserTel(String userTel) {
+		this.userTel = userTel;
 	}
 
 	public String getDeliveryFlag() {
