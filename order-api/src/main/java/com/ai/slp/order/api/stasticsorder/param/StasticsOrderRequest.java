@@ -13,9 +13,9 @@ public class StasticsOrderRequest extends BaseInfo {
 	 */
 	private String prodName;
 	/**
-	 * 用户id
+	 * 用户名
 	 */
-	private String userId;
+	private String userName;
 	/**
 	 * 销售商ID
 	 */
@@ -57,12 +57,12 @@ public class StasticsOrderRequest extends BaseInfo {
 		this.prodName = prodName;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public String getSupplierId() {
