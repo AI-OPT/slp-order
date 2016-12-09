@@ -10,10 +10,6 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
-import com.ai.slp.order.api.orderlist.param.QueryApiOrderRequest;
-import com.ai.slp.order.api.orderlist.param.QueryApiOrderResponse;
-import com.ai.slp.order.api.orderlist.param.QueryOrderListRequest;
-import com.ai.slp.order.api.orderlist.param.QueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
@@ -27,16 +23,6 @@ public class OrderListSVImpl implements IOrderListSV {
     private IOrdOrderBusiSV ordOrderBusiSV;
 
     @Override
-    public QueryOrderListResponse queryOrderList(QueryOrderListRequest orderListRequest)
-            throws BusinessException, SystemException {
-        QueryOrderListResponse response = ordOrderBusiSV.queryOrderList(orderListRequest);
-        ResponseHeader responseHeader = new ResponseHeader(true,
-                ExceptCodeConstants.Special.SUCCESS, "成功");
-        response.setResponseHeader(responseHeader);
-        return response;
-    }
-
-    @Override
     public QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException,
             SystemException {
         QueryOrderResponse response = ordOrderBusiSV.queryOrder(orderRequest);
@@ -45,17 +31,6 @@ public class OrderListSVImpl implements IOrderListSV {
         response.setResponseHeader(responseHeader);
         return response;
     }
-
-    @Override
-    public QueryApiOrderResponse queryApiOrder(QueryApiOrderRequest orderRequest)
-            throws BusinessException, SystemException {
-    	QueryApiOrderResponse response = ordOrderBusiSV.queryApiOrder(orderRequest);
-        ResponseHeader responseHeader = new ResponseHeader(true,
-                ExceptCodeConstants.Special.SUCCESS, "成功");
-        response.setResponseHeader(responseHeader);
-        return response;
-    }
-
 
 	@Override
 	public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
