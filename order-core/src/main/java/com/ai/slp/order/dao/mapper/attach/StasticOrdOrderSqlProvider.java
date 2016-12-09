@@ -24,7 +24,7 @@ public class StasticOrdOrderSqlProvider {
         	
         String userName = param.containsKey("userName") ? (String) param.get("userName") : null;
         if (!StringUtil.isBlank(userName)){
-        	 seqBuffer.append(" and oo.user_name = '" + userName+"'");
+        	 seqBuffer.append(" and oo.user_name like'" + "%"+userName+"%"+"'"); 
         }
         seqBuffer.append(" and oo.sub_flag = '" + "N"+"'");
         String supplierId = param.containsKey("supplierId") ? (String) param.get("supplierId") : null;
@@ -74,7 +74,7 @@ public class StasticOrdOrderSqlProvider {
          }
          String userName = param.containsKey("userName") ? (String) param.get("userName") : null;
          if (!StringUtil.isBlank(userName)){
-        	 seqBuffer.append(" and oo.user_name = '" + userName+ "'"); 
+        	 seqBuffer.append(" and oo.user_name like'" + "%"+userName+"%"+"'"); 
          }
          String supplierId = param.containsKey("supplierId") ? (String) param.get("supplierId") : null;
          if (!StringUtil.isBlank(supplierId)){
