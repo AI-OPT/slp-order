@@ -12,6 +12,7 @@ import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
+import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
 import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
@@ -471,6 +472,21 @@ public class ValidateUtils {
 		}
 		if(StringUtil.isBlank(condition.getRefuseReason())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "拒绝理由不能为空");
+		}
+	}
+	
+	/**
+	 * 订单详情查询参数校验
+	 */
+	public static void validateQueryOrder(QueryOrderRequest condition) {
+		if(condition==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if(condition.getOrderId()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
 	}
 }
