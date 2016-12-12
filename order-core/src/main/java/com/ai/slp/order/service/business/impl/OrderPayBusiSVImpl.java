@@ -4,7 +4,6 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
-import com.ai.opt.sdk.components.dss.DSSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
@@ -32,7 +31,6 @@ import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.InfoTranslateUtil;
-import com.ai.slp.order.util.JfAndAmountExchangeUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.InfoJsonVo;
@@ -130,7 +128,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Override
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
         /* 1.处理费用信息 */
-        //IDSSClient client = DSSClientFactory.getDSSClient(OrdersConstants.ORDER_PHONENUM_DSS);
         IDSSClient client = null;
         OrdOrder ordOrder =null;
         Set<Long> subOrderIds =new HashSet<Long>();
@@ -840,7 +837,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
 				subOrdOdFeeProd.setPaidFee(ordOdProd.getJfFee());
-				String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
+				String rate = parentOrdOrder.getPointRate();
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(ordOdProd.getJfFee()).divide(new BigDecimal(split[0]),
@@ -907,7 +904,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
 				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
 				subOrdOdFeeProd.setPaidFee(ordOdFeeProd.getPaidFee()+ordOdProd.getJfFee());
-				String rate = JfAndAmountExchangeUtil.getRate(parentOrdOrder.getAccountId());
+				String rate = parentOrdOrder.getPointRate();
 				if(!StringUtil.isBlank(rate)) {
 					String[] split = rate.split(":");
 					BigDecimal JfAmout=BigDecimal.valueOf(subOrdOdFeeProd.getPaidFee()).divide(new BigDecimal(split[0]),
