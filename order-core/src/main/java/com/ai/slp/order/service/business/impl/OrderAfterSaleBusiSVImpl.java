@@ -43,7 +43,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
-import com.ai.slp.order.util.JfAndAmountExchangeUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.OFCAfterSaleOrderCreateRequest;
@@ -310,7 +309,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 			ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 			/* 4.生成退款费用明细表*/
-			this.createAfterProdFee(afterOrderId, order, afterOrdOdProd);
+			this.createAfterProdFee(afterOrderId, order, afterOrdOdProd,busiCode);
     	}else {
     		/* 5.创建售后商品明细信息*/
     		afterOrdOdProd =new OrdOdProd();
@@ -367,24 +366,26 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
     		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
     		/* 8.生成售后费用明细表*/
-    		this.createAfterProdFee(afterOrderId, afterOrder, afterOrdOdProd);
+    		this.createAfterProdFee(afterOrderId, order, afterOrdOdProd,busiCode);
     	}
-    	/* 9.生成售后订单支付机构接口*/
-    	OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
-    			order.getTenantId(), order.getOrderId());
-    	if(ordBalacneIf==null) {
-    		throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
-    				"订单支付机构信息不存在[订单id:"+order.getOrderId()+"]");
+    	if(!OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER.equals(busiCode)) {
+    		/* 9.生成售后订单支付机构接口*/
+    		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
+    				order.getTenantId(), order.getOrderId());
+    		if(ordBalacneIf==null) {
+    			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
+    					"订单支付机构信息不存在[订单id:"+order.getOrderId()+"]");
+    		}
+    		OrdBalacneIf balacneIf=new OrdBalacneIf();
+    		BeanUtils.copyProperties(balacneIf, ordBalacneIf);
+    		Long balacneIfId = SequenceUtil.createBalacneIfId();
+    		balacneIf.setBalacneIfId(balacneIfId);
+    		balacneIf.setOrderId(afterOrderId);
+    		balacneIf.setPayStyle(odFeeTotal.getPayStyle());
+    		balacneIf.setPayFee(afterTotalFee-afterOrdOdProd.getDiscountFee());
+    		balacneIf.setCreateTime(DateUtil.getSysDate());
+    		ordBalacneIfAtomSV.insertSelective(balacneIf);
     	}
-    	OrdBalacneIf balacneIf=new OrdBalacneIf();
-    	BeanUtils.copyProperties(balacneIf, ordBalacneIf);
-    	Long balacneIfId = SequenceUtil.createBalacneIfId();
-    	balacneIf.setBalacneIfId(balacneIfId);
-    	balacneIf.setOrderId(afterOrderId);
-    	balacneIf.setPayStyle(odFeeTotal.getPayStyle());
-    	balacneIf.setPayFee(afterTotalFee-afterOrdOdProd.getDiscountFee());
-    	balacneIf.setCreateTime(DateUtil.getSysDate());
-    	ordBalacneIfAtomSV.insertSelective(balacneIf);
     	//更新商品为售后标识
     	ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
 		ordOdProdAtomSV.updateById(ordOdProd); 
@@ -395,30 +396,32 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     /**
      * 	生成售后费用明细表
      */
-    public void createAfterProdFee(long afterOrderId,OrdOrder order,OrdOdProd afterOrdOdProd) {
-		List<OrdOdFeeProd> feeProdList = ordOdFeeProdAtomSV.selectByOrderId(order.getOrderId());
-		for (OrdOdFeeProd ordOdFeeProd : feeProdList) {
-			OrdOdFeeProd subOrdOdFeeProd=new OrdOdFeeProd();
-			subOrdOdFeeProd.setOrderId(afterOrderId);
-			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
-				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
-				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getJfFee());
-				String rate = JfAndAmountExchangeUtil.getRate(order.getAccountId());
-				if(!StringUtil.isBlank(rate)) {
-					String[] split = rate.split(":");
-					BigDecimal JfAmout=BigDecimal.valueOf(afterOrdOdProd.getJfFee()).divide(new BigDecimal(split[0]),
-							5,BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(split[1]),5,BigDecimal.ROUND_HALF_UP);
-					subOrdOdFeeProd.setJfAmount(JfAmout.multiply(new BigDecimal(1000)).longValue());//积分对应的金额,并元转厘
-				}
-			}else if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
-				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
-				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getCouponFee());//优惠券
-			}else {
-				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
-				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getTotalFee()-afterOrdOdProd.getDiscountFee());
-			}
-			ordOdFeeProdAtomSV.insertSelective(subOrdOdFeeProd);
-		}
+    public void createAfterProdFee(long afterOrderId,OrdOrder order,OrdOdProd afterOrdOdProd,String busiCode) {
+    	if(!OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER.equals(busiCode)) {
+    		List<OrdOdFeeProd> feeProdList = ordOdFeeProdAtomSV.selectByOrderId(order.getOrderId());
+    		for (OrdOdFeeProd ordOdFeeProd : feeProdList) {
+    			OrdOdFeeProd subOrdOdFeeProd=new OrdOdFeeProd();
+    			subOrdOdFeeProd.setOrderId(afterOrderId);
+    			if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
+    				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+    				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getJfFee());
+    				String rate = order.getPointRate();
+    				if(!StringUtil.isBlank(rate)) {
+    					String[] split = rate.split(":");
+    					BigDecimal JfAmout=BigDecimal.valueOf(afterOrdOdProd.getJfFee()).divide(new BigDecimal(split[0]),
+    							5,BigDecimal.ROUND_HALF_UP).divide(new BigDecimal(split[1]),5,BigDecimal.ROUND_HALF_UP);
+    					subOrdOdFeeProd.setJfAmount(JfAmout.multiply(new BigDecimal(1000)).longValue());//积分对应的金额,并元转厘
+    				}
+    			}else if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
+    				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+    				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getCouponFee());//优惠券
+    			}else {
+    				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
+    				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getTotalFee()-afterOrdOdProd.getDiscountFee());
+    			}
+    			ordOdFeeProdAtomSV.insertSelective(subOrdOdFeeProd);
+    		}
+    	}
     }
     
     /**
