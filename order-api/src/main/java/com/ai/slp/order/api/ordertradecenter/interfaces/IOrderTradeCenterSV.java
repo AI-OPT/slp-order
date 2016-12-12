@@ -38,22 +38,4 @@ public interface IOrderTradeCenterSV {
     @Path("/apply")
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException;
-
-  /*  *//**
-     * 订单提交
-     * 
-     * @param request
-     * @return
-     * @throws BusinessException
-     * @throws SystemException
-     * @author zhangxw
-     * @ApiDocMethod
-     * @ApiCode ORDER_APPLY_002
-     * @RestRelativeURL ordertrade/apiApply
-     *//*
-    @POST
-    @Path("/apiApply")
-    public OrderApiTradeCenterResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
-            SystemException;*/
-
 }
