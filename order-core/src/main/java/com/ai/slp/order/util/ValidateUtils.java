@@ -137,6 +137,10 @@ public class ValidateUtils {
 				if(StringUtil.isBlank(ordProductDetailInfo.getTokenId())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "积分账户id存在的情况下,积分令牌不能为空");
 				}
+				if(StringUtil.isBlank(ordProductDetailInfo.getPointRate())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "积分账户id存在的情况下,积分比率不能为空");
+				}
+				
 			}
 			if(StringUtil.isBlank(ordProductDetailInfo.getSupplierId())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "销售商id不能为空");
