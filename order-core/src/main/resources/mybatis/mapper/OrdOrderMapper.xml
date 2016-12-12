@@ -49,6 +49,7 @@
     <result column="TOKEN_ID" property="tokenId" jdbcType="VARCHAR" />
     <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
     <result column="USER_TEL" property="userTel" jdbcType="VARCHAR" />
+    <result column="POINT_RATE" property="pointRate" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -115,7 +116,7 @@
     LOCK_TIME, ORDER_TIME, SELLER_ID, CHL_ID, OPER_ID, WORKFLOW_ID, REASON_TYPE, REASON_DESC, 
     FINISH_TIME, ORIG_ORDER_ID, ORDER_DESC, KEYWORDS, REMARK, EXTERNAL_ORDER_ID, EXTERNAL_SUPPLY_ID, 
     DOWNSTREAM_ORDER_ID, USER_TYPE, IP_ADDRESS, IF_WARNING, WARNING_TYPE, CUS_SERVICE_FLAG, 
-    ACCOUNT_ID, FLAG, TOKEN_ID, USER_NAME, USER_TEL
+    ACCOUNT_ID, FLAG, TOKEN_ID, USER_NAME, USER_TEL, POINT_RATE
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria" >
     select
@@ -167,7 +168,8 @@
       DOWNSTREAM_ORDER_ID, USER_TYPE, IP_ADDRESS, 
       IF_WARNING, WARNING_TYPE, CUS_SERVICE_FLAG, 
       ACCOUNT_ID, FLAG, TOKEN_ID, 
-      USER_NAME, USER_TEL)
+      USER_NAME, USER_TEL, POINT_RATE
+      )
     values (#{orderId,jdbcType=BIGINT}, #{tenantId,jdbcType=VARCHAR}, #{busiCode,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{subFlag,jdbcType=VARCHAR}, #{parentOrderId,jdbcType=BIGINT}, 
       #{batchNo,jdbcType=BIGINT}, #{userId,jdbcType=VARCHAR}, #{acctId,jdbcType=BIGINT}, 
@@ -183,7 +185,8 @@
       #{downstreamOrderId,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR}, 
       #{ifWarning,jdbcType=VARCHAR}, #{warningType,jdbcType=VARCHAR}, #{cusServiceFlag,jdbcType=VARCHAR}, 
       #{accountId,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR}, #{tokenId,jdbcType=VARCHAR}, 
-      #{userName,jdbcType=VARCHAR}, #{userTel,jdbcType=VARCHAR})
+      #{userName,jdbcType=VARCHAR}, #{userTel,jdbcType=VARCHAR}, #{pointRate,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOrder" >
     insert into ord_order
@@ -315,6 +318,9 @@
       <if test="userTel != null" >
         USER_TEL,
       </if>
+      <if test="pointRate != null" >
+        POINT_RATE,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       #{orderId,jdbcType=BIGINT},
@@ -443,6 +449,9 @@
       </if>
       <if test="userTel != null" >
         #{userTel,jdbcType=VARCHAR},
+      </if>
+      <if test="pointRate != null" >
+        #{pointRate,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -596,6 +605,9 @@
       <if test="record.userTel != null" >
         USER_TEL = #{record.userTel,jdbcType=VARCHAR},
       </if>
+      <if test="record.pointRate != null" >
+        POINT_RATE = #{record.pointRate,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -649,7 +661,8 @@
       FLAG = #{record.flag,jdbcType=VARCHAR},
       TOKEN_ID = #{record.tokenId,jdbcType=VARCHAR},
       USER_NAME = #{record.userName,jdbcType=VARCHAR},
-      USER_TEL = #{record.userTel,jdbcType=VARCHAR}
+      USER_TEL = #{record.userTel,jdbcType=VARCHAR},
+      POINT_RATE = #{record.pointRate,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -795,6 +808,9 @@
       <if test="userTel != null" >
         USER_TEL = #{userTel,jdbcType=VARCHAR},
       </if>
+      <if test="pointRate != null" >
+        POINT_RATE = #{pointRate,jdbcType=VARCHAR},
+      </if>
     </set>
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
@@ -845,7 +861,8 @@
       FLAG = #{flag,jdbcType=VARCHAR},
       TOKEN_ID = #{tokenId,jdbcType=VARCHAR},
       USER_NAME = #{userName,jdbcType=VARCHAR},
-      USER_TEL = #{userTel,jdbcType=VARCHAR}
+      USER_TEL = #{userTel,jdbcType=VARCHAR},
+      POINT_RATE = #{pointRate,jdbcType=VARCHAR}
     where ORDER_ID = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>
