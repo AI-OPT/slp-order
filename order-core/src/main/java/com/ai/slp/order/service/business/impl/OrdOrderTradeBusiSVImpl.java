@@ -118,11 +118,12 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	String accountId = ordProductDetailInfo.getAccountId();
         	//积分令牌id
         	String tokenId=ordProductDetailInfo.getTokenId();
+        	String pointRate = ordProductDetailInfo.getPointRate();
         	String remark = ordProductDetailInfo.getRemark();
         	String supplierId = ordProductDetailInfo.getSupplierId();
         	/* 1.创建业务订单,并返回订单Id*/
         	long orderId = this.createOrder(ordBaseInfo,accountId,beforSubmitOrder,
-        			request.getTenantId(),sysDate,remark,supplierId,tokenId);
+        			request.getTenantId(),sysDate,remark,supplierId,tokenId,pointRate);
         	/* 2.创建商品明细,费用明细信息 */
         	Map<String, Object> mapProduct = this.createProdInfo(request,ordProductDetailInfo, sysDate, 
         			orderId,client,supplierId);
@@ -163,7 +164,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private long createOrder(OrdBaseInfo ordBaseInfo,String accountId,OrderMonitorBeforResponse beforSubmitOrder,
-    		String tenantId,Timestamp sysDate,String remark,String supplierId,String tokenId) {
+    		String tenantId,Timestamp sysDate,String remark,String supplierId,String tokenId,String pointRate ) {
         OrdOrder ordOrder = new OrdOrder();
         long orderId = SequenceUtil.createOrderId();
         ordOrder.setOrderId(orderId);
@@ -196,6 +197,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setWarningType(beforSubmitOrder.getWarningType());
         ordOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
         ordOrder.setFlag(ordBaseInfo.getFlag());
+        ordOrder.setPointRate(pointRate);//积分比率
         ordOrderAtomSV.insertSelective(ordOrder);
         return orderId;
     }
