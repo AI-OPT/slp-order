@@ -170,8 +170,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				ordProductVo.setGiveJF(ordOdProd.getJf()); // 赠送积分
 				ordProductVo.setProdCode(ordOdProd.getProdCode()); // 商品编码
 				ordProductVo.setSkuStorageId(ordOdProd.getSkuStorageId());// 倉庫ID
-				ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
-				ordProductVo.setProductImage(productImage);
+			/*	ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
+				ordProductVo.setProductImage(productImage);*/
 				ordProductVo.setImageUrl(ordOdProd.getProdDesc()); // 图片id
 				ordProductVo.setProdExtendInfo(ordOdProd.getProdSn()); // 图片类型
 				productList.add(ordProductVo);
