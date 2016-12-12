@@ -20,9 +20,6 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     @Autowired
     private IOrdOrderTradeBusiSV ordOrderTradeBusiSV;
 
-   /* @Autowired
-    private IOrdOrderApiTradeBusiSV ordOrderApiTradeBusiSV;*/
-
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
@@ -32,19 +29,4 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
         response.setResponseHeader(responseHeader);
         return response;
     }
-
-  /*  @Override
-    public OrderApiTradeCenterResponse apiApply(OrderApiTradeCenterRequest request) throws BusinessException,
-            SystemException {
-    	OrderApiTradeCenterResponse response;
-		try {
-			response = ordOrderApiTradeBusiSV.apiApply(request);
-			ResponseHeader responseHeader = new ResponseHeader(true,
-					ExceptCodeConstants.Special.SUCCESS, "成功");
-			response.setResponseHeader(responseHeader);
-		} catch (SystemException e) {
-			throw new SystemException(ResultCodeConstants.ApiOrder.SYSTEM_ERROR, "系统异常");
-		}
-        return response;
-    }*/
 }
