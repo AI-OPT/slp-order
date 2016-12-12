@@ -14,6 +14,11 @@ public class OrdProductDetailInfo extends BaseInfo{
     private String accountId;
     
     /**
+     * 积分比率转换
+     */
+    private String pointRate;
+    
+    /**
      * 积分令牌ID 
      */
     private String tokenId;
@@ -125,4 +130,14 @@ public class OrdProductDetailInfo extends BaseInfo{
 	public void setTokenId(String tokenId) {
 		this.tokenId = tokenId;
 	}
+
+	public String getPointRate() {
+		return pointRate;
+	}
+
+	public void setPointRate(String pointRate) {
+		this.pointRate = pointRate;
+	}
+	
+	
 }
