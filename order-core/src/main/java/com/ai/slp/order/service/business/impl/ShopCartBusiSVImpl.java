@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Collator;
 import java.util.*;
 
 /**
@@ -219,6 +220,8 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         }
         List<String> failSkuList = new ArrayList<>();
         int delTotal = skuIdList.size(),delSuccessNum = 0;
+        
+        Collections.sort(skuIdList, Collator.getInstance(java.util.Locale.CHINA));
         //循环删除商品
         for (String skuId:skuIdList){
             String cartProdStr = iCacheClient.hget(cartUserId,skuId);
