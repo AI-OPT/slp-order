@@ -15,7 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * 获取积分与人民币的兑换比例
+ * 获取积分与人民币的兑换比例 (已废弃)
  * @date 2016年10月17日 
  * @author caofz
  */

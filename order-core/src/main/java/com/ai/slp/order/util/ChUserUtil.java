@@ -12,9 +12,14 @@ import com.ai.slp.order.constants.OrdersConstants;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+/**
+ * 获取用户信息(已废弃)
+ * @date 2016年12月12日 
+ * @author caofz
+ */
 public class ChUserUtil {
 	private static final Logger LOG = LoggerFactory.getLogger(ChUserUtil.class);
-	//获取用户信息
+	
 	public static JSONObject getUserInfo(String id){
 	   Map<String,String> params=new HashMap<String,String>();
 	   params.put("openId", id);
