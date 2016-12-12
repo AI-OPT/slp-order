@@ -97,6 +97,8 @@ public class OrdOrder {
 
     private String userTel;
 
+    private String pointRate;
+
     public long getOrderId() {
         return orderId;
     }
@@ -471,5 +473,13 @@ public class OrdOrder {
 
     public void setUserTel(String userTel) {
         this.userTel = userTel == null ? null : userTel.trim();
+    }
+
+    public String getPointRate() {
+        return pointRate;
+    }
+
+    public void setPointRate(String pointRate) {
+        this.pointRate = pointRate == null ? null : pointRate.trim();
     }
 }

@@ -3294,6 +3294,76 @@ public class OrdOrderCriteria {
             addCriterion("USER_TEL not between", value1, value2, "userTel");
             return (Criteria) this;
         }
+
+        public Criteria andPointRateIsNull() {
+            addCriterion("POINT_RATE is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateIsNotNull() {
+            addCriterion("POINT_RATE is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateEqualTo(String value) {
+            addCriterion("POINT_RATE =", value, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateNotEqualTo(String value) {
+            addCriterion("POINT_RATE <>", value, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateGreaterThan(String value) {
+            addCriterion("POINT_RATE >", value, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateGreaterThanOrEqualTo(String value) {
+            addCriterion("POINT_RATE >=", value, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateLessThan(String value) {
+            addCriterion("POINT_RATE <", value, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateLessThanOrEqualTo(String value) {
+            addCriterion("POINT_RATE <=", value, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateLike(String value) {
+            addCriterion("POINT_RATE like", value, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateNotLike(String value) {
+            addCriterion("POINT_RATE not like", value, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateIn(List<String> values) {
+            addCriterion("POINT_RATE in", values, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateNotIn(List<String> values) {
+            addCriterion("POINT_RATE not in", values, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateBetween(String value1, String value2) {
+            addCriterion("POINT_RATE between", value1, value2, "pointRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPointRateNotBetween(String value1, String value2) {
+            addCriterion("POINT_RATE not between", value1, value2, "pointRate");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
