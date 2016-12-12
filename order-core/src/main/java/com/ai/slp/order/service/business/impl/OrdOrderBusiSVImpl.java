@@ -428,21 +428,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				pOrderVo.setChlIdName(sysParamChlId == null ? "" : sysParamChlId.getColumnDesc());
 				pOrderVo.setContactTel(behindOrdOrderAttach.getContactTel());
 				pOrderVo.setUserId(behindOrdOrderAttach.getUserId());
-				/*	long userStart = System.currentTimeMillis();
-				logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList,通过O2p获取用户信息，当前时间戳：" + userStart);
-				JSONObject dataJson = ChUserUtil.getUserInfo(behindOrdOrderAttach.getUserId());
-				Object userName = null;
-				Object phone = null;
-				if (dataJson != null) {
-					// 获取用户名,绑定手机号
-					userName = dataJson.get("userName");
-					phone = dataJson.get("phone");
-				}
-				pOrderVo.setUserName(userName == null ? null : userName.toString());
-				pOrderVo.setUserTel(phone == null ? null : phone.toString());
-				long userEnd = System.currentTimeMillis();
-				logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList,通过O2p获取用户信息，当前时间戳：" + userEnd + ",用时:"
-						+ (userEnd - userStart) + "毫秒");*/
 				pOrderVo.setUserName(behindOrdOrderAttach.getUserName());
 				pOrderVo.setUserTel(behindOrdOrderAttach.getUserTel());
 				pOrderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
