@@ -61,7 +61,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdExtendAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAttachAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
-import com.ai.slp.order.util.ChUserUtil;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.ValidateUtils;
@@ -169,9 +168,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				ordProductVo.setJfFee(ordOdProd.getJfFee()); // 消费积分
 				ordProductVo.setGiveJF(ordOdProd.getJf()); // 赠送积分
 				ordProductVo.setProdCode(ordOdProd.getProdCode()); // 商品编码
-				ordProductVo.setSkuStorageId(ordOdProd.getSkuStorageId());// 倉庫ID
-			/*	ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
-				ordProductVo.setProductImage(productImage);*/
+				ordProductVo.setSkuStorageId(ordOdProd.getSkuStorageId());// 仓库id
+				long start = System.currentTimeMillis();
+				logger.info("开始执行商品信息查询>>>>>>>>>>>>>>：" + start);
+				ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
+				long end = System.currentTimeMillis();
+				logger.info("结束执行商品信息查询>>>>>>>>>>>>>>:" + end + ",用时:"+ (end - start) + "毫秒");
+				ordProductVo.setProductImage(productImage);
 				ordProductVo.setImageUrl(ordOdProd.getProdDesc()); // 图片id
 				ordProductVo.setProdExtendInfo(ordOdProd.getProdSn()); // 图片类型
 				productList.add(ordProductVo);
@@ -236,13 +239,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			ordOrderVo.setAccountId(order.getAccountId());
 			ordOrderVo.setToken(order.getTokenId());// 积分令牌
 			ordOrderVo.setDownstreamOrderId(order.getDownstreamOrderId());
-		/*	JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
-			Object userName = null;
-			if (dataJson != null) {
-				// 获取用户名
-				userName = dataJson.get("userName");
-			}
-			ordOrderVo.setUserName(userName == null ? null : userName.toString());*/
 			ordOrderVo.setUserName(order.getUserName());
 			ordOrderVo.setRemark(order.getRemark());// 买家留言(订单备注)
 			ordOrderVo.setOrigOrderId(order.getOrigOrderId()); // 原始订单号
