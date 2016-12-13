@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.orderrule.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,8 @@ import com.alibaba.dubbo.config.annotation.Service;
 @Service
 @Component
 public class OrderRuleSVImpl implements IOrderRuleSV {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(OrderRuleSVImpl.class);
 	@Autowired
 	private IOrdRuleBusiSV ordRuleBusiSV;
 	/**
@@ -67,12 +71,14 @@ public class OrderRuleSVImpl implements IOrderRuleSV {
 			responseHeader.setResultMessage(e.getErrorMessage());
 			//
 			response.setResponseHeader(responseHeader);
+			LOG.error(e.getMessage(),e);
 		}catch(Exception e){
 			//
 			responseHeader.setResultCode("999999");
 			responseHeader.setResultMessage("设置失败");
 			//
 			response.setResponseHeader(responseHeader);
+			LOG.error("设置失败:"+e.getMessage(),e);
 		}
 		return response;
 	}
@@ -93,6 +99,7 @@ public class OrderRuleSVImpl implements IOrderRuleSV {
 			responseHeader.setResultMessage("失败");
 			//
 			response.setResponseHeader(responseHeader);
+			LOG.error("失败:"+e.getMessage(),e);
 		}
 		//
 		return response;
