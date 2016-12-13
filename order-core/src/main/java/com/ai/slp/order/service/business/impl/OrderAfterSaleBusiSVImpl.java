@@ -309,7 +309,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 			ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
 			/* 4.生成退款费用明细表*/
-			this.createAfterProdFee(afterOrderId, order, afterOrdOdProd,busiCode);
+			//this.createAfterProdFee(afterOrderId, order, afterOrdOdProd,busiCode);
     	}else {
     		/* 5.创建售后商品明细信息*/
     		afterOrdOdProd =new OrdOdProd();
@@ -366,7 +366,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
     		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
     		/* 8.生成售后费用明细表*/
-    		this.createAfterProdFee(afterOrderId, order, afterOrdOdProd,busiCode);
+    		//this.createAfterProdFee(afterOrderId, order, afterOrdOdProd,busiCode);
     	}
     	if(!OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER.equals(busiCode)) {
     		/* 9.生成售后订单支付机构接口*/
