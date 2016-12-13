@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.orderstate.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 @Service
 @Component
 public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
+	private static final Logger LOG = LoggerFactory.getLogger(OrderStateServiceSVImpl.class);
 
 	@Autowired
 	private IOrderStateBusiSV orderStateBusiSV;
@@ -52,9 +55,10 @@ public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
 		}catch(Exception e){
 			//e.printStackTrace();
 			responseHeader.setResultCode("999999");
-			responseHeader.setResultMessage("修改状态失败");
+			responseHeader.setResultMessage("修改状态失败");			
 			//
 			response.setResponseHeader(responseHeader);
+			LOG.error("修改状态失败:"+e.getMessage(),e);
 		}
 		
 		return response;
