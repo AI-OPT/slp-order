@@ -64,7 +64,7 @@ public class CartProdInfo implements Serializable{
     /**
      * 销售价,单位:厘
      */
-    private Long salePrice;
+    private long salePrice;
 
     public String getSupplierId() {
         return supplierId;
@@ -146,11 +146,11 @@ public class CartProdInfo implements Serializable{
         this.insertTime = insertTime;
     }
 
-    public Long getSalePrice() {
+    public long getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(Long salePrice) {
+    public void setSalePrice(long salePrice) {
         this.salePrice = salePrice;
     }
 
