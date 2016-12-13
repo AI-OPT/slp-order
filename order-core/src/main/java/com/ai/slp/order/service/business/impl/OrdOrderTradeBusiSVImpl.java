@@ -3,6 +3,7 @@ package com.ai.slp.order.service.business.impl;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
+import com.ai.slp.order.util.ProdComparator;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
@@ -316,6 +318,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         long discountFee = 0;
         long operDiscountFee = 0;
         long totalJf=0;
+        
+        //更新前排序
+        Collections.sort(ordOdProds, new ProdComparator());
+
         /* 更新商品明细信息*/
         for (OrdOdProd ordOdProd : ordOdProds) {
         	//积分 积分金额 优惠券 优惠金额,按比例划分
