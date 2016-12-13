@@ -91,6 +91,7 @@ public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
 			responseHeader.setResultMessage("修改状态失败");
 			//
 			response.setResponseHeader(responseHeader);
+			LOG.error("修改状态失败:"+e.getMessage(),e);
 		}
 		//
 		return response;
