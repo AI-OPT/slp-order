@@ -83,13 +83,10 @@ public class MonitorService {
 		}
 		
 		log.info("当前用户下订单数量:"+userSet.size());
-		log.info("当前用户下订单Json:"+JSON.toJSONString(userSet));
 		//
 		log.info("当前ip下订单数量:"+ipSet.size());
-		log.info("当前ip下订单Json:"+JSON.toJSONString(ipSet));
 		//
 		log.info("订单总量下订单数量:"+orderAllSet.size());
-		log.info("当前订单总量下订单Json:"+JSON.toJSONString(orderAllSet));
 		//
 		response.setIfWarning(MonitorCoonstants.WARNING_NO);
 		response.setWarningType("");
