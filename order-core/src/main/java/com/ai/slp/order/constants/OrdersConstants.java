@@ -129,7 +129,7 @@ public final class OrdersConstants {
 
         public static class State {
             /**
-             * 101 提交
+             * 10 提交
              */
             public static final String NEW = "10";
 
