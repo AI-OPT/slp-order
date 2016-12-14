@@ -292,6 +292,12 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             OrdOdCartProd cartProd = JSON.parseObject(cartProdStr,OrdOdCartProd.class);
             try {
                 ProductSkuInfo skuInfo = querySkuInfo(tenantId, skuId);
+                if(skuInfo!=null&&skuInfo.getUsableNum()==null) {
+                	skuInfo.setUsableNum(0l);
+                }
+                if(skuInfo!=null&&skuInfo.getSalePrice()==null) {
+                	skuInfo.setSalePrice(0l);
+                }
                 CartProdInfo prodInfo = new CartProdInfo();
                 BeanUtils.copyProperties(prodInfo,skuInfo);
                 prodInfo.setProductId(skuInfo.getProdId());
