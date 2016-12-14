@@ -460,15 +460,11 @@ public final class OrdersConstants {
          * @author zhangxw
          */
         public static class ChgDesc {
-            /**
-             * 订单提交
-             */
-            public static final String ORDER_CREATE = "您提交的订单已经受理,请耐心等候处理";
 
             /**
-             * 订单进入支付环节
+             * 订单提交之后进入支付环节
              */
-            public static final String ORDER_TO_PAY = "您提交的订单进入待支付处理";
+            public static final String ORDER_TO_PAY = "您提交的订单已经受理,现进入待支付处理";
 
             /**
              * 订单支付完成
