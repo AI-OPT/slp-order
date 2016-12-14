@@ -38,7 +38,7 @@ public class Testrest {
     @Test
     public void orderListTest() {
     	QueryOrderRequest request = new QueryOrderRequest();
-        request.setOrderId(78436478);
+        request.setOrderId(78436478L);
         request.setTenantId("SLP");
         QueryOrderResponse queryOrder = orderListSV.queryOrder(request);
         OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
