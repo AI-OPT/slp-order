@@ -76,7 +76,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	
 	@Override
 	public void back(OrderReturnRequest request) throws BusinessException, SystemException {
-		/* 1.参数校验*/
+    	/* 1.参数校验*/
 		ValidateUtils.validateOrderReturnRequest(request);
 		/* 2.查询该商品的子订单*/
 		OrdOrder order = this.getOrdOrder(request);
@@ -84,9 +84,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		OrdOdProd ordOdProd = this.getOrdOdProd(request);
 		long prodSum = request.getProdSum();
 		if(prodSum>ordOdProd.getBuySum()) {
-			logger.error("退货的商品数量不能大于所购买的商品数量");
-			throw new BusinessException("", 
-					"退货数量不能大于实际商品数量");
+			throw new BusinessException("","退货数量不能大于实际商品数量");
 		}
 		long backOrderId=SequenceUtil.createOrderId();
 		Timestamp sysDate=DateUtil.getSysDate();
@@ -260,6 +258,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     public long createAfterOrderInfo(OrdOrder order,OrderReturnRequest request,
     		String busiCode,long prodSum,OrdOdProd ordOdProd,
     		String prodState,long afterOrderId,Timestamp sysDate,String orderState) {
+    	long orderStart=System.currentTimeMillis();
+		logger.info("####loadtest####开始售后订单创建，当前时间戳>>>>>>>>>>："+orderStart);
     	/* 1.创建售后订单*/
 		OrdOrder afterOrder=new OrdOrder();
 		BeanUtils.copyProperties(afterOrder, order);
@@ -270,6 +270,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		afterOrder.setOrigOrderId(order.getOrderId());
 		afterOrder.setRemark(request.getAfterSaleReason()); //退款理由 
 		this.insertOrderState(sysDate, afterOrder);
+		long orderEnd=System.currentTimeMillis();
+		logger.info("####loadtest####完成售后订单创建,当前时间戳>>>>>>>>>>："+orderEnd+",用时:"+(orderEnd-orderStart)+"毫秒");
 		OrdOdFeeTotal odFeeTotal =null;
 		long afterTotalFee=0;
 		OrdOdProd afterOrdOdProd=null;
@@ -279,7 +281,9 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(orderState)||
 				OrdersConstants.OrdOrder.State.WAIT_SEND.equals(orderState)||
 				OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(busiCode))) {
-			/* 2.生成商品明细信息*/
+    		long prodStart=System.currentTimeMillis();
+			logger.info("####loadtest####按照全部数量,开始售后订单商品明细创建，当前时间戳>>>>>>>>>>："+prodStart);
+    		/* 2.生成商品明细信息*/
 			afterOrdOdProd =new OrdOdProd();
 			BeanUtils.copyProperties(afterOrdOdProd, ordOdProd);
 			afterTotalFee = afterOrdOdProd.getTotalFee();
@@ -291,8 +295,12 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			afterOrdOdProd.setProdDesc(request.getImageId()); //图片id
 			afterOrdOdProd.setProdSn(request.getImageType()); //图片类型
 			ordOdProdAtomSV.insertSelective(afterOrdOdProd);
+			long prodEnd=System.currentTimeMillis();
+			logger.info("####loadtest####按照全部数量,完成售后订单商品明细创建,当前时间戳>>>>>>>>>>："+prodEnd+",用时:"+(prodEnd-prodStart)+"毫秒");
 			odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
 					order.getOrderId());
+			long feetotalStart=System.currentTimeMillis();
+			logger.info("####loadtest####按照全部数量,开始售后费用总表细创建，当前时间戳>>>>>>>>>>："+feetotalStart);
 			/* 生成售后费用总表信息*/
 			rdOrdOdFeeTotal=new OrdOdFeeTotal();
 			BeanUtils.copyProperties(rdOrdOdFeeTotal, odFeeTotal);
@@ -308,9 +316,13 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			rdOrdOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
 			rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 			ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
+			long feetotalEnd=System.currentTimeMillis();
+			logger.info("####loadtest####按照全部的数量,完成售后费用总表创建,当前时间戳>>>>>>>>>>："+feetotalEnd+",用时:"+(feetotalEnd-feetotalStart)+"毫秒");
 			/* 4.生成退款费用明细表*/
 			//this.createAfterProdFee(afterOrderId, order, afterOrdOdProd,busiCode);
     	}else {
+    		long prodStart=System.currentTimeMillis();
+			logger.info("####loadtest####按照输入数量,开始售后订单商品明细创建，当前时间戳>>>>>>>>>>："+prodStart);
     		/* 5.创建售后商品明细信息*/
     		afterOrdOdProd =new OrdOdProd();
     		BeanUtils.copyProperties(afterOrdOdProd, ordOdProd);
@@ -348,6 +360,10 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			afterOrdOdProd.setProdSn(request.getImageType()); //图片类型
     		afterOrdOdProd.setUpdateOperId(request.getOperId());
     		ordOdProdAtomSV.insertSelective(afterOrdOdProd);
+    		long prodEnd=System.currentTimeMillis();
+			logger.info("####loadtest####按照输入数量,完成售后订单商品明细创建，当前时间戳>>>>>>>>>>："+prodEnd+",用时:"+(prodEnd-prodStart)+"毫秒");
+			long feetotalStart=System.currentTimeMillis();
+			logger.info("####loadtest####按照输入数量,开始售后订单费用总表创建，当前时间戳>>>>>>>>>>："+feetotalStart);
     		/* 7.生成售后订单费用总表*/
     		odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
     				order.getOrderId());
@@ -365,10 +381,14 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		rdOrdOdFeeTotal.setFreight(0);//运费暂不做运算
     		rdOrdOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
     		ordOdFeeTotalAtomSV.insertSelective(rdOrdOdFeeTotal);
+    		long feetotalEnd=System.currentTimeMillis();
+			logger.info("####loadtest####按照输入数量,完成售后订单费用总表创建，当前时间戳>>>>>>>>>>："+feetotalEnd+",用时:"+(feetotalEnd-feetotalStart)+"毫秒");
     		/* 8.生成售后费用明细表*/
     		//this.createAfterProdFee(afterOrderId, order, afterOrdOdProd,busiCode);
     	}
     	if(!OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER.equals(busiCode)) {
+    		long balacneStart=System.currentTimeMillis();
+			logger.info("####loadtest####按照输入数量,开始售后订单支付机构表创建，当前时间戳>>>>>>>>>>："+balacneStart);
     		/* 9.生成售后订单支付机构接口*/
     		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
     				order.getTenantId(), order.getOrderId());
@@ -385,10 +405,17 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		balacneIf.setPayFee(afterTotalFee-afterOrdOdProd.getDiscountFee());
     		balacneIf.setCreateTime(DateUtil.getSysDate());
     		ordBalacneIfAtomSV.insertSelective(balacneIf);
+    		long balacneEnd=System.currentTimeMillis();
+			logger.info("####loadtest####按照输入数量,完成售后订单支付机构表创建，当前时间戳>>>>>>>>>>："+balacneEnd+",用时:"+(balacneEnd-balacneStart)+"毫秒");
+    		
     	}
+    	long updateStart=System.currentTimeMillis();
+		logger.info("####loadtest####开始更新子订单商品明细表信息，当前时间戳>>>>>>>>>>："+updateStart);
     	//更新商品为售后标识
     	ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
 		ordOdProdAtomSV.updateById(ordOdProd); 
+		long updateEnd=System.currentTimeMillis();
+		logger.info("####loadtest####完成更新子订单商品明细表信息,当前时间戳>>>>>>>>>>："+updateEnd+",用时:"+(updateEnd-updateStart)+"毫秒");
 		return afterTotalFee;
     }
     
