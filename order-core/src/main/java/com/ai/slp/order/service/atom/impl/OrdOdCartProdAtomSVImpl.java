@@ -104,7 +104,9 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
     @Override
     public OrdOdCartProd queryByProdOfCart(String tenantId, String userId, String skuId) {
         OrdOdCartProdCriteria example = new OrdOdCartProdCriteria();
-        example.setOrderByClause("INSERT_TIME desc");
+        example.setLimitStart(0);
+        example.setLimitEnd(100);
+       // example.setOrderByClause("INSERT_TIME desc");
         example.createCriteria().andTenantIdEqualTo(tenantId)
                 .andUserIdEqualTo(userId)
                 .andSkuIdEqualTo(skuId);
