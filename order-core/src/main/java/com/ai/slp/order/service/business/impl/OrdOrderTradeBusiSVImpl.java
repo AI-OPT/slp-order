@@ -135,17 +135,15 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	this.createOrderFeeInvoice(request,ordProductDetailInfo, sysDate, orderId);
         	/* 5. 处理配送信息，存在则写入 */
         	this.createOrderLogistics(request, sysDate, orderId);
-        	/* 6. 记录一条订单创建轨迹记录 */
-        	this.writeOrderCreateStateChg(request, sysDate, orderId);
-        	/* 7. 更新订单状态 */
-        	this.updateOrderState(request.getTenantId(), sysDate, ordOrder);
+        	/* 6. 记录一条订单创建轨迹记录,并处理订单信息 */
+        	this.writeOrderCreateStateChg(request.getTenantId(), sysDate, ordOrder);
         	long orderAWarnStart=System.currentTimeMillis();
         	LOG.info("####loadtest####订单提交成功后进行监控,当前时间戳>>>>>>>>>>："+orderAWarnStart);
-        	/* 8.订单提交成功后监控服务*/
+        	/* 7.订单提交成功后监控服务*/
         	orderMonitorSV.afterSubmitOrder(monitorRequest);
         	long orderAWarnEnd=System.currentTimeMillis();
         	LOG.info("####loadtest####订单提交成功后完成监控,当前时间戳>>>>>>>>>>："+orderAWarnEnd+",用时:"+(orderAWarnEnd-orderAWarnStart)+"毫秒");
-        	/* 9.封装返回参数*/
+        	/* 8.封装返回参数*/
         	orderResInfo.setOrderId(orderId);
         	orderResInfo.setOrdProductResList(ordProductResList);
         	orderResInfos.add(orderResInfo);
@@ -452,24 +450,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	ordOdLogisticsAtomSV.insertSelective(logistics);
     }
     
-    
-    /**
-     * 写入订单状态变化轨迹
-     * 
-     * @param request
-     * @param sysDate
-     * @param orderId
-     * @author zhangxw
-     * @ApiDocMethod
-     */
-    private void writeOrderCreateStateChg(OrderTradeCenterRequest request, Timestamp sysDate,
-            long orderId) {
-        orderFrameCoreSV.ordOdStateChg(orderId, request.getTenantId(), null,
-                OrdersConstants.OrdOrder.State.NEW, OrdOdStateChg.ChgDesc.ORDER_CREATE, null, null,
-                null, sysDate);
-
-    }
-
     /**
      * 更新订单状态
      * 
@@ -479,7 +459,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void updateOrderState(String tenantId, Timestamp sysDate,OrdOrder ordOrder) {
+    private void writeOrderCreateStateChg(String tenantId, Timestamp sysDate,OrdOrder ordOrder) {
         String orgState = ordOrder.getState();
         String newState = OrdersConstants.OrdOrder.State.WAIT_PAY;
         ordOrder.setState(newState);
