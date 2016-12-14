@@ -119,8 +119,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	String remark = ordProductDetailInfo.getRemark();
         	String supplierId = ordProductDetailInfo.getSupplierId();
         	/* 1.创建业务订单,并返回订单Id*/
-        	long orderId = this.createOrder(ordBaseInfo,accountId,beforSubmitOrder,
+        	OrdOrder ordOrder = this.createOrder(ordBaseInfo,accountId,beforSubmitOrder,
         			request.getTenantId(),sysDate,remark,supplierId,tokenId,pointRate);
+        	long orderId=ordOrder.getOrderId();
         	/* 2.创建商品明细,费用明细信息 */
         	Map<String, Object> mapProduct = this.createProdInfo(request,ordProductDetailInfo, sysDate, 
         			orderId,supplierId);
@@ -137,7 +138,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	/* 6. 记录一条订单创建轨迹记录 */
         	this.writeOrderCreateStateChg(request, sysDate, orderId);
         	/* 7. 更新订单状态 */
-        	this.updateOrderState(request.getTenantId(), sysDate, orderId);
+        	this.updateOrderState(request.getTenantId(), sysDate, ordOrder);
         	long orderAWarnStart=System.currentTimeMillis();
         	LOG.info("####loadtest####订单提交成功后进行监控,当前时间戳>>>>>>>>>>："+orderAWarnStart);
         	/* 8.订单提交成功后监控服务*/
@@ -166,7 +167,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private long createOrder(OrdBaseInfo ordBaseInfo,String accountId,OrderMonitorBeforResponse beforSubmitOrder,
+    private OrdOrder createOrder(OrdBaseInfo ordBaseInfo,String accountId,OrderMonitorBeforResponse beforSubmitOrder,
     		String tenantId,Timestamp sysDate,String remark,String supplierId,String tokenId,String pointRate ) {
         OrdOrder ordOrder = new OrdOrder();
         long orderId = SequenceUtil.createOrderId();
@@ -201,8 +202,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
         ordOrder.setFlag(ordBaseInfo.getFlag());
         ordOrder.setPointRate(pointRate);//积分比率
-        ordOrderAtomSV.insertSelective(ordOrder);
-        return orderId;
+       // ordOrderAtomSV.insertSelective(ordOrder);
+        return ordOrder;
     }
 
     /**
@@ -478,15 +479,14 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void updateOrderState(String tenantId, Timestamp sysDate, long orderId) {
-        OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+    private void updateOrderState(String tenantId, Timestamp sysDate,OrdOrder ordOrder) {
         String orgState = ordOrder.getState();
         String newState = OrdersConstants.OrdOrder.State.WAIT_PAY;
         ordOrder.setState(newState);
         ordOrder.setStateChgTime(sysDate);
-        ordOrderAtomSV.updateById(ordOrder);
+        ordOrderAtomSV.insertSelective(ordOrder);
         // 写入订单状态变化轨迹表
-        orderFrameCoreSV.ordOdStateChg(orderId, tenantId, orgState, newState,
+        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, orgState, newState,
                 OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null, null, null, sysDate);
     }
 
