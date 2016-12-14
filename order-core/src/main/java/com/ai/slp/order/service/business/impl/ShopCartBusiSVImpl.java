@@ -213,11 +213,11 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     public CartProdOptRes deleteCartProd(String tenantId, String userId, List<String> skuIdList) {
         ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
-        //若不存在购物车信息缓存,则建立缓存
+       /* //若不存在购物车信息缓存,则建立缓存
         if (!iCacheClient.exists(cartUserId)){
             //从数据库中查询,建立缓存
             addShopCartCache(tenantId,userId);
-        }
+        }*/
         List<String> failSkuList = new ArrayList<>();
         int delTotal = skuIdList.size(),delSuccessNum = 0;
         
@@ -243,15 +243,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             //若商品数量为空或零,删除购物车中商品
             if (prod.getBuySum()==null || new Long(0l).equals(prod.getBuySum())){
                 cartProdAtomSV.deleteByProdId(prod.getTenantId(),prod.getUserId(),prod.getSkuId());
-            }else {
-                OrdOdCartProd cartProd0 = cartProdAtomSV.queryByProdOfCart(prod.getTenantId(),prod.getUserId(),prod.getSkuId());
-                //若没有添加商品,则直接添加
-                if (cartProd0 ==null){
-                    cartProdAtomSV.installCartProd(prod);
-                }else {
-                    cartProd0.setBuySum(prod.getBuySum());
-                    cartProdAtomSV.updateCartProdById(cartProd0);
-                }
             }
 
         }
