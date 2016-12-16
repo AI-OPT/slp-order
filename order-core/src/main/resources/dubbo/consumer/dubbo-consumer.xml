@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+\<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans     
@@ -22,7 +22,7 @@
 
 	<!-- <dubbo:monitor protocol="registry" /> -->
 
-	<!-- <dubbo:consumer timeout="${dubbo.consoumer.timeout}" /> -->
+	<dubbo:consumer timeout="${dubbo.consumer.timeout}" />
 
 	<!--  <dubbo:reference id="iLoginSV"
 		interface="com.ai.slp.user.api.login.interfaces.ILoginSV" />-->
