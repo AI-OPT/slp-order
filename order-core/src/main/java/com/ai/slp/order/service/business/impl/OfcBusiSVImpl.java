@@ -32,6 +32,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdParamAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
+import com.ai.slp.order.util.SequenceUtil;
 import com.alibaba.fastjson.JSON;
 
 @Service
@@ -74,11 +75,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOrder ordOrder = new OrdOrder();
 		BeanUtils.copyProperties(request.getOrOrderOfcVo(), ordOrder);
 		if (orderNum == 0) {
-			try {
-				ordOrderAtomSV.insertSelective(ordOrder);
-			} catch (Exception e) {
-				ordOrderAtomSV.updateByExampleSelective(ordOrder, orderNumExample);
-			}
+			ordOrderAtomSV.insertSelective(ordOrder);
 		} else {
 			ordOrderAtomSV.updateByExampleSelective(ordOrder, orderNumExample);
 		}
@@ -92,11 +89,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
 		BeanUtils.copyProperties(request.getOrdOdFeeTotalVo(), ordOdFeeTotal);
 		if (ordOdFeeNum == 0) {
-			try {
-				ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
-			} catch (Exception e) {
-				ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal, ordOdFeeNumExample);
-			}
+			ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
 		} else {
 			ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal, ordOdFeeNumExample);
 		}
@@ -109,16 +102,9 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdLogistics> list = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
+		ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
 		if (list.isEmpty()) {
-			try {
-				ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
-			} catch (Exception e) {
-				List<OrdOdLogistics> reList = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
-				if(!reList.isEmpty()){
-					ordOdLogistics.setLogisticsId(reList.get(0).getLogisticsId());
-					ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
-				}
-			}
+			ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		} else {
 			ordOdLogistics.setLogisticsId(list.get(0).getLogisticsId());
 			ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
@@ -145,12 +131,12 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		List<OrdOdProd> list = ordOdProdAtomSV.selectByExample(example);
 		OrdOdProd ordOdProd = new OrdOdProd();
 		BeanUtils.copyProperties(request, ordOdProd);
+		ordOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
 		LOG.info("++++++++++++++++++请求数据+++++++++++++++" + JSON.toJSONString(ordOdProd));
 		if (list.isEmpty()) {
 			try {
 				ordOdProdAtomSV.insertSelective(ordOdProd);
 			} catch (Exception e) {
-				
 			}
 		}
 	}
