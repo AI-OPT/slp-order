@@ -13,6 +13,12 @@ allprojects {
         publishURL = "http://10.1.228.199:18081/nexus/content/repositories/snapshots/"
 
         mavenPublicURL = "http://10.1.228.199:18081/nexus/content/groups/public/"
+    	//长虹仓库
+    //   publishUserName = "admin"
+    //   publishUserPassword = "admin123"
+     //   publishURL = "http://202.98.157.5:8003/nexus/content/repositories/upSnapshots/"
+     //   mavenPublicURL = "http://202.98.157.5:8003/nexus/content/groups/public/"
+    
     }
     compileJava.dependsOn clean
     sourceCompatibility = 1.7
