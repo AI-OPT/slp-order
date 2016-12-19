@@ -29,7 +29,7 @@ public class OrderListSVImplTest {
     @Test
     public void testQueryOrder() {
     	QueryOrderRequest request=new QueryOrderRequest();
-    	request.setOrderId(277497l);
+    	request.setOrderId(2000001234889137l);
     	request.setTenantId("changhong");
     	QueryOrderResponse response = orderListSV.queryOrder(request);
     	String str = JSON.toJSONString(response);

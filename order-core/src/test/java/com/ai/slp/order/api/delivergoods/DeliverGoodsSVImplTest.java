@@ -22,7 +22,7 @@ public class DeliverGoodsSVImplTest {
 		DeliverGoodsRequest request=new DeliverGoodsRequest();
 		request.setExpressId("1100011");
 		request.setExpressOddNumber("3333");
-		request.setOrderId(2000001107482446l);
+		request.setOrderId(2000001226131125l);
 		request.setTenantId("changhong");
 		request.setOperId("11111");
 		System.out.println(JSON.toJSONString(request));

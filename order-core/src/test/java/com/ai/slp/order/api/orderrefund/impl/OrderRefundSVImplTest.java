@@ -45,7 +45,7 @@ public class OrderRefundSVImplTest {
 	public void testRefuseRefund() {
 		OrderRefuseRefundRequest request=new OrderRefuseRefundRequest();
 		request.setOperId("1111");
-		request.setOrderId(35913355l);
+		request.setOrderId(2000001220880690l);
 		request.setTenantId("changhong");
 		request.setRefuseReason("商品损害");
 		System.out.println(JSON.toJSONString(request));

@@ -90,6 +90,7 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 					flag=true;
 				}else {
 					flag=false;
+					break;
 				}
 			}
 			if(CollectionUtil.isEmpty(orderList)||flag) {

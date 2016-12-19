@@ -4,10 +4,14 @@ import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.shopcart.interfaces.IShopCartSV;
 import com.ai.slp.order.api.shopcart.param.CartProd;
+import com.ai.slp.order.api.shopcart.param.MultiCartProd;
 import com.ai.slp.order.api.shopcart.param.UserInfo;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.util.IPassMcsUtils;
 import com.alibaba.fastjson.JSON;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,25 +42,37 @@ public class IShopCartSVTest {
     @Test
     public void showCartList(){
         UserInfo userInfo = new UserInfo();
-        userInfo.setTenantId("SLP");
-        userInfo.setUserId("000000000000000994");
+        userInfo.setTenantId("changhong");
+        userInfo.setUserId("3da3109cdb3f4d9e");
         shopCartSV.queryCartOfUser(userInfo);
     }
     
     @Test
     public void updateProdNumTest(){
     	CartProd cartProd = new CartProd();
-    	cartProd.setTenantId("SLP");
-    	cartProd.setUserId("000000000000000480");
+    	cartProd.setTenantId("changhong");
+    	cartProd.setUserId("3da3109cdb3f4d9e");
     	cartProd.setBuyNum(6l);
     	shopCartSV.updateProdNum(cartProd);
+    }
+    
+    
+    @Test
+    public void deleteCartProdTest(){
+    	MultiCartProd multiCartProd=new MultiCartProd();
+    	multiCartProd.setTenantId("changhong");
+    	multiCartProd.setUserId("3da3109cdb3f4d9e");
+    	List<String> skuIdList=new ArrayList<String>();
+    	skuIdList.add("0000000000000286");
+    	multiCartProd.setSkuIdList(skuIdList);
+    	shopCartSV.deleteMultiProd(multiCartProd);
     }
 
     @Test
     public void deleteCartCache(){
         //删除购物车缓存
         ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
-        String cartUserId = IPassMcsUtils.genShopCartUserId("SLP","000000000000000480");
+        String cartUserId = IPassMcsUtils.genShopCartUserId("changhong","3da3109cdb3f4d9e");
         iCacheClient.del(cartUserId);
     }
 }

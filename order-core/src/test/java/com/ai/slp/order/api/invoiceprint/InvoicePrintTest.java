@@ -29,7 +29,7 @@ public class InvoicePrintTest {
 		request.setTenantId("changhong");
 	//request.setOrderId(null);
 	//	request.setInvoiceTitle("长虹");
-		//request.setInvoiceStatus("1");
+		request.setInvoiceStatus("2");
 		InvoicePrintResponse response = invoicePrintSV.queryList(request);
 		System.out.println(JSON.toJSONString(response));
 	}

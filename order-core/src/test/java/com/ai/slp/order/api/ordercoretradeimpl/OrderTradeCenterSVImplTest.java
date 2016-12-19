@@ -36,6 +36,8 @@ public class OrderTradeCenterSVImplTest {
         ordBaseInfo.setUserId("112233");
         ordBaseInfo.setOrderType("110000");
         ordBaseInfo.setUserType("10");
+        ordBaseInfo.setUserName("111");
+        ordBaseInfo.setUserTel("1221");
         ordBaseInfo.setChlId("9006");
         ordBaseInfo.setDeliveryFlag("1");
         ordBaseInfo.setIpAddress("10.1.65.98");
@@ -49,16 +51,16 @@ public class OrderTradeCenterSVImplTest {
         List<OrdProductInfo> ordProductInfoList = new ArrayList<OrdProductInfo>();
         OrdProductInfo ordProductInfo = new OrdProductInfo();
         ordProductInfo.setBuySum(1);
-        ordProductInfo.setSkuId("0000000000000194");
-        //ordProductInfo.setSupplierId(-1l);
+        ordProductInfo.setSkuId("0000000000000286");
         ordProductInfo.setGiveJF(100);
+        ordProductInfo.setStandard("件");
         ordProductInfoList.add(ordProductInfo);
-        
-  /*    OrdProductInfo ordProductInfo1 = new OrdProductInfo();
+     /*   
+      OrdProductInfo ordProductInfo1 = new OrdProductInfo();
         ordProductInfo1.setBuySum(5);
-        //ordProductInfo1.setSupplierId(-1l);
-        ordProductInfo1.setSkuId("0000000000000194");  //两个商品同一销售商 不同仓库
-        ordProductInfo.setGiveJF(10);
+        ordProductInfo1.setSkuId("0000000000000286");  //两个商品同一销售商 不同仓库
+        ordProductInfo1.setGiveJF(10);
+        ordProductInfo1.setStandard("件");
         ordProductInfoList.add(ordProductInfo1);*/
         
   /*     OrdProductInfo ordProductInfo2 = new OrdProductInfo();
@@ -104,6 +106,7 @@ public class OrderTradeCenterSVImplTest {
         detailInfo.setOrdProductInfoList(ordProductInfoList);
         detailInfo.setOrdFeeTotalProdInfo(ordFeeTotalProdInfo);
         detailInfo.setAccountId("jfat1.201609256101549914_0001");
+        detailInfo.setPointRate("100:1");
         detailInfo.setTokenId("peter");
         ordProductDetailInfos.add(detailInfo);
         

@@ -22,8 +22,8 @@ public class OrderAfterSaleSVImplTest {
 	public void testBack() {
 		try {
 			OrderReturnRequest req=new OrderReturnRequest();
-			req.setOrderId(2000001028754487l);
-			req.setProdDetalId(5631l);
+			req.setOrderId(2000001235127007l);
+			req.setProdDetalId(230524l);
 			req.setProdSum(1l);
 			req.setTenantId("changhong");
 			req.setOperId("11111");
