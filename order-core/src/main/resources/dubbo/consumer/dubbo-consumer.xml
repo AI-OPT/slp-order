@@ -1,4 +1,4 @@
-\<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans     
@@ -6,7 +6,7 @@
            http://code.alibabatech.com/schema/dubbo
            http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 
-
+	<!-- 相关配置 -->
 	<bean id="dubboConfig"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="order" value="1" />
@@ -14,46 +14,38 @@
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
 		<property name="locations" value="classpath:dubbo/dubbo.properties" />
 	</bean>
-
+	
+	<!-- dubbo应用名称 -->
 	<dubbo:application name="consumer-of-${dubbo.appname}" />
 
 	<dubbo:registry protocol="${dubbo.registry.protocol}"
 		address="${dubbo.registry.address}" />
 
 	<!-- <dubbo:monitor protocol="registry" /> -->
-
-	<!-- <dubbo:consumer timeout="${dubbo.consumer.timeout}" /> -->
-
-	<!--  <dubbo:reference id="iLoginSV"
-		interface="com.ai.slp.user.api.login.interfaces.ILoginSV" />-->
-
+	<!-- 消费者超时时间 -->
+	<dubbo:consumer timeout="${dubbo.consumer.timeout}" />
+	<!-- 商品销售相关服务 -->
 	<dubbo:reference id="iStorageNumSV"
-		interface="com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV" timeout="5000"/>
-
+		interface="com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV" />
+	<!-- 仓库 -->
 	<dubbo:reference id="iRouteCoreService"
 		interface="com.ai.slp.route.api.core.interfaces.IRouteCoreService" />
 
 	<dubbo:reference id="iSupplyProductServiceSV"
-		interface="com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV" timeout="5000"/>
-
+		interface="com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV" />
+	<!-- 商品 -->
 	<dubbo:reference id="iProductServerSV"
-		interface="com.ai.slp.product.api.product.interfaces.IProductServerSV" timeout="5000"/>
-
+		interface="com.ai.slp.product.api.product.interfaces.IProductServerSV" />
+	<!-- 仓库 -->
 	<dubbo:reference id="iRouteServer"
 		interface="com.ai.slp.route.api.server.interfaces.IRouteServer" />
 	<!-- 缓存 -->
 	<dubbo:reference id="iCacheSV"
 		interface="com.ai.platform.common.api.cache.interfaces.ICacheSV" />
-
+	<!-- 订单取消 -->
 	<dubbo:reference id="iOrderCancelSV"
 		interface="com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV" />
 
-	<dubbo:reference id="iDeductSV"
-		interface="com.ai.slp.balance.api.deduct.interfaces.IDeductSV" />
-
-	<dubbo:reference id="iServiceNumSV"
-		interface="com.ai.platform.common.api.servicenum.interfaces.IServiceNumSV" />
-		
 	<dubbo:reference id="iAccountQuerySV"
 		interface="com.ai.slp.balance.api.accountquery.interfaces.IAccountQuerySV" />
 		
@@ -63,10 +55,10 @@
 	<!-- 仓库 -->	
 	<dubbo:reference id="iRouteManageSV"
 		interface="com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV" />
-		
+	<!-- 订单查询 -->
 	<dubbo:reference id="iOrderListSV"
 		interface="com.ai.slp.order.api.orderlist.interfaces.IOrderListSV" />
-		
+	<!-- ofc -->
 	<dubbo:reference id="iOfcSV"
 		interface="com.ai.slp.order.api.ofc.interfaces.IOfcSV" />
 	
