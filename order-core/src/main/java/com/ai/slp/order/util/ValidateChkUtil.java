@@ -60,13 +60,14 @@ public class ValidateChkUtil {
 			str = temp.split("\\t");
 			temp = br.readLine();
 		}
+		try{
 		// 校验数据文件名称
 		if (!datName.equals(str[0])) {
 			LOG.error("+++++++++++++++校验数据文件名称有问题");
 			return "99";
 		}
 		//校验文件大小
-		try{
+		
 		if (!String.valueOf(datAttrs.getSize()).equals(str[1])) {
 			errCode.append("02");
 		}
