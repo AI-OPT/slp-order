@@ -113,6 +113,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     				cusFlag=true;
     			}else {
     				cusFlag=false;
+    				break;
     			}
     		}
     		/* 获取子订单下的所有售后订单*/
@@ -134,6 +135,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     				flag=true;
     			}else {
     				flag=false;
+    				break;
     			}
     		}
     		//未发货状态时
@@ -156,7 +158,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     			 }
     		 }else { //已发货状态
     			 if(!CollectionUtil.isEmpty(orderList)) {
-    				 if(flag&&cusFlag) {
+    				 if(flag) {
 	    				 order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 	    				 ordOrderAtomSV.updateById(order);
 	 					//判断父订单下的其它子订单状态  
