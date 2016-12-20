@@ -168,7 +168,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
         skuInfoQuery.setTenantId(tenantId);
         skuInfoQuery.setSkuId(skuId);
         IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
-        ProductSkuInfo productSkuInfo = iProductServerSV.queryProductSkuById(skuInfoQuery);
+        ProductSkuInfo productSkuInfo = iProductServerSV.queryProductSkuById4ShopCart(skuInfoQuery);
         productImage.setVfsId(productSkuInfo.getVfsId());
         productImage.setPicType(productSkuInfo.getPicType());
         return productImage;
