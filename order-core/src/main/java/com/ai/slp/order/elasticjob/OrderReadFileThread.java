@@ -10,7 +10,9 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.logging.Log;
@@ -32,6 +34,7 @@ public class OrderReadFileThread extends Thread {
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 	public BlockingQueue<String[]> ordOrderQueue;
+	public Map<String,String[]> index = new HashMap<>();
 
 	String ip = PropertiesUtil.getStringByKey("ftp.ip"); // 服务器IP地址
 	String userName = PropertiesUtil.getStringByKey("ftp.userName"); // 用户名
@@ -88,17 +91,17 @@ public class OrderReadFileThread extends Thread {
 						InputStream chkIs = SftpUtil.download(path, chkName, localPath, sftp);
 						SftpUtil.uploadIs(path + "/sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
-						deleteFile(localPath+"/"+errCodeName);
-						deleteFile(localpath+"/bak/"+chkName);
+						deleteFile(localPath + "/" + errCodeName);
+						deleteFile(localpath + "/bak/" + chkName);
 					}
 					continue;
 					// 推到ftp上
 				} else {
 					LOG.error("++++++++++++订单信息校验成功" + chkName);
-					InputStream is = SftpUtil.download(path, chkName, localpath+"/bak", sftp);
+					InputStream is = SftpUtil.download(path, chkName, localpath + "/bak", sftp);
 					SftpUtil.delete(path, chkName, sftp);
 					SftpUtil.uploadIs(path + "/sapa/chk", chkName, is, sftp);
-					deleteFile(localpath+"/bak/"+chkName);
+					deleteFile(localpath + "/bak/" + chkName);
 					readOrderFile(fileName, sftp);
 				}
 			} catch (Exception e) {
@@ -114,8 +117,8 @@ public class OrderReadFileThread extends Thread {
 		try {
 			// 从服务器上读取指定的文件
 			LOG.error("开始读取订单信息文件：" + fileName);
-			ins = SftpUtil.download(path, fileName, localpath+"/bak", sftp);
-			//ins = sftp.get(path + "/" + fileName);
+			ins = SftpUtil.download(path, fileName, localpath + "/bak", sftp);
+			// ins = sftp.get(path + "/" + fileName);
 			if (ins != null) {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(ins, "gbk"));
 				String line;
@@ -124,7 +127,15 @@ public class OrderReadFileThread extends Thread {
 						String[] datTemp = line.split("\\t");
 						if (datTemp.length != 32)
 							continue;
-						ordOrderQueue.put(datTemp);
+						if (!index.keySet().contains(datTemp[0])) {
+							index.put(datTemp[0], datTemp);
+							ordOrderQueue.put(datTemp);
+						} else {
+							ordOrderQueue.remove(index.get(datTemp[0]));
+							index.remove(datTemp[0]);
+							index.put(datTemp[0], datTemp);
+							ordOrderQueue.put(datTemp);
+						}
 						LOG.error("订单信息订单Id信息：" + datTemp[0]);
 					} catch (Exception e) {
 						LOG.error("读取订单信息文件失败：" + e.getMessage());
@@ -141,13 +152,13 @@ public class OrderReadFileThread extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			deleteFile(localpath +"/" +fileName);
+			deleteFile(localpath + "/" + fileName);
 		}
 	}
 
 	public List getFileName(String path, ChannelSftp sftp) throws SftpException {
 		List<String> fileList = SftpUtil.listFiles(path, sftp);
-		LOG.error("++++++++++获取ftp订单信息文件列表,文件列表如下"+JSON.toJSONString(fileList));
+		LOG.error("++++++++++获取ftp订单信息文件列表,文件列表如下" + JSON.toJSONString(fileList));
 		List<String> nameList = new ArrayList<>();
 		for (String string : fileList) {
 			String date = sdf.format(DateUtil.getSysDate());
@@ -157,7 +168,7 @@ public class OrderReadFileThread extends Thread {
 				}
 			}
 		}
-		LOG.error("++++++++++获取订单信息文件列表成功,文件列表如下"+JSON.toJSONString(nameList));
+		LOG.error("++++++++++获取订单信息文件列表成功,文件列表如下" + JSON.toJSONString(nameList));
 		return nameList;
 	}
 

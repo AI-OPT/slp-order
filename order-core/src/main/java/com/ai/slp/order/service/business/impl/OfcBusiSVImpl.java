@@ -75,11 +75,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOrder ordOrder = new OrdOrder();
 		BeanUtils.copyProperties(request.getOrOrderOfcVo(), ordOrder);
 		if (orderNum == 0) {
-			try{
 			ordOrderAtomSV.insertSelective(ordOrder);
-			}catch(Exception e){
-				ordOrderAtomSV.updateByExampleSelective(ordOrder, orderNumExample);
-			}
 		} else {
 			ordOrderAtomSV.updateByExampleSelective(ordOrder, orderNumExample);
 		}
@@ -93,11 +89,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
 		BeanUtils.copyProperties(request.getOrdOdFeeTotalVo(), ordOdFeeTotal);
 		if (ordOdFeeNum == 0) {
-			try{
 			ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
-			}catch(Exception e){
-				ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal, ordOdFeeNumExample);
-			}
 		} else {
 			ordOdFeeTotalAtomSV.updateByExampleSelective(ordOdFeeTotal, ordOdFeeNumExample);
 		}
@@ -112,13 +104,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		BeanUtils.copyProperties(request.getOrdOdLogisticsVo(), ordOdLogistics);
 		ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
 		if (list.isEmpty()) {
-			try{
 			ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
-			}catch(Exception e){
-				List<OrdOdLogistics> nameList = ordOdLogisticsAtomSV.selectByExample(ordOdLogisticsExample);
-				ordOdLogistics.setLogisticsId(nameList.get(0).getLogisticsId());
-				ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
-			}
 		} else {
 			ordOdLogistics.setLogisticsId(list.get(0).getLogisticsId());
 			ordOdLogisticsAtomSV.updateByExampleSelective(ordOdLogistics, ordOdLogisticsExample);
