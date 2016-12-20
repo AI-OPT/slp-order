@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.logging.Log;
@@ -25,6 +26,8 @@ import com.alibaba.fastjson.JSON;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 
+import scala.collection.mutable.HashMap;
+
 public class OrdProdReadFileThread extends Thread {
 
 	private static final Log LOG = LogFactory.getLog(OrdProdReadFileThread.class);
@@ -32,6 +35,7 @@ public class OrdProdReadFileThread extends Thread {
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 	public BlockingQueue<String[]> ordOdProdQueue;
+	public Map<String,String[]> index = (Map<String, String[]>) new HashMap<>();
 	
 	String ip = PropertiesUtil.getStringByKey("ftp.ip"); // 服务器IP地址
 	String userName = PropertiesUtil.getStringByKey("ftp.userName"); // 用户名
@@ -124,7 +128,17 @@ public class OrdProdReadFileThread extends Thread {
 						String[] datTemp = line.split("\\t");
 						if (datTemp.length != 8)
 							continue;
-						ordOdProdQueue.put(datTemp);
+						if(!index.keySet().contains(datTemp[0]+datTemp[1])){
+							LOG.error("全新的订单商品id");
+							index.put(datTemp[0]+datTemp[1], datTemp);
+							ordOdProdQueue.put(datTemp);
+						}else{
+							LOG.error("已存在的订单商品id");
+							ordOdProdQueue.remove(index.get(datTemp[0]+datTemp[1]));
+							index.remove(datTemp[0]+datTemp[1]);
+							index.put(datTemp[0]+datTemp[1], datTemp);
+							ordOdProdQueue.put(datTemp);
+						}
 						LOG.error("订单商品订单Id信息：" + datTemp[0]);
 					} catch (Exception e) {
 						LOG.error("读取订单商品文件失败：" + e.getMessage());
