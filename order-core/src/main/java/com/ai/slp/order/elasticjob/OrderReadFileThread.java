@@ -128,9 +128,11 @@ public class OrderReadFileThread extends Thread {
 						if (datTemp.length != 32)
 							continue;
 						if (!index.keySet().contains(datTemp[0])) {
+							LOG.error("全新的订单id");
 							index.put(datTemp[0], datTemp);
 							ordOrderQueue.put(datTemp);
 						} else {
+							LOG.error("已存在的订单id");
 							ordOrderQueue.remove(index.get(datTemp[0]));
 							index.remove(datTemp[0]);
 							index.put(datTemp[0], datTemp);
@@ -153,6 +155,7 @@ public class OrderReadFileThread extends Thread {
 			e.printStackTrace();
 		} finally {
 			deleteFile(localpath + "/" + fileName);
+			index = null;
 		}
 	}
 
