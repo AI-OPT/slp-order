@@ -63,7 +63,7 @@ public class OrdProdReadFileThread extends Thread {
 			String chkName = fileName.substring(0, 23) + ".chk";
 			try {
 				ValidateChkUtil util = new ValidateChkUtil();
-				String errCode = util.validateChk(path, localpath, fileName, chkName, sftp);
+				String errCode = util.validateChk(path, localpath+"bak/", fileName, chkName, sftp);
 				if (!StringUtil.isBlank(errCode)) {
 					LOG.error("校验订单商品文件失败,校验码:" + errCode.toString());
 					String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
@@ -92,16 +92,16 @@ public class OrdProdReadFileThread extends Thread {
 						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
 						deleteFile(localPath+"/"+errCodeName);
-						deleteFile(localpath+chkName);
+						deleteFile(localpath+"bak/"+chkName);
 					}
 					continue;
 					// 推到ftp上
 				} else {
 					LOG.error("++++++++++++校验成功" + chkName);
-					InputStream is = SftpUtil.download(path, chkName, localpath+"bak", sftp);
+					InputStream is = SftpUtil.download(path, chkName, localpath+"bak/", sftp);
 					SftpUtil.uploadIs(path + "sapa/chk", chkName, is, sftp);
 					SftpUtil.delete(path, chkName, sftp);
-					deleteFile(localpath+chkName);
+					deleteFile(localpath+"bak/"+chkName);
 					readOrdProdFile(fileName, sftp);
 				}
 			} catch (Exception e) {
