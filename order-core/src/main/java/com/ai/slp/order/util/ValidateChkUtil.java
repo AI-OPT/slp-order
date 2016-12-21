@@ -29,7 +29,7 @@ public class ValidateChkUtil {
 		SftpATTRS chkAttrs = null;
 		SftpATTRS datAttrs = null;
 		try {
-			chkAttrs = sftp.lstat(path + "/" + chkName);
+			chkAttrs = sftp.lstat(path + chkName);
 		} catch (Exception e) {
 			LOG.error("校验文件" + chkName + "获取不到");
 			//分布式系统会有一台机器找不到校验文件
@@ -37,7 +37,7 @@ public class ValidateChkUtil {
 		}
 		try {
 			// 校验数据文件是否存在
-			datAttrs = sftp.lstat(path + "/" + datName);
+			datAttrs = sftp.lstat(path + datName);
 		} catch (Exception e) {
 			LOG.error("数据文件" + datName + "获取不到");
 			return "01";

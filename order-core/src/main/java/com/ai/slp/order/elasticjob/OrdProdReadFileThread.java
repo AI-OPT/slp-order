@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -26,8 +27,6 @@ import com.alibaba.fastjson.JSON;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 
-import scala.collection.mutable.HashMap;
-
 public class OrdProdReadFileThread extends Thread {
 
 	private static final Log LOG = LogFactory.getLog(OrdProdReadFileThread.class);
@@ -35,7 +34,7 @@ public class OrdProdReadFileThread extends Thread {
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 	public BlockingQueue<String[]> ordOdProdQueue;
-	public Map<String,String[]> index = (Map<String, String[]>) new HashMap<>();
+	public Map<String,String[]> index = new HashMap<>();
 	
 	String ip = PropertiesUtil.getStringByKey("ftp.ip"); // 服务器IP地址
 	String userName = PropertiesUtil.getStringByKey("ftp.userName"); // 用户名
@@ -58,7 +57,7 @@ public class OrdProdReadFileThread extends Thread {
 			nameList = getFileName(path, sftp);
 			LOG.error("+++++++++++++订单商品文件列表" + JSON.toJSONString(nameList));
 		} catch (SftpException e) {
-			e.printStackTrace();
+			LOG.error("获取订单商品信息报错"+DateUtil.getSysDate()+e.getMessage());
 		}
 		for (String fileName : nameList) {
 			String chkName = fileName.substring(0, 23) + ".chk";
@@ -68,7 +67,7 @@ public class OrdProdReadFileThread extends Thread {
 				if (!StringUtil.isBlank(errCode)) {
 					LOG.error("校验订单商品文件失败,校验码:" + errCode.toString());
 					String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
-					String localPath = localpath + "/rpt";
+					String localPath = localpath + "rpt";
 					File file = new File(localPath);
 					if (!file.exists()) {
 						file.mkdirs();
@@ -86,29 +85,29 @@ public class OrdProdReadFileThread extends Thread {
 					fw.close();
 					InputStream is = new FileInputStream(rptFile);
 					// 移动rpt文件
-					SftpUtil.uploadIs(path + "/sapa/rpt", errCodeName, is, sftp);
+					SftpUtil.uploadIs(path + "sapa/rpt", errCodeName, is, sftp);
 					if (!errCode.toString().equals("09")) {
 						// 移动chk文件
 						InputStream chkIs = SftpUtil.download(path, chkName, localpath+"/bak", sftp);
-						SftpUtil.uploadIs(path + "/sapa/err", chkName, chkIs, sftp);
+						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
 						deleteFile(localPath+"/"+errCodeName);
-						deleteFile(localpath+"/bak/"+chkName);
+						deleteFile(localpath+chkName);
 					}
 					continue;
 					// 推到ftp上
 				} else {
 					LOG.error("++++++++++++校验成功" + chkName);
-					InputStream is = SftpUtil.download(path, chkName, localpath+"/bak", sftp);
-					SftpUtil.uploadIs(path + "/sapa/chk", chkName, is, sftp);
+					InputStream is = SftpUtil.download(path, chkName, localpath+"bak", sftp);
+					SftpUtil.uploadIs(path + "sapa/chk", chkName, is, sftp);
 					SftpUtil.delete(path, chkName, sftp);
-					deleteFile(localpath+"/bak/"+chkName);
+					deleteFile(localpath+chkName);
 					readOrdProdFile(fileName, sftp);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error("读取订单商品数据出错"+DateUtil.getSysDate()+e.getMessage());
 			}
-		}
+		} 
 		LOG.error("获取订单商品ftp文件结束：" + DateUtil.getSysDate());
 		SftpUtil.disconnect(sftp);
 	}
@@ -118,7 +117,7 @@ public class OrdProdReadFileThread extends Thread {
 		try {
 			// 从服务器上读取指定的文件
 			LOG.error("开始读取订单商品文件：" + fileName);
-			ins = SftpUtil.download(path, fileName, localpath+"/bak", sftp);
+			ins = SftpUtil.download(path, fileName, localpath+"bak", sftp);
 			//ins = sftp.get(path + "/" + fileName);
 			if (ins != null) {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(ins, "gbk"));
@@ -155,7 +154,7 @@ public class OrdProdReadFileThread extends Thread {
 		} catch (Exception e) {
 			LOG.error("订单商品读取失败"+DateUtil.getSysDate()+e.getMessage());
 		} finally {
-			deleteFile(localpath + fileName);
+			deleteFile(localpath +"bak/"+ fileName);
 		}
 	}
 
