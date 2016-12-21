@@ -153,7 +153,7 @@ public class OrdProdReadFileThread extends Thread {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("订单商品读取失败"+DateUtil.getSysDate()+e.getMessage());
 		} finally {
 			deleteFile(localpath + fileName);
 		}

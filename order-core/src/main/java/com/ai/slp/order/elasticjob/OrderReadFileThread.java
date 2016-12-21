@@ -105,7 +105,7 @@ public class OrderReadFileThread extends Thread {
 					readOrderFile(fileName, sftp);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error("订单读取数据失败"+DateUtil.getSysDate()+e.getMessage());
 			}
 		}
 		LOG.error("获取订单信息ftp文件结束：" + DateUtil.getSysDate());
