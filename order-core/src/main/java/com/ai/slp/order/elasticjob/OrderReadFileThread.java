@@ -67,12 +67,12 @@ public class OrderReadFileThread extends Thread {
 				if (!StringUtil.isBlank(errCode)) {
 					LOG.error("校验订单信息文件失败,校验码:" + errCode.toString());
 					String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
-					String localPath = localpath + "rpt";
+					String localPath = localpath + "rpt/";
 					File file = new File(localPath);
 					if (!file.exists()) {
 						file.mkdirs();
 					}
-					File rptFile = new File(localPath + "/" + errCodeName);
+					File rptFile = new File(localPath + errCodeName);
 					if (!rptFile.exists()) {
 						rptFile.createNewFile();
 					}
@@ -178,7 +178,9 @@ public class OrderReadFileThread extends Thread {
 	public void deleteFile(String sPath) {
 		File file = new File(sPath);
 		// 路径为文件且不为空则进行删除
+		LOG.error("删除文件条件"+file.isFile()+"++++++++++++"+file.exists()+"+++++++++"+sPath);
 		if (file.isFile() && file.exists()) {
+			
 			file.delete();
 		}
 	}
