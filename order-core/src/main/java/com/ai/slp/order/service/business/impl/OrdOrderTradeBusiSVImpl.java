@@ -91,7 +91,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
-    	LOG.info("商品下单处理......");
+    	long orderStart=System.currentTimeMillis();
+    	LOG.info("####loadtest####订单提交begin......");
     	//参数校验
     	ValidateUtils.validateOrderTradeCenter(request); 
     	//订单异常监控
@@ -99,16 +100,15 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
     	monitorRequest.setUserId(ordBaseInfo.getUserId());
     	monitorRequest.setIpAddress(ordBaseInfo.getIpAddress());
-    	long orderBWarnStart=System.currentTimeMillis();
-    	LOG.info("####loadtest####订单提交前进行监控,当前时间戳>>>>>>>>>>："+orderBWarnStart);
     	OrderMonitorBeforResponse beforSubmitOrder = orderMonitorSV.beforSubmitOrder(monitorRequest);
     	long orderBWarnEnd=System.currentTimeMillis();
-    	LOG.info("####loadtest####订单提交前完成监控,当前时间戳>>>>>>>>>>："+orderBWarnEnd+",用时:"+(orderBWarnEnd-orderBWarnStart)+"毫秒");
+    	LOG.info("####loadtest####订单提交前完成监控,当前时间戳>>>>>>>>>>："+orderBWarnEnd+",用时:"+(orderBWarnEnd-orderStart)+"毫秒");
         OrderTradeCenterResponse response = new OrderTradeCenterResponse();
         List<OrderResInfo> orderResInfos=new ArrayList<OrderResInfo>();
         List<OrdProductResInfo> ordProductResList =null;
         Timestamp sysDate = DateUtil.getSysDate();
         List<OrdProductDetailInfo> ordProductDetailInfos = request.getOrdProductDetailInfos();
+        int i=0;
         for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
         	OrderResInfo orderResInfo=new OrderResInfo();
         	//积分账户id
@@ -147,11 +147,16 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	orderResInfo.setOrderId(orderId);
         	orderResInfo.setOrdProductResList(ordProductResList);
         	orderResInfos.add(orderResInfo);
+        	long orderFori=System.currentTimeMillis();
+        	LOG.info("####loadtest####订单提交前完成监控,当前时间戳>>>>>>>>>>i=["+(i++)+"]："+orderFori+",用时:"+(orderFori-orderStart)+"毫秒");
+
 		}
         /* 10.返回费用总金额*/
         OrdFeeInfo ordFeeInfo = this.buildFeeInfo(request);
         response.setOrdFeeInfo(ordFeeInfo);
         response.setOrderResInfos(orderResInfos);
+        long orderEnd=System.currentTimeMillis();
+    	LOG.info("####loadtest####订单提交end......,当前时间戳>"+(orderEnd-orderStart)+"毫秒");
         return response;
     }
     
