@@ -91,7 +91,7 @@ public class OrderReadFileThread extends Thread {
 						InputStream chkIs = SftpUtil.download(path, chkName, localPath, sftp);
 						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
-						deleteFile(localPath + errCodeName);
+						deleteFile(localpath +"rpt/" + errCodeName);
 						deleteFile(localpath +"bak/" +chkName);
 					}
 					continue;
@@ -105,7 +105,7 @@ public class OrderReadFileThread extends Thread {
 					readOrderFile(fileName, sftp);
 				}
 			} catch (Exception e) {
-				LOG.error("订单读取数据失败"+DateUtil.getSysDate()+e.getMessage());
+				LOG.error("订单读取数据失败"+DateUtil.getSysDate()+JSON.toJSONString(e));
 			}
 		}
 		LOG.error("获取订单信息ftp文件结束：" + DateUtil.getSysDate());

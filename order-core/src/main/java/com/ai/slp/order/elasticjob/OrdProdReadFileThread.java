@@ -91,7 +91,7 @@ public class OrdProdReadFileThread extends Thread {
 						InputStream chkIs = SftpUtil.download(path, chkName, localpath + "/bak", sftp);
 						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
-						deleteFile(localPath + errCodeName);
+						deleteFile(localpath + "rpt/" + errCodeName);
 						deleteFile(localpath + "bak/" + chkName);
 					}
 					continue;
@@ -105,7 +105,7 @@ public class OrdProdReadFileThread extends Thread {
 					readOrdProdFile(fileName, sftp);
 				}
 			} catch (Exception e) {
-				LOG.error("读取订单商品数据出错" + DateUtil.getSysDate() + e.getMessage());
+				LOG.error("读取订单商品数据出错" + DateUtil.getSysDate() + JSON.toJSONString(e));
 			}
 		}
 		LOG.error("获取订单商品ftp文件结束：" + DateUtil.getSysDate());
@@ -176,6 +176,7 @@ public class OrdProdReadFileThread extends Thread {
 
 	public void deleteFile(String sPath) {
 		File file = new File(sPath);
+		LOG.error("删除文件条件"+file.isFile()+"++++++++++++"+file.exists()+"+++++++++"+sPath);
 		// 路径为文件且不为空则进行删除
 		if (file.isFile() && file.exists()) {
 			file.delete();
