@@ -31,7 +31,6 @@ import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
-import com.ai.slp.order.api.orderlist.param.OrderPayVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
@@ -106,36 +105,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 
 	@Autowired
 	private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
-
-	/**
-	 * 订单费用明细查询
-	 * 
-	 * @param orderId
-	 * @return
-	 * @author zhangxw
-	 * @param iCacheSV
-	 * @ApiDocMethod
-	 */
-	private List<OrderPayVo> getOrderFeeProdList(ICacheSV iCacheSV, long orderId, String tenantId) {
-		List<OrderPayVo> payDataList = null;
-		OrdOdFeeProdCriteria example = new OrdOdFeeProdCriteria();
-		OrdOdFeeProdCriteria.Criteria criteria = example.createCriteria();
-		criteria.andOrderIdEqualTo(orderId);
-		List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByExample(example);
-		if (!CollectionUtil.isEmpty(orderFeeProdList)) {
-			for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) {
-				payDataList = new ArrayList<OrderPayVo>();
-				OrderPayVo orderPayVo = new OrderPayVo();
-				orderPayVo.setPayStyle(ordOdFeeProd.getPayStyle());
-				orderPayVo.setPaidFee(ordOdFeeProd.getPaidFee());
-				SysParam sysParam = InfoTranslateUtil.translateInfo(tenantId, "ORD_OD_FEE_TOTAL", "PAY_STYLE",
-						ordOdFeeProd.getPayStyle(), iCacheSV);
-				orderPayVo.setPayStyleName(sysParam == null ? "" : sysParam.getColumnDesc());
-				payDataList.add(orderPayVo);
-			}
-		}
-		return payDataList;
-	}
 
 	/**
 	 * 商品集合
@@ -317,21 +286,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					ordOrderVo.setAddress(ordOdLogistics.getAddress());
 					ordOrderVo.setExpressId(ordOdLogistics.getExpressId());
 				}
-				/* 5.订单费用明细查询 */
-			/*	if (OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())
-						|| OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())) {
-					List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV, order.getOrderId(),
-							order.getTenantId());
-					ordOrderVo.setPayDataList(orderFeeProdList);
-				} else {
-					List<OrderPayVo> orderFeeProdList = this.getOrderFeeProdList(iCacheSV, order.getParentOrderId(),
-							order.getTenantId());
-					ordOrderVo.setPayDataList(orderFeeProdList);
-				}*/
-				/* 6.订单商品明细查询 */
+				/* 5.订单商品明细查询 */
 				List<OrdProductVo> productList = this.getOrdProductList(order.getTenantId(), order.getOrderId());
 				ordOrderVo.setProductList(productList);
-				/* 7.订单支付机构查询 */
+				/* 6.订单支付机构查询 */
 				OrdBalacneIfCriteria exampleBalance = new OrdBalacneIfCriteria();
 				Criteria criteriaBalance = exampleBalance.createCriteria();
 				criteriaBalance.andTenantIdEqualTo(order.getTenantId());
@@ -580,6 +538,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		return productList;
 	}
 
+	
+	
+	
 	@Override
 	public int updateOrder(OrdOrder request) throws BusinessException, SystemException {
 		/* 获取售后订单 */
@@ -624,11 +585,17 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					// 1.无Y --无售后订单 商品Y标识
 					order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 					ordOrderAtomSV.updateById(order);
-					parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-					ordOrderAtomSV.updateById(parentOrder);
+					//判断父订单下的其它子订单状态  
+					// 完成则为 父订单完成,否则父订单不变
+					boolean stateFlag = this.judgeState(order);
+					if(stateFlag) {
+						parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+						ordOrderAtomSV.updateById(parentOrder); 
+					}
 				} else {
 					// 2.有Y --有售后订单,商品标识Y
 					// 判断售后订单为已完成状态或者审核失败则改变状态
+					boolean flag=false;
 					for (OrdOrder ordOrder : orderList) {
 						String state = ordOrder.getState();
 						if (OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(state)
@@ -636,11 +603,22 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 								|| OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(state)
 								|| OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(state)
 								|| OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(state)) {
-							order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-							ordOrderAtomSV.updateById(order);
-							parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-							ordOrderAtomSV.updateById(parentOrder);
-						}
+							flag=true;
+		    			}else {
+		    				flag=false;
+		    				break;
+		    			}
+					}
+					if(flag) {
+						order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+						ordOrderAtomSV.updateById(order);
+						//判断父订单下的其它子订单状态  
+    					// 完成则为 父订单完成,否则父订单不变
+    					boolean stateFlag = this.judgeState(order);
+    					if(stateFlag) {
+    						parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+    						ordOrderAtomSV.updateById(parentOrder); 
+    					}
 					}
 				}
 			} else if (!cusFlag) {
@@ -653,8 +631,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					if (CollectionUtil.isEmpty(orderList)) {
 						order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 						ordOrderAtomSV.updateById(order);
-						parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-						ordOrderAtomSV.updateById(parentOrder);
+						//判断父订单下的其它子订单状态  
+    					// 完成则为 父订单完成,否则父订单不变
+    					boolean stateFlag = this.judgeState(order);
+    					if(stateFlag) {
+    						parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+    						ordOrderAtomSV.updateById(parentOrder); 
+    					}
 						// 4.有N --有售后订单 存在商品标识N
 						// 发货后状态
 						// 判断售后订单为已完成状态或者审核失败则 改变状态
@@ -669,8 +652,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 									|| OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(state)) {
 								order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 								ordOrderAtomSV.updateById(order);
-								parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-								ordOrderAtomSV.updateById(parentOrder);
+								//判断父订单下的其它子订单状态  
+		    					// 完成则为 父订单完成,否则父订单不变
+		    					boolean stateFlag = this.judgeState(order);
+		    					if(stateFlag) {
+		    						parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+		    						ordOrderAtomSV.updateById(parentOrder); 
+		    					}
 							}
 						}
 					}
@@ -679,6 +667,29 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		}
 		return ordOrderAtomSV.updateById(afterOrdOrder);
 	}
+	
+	
+	 /**
+     * 判断父订单下面其它子订单状态
+     */
+    private boolean judgeState(OrdOrder order) {
+    	//父订单下的其它子订单
+        OrdOrderCriteria example = new OrdOrderCriteria();
+        OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        criteria.andTenantIdEqualTo(order.getTenantId()).andOrderIdNotEqualTo(order.getOrderId());
+        criteria.andParentOrderIdEqualTo(order.getParentOrderId());
+        criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
+        List<OrdOrder> childOrders = ordOrderAtomSV.selectByExample(example);
+	    if(!CollectionUtil.isEmpty(childOrders)) {
+	    	for (OrdOrder ordOrder : childOrders) {
+	    		//其它子订单状态不是'完成'
+				if(!OrdersConstants.OrdOrder.State.COMPLETED.equals(ordOrder.getState())) {
+					return false;
+				}
+			}
+	    }
+	    return true;
+    }
 
 	/**
 	 * OFC订单查询
