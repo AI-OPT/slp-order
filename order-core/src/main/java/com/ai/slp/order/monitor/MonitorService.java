@@ -49,11 +49,11 @@ public class MonitorService {
 		//
 		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
 		//
-		Set<String> userSet = cacheClient.zrevrangeByScore(userId, userCycleDate.get("startTime").toString(), userCycleDate.get("endTime").toString());
-		Set<String> ipSet = cacheClient.zrevrangeByScore(ipAddress, ipCycleDate.get("startTime").toString(), ipCycleDate.get("endTime").toString());
-		Set<String> orderAllSet = cacheClient.zrevrangeByScore("order_all", allCycleDate.get("startTime").toString(), allCycleDate.get("endTime").toString());
+		Long userSize = cacheClient.zcount(userId,userCycleDate.get("endTime").toString(),userCycleDate.get("startTime").toString());
+		Long ipSize = cacheClient.zcount(ipAddress, ipCycleDate.get("endTime").toString(), ipCycleDate.get("startTime").toString());
+		Long orderAllSize = cacheClient.zcount("order_all", allCycleDate.get("endTime").toString(), allCycleDate.get("startTime").toString());
 		//用户预警提示
-		if(userSet.size() >= ordRuleUser.getOrderSum() ){
+		if(userSize >= ordRuleUser.getOrderSum() ){
 			//throw new BusinessException("999999","当前用户["+userId+"]下,"+ordRuleUser.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleUser.getTimeType())+"内,已达到"+ordRuleUser.getOrderSum()+"单预警");
 			response.setIfWarning(MonitorCoonstants.WARNING_YES);
 			response.setWarningType(MonitorCoonstants.WARNING_TYPE_USER_ID);
@@ -62,7 +62,7 @@ public class MonitorService {
 			return response;
 		}
 		//ip预警提示
-		if(ipSet.size() >= ordRuleIp.getOrderSum() ){
+		if(ipSize >= ordRuleIp.getOrderSum() ){
 			//throw new BusinessException("999999","当前ip["+ipAddress+"]下,"+ordRuleIp.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleIp.getTimeType())+"内,已达到"+ordRuleIp.getOrderSum()+"单预警");
 			response.setIfWarning(MonitorCoonstants.WARNING_YES);
 			response.setWarningType(MonitorCoonstants.WARNING_TYPE_IP);
@@ -71,7 +71,7 @@ public class MonitorService {
 			return response;
 		}
 		//订单总量预警提示
-		if(orderAllSet.size() >= ordRuleAll.getOrderSum() ){
+		if(orderAllSize >= ordRuleAll.getOrderSum() ){
 			//throw new BusinessException("999999","订单总量,"+ordRuleAll.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleAll.getTimeType())+"内,已达到"+ordRuleAll.getOrderSum()+"单预警");
 			response.setIfWarning(MonitorCoonstants.WARNING_YES);
 			response.setWarningType(MonitorCoonstants.WARNING_TYPE_ORDER_SUM);
@@ -80,11 +80,11 @@ public class MonitorService {
 			return response;
 		}
 		
-		log.info("当前用户下订单数量:"+userSet.size());
+		log.info("当前用户下订单数量:"+userSize);
 		//
-		log.info("当前ip下订单数量:"+ipSet.size());
+		log.info("当前ip下订单数量:"+ipSize);
 		//
-		log.info("订单总量下订单数量:"+orderAllSet.size());
+		log.info("订单总量下订单数量:"+orderAllSize);
 		//
 		response.setIfWarning(MonitorCoonstants.WARNING_NO);
 		response.setWarningType("");
