@@ -57,22 +57,22 @@ public class OrderReadFileThread extends Thread {
 			nameList = getFileName(path, sftp);
 			LOG.error("++++++++++++++++++++订单信息文件列表" + JSON.toJSONString(nameList));
 		} catch (SftpException e1) {
-			e1.printStackTrace();
+			LOG.error("获取订单列表失败了"+DateUtil.getSysDate()+e1.getMessage());
 		}
 		for (String fileName : nameList) {
 			String chkName = fileName.substring(0, 23) + ".chk";
 			try {
 				ValidateChkUtil util = new ValidateChkUtil();
-				String errCode = util.validateChk(path, localpath, fileName, chkName, sftp);
+				String errCode = util.validateChk(path, localpath+"bak/", fileName, chkName, sftp);
 				if (!StringUtil.isBlank(errCode)) {
 					LOG.error("校验订单信息文件失败,校验码:" + errCode.toString());
 					String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
-					String localPath = localpath + "/rpt";
+					String localPath = localpath + "rpt/";
 					File file = new File(localPath);
 					if (!file.exists()) {
 						file.mkdirs();
 					}
-					File rptFile = new File(localPath + "/" + errCodeName);
+					File rptFile = new File(localPath + errCodeName);
 					if (!rptFile.exists()) {
 						rptFile.createNewFile();
 					}
@@ -85,27 +85,27 @@ public class OrderReadFileThread extends Thread {
 					fw.close();
 					InputStream is = new FileInputStream(rptFile);
 					// 移动rpt文件
-					SftpUtil.uploadIs(path + "/sapa/rpt", errCodeName, is, sftp);
+					SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
+					deleteFile(localpath +"rpt/" + errCodeName);
 					if (!errCode.toString().equals("09")) {
 						// 移动chk文件
 						InputStream chkIs = SftpUtil.download(path, chkName, localPath, sftp);
-						SftpUtil.uploadIs(path + "/sapa/err", chkName, chkIs, sftp);
+						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
-						deleteFile(localPath + "/" + errCodeName);
-						deleteFile(localpath + "/bak/" + chkName);
+						deleteFile(localpath +"bak/" +chkName);
 					}
 					continue;
 					// 推到ftp上
 				} else {
 					LOG.error("++++++++++++订单信息校验成功" + chkName);
-					InputStream is = SftpUtil.download(path, chkName, localpath + "/bak", sftp);
+					InputStream is = SftpUtil.download(path, chkName, localpath + "bak/", sftp);
 					SftpUtil.delete(path, chkName, sftp);
-					SftpUtil.uploadIs(path + "/sapa/chk", chkName, is, sftp);
-					deleteFile(localpath + "/bak/" + chkName);
+					SftpUtil.uploadIs(path + "sapa/chk", chkName, is, sftp);
+					deleteFile(localpath +"bak/"+ chkName);
 					readOrderFile(fileName, sftp);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error("订单读取数据失败"+DateUtil.getSysDate()+JSON.toJSONString(e));
 			}
 		}
 		LOG.error("获取订单信息ftp文件结束：" + DateUtil.getSysDate());
@@ -117,7 +117,7 @@ public class OrderReadFileThread extends Thread {
 		try {
 			// 从服务器上读取指定的文件
 			LOG.error("开始读取订单信息文件：" + fileName);
-			ins = SftpUtil.download(path, fileName, localpath + "/bak", sftp);
+			ins = SftpUtil.download(path, fileName, localpath + "bak", sftp);
 			// ins = sftp.get(path + "/" + fileName);
 			if (ins != null) {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(ins, "gbk"));
@@ -154,7 +154,7 @@ public class OrderReadFileThread extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			deleteFile(localpath + "/" + fileName);
+			deleteFile(localpath + "bak/" + fileName);
 			index = null;
 		}
 	}
@@ -178,7 +178,9 @@ public class OrderReadFileThread extends Thread {
 	public void deleteFile(String sPath) {
 		File file = new File(sPath);
 		// 路径为文件且不为空则进行删除
+		LOG.error("删除文件条件"+file.isFile()+"++++++++++++"+file.exists()+"+++++++++"+sPath);
 		if (file.isFile() && file.exists()) {
+			
 			file.delete();
 		}
 	}
