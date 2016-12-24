@@ -11,9 +11,9 @@
        </PatternLayout>
        <Policies>
          <TimeBasedTriggeringPolicy />
-         <SizeBasedTriggeringPolicy size="250 MB"/>
+         <SizeBasedTriggeringPolicy size="50 MB"/>
        </Policies>
-       <DefaultRolloverStrategy max="20"/>
+       <DefaultRolloverStrategy max="10"/>
      </RollingFile>
     <Async name="ASYNC">
       <AppenderRef ref="RollingFile"/>
