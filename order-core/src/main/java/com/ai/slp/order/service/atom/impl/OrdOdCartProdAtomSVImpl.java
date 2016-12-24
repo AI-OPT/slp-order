@@ -3,11 +3,9 @@ package com.ai.slp.order.service.atom.impl;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProdCriteria;
 import com.ai.slp.order.dao.mapper.factory.MapperFactory;
-import com.ai.slp.order.dao.mapper.interfaces.OrdOdCartProdMapper;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
 import com.ai.slp.order.util.DateUtils;
 import com.ai.slp.order.util.SequenceUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

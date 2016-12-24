@@ -98,10 +98,15 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 						ordOrder.getOrigOrderId());
 				order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 				ordOrderAtomSV.updateById(order);
-				OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
-						order.getParentOrderId());
-				parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-				ordOrderAtomSV.updateById(parentOrder);
+				//判断父订单下的其它子订单状态  
+				// 完成则为 父订单完成,否则父订单不变
+				boolean stateFlag = this.judgeState(order);
+				if(stateFlag) {
+					OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
+							order.getParentOrderId());
+					parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+					ordOrderAtomSV.updateById(parentOrder); 
+				}
 			}
 		}else {
 			ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_REPAY);
@@ -110,5 +115,29 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		}
 		return response;
 	}
+	
+	
+
+    /**
+     * 判断父订单下面其它子订单状态
+     */
+    private boolean judgeState(OrdOrder order) {
+    	//父订单下的其它子订单
+        OrdOrderCriteria example = new OrdOrderCriteria();
+        OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        criteria.andTenantIdEqualTo(order.getTenantId()).andOrderIdNotEqualTo(order.getOrderId());
+        criteria.andParentOrderIdEqualTo(order.getParentOrderId());
+        criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
+        List<OrdOrder> childOrders = ordOrderAtomSV.selectByExample(example);
+	    if(!CollectionUtil.isEmpty(childOrders)) {
+	    	for (OrdOrder ordOrder : childOrders) {
+	    		//其它子订单状态不是'完成'
+				if(!OrdersConstants.OrdOrder.State.COMPLETED.equals(ordOrder.getState())) {
+					return false;
+				}
+			}
+	    }
+	    return true;
+    }
 
 }

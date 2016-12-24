@@ -10,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
-import com.ai.opt.sdk.util.UUIDUtil;
 import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
 import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
 import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;

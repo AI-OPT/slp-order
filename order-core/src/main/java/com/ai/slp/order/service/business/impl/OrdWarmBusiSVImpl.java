@@ -27,11 +27,9 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdWarmAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdWarmBusiSV;
-import com.ai.slp.order.util.ChUserUtil;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
-import com.alibaba.fastjson.JSONObject;
 @Service
 @Transactional
 public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
@@ -68,22 +66,6 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				OrderWarmVo orderVo = new OrderWarmVo();
 				List<ProductInfo> prodinfoList = new ArrayList<ProductInfo>();
 				BeanUtils.copyProperties(orderVo, ord);
-		/*		long userStart=System.currentTimeMillis();
-				LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,通过O2p获取用户信息，当前时间戳："+userStart);
-				//获取绑定手机号
-				JSONObject dataJson = ChUserUtil.getUserInfo(ord.getUserId());
-				Object userName=null;
-        		Object phone=null;
-                if(dataJson!=null) {
-                  	//获取用户名,绑定手机号
-                  	userName =dataJson.get("userName");
-                  	phone =dataJson.get("phone");
-                 }
-		        orderVo.setUserTel(phone==null?null:phone.toString());
-        		orderVo.setUserName(userName==null?null:userName.toString()); 
-        		long userEnd=System.currentTimeMillis();
-        		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,通过O2p获取用户信息，当前时间戳："+userEnd+
-        				",用时:"+(userEnd-userStart)+"毫秒");*/
 				//获取商品信息
 				if(orderVo.getOrderId()!=null){
 					List<OrdOdProd>  proList = iOrdOdProdAtomSV.selectByOrd(ord.getTenantId(), ord.getOrderId());
@@ -168,7 +150,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
         skuInfoQuery.setTenantId(tenantId);
         skuInfoQuery.setSkuId(skuId);
         IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
-        ProductSkuInfo productSkuInfo = iProductServerSV.queryProductSkuById(skuInfoQuery);
+        ProductSkuInfo productSkuInfo = iProductServerSV.queryProductSkuById4ShopCart(skuInfoQuery);
         productImage.setVfsId(productSkuInfo.getVfsId());
         productImage.setPicType(productSkuInfo.getPicType());
         return productImage;
