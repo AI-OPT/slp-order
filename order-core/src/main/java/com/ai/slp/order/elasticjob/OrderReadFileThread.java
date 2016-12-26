@@ -5,11 +5,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +33,10 @@ public class OrderReadFileThread extends Thread {
 
 	private static final Log LOG = LogFactory.getLog(OrderReadFileThread.class);
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	public BlockingQueue<String[]> ordOrderQueue;
-	public Map<String,String[]> index = new HashMap<>();
+	public Map<String, String[]> index = new HashMap<>();
 
 	String ip = PropertiesUtil.getStringByKey("ftp.ip"); // 服务器IP地址
 	String userName = PropertiesUtil.getStringByKey("ftp.userName"); // 用户名
@@ -57,13 +59,16 @@ public class OrderReadFileThread extends Thread {
 			nameList = getFileName(path, sftp);
 			LOG.error("++++++++++++++++++++订单信息文件列表" + JSON.toJSONString(nameList));
 		} catch (SftpException e1) {
-			LOG.error("获取订单列表失败了"+DateUtil.getSysDate()+e1.getMessage());
+			LOG.error("获取订单列表失败了" + DateUtil.getSysDate() + e1.getMessage());
 		}
 		for (String fileName : nameList) {
 			String chkName = fileName.substring(0, 23) + ".chk";
+			InputStream is = null;
+			InputStream chkIs =null;
+			BufferedWriter bw = null;
 			try {
 				ValidateChkUtil util = new ValidateChkUtil();
-				String errCode = util.validateChk(path, localpath+"bak/", fileName, chkName, sftp);
+				String errCode = util.validateChk(path, localpath + "bak/", fileName, chkName, sftp);
 				if (!StringUtil.isBlank(errCode)) {
 					LOG.error("校验订单信息文件失败,校验码:" + errCode.toString());
 					String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
@@ -77,35 +82,45 @@ public class OrderReadFileThread extends Thread {
 						rptFile.createNewFile();
 					}
 					FileWriter fw = new FileWriter(rptFile);
-					BufferedWriter bw = new BufferedWriter(fw);
+					bw = new BufferedWriter(fw);
 					bw.write(fileName + "\n");
 					bw.write(errCode.toString() + "\n");
 					bw.flush();
 					bw.close();
 					fw.close();
-					InputStream is = new FileInputStream(rptFile);
+					is = new FileInputStream(rptFile);
 					// 移动rpt文件
 					SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
-					deleteFile(localpath +"rpt/" + errCodeName);
+					deleteFile(localpath + "rpt/" + errCodeName);
 					if (!errCode.toString().equals("09")) {
 						// 移动chk文件
-						InputStream chkIs = SftpUtil.download(path, chkName, localPath, sftp);
+						chkIs = SftpUtil.download(path, chkName, localPath, sftp);
 						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
-						deleteFile(localpath +"bak/" +chkName);
+						deleteFile(localpath + "bak/" + chkName);
 					}
 					continue;
 					// 推到ftp上
 				} else {
 					LOG.error("++++++++++++订单信息校验成功" + chkName);
-					InputStream is = SftpUtil.download(path, chkName, localpath + "bak/", sftp);
+					is = SftpUtil.download(path, chkName, localpath + "bak/", sftp);
 					SftpUtil.delete(path, chkName, sftp);
 					SftpUtil.uploadIs(path + "sapa/chk", chkName, is, sftp);
-					deleteFile(localpath +"bak/"+ chkName);
+					deleteFile(localpath + "bak/" + chkName);
 					readOrderFile(fileName, sftp);
 				}
 			} catch (Exception e) {
-				LOG.error("订单读取数据失败"+DateUtil.getSysDate()+JSON.toJSONString(e));
+				LOG.error("订单读取数据失败" + DateUtil.getSysDate() + JSON.toJSONString(e));
+			}finally {
+				if (is != null) {
+					safeClose(is);
+				}
+				if (chkIs != null) {
+					safeClose(chkIs);
+				}
+				if (bw != null) {
+					safeClose(bw);
+				}
 			}
 		}
 		LOG.error("获取订单信息ftp文件结束：" + DateUtil.getSysDate());
@@ -114,13 +129,14 @@ public class OrderReadFileThread extends Thread {
 
 	public void readOrderFile(String fileName, ChannelSftp sftp) throws ParseException {
 		InputStream ins = null;
+		BufferedReader reader =null;
 		try {
 			// 从服务器上读取指定的文件
 			LOG.error("开始读取订单信息文件：" + fileName);
 			ins = SftpUtil.download(path, fileName, localpath + "bak", sftp);
 			// ins = sftp.get(path + "/" + fileName);
 			if (ins != null) {
-				BufferedReader reader = new BufferedReader(new InputStreamReader(ins, "gbk"));
+				reader = new BufferedReader(new InputStreamReader(ins, "gbk"));
 				String line;
 				while ((line = reader.readLine()) != null) {
 					try {
@@ -156,15 +172,17 @@ public class OrderReadFileThread extends Thread {
 		} finally {
 			deleteFile(localpath + "bak/" + fileName);
 			index = null;
+			safeClose(reader);
 		}
 	}
 
-	public List getFileName(String path, ChannelSftp sftp) throws SftpException {
+	public List<String> getFileName(String path, ChannelSftp sftp) throws SftpException {
 		List<String> fileList = SftpUtil.listFiles(path, sftp);
 		LOG.error("++++++++++获取ftp订单信息文件列表,文件列表如下" + JSON.toJSONString(fileList));
 		List<String> nameList = new ArrayList<>();
 		for (String string : fileList) {
-			String date = sdf.format(DateUtil.getSysDate());
+			//String date = sdf.format(DateUtil.getSysDate());
+			String date = format1(DateUtil.getSysDate());
 			if (string.length() >= 20) {
 				if ((date + "_" + "omsa01001").equals(string.substring(2, 20)) && string.endsWith(".dat")) {
 					nameList.add(string);
@@ -178,11 +196,50 @@ public class OrderReadFileThread extends Thread {
 	public void deleteFile(String sPath) {
 		File file = new File(sPath);
 		// 路径为文件且不为空则进行删除
-		LOG.error("删除文件条件"+file.isFile()+"++++++++++++"+file.exists()+"+++++++++"+sPath);
+		LOG.error("删除文件条件" + file.isFile() + "++++++++++++" + file.exists() + "+++++++++" + sPath);
 		if (file.isFile() && file.exists()) {
-			
+
 			file.delete();
 		}
 	}
 
+	public static void safeClose(InputStream fis) {
+		if (fis != null) {
+			try {
+				fis.close();
+			} catch (IOException e) {
+				LOG.error(JSON.toJSONString(e));
+			}
+		}
+	}
+	
+	public static void safeClose(BufferedWriter fis) {
+		if (fis != null) {
+			try {
+				fis.close();
+			} catch (IOException e) {
+				LOG.error(JSON.toJSONString(e));
+			}
+		}
+	}
+	
+	public static void safeClose(BufferedReader fis) {
+		if (fis != null) {
+			try {
+				fis.close();
+			} catch (IOException e) {
+				LOG.error(JSON.toJSONString(e));
+			}
+		}
+	}
+	
+	public synchronized String format1(Date date) {
+		return dateFormat.format(date);
+	}
+
+	public String format2(Date date) {
+		synchronized (dateFormat) {
+			return dateFormat.format(date);
+		}
+	}
 }

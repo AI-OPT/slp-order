@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.ai.opt.sdk.util.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -282,6 +281,7 @@ public final class SftpUtil {
 		String userPwd = "chupiot@Ch8899"; // 密码
 		int port = 22022; // 端口号
 		ChannelSftp sftp = SftpUtil.connect(ip, port, userName, userPwd);
+		BufferedReader bufferedReader = null;
 		try {
 			//SftpUtil.download("/aifs01/tstusers/tstusr01", "office.txt", "/src/main/resources/test/", sftp);
 
@@ -292,7 +292,7 @@ public final class SftpUtil {
 			}
 			if (file.isFile() && file.exists()) { // 判断文件是否存在
 				InputStreamReader read = new InputStreamReader(new FileInputStream(file));// 考虑到编码格式
-				BufferedReader bufferedReader = new BufferedReader(read);
+				bufferedReader = new BufferedReader(read);
 				String lineTxt = null;
 				while ((lineTxt = bufferedReader.readLine()) != null) {
 					System.out.println(lineTxt);
@@ -302,6 +302,20 @@ public final class SftpUtil {
 //			SftpUtil.delete("/aifs01/tstusers/tstusr01", "test.txt", sftp);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			if (bufferedReader != null) {
+				safeClose(bufferedReader);
+			}
+		}
+	}
+	
+	public static void safeClose(BufferedReader fis) {
+		if (fis != null) {
+			try {
+				fis.close();
+			} catch (IOException e) {
+				LOG.error(JSON.toJSONString(e));
+			}
 		}
 	}
 	
