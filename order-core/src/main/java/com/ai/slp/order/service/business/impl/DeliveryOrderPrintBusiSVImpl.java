@@ -408,6 +408,18 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 										OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
 									it.remove();
 									break;
+								}else {
+									OrdOrderProdAttach oPAttach=new OrdOrderProdAttach();
+									oPAttach.setSkuId(ordOdProd.getSkuId());
+									oPAttach.setRouteId(ordOdProd.getRouteId());
+									if(!originalAttachs.contains(oPAttach)) {
+										if(CollectionUtil.isEmpty(orderList)) {
+											orderList=new ArrayList<Long>();
+										}
+										orderList.add(Long.valueOf(ordOrderProdAttach.getOrderId()));
+										it.remove();
+										break;
+									}
 								}
 							}
 						}else {
