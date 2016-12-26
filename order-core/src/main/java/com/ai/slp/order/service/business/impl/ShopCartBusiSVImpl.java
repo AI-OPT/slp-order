@@ -278,6 +278,9 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             OrdOdCartProd cartProd = JSON.parseObject(cartProdStr,OrdOdCartProd.class);
             try {
                 ProductSkuInfo skuInfo = querySkuInfo(tenantId, skuId);
+                if(skuInfo==null) {
+                	throw new BusinessException("", "sku单品信息不存在");
+                }
                 if(skuInfo!=null&&skuInfo.getUsableNum()==null) {
                 	skuInfo.setUsableNum(0l);
                 }
