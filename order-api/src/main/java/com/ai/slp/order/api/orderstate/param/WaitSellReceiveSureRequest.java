@@ -4,15 +4,18 @@ import java.io.Serializable;
 
 import com.ai.opt.base.vo.BaseInfo;
 
+/**
+ * 发货请求参数
+ */
 public class WaitSellReceiveSureRequest extends BaseInfo implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Long orderId;
-	private String expressId;
-	private String expressOddNumber;
+	private Long orderId; //订单id
+	private String expressId;//物流公司id
+	private String expressOddNumber;//物流单号
 	public Long getOrderId() {
 		return orderId;
 	}
