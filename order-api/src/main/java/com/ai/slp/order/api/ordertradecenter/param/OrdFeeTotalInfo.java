@@ -6,8 +6,8 @@ public class OrdFeeTotalInfo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	private long totalFee;
-	private long adjustFee;
+	private long totalFee; //总费用
+	private long adjustFee;//实际支付费用
 	public long getTotalFee() {
 		return totalFee;
 	}
