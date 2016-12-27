@@ -34,6 +34,9 @@ public class ValidateUtils {
 	private ValidateUtils() {
 	}
 
+	/**
+	 * 预警订单查询参数校验
+	 */
 	public static void validateWarmOrdQuery(OrderWarmRequest condition) {
 		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
@@ -48,6 +51,10 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码大小不能为空");
 		}
 	}
+	
+	/**
+	 * 订单状态修改参数校验 
+	 */
 	public static void validateOrdUpdate(OrdRequest condition) {
 		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
@@ -62,6 +69,10 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单状态不能为空");
 		}
 	}
+	
+	/**
+	 * 预警订单详情参数校验
+	 */
 	public static void validateWarmOrdDetail(OrderWarmDetailRequest condition) {
 		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
@@ -73,6 +84,10 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单号不能为空");
 		}
 	}
+	
+	/**
+	 * 统计查询参数校验
+	 */
 	public static void validateStasticOrdQuery(StasticsOrderRequest condition) {
 		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
@@ -88,6 +103,9 @@ public class ValidateUtils {
 		}
 	}
 	
+	/**
+	 * 订单提交参数校验
+	 */
 	public static void validateOrderTradeCenter(OrderTradeCenterRequest condition) {
 		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
