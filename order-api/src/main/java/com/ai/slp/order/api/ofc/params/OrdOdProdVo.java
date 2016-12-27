@@ -14,78 +14,189 @@ public class OrdOdProdVo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * 商品明细ID
+	 */
 	private long prodDetalId;
 
+	/**
+	 * 租户ID
+	 */
 	private String tenantId;
 
+	/**
+	 * 订单ID
+	 */
 	private long orderId;
 
+	/**
+	 * 销售品类型
+	 */
 	private String prodType;
 
+	/**
+	 * 销售商ID
+	 */
 	private String supplierId;
 
+	/**
+	 * 供应商ID
+	 */
 	private String sellerId;
 
+	/**
+	 * 销售商ID
+	 */
 	private String prodId;
 
+	/**
+	 * 销售品ID
+	 */
 	private String prodName;
 
+	/**
+	 * 销售品名称
+	 */
 	private String prodSn;
 
+	/**
+	 * 销售品串号
+	 */
 	private String skuId;
 
+	/**
+	 * 单品ID
+	 */
 	private String standardProdId;
 
+	/**
+	 * 供应品ID
+	 */
 	private String supplyId;
 
+	/**
+	 * 库存ID
+	 */
 	private String storageId;
 
+	/**
+	 * 路由ID
+	 */
 	private String routeId;
 
+	/**
+	 * 生效时间
+	 */
 	private Timestamp validTime;
 
+	/**
+	 * 失效时间
+	 */
 	private Timestamp invalidTime;
 
+	/**
+	 * 状态
+	 */
 	private String state;
 
+	/**
+	 * 购买数量
+	 */
 	private long buySum;
 
+	/**
+	 * 销售单价
+	 */
 	private long salePrice;
 
+	/**
+	 * 成本单价
+	 */
 	private long costPrice;
 
+	/**
+	 * 是否允许发票
+	 */
 	private long totalFee;
 
+	/**
+	 * 优惠费用
+	 */
 	private long discountFee;
 
+	/**
+	 * 减免费用(营业员)
+	 */
 	private long operDiscountFee;
 
+	/**
+	 * 减免原因
+	 */
 	private String operDiscountDesc;
 
+	/**
+	 * 应收费用
+	 */
 	private long adjustFee;
 
+	/**
+	 * 赠送积分
+	 */
 	private long jf;
 
+	/**
+	 * 商品说明
+	 */
 	private String prodDesc;
 
+	/**
+	 * 商品附加信息
+	 */
 	private String extendInfo;
 
+	/**
+	 * 变更时间
+	 */
 	private Timestamp updateTime;
 
+	/**
+	 * 变更渠道
+	 */
 	private String updateChlId;
 
+	/**
+	 * 变更工号
+	 */
 	private String updateOperId;
 
+	/**
+	 * SKU库存ID
+	 */
 	private String skuStorageId;
 
+	/**
+	 * 是否允许发票
+	 */
 	private String isInvoice;
 
+	/**
+	 * 优惠券抵扣费用
+	 */
 	private long couponFee;
 
+	/**
+	 * 积分抵扣费用
+	 */
 	private long jfFee;
 
+	/**
+	 * 售后标识
+	 */
 	private String cusServiceFlag;
 
+	/**
+	 * 商品编码
+	 */
 	private String prodCode;
 
 	public long getProdDetalId() {

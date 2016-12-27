@@ -13,94 +13,229 @@ public class OrdOrderOfcVo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * 订单id
+	 */
 	private long orderId;
 
+	/**
+	 * 租户id
+	 */
 	private String tenantId;
 
+	/**
+	 * 业务类型
+	 */
 	private String busiCode;
 
+	/**
+	 * 订单类型
+	 */
 	private String orderType;
 
+	/**
+	 * 子订单标识
+	 */
 	private String subFlag;
 
+	/**
+	 * 父订单ID
+	 */
 	private long parentOrderId;
 
+	/**
+	 * 批次号
+	 */
 	private long batchNo;
 
+	/**
+	 * 用户ID
+	 */
 	private String userId;
 
+	/**
+	 * 账户ID
+	 */
 	private long acctId;
 
+	/**
+	 * 订购ID
+	 */
 	private long subsId;
 
+	/**
+	 * 供应商ID
+	 */
 	private String supplierId;
 
+	/**
+	 * 库存ID
+	 */
 	private String storageId;
 
+	/**
+	 * 路由ID
+	 */
 	private String routeId;
 
+	/**
+	 * 省分
+	 */
 	private String provinceCode;
 
+	/**
+	 * 地市
+	 */
 	private String cityCode;
 
+	/**
+	 * 订单状态(后厂)
+	 */
 	private String state;
 
+	/**
+	 * 状态变化时间
+	 */
 	private Timestamp stateChgTime;
 
+	/**
+	 * 客户端显示状态
+	 */
 	private String displayFlag;
 
+	/**
+	 * 客户端显示状态变更时间
+	 */
 	private Timestamp displayFlagChgTime;
 
+	/**
+	 * 是否需要物流
+	 */
 	private String deliveryFlag;
 
+	/**
+	 * 业务锁标识
+	 */
 	private String lockFlag;
 
+	/**
+	 * 锁定时间
+	 */
 	private Timestamp lockTime;
 
+	/**
+	 * 下单时间
+	 */
 	private Timestamp orderTime;
 
+	/**
+	 * 销售商ID
+	 */
 	private long sellerId;
 
+	/**
+	 * 订单来源
+	 */
 	private String chlId;
 
+	/**
+	 * 受理工号
+	 */
 	private String operId;
 
+	/**
+	 * 流程实例ID
+	 */
 	private String workflowId;
 
+	/**
+	 * 原因类型(撤改单)
+	 */
 	private String reasonType;
 
+	/**
+	 * 原因描述(撤改单)
+	 */
 	private String reasonDesc;
 
+	/**
+	 * 完成时间
+	 */
 	private Timestamp finishTime;
 
+	/**
+	 * 原始订单号
+	 */
 	private long origOrderId;
 
+	/**
+	 * 订单简要信息
+	 */
 	private String orderDesc;
 
+	/**
+	 * 关键字
+	 */
 	private String keywords;
 
+	/**
+	 * 备注
+	 */
 	private String remark;
 
+	/**
+	 * 外部订单id
+	 */
 	private String externalOrderId;
 
+	/**
+	 * 外部供应商id
+	 */
 	private String externalSupplyId;
 
+	/**
+	 * 下游订单ID
+	 */
 	private String downstreamOrderId;
 
+	/**
+	 * 用户类型
+	 */
 	private String userType;
 
+	/**
+	 * IP地址
+	 */
 	private String ipAddress;
 
+	/**
+	 * 是否预警
+	 */
 	private String ifWarning;
 
+	/**
+	 * 预警类型
+	 */
 	private String warningType;
 
+	/**
+	 * 售后订单标识
+	 */
 	private String cusServiceFlag;
 
+	/**
+	 * 积分账户ID
+	 */
 	private String accountId;
 
+	/**
+	 * 业务标识
+	 */
 	private String flag;
 
+	/**
+	 * token id
+	 */
 	private String tokenId;
 
 	public long getOrderId() {
