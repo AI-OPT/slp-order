@@ -6,6 +6,13 @@ import java.util.HashMap;
 import java.util.Map;  
 import java.util.Properties;  
   
+/**
+ * 读取文件工具类
+ * Date: 2016年12月27日 <br>
+ * Copyright (c) 2016 asiainfo.com <br>
+ * 
+ * @author zhangqiang7
+ */
 public final class ResourceLoader {  
   
     private static ResourceLoader loader = new ResourceLoader();  
@@ -19,7 +26,7 @@ public final class ResourceLoader {
     }  
     
     /**
-     * 获取配置文件
+     * 从propertie文件获取信息
      */
     public Properties getPropFromProperties(String fileName) throws Exception {  
           

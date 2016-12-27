@@ -4,6 +4,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;  
 
 
+/**
+ * 读取配置文件工具类
+ * Date: 2016年12月27日 <br>
+ * Copyright (c) 2016 asiainfo.com <br>
+ * 
+ * @author zhangqiang7
+ */
 public class PropertiesUtil {
 
 	private static ResourceLoader loader = ResourceLoader.getInstance();  
@@ -13,7 +20,7 @@ public class PropertiesUtil {
 	    private static Properties prop = null;  
 	    
 	    /**
-	     * 读取配置文件信息
+	     * 读取properties文件信息
 	     */
 	    public static String getStringByKey(String key, String propName) {  
 	        try {  
@@ -30,10 +37,23 @@ public class PropertiesUtil {
 	        return configMap.get(key);  
 	    }  
 	  
+	    /**
+	     * 读取properties文件信息
+	     * @param key
+	     * @return
+	     * @author zhangqiang7
+	     * @UCUSER
+	     */
 	    public static String getStringByKey(String key) {  
 	        return getStringByKey(key, DEFAULT_CONFIG_FILE);  
 	    }  
 	  
+	    /**
+	     * 读取properties文件信息
+	     * @return
+	     * @author zhangqiang7
+	     * @UCUSER
+	     */
 	    public static Properties getProperties() {  
 	        try {  
 	            return loader.getPropFromProperties(DEFAULT_CONFIG_FILE);  

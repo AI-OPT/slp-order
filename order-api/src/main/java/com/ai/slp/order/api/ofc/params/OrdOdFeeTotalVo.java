@@ -14,36 +14,84 @@ public class OrdOdFeeTotalVo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * 订单id
+	 */
 	private long orderId;
 
+	/**
+	 * 租户id
+	 */
 	private String tenantId;
 
+	/**
+	 * 收退费标识
+	 */
 	private String payFlag;
 
+	/**
+	 * 总费用
+	 */
 	private long totalFee;
 
+	/**
+	 * 总优惠金额
+	 */
 	private long discountFee;
 
+	/**
+	 * 减免费用(营业员)
+	 */
 	private long operDiscountFee;
 
+	/**
+	 * 减免原因
+	 */
 	private String operDiscountDesc;
 
+	/**
+	 * 总应收费用
+	 */
 	private long adjustFee;
 
+	/**
+	 * 总实收费用
+	 */
 	private long paidFee;
 
+	/**
+	 * 总待收费用
+	 */
 	private long payFee;
 
+	/**
+	 * 默认支付方式
+	 */
 	private String payStyle;
 
+	/**
+	 * 变更时间
+	 */
 	private Timestamp updateTime;
 
+	/**
+	 * 变更渠道
+	 */
 	private String updateChlId;
 
+	/**
+	 * 变更工号
+	 */
 	private String updateOperId;
 
+	/**
+	 * 赠送积分
+	 */
 	private long totalJf;
 
+	/**
+	 * 运费
+	 */
 	private long freight;
 
 	public long getOrderId() {
