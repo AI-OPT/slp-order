@@ -20,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.ai.opt.sdk.util.CryptUtils;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.util.PropertiesUtil;
@@ -39,8 +40,8 @@ public class OrderReadFileThread extends Thread {
 	public Map<String, String[]> index = new HashMap<>();
 
 	String ip = PropertiesUtil.getStringByKey("ftp.ip"); // 服务器IP地址
-	String userName = PropertiesUtil.getStringByKey("ftp.userName"); // 用户名
-	String userPwd = PropertiesUtil.getStringByKey("ftp.userPwd"); // 密码
+	String userName = CryptUtils.decrypt(PropertiesUtil.getStringByKey("ftp.userName")); // 用户名
+	String userPwd = CryptUtils.decrypt(PropertiesUtil.getStringByKey("ftp.userPwd")); // 密码
 	int port = Integer.parseInt(PropertiesUtil.getStringByKey("ftp.port")); // 端口号
 	String path = PropertiesUtil.getStringByKey("ftp.path"); // 读取文件的存放目录
 	String localpath = PropertiesUtil.getStringByKey("ftp.localpath");// 本地存在的文件路径
