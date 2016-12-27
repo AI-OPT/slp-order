@@ -104,8 +104,15 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 				}
 			}
 		}
-		/* 根据订单规则获取合并时间*/
-		Timestamp time = getOrderListInTime(OrdRuleConstants.MERGE_ORDER_SETTING_ID,order.getOrderTime());
+		/* 订单规则*/
+		OrdRule ordRule = ordRuleAtomSV.getOrdRule(OrdRuleConstants.MERGE_ORDER_SETTING_ID);
+		if(ordRule==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单规则信息[订单规则id:"+OrdRuleConstants.MERGE_ORDER_SETTING_ID+"]");
+		}
+		/* 根据订单规则获取合并前后时间*/
+		Timestamp timeBefore = getOrderListInTime(-ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
+		Timestamp timeAfter = getOrderListInTime(ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
 		/* 组装订单商品信息集合*/
 		List<OrdOrderProdAttach> originalAttachs = createOriginalAttachs(ordOdProds);
 		List<Long> orderList =null;
@@ -113,7 +120,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			/* 多表多条件查询*/
 			List<OrdOrderProdAttach> orderProdAttachs = deliveryOrderPrintAtomSV.query(request.getUserId(),
 					request.getTenantId(),ordOdProd.getSkuId(),ordOdProd.getRouteId(),ordOdProd.getOrderId(),
-					OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,time,order.getOrderTime(),
+					OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,timeBefore,timeAfter,
 					OrdersConstants.OrdOrder.cusServiceFlag.NO);
 			if(!CollectionUtil.isEmpty(orderProdAttachs)) {
 				/* 筛选不符合合并规则的订单*/
@@ -141,8 +148,15 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		long sum = 0;
 		/* 获取订单下的商品信息*/
 		List<OrdOdProd> ordOdProds = getOrdOdProds(request);
-		/* 根据订单规则获取合并时间*/
-		Timestamp time = getOrderListInTime(OrdRuleConstants.MERGE_ORDER_SETTING_ID,order.getOrderTime());
+		/*订单规则*/
+		OrdRule ordRule = ordRuleAtomSV.getOrdRule(OrdRuleConstants.MERGE_ORDER_SETTING_ID);
+		if(ordRule==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单规则信息[订单规则id:"+OrdRuleConstants.MERGE_ORDER_SETTING_ID+"]");
+		}
+		/* 根据订单规则获取合并前后时间*/
+		Timestamp timeBefore = getOrderListInTime(-ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
+		Timestamp timeAfter = getOrderListInTime(ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
 		/* 组装订单商品信息集合*/
 		List<OrdOrderProdAttach> originalAttachs = createOriginalAttachs(ordOdProds);
 		List<Long> orderList =null;
@@ -153,7 +167,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			/* 多表多条件查询*/
 			List<OrdOrderProdAttach> orderProdAttachs = deliveryOrderPrintAtomSV.query(request.getUserId(),
 					request.getTenantId(),ordOdProd.getSkuId(),ordOdProd.getRouteId(),ordOdProd.getOrderId(),
-					OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,time,order.getOrderTime(),
+					OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,timeBefore,timeAfter,
 					OrdersConstants.OrdOrder.cusServiceFlag.NO);
 			if(!CollectionUtil.isEmpty(orderProdAttachs)) {
 				/* 筛选不符合合并规则的订单*/
@@ -295,23 +309,19 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	/**
 	  * 根据订单规则获取合并时间
 	  */
-	 public Timestamp getOrderListInTime(String buyIpMonitorId,Timestamp time) {
-		OrdRule ordRule = ordRuleAtomSV.getOrdRule(buyIpMonitorId);
-		if(ordRule==null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单规则信息[订单规则id:"+buyIpMonitorId+"]");
-		}
+	 public Timestamp getOrderListInTime(Integer monitorTime,Timestamp time,
+			 String timeType) {
 	 	Calendar calendar = Calendar.getInstance();
 	 	calendar.setTime(time);
-	 	switch(ordRule.getTimeType()) {
+	 	switch(timeType) {
 	 		case "D":
-	 			calendar.add(Calendar.DAY_OF_MONTH, -(ordRule.getMonitorTime()));
+	 			calendar.add(Calendar.DAY_OF_MONTH, monitorTime);
 	 			break;
 	 		case "H":
-	 			calendar.add(Calendar.HOUR, -(ordRule.getMonitorTime()));
+	 			calendar.add(Calendar.HOUR, monitorTime);
 	 			break;
 	 		default:
-	 			calendar.add(Calendar.MINUTE, -(ordRule.getMonitorTime()));
+	 			calendar.add(Calendar.MINUTE, monitorTime);
 	 			break;
 	 	}
         return new Timestamp(calendar.getTimeInMillis());
