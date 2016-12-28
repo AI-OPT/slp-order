@@ -10,9 +10,9 @@ public class BehindQueryOrderListRequest extends BaseInfo{
 	private static final long serialVersionUID = 1L;
 	
 	 /**
-     * 用户ID
+     * 用户名称
      */
-    private String userId;
+    private String userName;
 
     /**
      * 订单号
@@ -64,14 +64,14 @@ public class BehindQueryOrderListRequest extends BaseInfo{
      */
     private Integer pageSize;
 
-	public String getUserId() {
-		return userId;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
-	
+
 	public String getRouteId() {
 		return routeId;
 	}
