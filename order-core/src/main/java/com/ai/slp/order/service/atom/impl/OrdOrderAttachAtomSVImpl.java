@@ -20,7 +20,7 @@ public class OrdOrderAttachAtomSVImpl implements IOrdOrderAttachAtomSV {
 	public int behindQueryCount(BehindQueryOrderListRequest orderListRequest, String states) {
 		 return ordOrderAttachMapper.getBehindCount(states, 
 				 	orderListRequest.getOrderId(),orderListRequest.getChlId(),
-				 	orderListRequest.getRouteId(), orderListRequest.getUserId(),
+				 	orderListRequest.getRouteId(), orderListRequest.getUserName(),
 				 	orderListRequest.getContactTel(),orderListRequest.getTenantId(),
 	                orderListRequest.getDeliveryFlag(),
 	                orderListRequest.getOrderTimeBegin(), orderListRequest.getOrderTimeEnd());
@@ -32,7 +32,7 @@ public class OrdOrderAttachAtomSVImpl implements IOrdOrderAttachAtomSV {
 		return ordOrderAttachMapper.getBehindOrdOrder((orderListRequest.getPageNo() - 1)* orderListRequest.getPageSize(), 
 				orderListRequest.getPageSize(),states,
 				orderListRequest.getOrderId(),orderListRequest.getChlId(),
-				orderListRequest.getRouteId(),orderListRequest.getUserId(), 
+				orderListRequest.getRouteId(),orderListRequest.getUserName(), 
 				orderListRequest.getContactTel(),orderListRequest.getTenantId(), 
 				orderListRequest.getDeliveryFlag(),
                 orderListRequest.getOrderTimeBegin(),orderListRequest.getOrderTimeEnd());
