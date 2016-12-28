@@ -18,7 +18,7 @@ public interface OrdOrderAttachMapper {
     @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindCount")
 	public int getBehindCount(@Param("states") String states,@Param("orderId") Long orderId,
 			@Param("chlId") String chlId,@Param("routeId") String routeId,
-			@Param("userId") String userId, @Param("contactTel") String contactTel,
+			@Param("userName") String userName, @Param("contactTel") String contactTel,
 			@Param("tenantId") String tenantId,@Param("deliveryFlag") String deliveryFlag,
 			@Param("orderTimeBegin") String orderTimeBegin,@Param("orderTimeEnd") String orderTimeEnd);
     
@@ -37,7 +37,7 @@ public interface OrdOrderAttachMapper {
 	public List<BehindOrdOrderAttach> getBehindOrdOrder(@Param("pageCount") Integer pageCount, 
 			@Param("pageSize") Integer pageSize,@Param("states") String states,@Param("orderId") Long orderId,
 			@Param("chlId") String chlId,@Param("routeId") String routeId,
-			@Param("userId") String userId, @Param("contactTel") String contactTel,
+			@Param("userName") String userName, @Param("contactTel") String contactTel,
 			@Param("tenantId") String tenantId,@Param("deliveryFlag") String deliveryFlag,
 			@Param("orderTimeBegin") String orderTimeBegin,@Param("orderTimeEnd") String orderTimeEnd);
     
