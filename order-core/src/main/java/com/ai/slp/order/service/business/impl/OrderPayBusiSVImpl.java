@@ -14,11 +14,6 @@ import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
-import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
-import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
-import com.ai.slp.order.api.orderlist.param.OrdProductVo;
-import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
-import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -94,9 +89,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Autowired
     private IOrderFrameCoreSV orderFrameCoreSV;
 
-    @Autowired
-    private static IOrderListSV orderListSV;
-    
     @Autowired
     private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
     
@@ -760,88 +752,97 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     /**
      * 组装OFC订单创建请求参数
      */
-    public static String getOFCRequestParams(OrderPayRequest request,Long orderId,Timestamp sysdate) {
+    public String getOFCRequestParams(OrderPayRequest request,Long orderId,Timestamp sysdate) {
         //封装数据查询该订单下的详细数据
     	ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
-    	QueryOrderRequest orderRequest=new QueryOrderRequest();
-        orderRequest.setOrderId(orderId);
-        orderRequest.setTenantId(request.getTenantId());
-        QueryOrderResponse queryOrder2 = orderListSV.queryOrder(orderRequest);
-        IOrderListSV listSV = DubboConsumerFactory.getService(IOrderListSV.class);
-        QueryOrderResponse queryOrder = listSV.queryOrder(orderRequest);
-        OrdOrderVo ordOrderVo = queryOrder.getOrdOrderVo();
         OFCOrderCreateRequest paramsRequest=new OFCOrderCreateRequest();
         paramsRequest.setOrderNo(String.valueOf(orderId));
-        SysParam sysParamChlId = InfoTranslateUtil.translateInfo(request.getTenantId(), 
-				"ORD_ORDER", "CHL_ID", ordOrderVo.getChlId(), iCacheSV);
-        paramsRequest.setShopName(sysParamChlId==null?"":sysParamChlId.getColumnDesc()); 
-        //paramsRequest.setShopName("长虹官方旗舰店"); 
-        String time = DateUtil.getDateString(ordOrderVo.getOrderTime(), DateUtil.DATETIME_FORMAT);
-        paramsRequest.setOrderTime(time);
-        paramsRequest.setReceiverContact(ordOrderVo.getContactName());
-        paramsRequest.setReceiverPhone(ordOrderVo.getContactTel());
-        paramsRequest.setProvince(ordOrderVo.getProvinceCode()==null?"":iCacheSV.
-        		getAreaName(ordOrderVo.getProvinceCode())+"省"); 
-        paramsRequest.setCity(ordOrderVo.getCityCode()==null?"":iCacheSV.
-    			getAreaName(ordOrderVo.getCityCode())+"市");
-        paramsRequest.setRegion(ordOrderVo.getCountyCode()==null?"":iCacheSV.
-    			getAreaName(ordOrderVo.getCountyCode()));
-        paramsRequest.setReceiverAddress(ordOrderVo.getAddress());
-        paramsRequest.setPostCode(ordOrderVo.getPostCode());
+        OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(),orderId);
+		if (order!=null) {
+			SysParam sysParamChlId = InfoTranslateUtil.translateInfo(request.getTenantId(), 
+						"ORD_ORDER", "CHL_ID", order.getChlId(), iCacheSV);
+	        paramsRequest.setShopName(sysParamChlId==null?"":sysParamChlId.getColumnDesc()); 
+	        //paramsRequest.setShopName("长虹官方旗舰店"); 
+	        String time = DateUtil.getDateString(order.getOrderTime(), DateUtil.DATETIME_FORMAT);
+	        paramsRequest.setOrderTime(time);
+	        paramsRequest.setPayNo(String.valueOf(order.getAcctId())); //支付帐号
+	        paramsRequest.setBuyerRemark(order.getRemark()); //买家备注
+		}
+		OrdOdLogistics logistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(),
+					order.getOrderId());
+		paramsRequest.setReceiverContact(logistics.getContactName());
+        paramsRequest.setReceiverPhone(logistics.getContactTel());
+        paramsRequest.setProvince(logistics.getProvinceCode()==null?"":iCacheSV.
+        		getAreaName(logistics.getProvinceCode())+"省"); 
+        paramsRequest.setCity(logistics.getCityCode()==null?"":iCacheSV.
+    			getAreaName(logistics.getCityCode())+"市");
+        paramsRequest.setRegion(logistics.getCountyCode()==null?"":iCacheSV.
+    			getAreaName(logistics.getCountyCode()));
+        paramsRequest.setReceiverAddress(logistics.getAddress());
+        paramsRequest.setPostCode(logistics.getPostcode());
+        OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
+				order.getOrderId());
         paramsRequest.setPayTime(sysdate.toString());
-        paramsRequest.setPayNo(String.valueOf(ordOrderVo.getAcctId())); //支付帐号
+    //  paramsRequest.setPayNo(String.valueOf(ordOrderVo.getAcctId())); //支付帐号
         paramsRequest.setPayType(Long.parseLong(request.getPayType())); //TODO 待验证
-        paramsRequest.setOrderAmout(ordOrderVo.getTotalFee()/10); //分为单位,订单总金额 ??
-        paramsRequest.setPayAmount(ordOrderVo.getPayFee()/10);//支付金额
-        paramsRequest.setCoupAmount(ordOrderVo.getDiscountFee()/10);//优惠金额
-        paramsRequest.setReceiveAmount(ordOrderVo.getPayFee()/10);
-        if(!StringUtil.isBlank(ordOrderVo.getInvoiceType())) {
+        paramsRequest.setOrderAmout(ordOdFeeTotal.getTotalFee()/10); //分为单位,订单总金额 ??
+        paramsRequest.setPayAmount(ordOdFeeTotal.getPayFee()/10);//支付金额
+        paramsRequest.setCoupAmount(ordOdFeeTotal.getDiscountFee()/10);//优惠金额
+        paramsRequest.setReceiveAmount(ordOdFeeTotal.getPayFee()/10);
+        paramsRequest.setSellerRemark(ordOdFeeTotal.getOperDiscountDesc()); //TODO 商家备注 减免原因 ?? 
+        OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
+    	if (ordOdInvoice != null) {
         	paramsRequest.setNeedInvoice(1); //TODO 确定下?
-        	paramsRequest.setInvoiceType(Long.parseLong(ordOrderVo.getInvoiceType()));
-        	paramsRequest.setInvoiceTitle(ordOrderVo.getInvoiceTitle());
-        	paramsRequest.setCompanyName(ordOrderVo.getInvoiceTitle());
-        	paramsRequest.setTaxNo(ordOrderVo.getBuyerTaxpayerNumber());
-        	StringBuffer st=new StringBuffer();////组装详细地址
-			st.append(ordOrderVo.getProvinceCode()==null?"":iCacheSV.
-        			getAreaName(ordOrderVo.getProvinceCode())+"省");
-			st.append(ordOrderVo.getCityCode()==null?"":iCacheSV.
-        			getAreaName(ordOrderVo.getCityCode())+"市");
-			st.append(ordOrderVo.getCountyCode()==null?"":iCacheSV.
-        			getAreaName(ordOrderVo.getCountyCode()));
-			st.append(ordOrderVo.getAddress());
-        	paramsRequest.setRegisterAddress(st.toString()); 
-        	paramsRequest.setRegisterTel(ordOrderVo.getContactTel());
-        	paramsRequest.setBank(ordOrderVo.getBuyerBankName());
-        	paramsRequest.setBankNo(ordOrderVo.getBuyerBankAccount());
+        	paramsRequest.setInvoiceType(Long.parseLong(ordOdInvoice.getInvoiceType()));
+        	paramsRequest.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
+        	paramsRequest.setCompanyName(ordOdInvoice.getInvoiceTitle());
+        	paramsRequest.setTaxNo(ordOdInvoice.getBuyerTaxpayerNumber());
+        	paramsRequest.setBank(ordOdInvoice.getBuyerBankName());
+        	paramsRequest.setBankNo(ordOdInvoice.getBuyerBankAccount());
         }else {  //发票类型为空的话,表示无需发票信息
         	paramsRequest.setNeedInvoice(0);
         }
-        paramsRequest.setBuyerRemark(ordOrderVo.getRemark());
-        paramsRequest.setSellerRemark(ordOrderVo.getOperDiscountDesc()); //TODO 商家备注 减免原因 ?? 
-        //订单明细
-        List<OrderItemsVo> orderItemsVoList=new ArrayList<OrderItemsVo>();
-        List<OrdProductVo> productList = ordOrderVo.getProductList();
-        for (OrdProductVo ordProductVo : productList) {
-        	OrderItemsVo orderItemsVo=new OrderItemsVo();
-        	orderItemsVo.setProductName(ordProductVo.getProdName());
-        	orderItemsVo.setProductCode(ordProductVo.getProdCode()); //商品编码
-        	orderItemsVo.setProductNo("");
-        	orderItemsVo.setPrice(ordProductVo.getSalePrice());
-        	orderItemsVo.setQuanlity(ordProductVo.getBuySum());
-        	orderItemsVoList.add(orderItemsVo);
+    	List<OrdOdProd> ordOdProdList=ordOdProdAtomSV.selectByOrd(order.getTenantId(), orderId);
+    	List<OrderItemsVo> orderItemsVoList=new ArrayList<OrderItemsVo>();
+		if (!CollectionUtil.isEmpty(ordOdProdList)) {
+			for (OrdOdProd ordOdProd : ordOdProdList) {
+	        	OrderItemsVo orderItemsVo=new OrderItemsVo();
+	        	orderItemsVo.setProductName(ordOdProd.getProdName());
+	        	orderItemsVo.setProductCode(ordOdProd.getProdCode()); //商品编码
+	        	orderItemsVo.setProductNo("");
+	        	orderItemsVo.setPrice(ordOdProd.getSalePrice());
+	        	orderItemsVo.setQuanlity(ordOdProd.getBuySum());
+	        	orderItemsVoList.add(orderItemsVo);
+			}
 		}
-        List<OrderCouponVo> orderCouponVoList=new ArrayList<OrderCouponVo>();
-        OrderCouponVo couponVo=new OrderCouponVo();
-        couponVo.setCouponName("");
-        couponVo.setCouponCode("");
-        couponVo.setProductCode(""); 
-        couponVo.setAmount(0); //TODO  单个商品的优惠券还是优惠总金额 ???
-        orderCouponVoList.add(couponVo);
+		List<OrdOdFeeProd> ordOdFeeProds = ordOdFeeProdAtomSV.selectByOrderId(orderId);
+		List<OrderCouponVo> orderCouponVoList=new ArrayList<OrderCouponVo>();
+		if(!CollectionUtil.isEmpty(ordOdFeeProds)) {
+			for (OrdOdFeeProd ordOdFeeProd : ordOdFeeProds) {
+				if(OrdersConstants.OrdOdFeeProd.PayStyle.COUPON.equals(ordOdFeeProd.getPayStyle())) {
+					OrderCouponVo couponVo=new OrderCouponVo();
+					couponVo.setCouponName("优惠券");
+					couponVo.setCouponCode("");
+					couponVo.setProductCode(""); 
+					couponVo.setAmount(ordOdFeeProd.getPaidFee()); 
+					orderCouponVoList.add(couponVo);
+				}
+				if(OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
+					OrderCouponVo couponVo=new OrderCouponVo();
+					couponVo.setCouponName("积分");
+					couponVo.setCouponCode("");
+					couponVo.setProductCode(""); 
+					couponVo.setAmount(ordOdFeeProd.getJfAmount()); 
+					orderCouponVoList.add(couponVo);
+				}
+			}
+		}
         //封装参数,转化为json形式
         paramsRequest.setItems(orderItemsVoList);
         paramsRequest.setCouponList(orderCouponVoList);
     	return JSON.toJSONString(paramsRequest);
     }
+    
 
 	@Override
 	public void returnOid(OrderOidRequest request) throws BusinessException, SystemException {
@@ -856,8 +857,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 		ordOrderAtomSV.updateById(order);
 	}
     
-    //TODO 测试
-   public static void main(String[] args) {
+    //测试
+  /* public static void main(String[] args) {
     	OrderPayRequest request=new OrderPayRequest();
     	request.setTenantId("changhong");
     	request.setPayType("28");
@@ -878,5 +879,5 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 }
