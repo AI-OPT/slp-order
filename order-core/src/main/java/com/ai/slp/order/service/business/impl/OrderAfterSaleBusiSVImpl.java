@@ -452,7 +452,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     }
     
     /**
-     * 组装退换货申请单创建参数(OCF)
+     * 组装退换货申请单创建参数(OFC)
      */
     private String getOFCAfterSaleOrderCreateParam(OrdOrder order,long subOrderId,OrdOdProd ordOdProd,
     		Timestamp sysDate,long backTotalFee,long prodSum,int type) {
