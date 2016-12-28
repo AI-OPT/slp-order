@@ -96,34 +96,14 @@ public final class OrdersConstants {
 		public static class OrderType {
 
 			/**
-			 * 虚拟商品
+			 * 虚拟类商品
 			 */
 			public static final String VIRTUAL_PROD = "100000";
 			
 			/**
-			 * 话费流量卡包
-			 */
-			public static final String BUG_PHONE_FLOWRATE_CARD = "100000";
-
-			/**
-			 * 话费流量直充
-			 */
-			public static final String BUG_PHONE_FLOWRATE_RECHARGE = "100010";
-
-			/**
-			 * 购买实物类商品
+			 * 实物类商品
 			 */
 			public static final String BUG_MATERIAL_PROD = "110000";
-
-			/**
-			 * 话费充值
-			 */
-			public static final String PHONE_BILL_RECHARGE = "200000";
-
-			/**
-			 * 流量充值
-			 */
-			public static final String FLOWRATE_RECHARGE = "210000";
 
 		}
 
