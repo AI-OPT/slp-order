@@ -118,16 +118,14 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             }
             /* 2.订单支付完成后，对订单进行处理 */
             this.execOrders(ordOrder, request.getTenantId(), sysdate);
-            /**
-             * 判断是否为虚拟商品
-             */
+            /* 3. 判断是否为虚拟商品*/
             if (OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(ordOrder.getOrderType())) {
             	ordOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
             }else{
-            	/* 3.拆分子订单 */
+            	/* 4.拆分子订单 */
             	subOrderIds = this.resoleOrders(ordOrder, request.getTenantId(),request,sysdate);
             }
-            /* 4.销售订单创建同步到OFC*/
+            /* 5.销售订单创建同步到OFC*/
             if(OrdersConstants.OrdOrder.Flag.OFC.equals(ordOrder.getFlag())) {
             	/* 获取参数*/
             	for (Long subOrderId : subOrderIds) {
