@@ -116,6 +116,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             /* 3. 判断是否为虚拟商品*/
             if (OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(ordOrder.getOrderType())) {
             	ordOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+            	ordOrderAtomSV.updateById(ordOrder);
             }else{
             	/* 4.拆分子订单 */
             	subOrderIds = this.resoleOrders(ordOrder, request.getTenantId(),request,sysdate);
