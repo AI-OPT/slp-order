@@ -3,7 +3,7 @@ package com.ai.slp.order.constants;
 import com.ai.slp.order.util.PropertiesLoader;
 
 public final class OrdersConstants {
-
+	
 	public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
 
 	public static final String ORDER_PHONENUM_DSS = "Order_PhoneNum";
@@ -11,8 +11,6 @@ public final class OrdersConstants {
 	public static final String O2P_NOTIFYURL = "o2p_nofityurl";
 
 	public static final String DTS_SCHEDULE_NAME = "slp-order-dts-sched";
-	public static final String ORDER_SUCCESS = "000000";
-	public static final String ORDER_FAILD = "999999";
 
 	/**
 	 * 属性文件加载对象
