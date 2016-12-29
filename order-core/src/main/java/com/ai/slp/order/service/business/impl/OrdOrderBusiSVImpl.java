@@ -294,9 +294,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				Criteria criteriaBalance = exampleBalance.createCriteria();
 				criteriaBalance.andTenantIdEqualTo(order.getTenantId());
 				if (OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())
-						|| OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())
-								||(OrdersConstants.OrdOrder.State.COMPLETED.equals(order.getState())
-										&& OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(order.getOrderType()))) {
+						|| OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())) {
 					criteriaBalance.andOrderIdEqualTo(order.getOrderId());
 				} else {
 					criteriaBalance.andOrderIdEqualTo(order.getParentOrderId());
