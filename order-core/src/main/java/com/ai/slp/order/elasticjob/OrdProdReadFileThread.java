@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,35 +69,38 @@ public class OrdProdReadFileThread extends Thread {
 			try {
 				ValidateChkUtil util = new ValidateChkUtil();
 				String errCode = util.validateChk(path, localpath + "bak/", fileName, chkName, sftp);
+				String localPath = localpath + "rpt/";
 				if (!StringUtil.isBlank(errCode)) {
 					LOG.error("校验订单商品文件失败,校验码:" + errCode.toString());
-					String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
-					String localPath = localpath + "rpt/";
-					File file = new File(localPath);
-					if (!file.exists()) {
-						file.mkdirs();
-					}
-					File rptFile = new File(localPath + errCodeName);
-					if (!rptFile.exists()) {
-						rptFile.createNewFile();
-					}
-					FileWriter fw = new FileWriter(rptFile);
-					bw = new BufferedWriter(fw);
-					bw.write(fileName + "\n");
-					bw.write(errCode.toString() + "\n");
-					bw.flush();
-					bw.close();
-					fw.close();
-					is = new FileInputStream(rptFile);
-					// 移动rpt文件
-					SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
-					deleteFile(localpath + "rpt/" + errCodeName);
 					if (!errCode.toString().equals("09")) {
 						// 移动chk文件
 						chkIs = SftpUtil.download(path, chkName, localpath + "/bak", sftp);
 						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
 						deleteFile(localpath + "bak/" + chkName);
+
+						// 生产rpt文件
+						String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
+						File file = new File(localPath);
+						if (!file.exists()) {
+							file.mkdirs();
+						}
+						File rptFile = new File(localPath + errCodeName);
+						if (!rptFile.exists()) {
+							rptFile.createNewFile();
+						}
+						FileWriter fw = new FileWriter(rptFile);
+						bw = new BufferedWriter(fw);
+						bw.write(fileName);
+						bw.write("\n");
+						bw.write(errCode.toString() + "\n");
+						bw.flush();
+						bw.close();
+						fw.close();
+						is = new FileInputStream(rptFile);
+						// 移动rpt文件
+						SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
+						deleteFile(localpath + "rpt/" + errCodeName);
 					}
 					continue;
 					// 推到ftp上
@@ -128,7 +130,7 @@ public class OrdProdReadFileThread extends Thread {
 		SftpUtil.disconnect(sftp);
 	}
 
-	public void readOrdProdFile(String fileName, ChannelSftp sftp) throws ParseException {
+	public void readOrdProdFile(String fileName, ChannelSftp sftp) {
 		InputStream ins = null;
 		BufferedReader reader = null;
 		try {
@@ -165,7 +167,7 @@ public class OrdProdReadFileThread extends Thread {
 				if (ins != null) {
 					ins.close();
 				}
-				// SftpUtil.delete(path, fileName, sftp);
+				SftpUtil.delete(path, fileName, sftp);
 			}
 
 		} catch (Exception e) {
@@ -180,7 +182,7 @@ public class OrdProdReadFileThread extends Thread {
 		LOG.error("++++++++++获取ftp订单商品信息文件列表,文件列表如下" + JSON.toJSONString(fileList));
 		List<String> nameList = new ArrayList<>();
 		for (String string : fileList) {
-			//String date = dateFormat.format(DateUtil.getSysDate());
+			// String date = dateFormat.format(DateUtil.getSysDate());
 			String date = format1(DateUtil.getSysDate());
 			if (string.length() >= 20) {
 				if ((date + "_" + "omsa01002").equals(string.substring(2, 20)) && string.endsWith(".dat")) {

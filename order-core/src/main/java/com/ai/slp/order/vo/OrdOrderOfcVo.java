@@ -1,4 +1,4 @@
-package com.ai.slp.order.api.ofc.params;
+package com.ai.slp.order.vo;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

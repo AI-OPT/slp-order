@@ -10,13 +10,13 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
-import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
-import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
-import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;
-import com.ai.slp.order.api.ofc.params.OrdOrderOfcVo;
-import com.ai.slp.order.api.ofc.params.OrderOfcVo;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
 import com.ai.slp.order.util.PropertiesUtil;
+import com.ai.slp.order.vo.OfcCodeRequst;
+import com.ai.slp.order.vo.OrdOdFeeTotalVo;
+import com.ai.slp.order.vo.OrdOdLogisticsVo;
+import com.ai.slp.order.vo.OrdOrderOfcVo;
+import com.ai.slp.order.vo.OrderOfcVo;
 import com.alibaba.fastjson.JSON;
 
 public class OrderThread extends Thread {

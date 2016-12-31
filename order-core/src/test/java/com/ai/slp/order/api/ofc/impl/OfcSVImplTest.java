@@ -2,26 +2,21 @@ package com.ai.slp.order.api.ofc.impl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.UUIDUtil;
-import com.ai.slp.order.api.ofc.interfaces.IOfcSV;
-import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
-import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
-import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;
-import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
-import com.ai.slp.order.api.ofc.params.OrdOrderOfcVo;
-import com.ai.slp.order.api.ofc.params.OrderOfcVo;
+import com.ai.slp.order.vo.OfcCodeRequst;
+import com.ai.slp.order.vo.OrdOdFeeTotalVo;
+import com.ai.slp.order.vo.OrdOdLogisticsVo;
+import com.ai.slp.order.vo.OrdOdProdVo;
+import com.ai.slp.order.vo.OrdOrderOfcVo;
+import com.ai.slp.order.vo.OrderOfcVo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/context/core-context.xml" })
 public class OfcSVImplTest {
-
-	@Autowired
-	private IOfcSV ofcSV;
 
 	@Test
 	public void insertOrder() throws Exception {
@@ -89,18 +84,15 @@ public class OfcSVImplTest {
 		ordOdLogistics.setAddress("舒服的暖色调");
 		// 邮编
 		ordOdLogistics.setPostcode("");
-		
+
 		OrderOfcVo order = new OrderOfcVo();
 		order.setOrOrderOfcVo(vo);
 		order.setOrdOdFeeTotalVo(ordOdFeeTotal);
 		order.setOrdOdLogisticsVo(ordOdLogistics);
-
-		ofcSV.insertOrdOrder(order);
 	}
-	
-	
+
 	@Test
-	public void insertProdOrder() throws Exception{
+	public void insertProdOrder() throws Exception {
 		OrdOdProdVo vo = new OrdOdProdVo();
 		vo.setState("1");
 		vo.setTenantId("changhong");
@@ -123,17 +115,15 @@ public class OfcSVImplTest {
 		vo.setDiscountFee(0);
 		vo.setJf(0);
 		vo.setJfFee(0);
-		
-		ofcSV.insertOrdOdProd(vo);
+
 	}
-	
+
 	@Test
-	public void testCode(){
+	public void testCode() {
 		OfcCodeRequst re = new OfcCodeRequst();
 		re.setTenantId("changhong");
 		re.setSystemId("OFC");
 		re.setParamCode("CHL_ID");
 		re.setOutCode("京东平台");
-		System.out.println(ofcSV.parseOfcCode(re));
 	}
 }

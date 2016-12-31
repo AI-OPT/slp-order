@@ -2,9 +2,9 @@ package com.ai.slp.order.service.business.interfaces;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.slp.order.api.ofc.params.OfcCodeRequst;
-import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
-import com.ai.slp.order.api.ofc.params.OrderOfcVo;
+import com.ai.slp.order.vo.OfcCodeRequst;
+import com.ai.slp.order.vo.OrdOdProdVo;
+import com.ai.slp.order.vo.OrderOfcVo;
 
 public interface IOfcBusiSV {
 

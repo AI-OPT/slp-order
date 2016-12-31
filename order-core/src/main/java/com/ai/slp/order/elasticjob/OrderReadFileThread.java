@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,40 +64,43 @@ public class OrderReadFileThread extends Thread {
 		for (String fileName : nameList) {
 			String chkName = fileName.substring(0, 23) + ".chk";
 			InputStream is = null;
-			InputStream chkIs =null;
+			InputStream chkIs = null;
 			BufferedWriter bw = null;
 			try {
 				ValidateChkUtil util = new ValidateChkUtil();
 				String errCode = util.validateChk(path, localpath + "bak/", fileName, chkName, sftp);
+				String localPath = localpath + "rpt/";
 				if (!StringUtil.isBlank(errCode)) {
 					LOG.error("校验订单信息文件失败,校验码:" + errCode.toString());
-					String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
-					String localPath = localpath + "rpt/";
-					File file = new File(localPath);
-					if (!file.exists()) {
-						file.mkdirs();
-					}
-					File rptFile = new File(localPath + errCodeName);
-					if (!rptFile.exists()) {
-						rptFile.createNewFile();
-					}
-					FileWriter fw = new FileWriter(rptFile);
-					bw = new BufferedWriter(fw);
-					bw.write(fileName + "\n");
-					bw.write(errCode.toString() + "\n");
-					bw.flush();
-					bw.close();
-					fw.close();
-					is = new FileInputStream(rptFile);
-					// 移动rpt文件
-					SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
-					deleteFile(localpath + "rpt/" + errCodeName);
 					if (!errCode.toString().equals("09")) {
 						// 移动chk文件
 						chkIs = SftpUtil.download(path, chkName, localPath, sftp);
 						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
 						deleteFile(localpath + "bak/" + chkName);
+						
+						//上传rpt报告
+						String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
+						File file = new File(localPath);
+						if (!file.exists()) {
+							file.mkdirs();
+						}
+						File rptFile = new File(localPath + errCodeName);
+						if (!rptFile.exists()) {
+							rptFile.createNewFile();
+						}
+						FileWriter fw = new FileWriter(rptFile);
+						bw = new BufferedWriter(fw);
+						bw.write(fileName);
+						bw.write("\n");
+						bw.write(errCode.toString() + "\n");
+						bw.flush();
+						bw.close();
+						fw.close();
+						is = new FileInputStream(rptFile);
+						// 移动rpt文件
+						SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
+						deleteFile(localpath + "rpt/" + errCodeName);
 					}
 					continue;
 					// 推到ftp上
@@ -112,7 +114,7 @@ public class OrderReadFileThread extends Thread {
 				}
 			} catch (Exception e) {
 				LOG.error("订单读取数据失败" + DateUtil.getSysDate() + JSON.toJSONString(e));
-			}finally {
+			} finally {
 				if (is != null) {
 					safeClose(is);
 				}
@@ -128,9 +130,9 @@ public class OrderReadFileThread extends Thread {
 		SftpUtil.disconnect(sftp);
 	}
 
-	public void readOrderFile(String fileName, ChannelSftp sftp) throws ParseException {
+	public void readOrderFile(String fileName, ChannelSftp sftp){
 		InputStream ins = null;
-		BufferedReader reader =null;
+		BufferedReader reader = null;
 		try {
 			// 从服务器上读取指定的文件
 			LOG.error("开始读取订单信息文件：" + fileName);
@@ -165,11 +167,11 @@ public class OrderReadFileThread extends Thread {
 				if (ins != null) {
 					ins.close();
 				}
-				// SftpUtil.delete(path, fileName, sftp);
+				SftpUtil.delete(path, fileName, sftp);
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("读取订单信息文件失败了+原因:"+JSON.toJSONString(e));
 		} finally {
 			deleteFile(localpath + "bak/" + fileName);
 			index = null;
@@ -182,7 +184,7 @@ public class OrderReadFileThread extends Thread {
 		LOG.error("++++++++++获取ftp订单信息文件列表,文件列表如下" + JSON.toJSONString(fileList));
 		List<String> nameList = new ArrayList<>();
 		for (String string : fileList) {
-			//String date = sdf.format(DateUtil.getSysDate());
+			// String date = sdf.format(DateUtil.getSysDate());
 			String date = format1(DateUtil.getSysDate());
 			if (string.length() >= 20) {
 				if ((date + "_" + "omsa01001").equals(string.substring(2, 20)) && string.endsWith(".dat")) {
@@ -213,7 +215,7 @@ public class OrderReadFileThread extends Thread {
 			}
 		}
 	}
-	
+
 	public static void safeClose(BufferedWriter fis) {
 		if (fis != null) {
 			try {
@@ -223,7 +225,7 @@ public class OrderReadFileThread extends Thread {
 			}
 		}
 	}
-	
+
 	public static void safeClose(BufferedReader fis) {
 		if (fis != null) {
 			try {
@@ -233,7 +235,7 @@ public class OrderReadFileThread extends Thread {
 			}
 		}
 	}
-	
+
 	public synchronized String format1(Date date) {
 		return dateFormat.format(date);
 	}

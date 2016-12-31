@@ -9,9 +9,9 @@ import org.apache.commons.logging.LogFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.opt.sdk.util.UUIDUtil;
-import com.ai.slp.order.api.ofc.params.OrdOdProdVo;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
 import com.ai.slp.order.util.PropertiesUtil;
+import com.ai.slp.order.vo.OrdOdProdVo;
 import com.alibaba.fastjson.JSON;
 
 public class OrdOdProdThread extends Thread {

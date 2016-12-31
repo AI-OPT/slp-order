@@ -1,10 +1,10 @@
-package com.ai.slp.order.api.ofc.params;
+package com.ai.slp.order.vo;
 
 import java.io.Serializable;
 
-import com.ai.slp.order.api.ofc.params.OrdOdFeeTotalVo;
-import com.ai.slp.order.api.ofc.params.OrdOdLogisticsVo;
-import com.ai.slp.order.api.ofc.params.OrdOrderOfcVo;
+import com.ai.slp.order.vo.OrdOdFeeTotalVo;
+import com.ai.slp.order.vo.OrdOdLogisticsVo;
+import com.ai.slp.order.vo.OrdOrderOfcVo;
 
 /**
  * 订单信息,包括订单费用信息/订单信息/订单出货信息 
