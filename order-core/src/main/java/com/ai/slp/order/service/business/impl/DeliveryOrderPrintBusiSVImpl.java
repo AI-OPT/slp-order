@@ -113,6 +113,14 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		/* 根据订单规则获取合并前后时间*/
 		Timestamp timeBefore = getOrderListInTime(-ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
 		Timestamp timeAfter = getOrderListInTime(ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
+		//获取地址信息
+		OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+  		if(odLogistics==null) {
+  			logger.warn("未能查询到指定的订单配送信息[订单id:"+order.getOrderId()+"]");
+  			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
+  					"未能查询到指定的订单配送信息[订单id:"+order.getOrderId()+"]");
+  		}
+		String addressInfo = getAddressInfo(odLogistics);
 		/* 组装订单商品信息集合*/
 		List<OrdOrderProdAttach> originalAttachs = createOriginalAttachs(ordOdProds);
 		List<Long> orderList =null;
@@ -124,7 +132,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 					OrdersConstants.OrdOrder.cusServiceFlag.NO);
 			if(!CollectionUtil.isEmpty(orderProdAttachs)) {
 				/* 筛选不符合合并规则的订单*/
-				orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList);
+				orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList,addressInfo);
 				if(!CollectionUtil.isEmpty(orderProdAttachs)) {
 					response.setMark(OrdersConstants.printMark.CAN_MERGE);
 					break;
@@ -157,6 +165,14 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		/* 根据订单规则获取合并前后时间*/
 		Timestamp timeBefore = getOrderListInTime(-ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
 		Timestamp timeAfter = getOrderListInTime(ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
+		//获取地址信息
+		OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+  		if(odLogistics==null) {
+  			logger.warn("未能查询到指定的订单配送信息[订单id:"+order.getOrderId()+"]");
+  			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
+  					"未能查询到指定的订单配送信息[订单id:"+order.getOrderId()+"]");
+  		}
+		String addressInfo = getAddressInfo(odLogistics);
 		/* 组装订单商品信息集合*/
 		List<OrdOrderProdAttach> originalAttachs = createOriginalAttachs(ordOdProds);
 		List<Long> orderList =null;
@@ -171,7 +187,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 					OrdersConstants.OrdOrder.cusServiceFlag.NO);
 			if(!CollectionUtil.isEmpty(orderProdAttachs)) {
 				/* 筛选不符合合并规则的订单*/
-				orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList);
+				orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList,addressInfo);
 				if(!CollectionUtil.isEmpty(orderProdAttachs)) {
 					for (OrdOrderProdAttach ordOrderProdAttach : orderProdAttachs) {
 						buySum+=ordOrderProdAttach.getBuySum();
@@ -183,13 +199,6 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			/* 组装订单提货明细信息*/
 			DeliveryProdPrintVo dpVo = this.createDeliverInfoProd(ordOdProd,buySum,mergeOrderIds);
 			list.add(dpVo);
-		}
-		/* 查询订单配送信息*/
-		OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
-		if(odLogistics==null) {
-			logger.warn("未能查询到指定的订单配送信息[订单id:"+order.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
-					"未能查询到指定的订单配送信息[订单id:"+order.getTenantId()+"]");
 		}
 		response.setContactName(odLogistics.getContactName());
 		response.setSum(sum);
@@ -381,7 +390,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	  * 筛选订单
 	  */
 	  private List<Long> judgeOrder(List<OrdOrderProdAttach> originalAttachs,
-			  List<OrdOrderProdAttach> orderProdAttachs,List<Long> orderList) {
+			  List<OrdOrderProdAttach> orderProdAttachs,List<Long> orderList,String str) {
 		  logger.info("筛选不符合合并规则的订单......");
 		  if (null != orderProdAttachs && orderProdAttachs.size() > 0) {
 			    Iterator<OrdOrderProdAttach> it = orderProdAttachs.iterator();  
@@ -398,6 +407,19 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 					List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByExample(example);
 					/* 1.个数筛选(合并之后的订单商品个数大于原来商品个数,则不合并)*/
 					if(ordOdProds.size()>originalAttachs.size()) {
+						it.remove();
+						continue;
+					}
+					/* 收货地址筛选*/
+					OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(
+							ordOrderProdAttach.getTenantId(), ordOrderProdAttach.getOrderId());
+					if(odLogistics==null) {
+						logger.warn("未能查询到指定的订单配送信息[订单id:"+ordOrderProdAttach.getOrderId()+"]");
+						throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
+								"未能查询到指定的订单配送信息[订单id:"+ordOrderProdAttach.getOrderId()+"]");
+					}
+					String sp = getAddressInfo(odLogistics);
+					if(!sp.equals(str)) {
 						it.remove();
 						continue;
 					}
@@ -484,4 +506,13 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 			}
 		return orderList;
 	  }
+	  
+  	//获取地址信息
+  	private String getAddressInfo(OrdOdLogistics odLogistics) {
+  		//拼接地址
+  		StringBuilder oriSp=new StringBuilder();
+  		oriSp.append(odLogistics.getProvinceCode()).append(odLogistics.getCityCode()).
+  		append(odLogistics.getCountyCode()).append(odLogistics.getAddress());
+		return oriSp.toString();
+  	}
 }
