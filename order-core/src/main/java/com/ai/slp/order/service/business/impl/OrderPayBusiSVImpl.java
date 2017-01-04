@@ -115,7 +115,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             this.execOrders(ordOrder, request.getTenantId(), sysdate);
         	/* 3.拆分子订单 */
         	subOrderIds = this.resoleOrders(ordOrder, request.getTenantId(),request,sysdate);
-            /* 4.销售订单创建同步到OFC*/
+        	/* 4.虚拟商品改变父订单状态*/
+        	if(OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(ordOrder.getOrderType())) {
+        		ordOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+        		ordOrderAtomSV.updateById(ordOrder);
+        	}
+            /* 5.销售订单创建同步到OFC*/
             if(OrdersConstants.OrdOrder.Flag.OFC.equals(ordOrder.getFlag())) {
             	/* 获取参数*/
             	for (Long subOrderId : subOrderIds) {
@@ -370,7 +375,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		childOrdOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.YES);
     		childOrdOrder.setParentOrderId(parentOrdOrder.getOrderId());
     		if (OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(parentOrdOrder.getOrderType())) {
-    			childOrdOrder.setState(OrdersConstants.OrdOrder.State.WAIT_CONFIRM); //虚拟类商品
+    			childOrdOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED); //虚拟类商品
 	        }else {
 	        	childOrdOrder.setState(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION); //实物
 	        }
