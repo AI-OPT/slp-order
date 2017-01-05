@@ -471,8 +471,8 @@ public class ValidateUtils {
 		if(condition.getUpdateMoney()==null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额不能为空");
 		}else {
-			if(condition.getUpdateMoney()<=0) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额不能小于等于0");
+			if(condition.getUpdateMoney()<0) {
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额不能小于0");
 			}
 		}
 	}
