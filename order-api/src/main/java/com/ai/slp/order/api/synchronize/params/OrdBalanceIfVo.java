@@ -1,7 +1,6 @@
 package com.ai.slp.order.api.synchronize.params;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 public class OrdBalanceIfVo implements Serializable {
 
@@ -12,23 +11,70 @@ public class OrdBalanceIfVo implements Serializable {
 	 */
 	private long balacneIfId;
 
-	private String tenantId;
-
+	/**
+	 * 订单id
+	 */
 	private long orderId;
-
+	/**
+	 * 支付类型
+	 */
 	private String payStyle;
 
 	/**
 	 * 已支付金额
 	 */
 	private long payFee;
-
-	private String paySystemId;
-
+	/**
+	 * 外部流水号
+	 */
 	private String externalId;
 
-	private Timestamp createTime;
+	public String getExternalId() {
+		return externalId;
+	}
 
-	private String remark;
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
+
+	public String getPayStyle() {
+		return payStyle;
+	}
+
+	public void setPayStyle(String payStyle) {
+		this.payStyle = payStyle;
+	}
+
+	public long getBalacneIfId() {
+		return balacneIfId;
+	}
+
+	public void setBalacneIfId(long balacneIfId) {
+		this.balacneIfId = balacneIfId;
+	}
+
+	public long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(long orderId) {
+		this.orderId = orderId;
+	}
+
+	public long getPayFee() {
+		return payFee;
+	}
+
+	public void setPayFee(long payFee) {
+		this.payFee = payFee;
+	}
+
+	// private String paySystemId;
+
+	// private String externalId;
+
+	// private Timestamp createTime;
+
+	// private String remark;
 
 }

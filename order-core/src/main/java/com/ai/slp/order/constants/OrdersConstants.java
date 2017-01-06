@@ -6,6 +6,8 @@ public final class OrdersConstants {
 	
 	/** 消息队列配置信息(已废弃)*/
 	public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
+	
+	public static final String TENANT_ID = "changhong";
 	/** 定时任务配置信息*/
 	public static final String DTS_SCHEDULE_NAME = "slp-order-dts-sched";
 
@@ -26,6 +28,23 @@ public final class OrdersConstants {
 			 * 1：up平台
 			 */
 			public static final String UPPLATFORM = "1";
+
+		}
+		
+		public static final class UserType {
+			/**
+			 * 10:个人
+			 */
+			public static final String PERSONAL = "10";
+
+			/**
+			 * 11:企业
+			 */
+			public static final String ENTERPRISE = "11";
+			/**
+			 * 11:代理人
+			 */
+			public static final String PROXY = "12";
 
 		}
 		/** 订单物流信息*/
@@ -386,6 +405,13 @@ public final class OrdersConstants {
 			 */
 			public static final String PROD = "1";
 
+		}
+		public static class StandProdId {
+			/**
+			 *  标准品id
+			 */
+			public static final String STAND_PROD_ID = "1";
+			
 		}
 
 	}

@@ -1,127 +1,262 @@
 package com.ai.slp.order.api.synchronize.params;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
-public class OrdOdProdVo implements Serializable{
+public class OrdOdProdVo implements Serializable {
 
-	 private long prodDetalId;
+	// private long prodDetalId;
 
-	    private String tenantId;
+	private static final long serialVersionUID = 1L;
 
-	    private long orderId;
+	/**
+	 * 租户id
+	 */
+	// private String tenantId;
 
-	    /**
-	     * 销售品类型
-	     */
-	    private String prodType;
+	/**
+	 * 订单id
+	 */
+	private long orderId;
 
-	    private String supplierId;
+	/**
+	 * 销售品类型
+	 */
+	private String prodType;
 
-	    private String sellerId;
+	// private String supplierId;
 
-	    /**
-	     * 销售品ID
-	     */
-	    private String prodId;
+	// private String sellerId;
 
-	    /**
-	     * 销售品名称
-	     */
-	    private String prodName;
+	/**
+	 * 销售品ID
+	 */
+	private String prodId;
 
-	    private String prodSn;
+	/**
+	 * 销售品名称
+	 */
+	private String prodName;
 
-	    /**
-	     * 单品ID
-	     */
-	    private String skuId;
+	// private String prodSn;
 
-	    private String standardProdId;
+	/**
+	 * 单品ID
+	 */
+	private String skuId;
 
-	    private String supplyId;
+	// private String standardProdId;
 
-	    /**
-	     * 库存ID
-	     */
-	    private String storageId;
+	// private String supplyId;
 
-	    private String routeId;
+	/**
+	 * 库存ID
+	 */
+	private String storageId;
 
-	    private Timestamp validTime;
+	// private String routeId;
 
-	    private Timestamp invalidTime;
+	// private Timestamp validTime;
 
-	    private String state;
+	// private Timestamp invalidTime;
 
-	    /**
-	     * 购买数量
-	     */
-	    private long buySum;
+	// private String state;
 
-	    
-	    private long salePrice;
+	/**
+	 * 购买数量
+	 */
+	private long buySum;
 
-	    private long costPrice;
+	// private long salePrice;
 
-	    /**
-	     * 总费用
-	     */
-	    private long totalFee;
+	// private long costPrice;
 
-	    /**
-	     * 优惠费用
-	     */
-	    private long discountFee;
+	/**
+	 * 总费用
+	 */
+	private long totalFee;
 
-	    /**
-	     * 减免金额
-	     */
-	    private long operDiscountFee;
+	/**
+	 * 优惠费用
+	 */
+	private long discountFee;
 
-	    /**
-	     * 减免原因
-	     */
-	    private String operDiscountDesc;
+	/**
+	 * 减免金额
+	 */
+	private long operDiscountFee;
 
-	    /**
-	     * 应收费用
-	     */
-	    private long adjustFee;
+	/**
+	 * 减免原因
+	 */
+	private String operDiscountDesc;
 
-	    /**
-	     * 赠送积分
-	     */
-	    private long jf;
+	/**
+	 * 应收费用
+	 */
+	private long adjustFee;
 
-	    private String prodDesc;
+	/**
+	 * 赠送积分
+	 */
+	private long jf;
 
-	    private String extendInfo;
+	// private String prodDesc;
 
-	    private Timestamp updateTime;
+	// private String extendInfo;
 
-	    private String updateChlId;
+	// private Timestamp updateTime;
 
-	    private String updateOperId;
+	// private String updateChlId;
 
-	    /**
-	     * SKU库存ID
-	     */
-	    private String skuStorageId;
+	// private String updateOperId;
 
-	    private String isInvoice;
+	/**
+	 * SKU库存ID
+	 */
+	private String skuStorageId;
 
-	    private long couponFee;
+	// private String isInvoice;
 
-	    private long jfFee;
+	// private long couponFee;
 
-	    /**
-	     * 售后标识
-	     */
-	    private String cusServiceFlag;
+	// private long jfFee;
 
-	    /**
-	     * 商品编码
-	     */
-	    private String prodCode;
+	/**
+	 * 售后标识
+	 */
+	private String cusServiceFlag;
+
+	/**
+	 * 商品编码
+	 */
+	private String prodCode;
+
+	public long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(long orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getProdId() {
+		return prodId;
+	}
+
+	public void setProdId(String prodId) {
+		this.prodId = prodId;
+	}
+
+	public String getProdName() {
+		return prodName;
+	}
+
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
+	public String getSkuId() {
+		return skuId;
+	}
+
+	public void setSkuId(String skuId) {
+		this.skuId = skuId;
+	}
+
+	public String getStorageId() {
+		return storageId;
+	}
+
+	public void setStorageId(String storageId) {
+		this.storageId = storageId;
+	}
+
+	public long getBuySum() {
+		return buySum;
+	}
+
+	public void setBuySum(long buySum) {
+		this.buySum = buySum;
+	}
+
+	public long getTotalFee() {
+		return totalFee;
+	}
+
+	public void setTotalFee(long totalFee) {
+		this.totalFee = totalFee;
+	}
+
+	public long getDiscountFee() {
+		return discountFee;
+	}
+
+	public void setDiscountFee(long discountFee) {
+		this.discountFee = discountFee;
+	}
+
+	public long getOperDiscountFee() {
+		return operDiscountFee;
+	}
+
+	public void setOperDiscountFee(long operDiscountFee) {
+		this.operDiscountFee = operDiscountFee;
+	}
+
+	public String getOperDiscountDesc() {
+		return operDiscountDesc;
+	}
+
+	public void setOperDiscountDesc(String operDiscountDesc) {
+		this.operDiscountDesc = operDiscountDesc;
+	}
+
+	public long getAdjustFee() {
+		return adjustFee;
+	}
+
+	public void setAdjustFee(long adjustFee) {
+		this.adjustFee = adjustFee;
+	}
+
+	public long getJf() {
+		return jf;
+	}
+
+	public void setJf(long jf) {
+		this.jf = jf;
+	}
+
+	public String getSkuStorageId() {
+		return skuStorageId;
+	}
+
+	public void setSkuStorageId(String skuStorageId) {
+		this.skuStorageId = skuStorageId;
+	}
+
+	public String getCusServiceFlag() {
+		return cusServiceFlag;
+	}
+
+	public void setCusServiceFlag(String cusServiceFlag) {
+		this.cusServiceFlag = cusServiceFlag;
+	}
+
+	public String getProdCode() {
+		return prodCode;
+	}
+
+	public void setProdCode(String prodCode) {
+		this.prodCode = prodCode;
+	}
+
+	public String getProdType() {
+		return prodType;
+	}
+
+	public void setProdType(String prodType) {
+		this.prodType = prodType;
+	}
+
 }

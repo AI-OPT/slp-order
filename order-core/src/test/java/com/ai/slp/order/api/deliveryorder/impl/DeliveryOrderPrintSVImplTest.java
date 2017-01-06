@@ -29,7 +29,7 @@ public class DeliveryOrderPrintSVImplTest {
 	@Test
 	public void testQuery() {
 		DeliveryOrderPrintRequest request=new DeliveryOrderPrintRequest();
-		request.setOrderId(2000001072461999l);
+		request.setOrderId(2000001256210756l);
 		request.setUserId("2ecee85451c3460a");
 		request.setTenantId("changhong");
 		DeliveryOrderQueryResponse response = deliveryOrderPrintSV.query(request);

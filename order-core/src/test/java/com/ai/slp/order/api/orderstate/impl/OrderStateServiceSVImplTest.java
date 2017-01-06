@@ -37,12 +37,11 @@ public class OrderStateServiceSVImplTest {
 	public void updateWaitRebateState(){
 		WaitRebateRequest request = new WaitRebateRequest();
 		//
-		request.setOrderId(2000001052388255l);
+		request.setOrderId(2000001244455979l);
 		request.setTenantId("changhong");
 		log.info("request:"+JSON.toJSONString(request));
 		WaitRebateResponse response = this.orderStateServiceSV.updateWaitRebateState(request);
 		log.info("response:"+JSON.toJSONString(response));
 		
 	}
-
 }

@@ -43,7 +43,7 @@
 					 interface="com.ai.slp.route.api.server.interfaces.IRouteServer" />
 	<!-- 缓存 -->
 	<dubbo:reference id="iCacheSV" loadbalance="roundrobin"
-					 interface="com.ai.slp.common.api.cache.interfaces.ICacheSV" />
+					 interface="com.ai.platform.common.api.cache.interfaces.ICacheSV" />
 
 	<dubbo:reference id="iOrderCancelSV" loadbalance="roundrobin"
 					 interface="com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV" />

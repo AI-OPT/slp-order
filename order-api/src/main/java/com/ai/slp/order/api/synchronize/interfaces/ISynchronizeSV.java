@@ -25,6 +25,8 @@ public interface ISynchronizeSV {
 	 * @param request
 	 * @throws SystemException
 	 * @author zhangqiang7
+	 * @ApiCode ORD_SYNCRONIZE
+     * @RestRelativeURL orderSynchronize/ordersynchronizeservice
 	 * 
 	 */
 	@POST

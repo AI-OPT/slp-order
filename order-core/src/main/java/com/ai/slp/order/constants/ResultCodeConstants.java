@@ -6,6 +6,8 @@ public class ResultCodeConstants {
 	
 	public static final String FAIL_CODE = "000001";
 	
+	public static final String FAILT_CODE = "999999";
+	
 	public final class ApiOrder {
 		
 		 /**

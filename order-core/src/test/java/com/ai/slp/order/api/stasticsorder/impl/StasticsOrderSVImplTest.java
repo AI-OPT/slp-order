@@ -23,11 +23,10 @@ public class StasticsOrderSVImplTest {
     public void testStasticOrder(){
 		StasticsOrderRequest query=new StasticsOrderRequest();
         query.setTenantId("changhong");
-        query.setPageSize(10);
+        query.setPageSize(5);
         query.setPageNo(1);
         //query.setState("14");
        // query.setUserId("123");
-        query.setOrderId(277497l);
         List<String> list = new ArrayList<String>();
         //list.add("000000000000000945");
        // list.add("123");

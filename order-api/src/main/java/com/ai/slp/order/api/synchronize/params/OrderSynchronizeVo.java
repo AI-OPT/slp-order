@@ -14,12 +14,12 @@ public class OrderSynchronizeVo extends BaseInfo {
 	/**
 	 * 订单发票信息
 	 */
-	private OrdOdInvoiceVo ordOdInvoice;
+	private OrdOdInvoiceVo ordOdInvoiceVo;
 
 	/**
 	 * 订单物流信息
 	 */
-	private OrdOdLogisticVo ordOdLogistic;
+	private OrdOdLogisticVo ordOdLogisticVo;
 
 	/**
 	 * 订单商品信息
@@ -31,6 +31,11 @@ public class OrderSynchronizeVo extends BaseInfo {
 	 */
 	private OrdOrderVo ordOrderVo;
 
+	/**
+	 * 订单支付信息
+	 */
+	private OrdBalanceIfVo ordBalanceIfVo;
+
 	public OrdOdFeeTotalVo getOrdOdFeeTotalVo() {
 		return ordOdFeeTotalVo;
 	}
@@ -39,20 +44,20 @@ public class OrderSynchronizeVo extends BaseInfo {
 		this.ordOdFeeTotalVo = ordOdFeeTotalVo;
 	}
 
-	public OrdOdInvoiceVo getOrdOdInvoice() {
-		return ordOdInvoice;
+	public OrdOdInvoiceVo getOrdOdInvoiceVo() {
+		return ordOdInvoiceVo;
 	}
 
-	public void setOrdOdInvoice(OrdOdInvoiceVo ordOdInvoice) {
-		this.ordOdInvoice = ordOdInvoice;
+	public void setOrdOdInvoiceVo(OrdOdInvoiceVo ordOdInvoiceVo) {
+		this.ordOdInvoiceVo = ordOdInvoiceVo;
 	}
 
-	public OrdOdLogisticVo getOrdOdLogistic() {
-		return ordOdLogistic;
+	public OrdOdLogisticVo getOrdOdLogisticVo() {
+		return ordOdLogisticVo;
 	}
 
-	public void setOrdOdLogistic(OrdOdLogisticVo ordOdLogistic) {
-		this.ordOdLogistic = ordOdLogistic;
+	public void setOrdOdLogisticVo(OrdOdLogisticVo ordOdLogisticVo) {
+		this.ordOdLogisticVo = ordOdLogisticVo;
 	}
 
 	public OrdOdProdVo getOrdOdProdVo() {
@@ -69,6 +74,14 @@ public class OrderSynchronizeVo extends BaseInfo {
 
 	public void setOrdOrderVo(OrdOrderVo ordOrderVo) {
 		this.ordOrderVo = ordOrderVo;
+	}
+
+	public OrdBalanceIfVo getOrdBalanceIfVo() {
+		return ordBalanceIfVo;
+	}
+
+	public void setOrdBalanceIfVo(OrdBalanceIfVo ordBalanceIfVo) {
+		this.ordBalanceIfVo = ordBalanceIfVo;
 	}
 
 }

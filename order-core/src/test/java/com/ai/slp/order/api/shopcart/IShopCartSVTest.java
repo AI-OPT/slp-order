@@ -32,7 +32,7 @@ public class IShopCartSVTest {
     public void addProdTest(){
         CartProd cartProd = new CartProd();
         cartProd.setTenantId("changhong");
-        cartProd.setUserId("3da3109cdb3f4d9e");
+        cartProd.setUserId("3da3109cdb3f4d9e11");
         cartProd.setSkuId("0000000000000286");
         cartProd.setBuyNum(1l);
         System.out.println(JSON.toJSON(cartProd));

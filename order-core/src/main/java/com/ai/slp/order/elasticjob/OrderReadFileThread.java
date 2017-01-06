@@ -29,6 +29,13 @@ import com.alibaba.fastjson.JSON;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 
+/**
+ * 读取订单文件线程
+ * Date: 2017年1月6日 <br>
+ * Copyright (c) 2017 asiainfo.com <br>
+ * 
+ * @author zhangqiang7
+ */
 public class OrderReadFileThread extends Thread {
 
 	private static final Log LOG = LogFactory.getLog(OrderReadFileThread.class);
@@ -38,6 +45,9 @@ public class OrderReadFileThread extends Thread {
 	public BlockingQueue<String[]> ordOrderQueue;
 	public Map<String, String[]> index = new HashMap<>();
 
+	/**
+	 * 从配置文件获取信息
+	 */
 	String ip = PropertiesUtil.getStringByKey("ftp.ip"); // 服务器IP地址
 	String userName = CryptUtils.decrypt(PropertiesUtil.getStringByKey("ftp.userName")); // 用户名
 	String userPwd = CryptUtils.decrypt(PropertiesUtil.getStringByKey("ftp.userPwd")); // 密码
@@ -49,6 +59,9 @@ public class OrderReadFileThread extends Thread {
 		this.ordOrderQueue = ordOrderQueue;
 	}
 
+	/**
+	 * 线程启动
+	 */
 	public void run() {
 		LOG.error("开始获取订单信息ftp文件：" + DateUtil.getSysDate());
 		ChannelSftp sftp = SftpUtil.connect(ip, port, userName, userPwd);
@@ -130,6 +143,13 @@ public class OrderReadFileThread extends Thread {
 		SftpUtil.disconnect(sftp);
 	}
 
+	/**
+	 * 读取订单文件
+	 * @param fileName
+	 * @param sftp
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public void readOrderFile(String fileName, ChannelSftp sftp){
 		InputStream ins = null;
 		BufferedReader reader = null;
@@ -179,6 +199,15 @@ public class OrderReadFileThread extends Thread {
 		}
 	}
 
+	/**
+	 * 匹配需要的文件名称
+	 * @param path
+	 * @param sftp
+	 * @return
+	 * @throws SftpException
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public List<String> getFileName(String path, ChannelSftp sftp) throws SftpException {
 		List<String> fileList = SftpUtil.listFiles(path, sftp);
 		LOG.error("++++++++++获取ftp订单信息文件列表,文件列表如下" + JSON.toJSONString(fileList));
@@ -196,6 +225,12 @@ public class OrderReadFileThread extends Thread {
 		return nameList;
 	}
 
+	/**
+	 * 删除ftp文件
+	 * @param sPath
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public void deleteFile(String sPath) {
 		File file = new File(sPath);
 		// 路径为文件且不为空则进行删除
@@ -206,6 +241,12 @@ public class OrderReadFileThread extends Thread {
 		}
 	}
 
+	/**
+	 * 安全关闭资源
+	 * @param fis
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public static void safeClose(InputStream fis) {
 		if (fis != null) {
 			try {
@@ -216,6 +257,12 @@ public class OrderReadFileThread extends Thread {
 		}
 	}
 
+	/**
+	 * 安全关闭资源
+	 * @param fis
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public static void safeClose(BufferedWriter fis) {
 		if (fis != null) {
 			try {
@@ -226,6 +273,12 @@ public class OrderReadFileThread extends Thread {
 		}
 	}
 
+	/**
+	 * 安全关闭资源
+	 * @param fis
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public static void safeClose(BufferedReader fis) {
 		if (fis != null) {
 			try {
@@ -236,10 +289,24 @@ public class OrderReadFileThread extends Thread {
 		}
 	}
 
+	/**
+	 * 格式化
+	 * @param date
+	 * @return
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public synchronized String format1(Date date) {
 		return dateFormat.format(date);
 	}
 
+	/**
+	 * 格式化
+	 * @param date
+	 * @return
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public String format2(Date date) {
 		synchronized (dateFormat) {
 			return dateFormat.format(date);
