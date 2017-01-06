@@ -14,6 +14,7 @@ import com.ai.slp.order.api.synchronize.params.OrderSynchronizeVo;
 import com.ai.slp.order.constants.ResultCodeConstants;
 import com.ai.slp.order.service.business.interfaces.ISyncronizeBusiSV;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 
 @Service
 @Component
@@ -32,7 +33,7 @@ public class SyncronizeImpl implements ISynchronizeSV {
 			syncronizeBusiSV.orderSynchronize(request);
 			responseHeader = new ResponseHeader(true, ResultCodeConstants.SUCCESS_CODE, "同步成功");
 		} catch (BusinessException e) {
-			LOG.error("同步订单失败");
+			LOG.error("同步订单失败,原因:"+JSON.toJSONString(e));
 			responseHeader = new ResponseHeader(false, ResultCodeConstants.FAILT_CODE, "同步失败");
 		}
 		response.setResponseHeader(responseHeader);
