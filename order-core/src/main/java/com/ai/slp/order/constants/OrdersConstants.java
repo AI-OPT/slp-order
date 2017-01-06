@@ -5,6 +5,8 @@ import com.ai.slp.order.util.PropertiesLoader;
 public final class OrdersConstants {
 	
 	public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
+	
+	public static final String TENANT_ID = "changhong";
 
 	public static final String ORDER_PHONENUM_DSS = "Order_PhoneNum";
 
@@ -29,6 +31,23 @@ public final class OrdersConstants {
 			 * 1：up平台
 			 */
 			public static final String UPPLATFORM = "1";
+
+		}
+		
+		public static final class UserType {
+			/**
+			 * 10:个人
+			 */
+			public static final String PERSONAL = "10";
+
+			/**
+			 * 11:企业
+			 */
+			public static final String ENTERPRISE = "11";
+			/**
+			 * 11:代理人
+			 */
+			public static final String PROXY = "12";
 
 		}
 
@@ -424,6 +443,13 @@ public final class OrdersConstants {
 			 */
 			public static final String PROD = "1";
 
+		}
+		public static class StandProdId {
+			/**
+			 *  标准品id
+			 */
+			public static final String STAND_PROD_ID = "1";
+			
 		}
 
 	}

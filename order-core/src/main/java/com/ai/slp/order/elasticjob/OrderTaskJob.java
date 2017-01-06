@@ -15,6 +15,14 @@ import com.ai.opt.sdk.components.lock.AbstractMutexLock;
 import com.ai.opt.sdk.components.lock.RedisMutexLockFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
+
+/**
+ * 订单Task
+ * Date: 2017年1月6日 <br>
+ * Copyright (c) 2017 asiainfo.com <br>
+ * 
+ * @author zhangqiang7
+ */
 @Service
 public class OrderTaskJob {
 
@@ -29,6 +37,11 @@ public class OrderTaskJob {
 
 	public static ExecutorService handlePool;
 
+	/**
+	 * 分布式锁
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public void orderImportJob() {
 		AbstractMutexLock lock = null;
 		boolean lockflag = false;
@@ -56,6 +69,12 @@ public class OrderTaskJob {
 		}
 	}
 
+	/**
+	 * 现场启动
+	 * 
+	 * @author zhangqiang7
+	 * @UCUSER
+	 */
 	public void run() {
 		LOG.error("订单信息任务开始执行，当前时间戳：" + DateUtil.getSysDate());
 		try {

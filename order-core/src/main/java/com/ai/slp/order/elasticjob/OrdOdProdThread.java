@@ -14,6 +14,13 @@ import com.ai.slp.order.util.PropertiesUtil;
 import com.ai.slp.order.vo.OrdOdProdVo;
 import com.alibaba.fastjson.JSON;
 
+/**
+ * 订单商品信息同步
+ * Date: 2017年1月6日 <br>
+ * Copyright (c) 2017 asiainfo.com <br>
+ * 
+ * @author zhangqiang7
+ */
 public class OrdOdProdThread extends Thread {
 
 	private static final Log LOG = LogFactory.getLog(OrdOdProdThread.class);
@@ -27,6 +34,9 @@ public class OrdOdProdThread extends Thread {
 		this.ofcSV = ofcSV;
 	}
 
+	/**
+	 * 线程启动
+	 */
 	public void run() {
 		while (true) {
 			try {
