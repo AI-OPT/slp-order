@@ -4,19 +4,16 @@ import com.ai.slp.order.util.PropertiesLoader;
 
 public final class OrdersConstants {
 	
+	/** 消息队列配置信息(已废弃)*/
 	public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
-
-	public static final String ORDER_PHONENUM_DSS = "Order_PhoneNum";
-
-	public static final String O2P_NOTIFYURL = "o2p_nofityurl";
-
+	/** 定时任务配置信息*/
 	public static final String DTS_SCHEDULE_NAME = "slp-order-dts-sched";
 
 	/**
 	 * 属性文件加载对象
 	 */
 	private static PropertiesLoader loader = new PropertiesLoader("remote_url.properties");
-
+	/** 订单常量相关信息*/
 	public static final class OrdOrder {
 
 		public static final class Flag {
@@ -31,7 +28,7 @@ public final class OrdersConstants {
 			public static final String UPPLATFORM = "1";
 
 		}
-
+		/** 订单物流信息*/
 		public static final class DeliveryFlag {
 			/**
 			 * N:不需要物流
@@ -44,7 +41,7 @@ public final class OrdersConstants {
 			public static final String EXPRESS = "Y";
 
 		}
-
+		/** 订单标识*/
 		public static final class cusServiceFlag {
 			/**
 			 * N:否 (售后订单标识)
@@ -57,7 +54,7 @@ public final class OrdersConstants {
 			public static final String YES = "Y";
 
 		}
-
+		/** 订单来源*/
 		public static final class ChlId {
 
 			/**
@@ -90,7 +87,7 @@ public final class OrdersConstants {
 			 */
 			public static final String SELFOPERATION = "9006";
 		}
-
+		/** 订单类型*/
 		public static class OrderType {
 
 			/**
@@ -104,7 +101,7 @@ public final class OrdersConstants {
 			public static final String BUG_MATERIAL_PROD = "110000";
 
 		}
-
+		/** 订单状态*/
 		public static class State {
 			/**
 			 * 10 提交
@@ -312,47 +309,12 @@ public final class OrdersConstants {
 			public static final String FINSH_REVOKE = "25";
 
 			/**
-			 * 80 订单等待自动执行
-			 */
-			public static final String WAIT_AUTO_EXCUTE = "80";
-
-			/**
-			 * 802 订单自动执行失败
-			 */
-			public static final String AUTO_EXCUTED_FAILURE = "802";
-
-			/**
 			 * 110 支付失败
 			 */
 			public static final String PAY_FAILURE = "110";
 
-			/**
-			 * 待激活
-			 */
-			public static final String WAIT_ACTIVATION = "18";
-
-			/**
-			 * 已激活
-			 */
-			public static final String FINISH_ACTIVATION = "181";
-
-			/**
-			 * 预开户
-			 */
-			public static final String PRE_OPEN_STATE = "40";
-
-			/**
-			 * 待生成制卡文件
-			 */
-			public static final String WAIT_CARD_FILE = "36";
-
-			/**
-			 * 待卡商制卡
-			 */
-			public static final String WAIT_BUSINESS_CARD_FILE = "37";
-
 		}
-
+		/** 子订单标识*/
 		public static final class SubFlag {
 
 			// 1 是
@@ -362,7 +324,7 @@ public final class OrdersConstants {
 			public static final String NO = "N";
 
 		}
-
+		/** 订单业务类型*/
 		public static class BusiCode {
 
 			// 1：正常单
@@ -378,7 +340,7 @@ public final class OrdersConstants {
 			public static final String CANCEL_ORDER = "4";
 
 		}
-
+		/** 客户端显示状态*/
 		public static class DisplayFlag {
 
 			// 10 用户正常可见
@@ -392,9 +354,9 @@ public final class OrdersConstants {
 		}
 
 	}
-
+	/** 订单商品常量相关信息*/
 	public static final class OrdOdProd {
-
+		/** 订单商品状态*/
 		public static class State {
 			/**
 			 * 1 销售
@@ -417,7 +379,7 @@ public final class OrdersConstants {
 			public static final String PRESALE = "4";
 
 		}
-
+		/** 销售品类型*/
 		public static class ProdType {
 			/**
 			 * 1 商品
@@ -427,7 +389,7 @@ public final class OrdersConstants {
 		}
 
 	}
-
+	/** 订单轨迹相关信息*/
 	public static final class OrdOdStateChg {
 
 		/**
@@ -539,39 +501,9 @@ public final class OrdersConstants {
 			public static final String ORDER_TO_FINISH_LOGISTICS_DELIVERY = "您提交的订单已经完成出库，物流派发中，请耐心等待收货";
 
 			/**
-			 * 订单待用户网厅收货确认
-			 */
-			public static final String ORDER_TO_WAIT_CUST_NETHALL_CONFIRM = "您提交的订单需要您在网厅进行收货确认";
-
-			/**
-			 * 订单待用户网厅激活
-			 */
-			public static final String ORDER_TO_WAIT_WAIT_ACTIVATE = "等待激活";
-
-			/**
-			 * 订单 用户网厅激活操作
-			 */
-			public static final String ORDER_TO_AUTO_START_SV = "您已经完成激活";
-
-			/**
 			 * 订单 用户确认收货
 			 */
 			public static final String ORDER_TO_FINISH_CONFIRM = "您已经完成确认收货";
-
-			/**
-			 * 订单待用户营业厅自提确认
-			 */
-			public static final String ORDER_TO_WAIT_CUST_OFFICEHALL_CONFIRM = "您提交的订单需要您在营业厅进行自提确认";
-
-			/**
-			 * 订单 客户营业厅自提确认完成
-			 */
-			public static final String ORDER_TO_FINISH_CUST_OFFICEHALL_CONFIRM = "您已经在营业厅完成自提收货";
-
-			/**
-			 * 订单 物流送达确认
-			 */
-			public static final String ORDER_TO_FINISH_EXPRESS_CONFIRM = "您的订单已经由物流公司送达";
 
 			/**
 			 * 订单-完成
@@ -582,16 +514,6 @@ public final class OrdersConstants {
 			 * 订单－取消
 			 */
 			public static final String ORDER_TO_CANCEL = "您的订单已取消";
-
-			/**
-			 * 订单-撤销
-			 */
-			public static final String ORDER_TO_REVOKE = "您的撤销订单申请已经受理，请耐心等候处理";
-
-			/**
-			 * 订单-撤销审核
-			 */
-			public static final String ORDER_TO_REVOKE_AUDIT = "您的撤销申请进入待审核处理";
 
 			/**
 			 * 订单-审核通过
@@ -634,61 +556,15 @@ public final class OrdersConstants {
 			public static final String ORDER_REVOKE_FINISH = "您的订单撤销完成";
 
 			/**
-			 * 订单 - 待写卡
-			 */
-			public static final String WAIT_WRITE_CARD = "您的订单待写卡处理";
-
-			/**
 			 * 订单 - 退货完成
 			 */
 			public static final String FINISH_RETURN_GOODS = "您的订单退货完成";
-
-			/**
-			 * 订单不需要收费，后台自动执行订单
-			 */
-			public static final String NO_PAY_AUTO_EXCUTING = "您的订单不需要收费，正在自动执行订单，请稍候";
-
-			/**
-			 * 订单完成收费，后台自动执行订单
-			 */
-			public static final String PAID_AUTO_EXCUTING = "您的订单完成收费，正在自动执行订单，请稍候";
-
-			/**
-			 * 预开户订单提交完成,待客户资料返档
-			 */
-			public static final String ORDER_TO_WAIT_ARCHIVE = "您的订单完成，正在等待客户资料返档";
-
-			/**
-			 * 订单－预开户号码批量回收
-			 */
-			public static final String PRE_ORDER_BATCH_CANCEL = "您的订单已经通过预开户号码批量回收取消";
-
-			/**
-			 * 订单－用户逾期未激活强制销户
-			 */
-			public static final String INACTIVE_BATCH_CANCEL = "用户逾期未激活强制销户";
-
-			/**
-			 * 订单－用户欠费停机销户
-			 */
-			public static final String OWE_FEE_BATCH_CANCEL = "用户欠费停机销户";
-
-			/**
-			 * 订单-制卡文件生成
-			 */
-			public static final String WAIT_CREATE_CARD_FILE = "您的订单已审核通过，进入制卡文件生成环节";
-
-			/**
-			 * 订单-卡商制卡
-			 */
-			public static final String WAIT_BUSINESS_CARD_FILE = "您的订单制卡文件已生成，进入卡商制卡环节";
-
 		}
 
 	}
-
+	/** 订单费用总表常量相关信息*/
 	public static final class OrdOdFeeTotal {
-
+		/** 收退费表示*/
 		public static class payFlag {
 			/**
 			 * 收入
@@ -701,7 +577,7 @@ public final class OrdersConstants {
 			public static final String OUT = "out";
 
 		}
-
+		/** 默认支付方式*/
 		public static class PayStyle {
 
 			/**
@@ -727,9 +603,9 @@ public final class OrdersConstants {
 		}
 
 	}
-
+	/** 订单费用明细常量相关信息*/
 	public static final class OrdOdFeeProd {
-
+		/** 支付方式*/
 		public static class PayStyle {
 
 			/**
@@ -743,9 +619,9 @@ public final class OrdersConstants {
 			public static final String COUPON = "8";
 		}
 	}
-
+	/** 订单支付机构接口常量相关信息*/
 	public static final class OrdBalacneIf {
-
+		/** 支付系统id*/
 		public static class paySystemId {
 			/**
 			 * 1 支付中心
@@ -755,9 +631,9 @@ public final class OrdersConstants {
 		}
 
 	}
-
+	/** 订单商品明细扩展相关信息*/
 	public static final class OrdOdProdExtend {
-
+		/**批量标识*/
 		public static class BatchFlag {
 			/**
 			 * 1 是
@@ -772,9 +648,10 @@ public final class OrdersConstants {
 		}
 
 	}
-
+	
+	/** 订单提发货相关信息*/
 	public static final class OrdOdDeliverInfo {
-
+		/** 打印信息*/
 		public static class printInfo {
 
 			/**
@@ -790,9 +667,9 @@ public final class OrdersConstants {
 		}
 
 	}
-
+	/** 订单发票相关信息*/
 	public static final class ordOdInvoice {
-
+		/** 发票状态*/
 		public static class invoiceStatus {
 			/** 1：发票未打印 */
 			public static final String ONE = "1";
@@ -803,14 +680,14 @@ public final class OrdersConstants {
 			/** 打印失败 */
 			public static final String FOUR = "4";
 		}
-
+		/** 发票类型*/
 		public static class invoiceType {
 			/** 0：电子发票 */
 			public static final String ZERO = "0";
 			/** 1：纸质发票 */
 			public static final String ONE = "1";
 		}
-
+		/** 发票种类*/
 		public static class invoiceKind {
 			/** 001：增值税专用发票 */
 			public static final String VAT_SPECIAL_INVOICE = "001";
@@ -824,7 +701,7 @@ public final class OrdersConstants {
 			public static final String VAT_ELECTRONIC_SPECIAL_INVOICE = "005";
 		}
 	}
-
+	/** 订单预警信息*/
 	public static final class IfWarning {
 
 		public static class result {
@@ -842,7 +719,7 @@ public final class OrdersConstants {
 		}
 
 	}
-
+	/** 订单打印标记信息*/
 	public static final class printMark {
 
 		/**
@@ -860,7 +737,7 @@ public final class OrdersConstants {
 		 */
 		public static final String NOT_PRINT = "3";
 	}
-
+	
 	public static final class Sate {
 		public static final String TENANT_ID = "changhong";
 		/** 订单typeCode */
@@ -908,45 +785,5 @@ public final class OrdersConstants {
 		public static final String ALREADY_RECEIVE_GOODS = "13";
 		/** 部分发货 */
 		public static final String PART_DELIVER_GOODS = "18";
-	}
-
-	/**
-	 * 支付通知 Date: 2016年9月23日 <br>
-	 * Copyright (c) 2016 asiainfo.com <br>
-	 * 
-	 * @author zhanglh
-	 */
-	public static final class NoticeState {
-		/** 待支付 */
-		public static final String UN_PAID_STATE = "00";
-		/** 支付中 */
-		public static final String PAING_STATE = "01";
-		/** 支付成功 */
-		public static final String PAID_SUCCESS_STATE = "02";
-		/** 支付失败 */
-		public static final String PAID_FAILD_STATE = "03";
-		/** 退款中 */
-		public static final String REFUNDING_STATE = "00";
-		/** 退款成功 */
-		public static final String REFUND_SUCCESS_STATE = "01";
-		/** 退款失败 */
-		public static final String REFUND_FAILD_STATE = "02";
-
-	}
-
-	public static final class Notice {
-		/** 成功 */
-		public static final String NOTICE_SUCCESS_STATE = "000000";
-		/** 失败 */
-		public static final String NOTICE_FAILD_STATE = "999999";
-		/** 支付中 */
-		public static final String NOTICE_PAING_STATE = "111111";
-		/** 待支付 */
-		public static final String NOTICE_UNPAID_STATE = "222222";
-		/** 退款中 */
-		public static final String NOTICE_REFUNDING_STATE = "555555";
-		/** 验签失败 */
-		public static final String SIGN_CHECK_FAILD = "333333";
-
 	}
 }
