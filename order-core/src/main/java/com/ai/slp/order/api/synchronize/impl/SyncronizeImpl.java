@@ -34,7 +34,7 @@ public class SyncronizeImpl implements ISynchronizeSV {
 			responseHeader = new ResponseHeader(true, ResultCodeConstants.SUCCESS_CODE, "同步成功");
 		} catch (BusinessException e) {
 			LOG.error("同步订单失败,原因:"+JSON.toJSONString(e));
-			responseHeader = new ResponseHeader(false, ResultCodeConstants.FAILT_CODE, "同步失败");
+			responseHeader = new ResponseHeader(false, e.getErrorCode(), e.getErrorMessage());
 		}
 		response.setResponseHeader(responseHeader);
 		return response;
