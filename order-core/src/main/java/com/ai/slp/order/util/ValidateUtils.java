@@ -45,16 +45,16 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if (condition.getPageNo()==null) {
+		if (condition.getPageNo() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码不能为空");
 		}
-		if (condition.getPageSize()==null) {
+		if (condition.getPageSize() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码大小不能为空");
 		}
 	}
-	
+
 	/**
-	 * 订单状态修改参数校验 
+	 * 订单状态修改参数校验
 	 */
 	public static void validateOrdUpdate(OrdRequest condition) {
 		if (condition == null) {
@@ -63,14 +63,14 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if (condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单ID不能为空");
 		}
 		if (StringUtil.isBlank(condition.getState())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单状态不能为空");
 		}
 	}
-	
+
 	/**
 	 * 预警订单详情参数校验
 	 */
@@ -81,11 +81,11 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if (condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单号不能为空");
 		}
 	}
-	
+
 	/**
 	 * 统计查询参数校验
 	 */
@@ -96,14 +96,14 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if (condition.getPageNo()==null) {
+		if (condition.getPageNo() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码不能为空");
 		}
-		if (condition.getPageSize()==null) {
+		if (condition.getPageSize() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码大小不能为空");
 		}
 	}
-	
+
 	/**
 	 * 订单提交参数校验
 	 */
@@ -117,7 +117,7 @@ public class ValidateUtils {
 		OrdBaseInfo ordBaseInfo = condition.getOrdBaseInfo();
 		List<OrdProductDetailInfo> ordProductDetailInfos = condition.getOrdProductDetailInfos();
 		OrdLogisticsInfo logisticsInfo = condition.getOrdLogisticsInfo();
-		if (ordBaseInfo==null) {
+		if (ordBaseInfo == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单信息不能为空");
 		}
 		if (StringUtil.isBlank(ordBaseInfo.getUserId())) {
@@ -147,130 +147,133 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(ordBaseInfo.getDeliveryFlag())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "是否需要物流信息不能为空");
 		}
-		
+
 		if (CollectionUtil.isEmpty(ordProductDetailInfos)) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "信息列表不能为空");
 		}
 		for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
-			if(!StringUtil.isBlank(ordProductDetailInfo.getAccountId())) {
-				if(StringUtil.isBlank(ordProductDetailInfo.getTokenId())) {
+			if (!StringUtil.isBlank(ordProductDetailInfo.getAccountId())) {
+				if (StringUtil.isBlank(ordProductDetailInfo.getTokenId())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "积分账户id存在的情况下,积分令牌不能为空");
 				}
-				if(StringUtil.isBlank(ordProductDetailInfo.getPointRate())) {
+				if (StringUtil.isBlank(ordProductDetailInfo.getPointRate())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "积分账户id存在的情况下,积分比率不能为空");
 				}
-				
+
 			}
-			if(StringUtil.isBlank(ordProductDetailInfo.getSupplierId())) {
+			if (StringUtil.isBlank(ordProductDetailInfo.getSupplierId())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "销售商id不能为空");
 			}
 			List<OrdProductInfo> ordProductInfoList = ordProductDetailInfo.getOrdProductInfoList();
-			//费用明细不为空时,校验支付方式是否存在
+			// 费用明细不为空时,校验支付方式是否存在
 			List<OrdFeeTotalProdInfo> totalProdInfos = ordProductDetailInfo.getOrdFeeTotalProdInfo();
-			if(!CollectionUtil.isEmpty(totalProdInfos)) {
+			if (!CollectionUtil.isEmpty(totalProdInfos)) {
 				for (OrdFeeTotalProdInfo ordFeeTotalProdInfo : totalProdInfos) {
-					if(StringUtil.isBlank(ordFeeTotalProdInfo.getPayStyle())) {
+					if (StringUtil.isBlank(ordFeeTotalProdInfo.getPayStyle())) {
 						throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "支付方式不能为空");
 					}
 				}
 			}
-			/** 判断商品是否允许发票*/
+			/** 判断商品是否允许发票 */
 			OrdInvoiceInfo ordInvoiceInfo = ordProductDetailInfo.getOrdInvoiceInfo();
-			/** 判断是否选择打印发票*/
-			if(ordInvoiceInfo!=null) {
-				/** 发票参数校验*/
+			/** 判断是否选择打印发票 */
+			if (ordInvoiceInfo != null) {
+				/** 发票参数校验 */
 				ValidateUtils.validateOrdInvoice(ordInvoiceInfo);
 			}
 			if (CollectionUtil.isEmpty(ordProductInfoList)) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品信息列表不能为空");
 			}
 			for (OrdProductInfo ordProductInfo : ordProductInfoList) {
-				if(StringUtil.isBlank(ordProductInfo.getSkuId())) {
+				if (StringUtil.isBlank(ordProductInfo.getSkuId())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "单品id不能为空");
 				}
-				if(ordProductInfo.getBuySum()==0) {
+				if (ordProductInfo.getBuySum() == 0) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "购买数量不能为空");
 				}
-				if(StringUtil.isBlank(ordProductInfo.getStandard())) {
+				if (StringUtil.isBlank(ordProductInfo.getStandard())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品规格不能为空");
 				}
 			}
 		}
-		if(logisticsInfo==null) {
+		if (logisticsInfo == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "配送信息不能为空");
 		}
-		if(StringUtil.isBlank(logisticsInfo.getLogisticsType())) {
+		if (StringUtil.isBlank(logisticsInfo.getLogisticsType())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "配送方式不能为空");
 		}
-		if(StringUtil.isBlank(logisticsInfo.getContactName())) {
+		if (StringUtil.isBlank(logisticsInfo.getContactName())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人姓名不能为空");
 		}
-		if(StringUtil.isBlank(logisticsInfo.getContactTel())) {
+		if (StringUtil.isBlank(logisticsInfo.getContactTel())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人电话不能为空");
 		}
-		if(StringUtil.isBlank(logisticsInfo.getProvinceCode())) {
+		if (StringUtil.isBlank(logisticsInfo.getProvinceCode())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人省份不能为空");
 		}
-		if(StringUtil.isBlank(logisticsInfo.getCityCode())) {
+		if (StringUtil.isBlank(logisticsInfo.getCityCode())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人地市不能为空");
 		}
-		if(StringUtil.isBlank(logisticsInfo.getCountyCode())) {
+		if (StringUtil.isBlank(logisticsInfo.getCountyCode())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人区县不能为空");
 		}
-		if(StringUtil.isBlank(logisticsInfo.getAddress())) {
+		if (StringUtil.isBlank(logisticsInfo.getAddress())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人详细地址不能为空");
 		}
-		if(StringUtil.isBlank(logisticsInfo.getPostCode())) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人邮编不能为空");
-    	}
+		if (StringUtil.isBlank(logisticsInfo.getPostCode())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收件人邮编不能为空");
+		}
 	}
-	
+
 	/**
 	 * 订单下单时,发票参数检验
 	 */
 	public static void validateOrdInvoice(OrdInvoiceInfo condition) {
-		if(StringUtil.isBlank(condition.getInvoiceType())) {
+		if (StringUtil.isBlank(condition.getInvoiceType())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "在打印发票的情况下,发票类型不能为空");
 		}
-		if(StringUtil.isBlank(condition.getInvoiceTitle())) {
+		if (StringUtil.isBlank(condition.getInvoiceTitle())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "在打印发票的情况下,发票抬头不能为空");
 		}
-		if(StringUtil.isBlank(condition.getInvoiceContent())) {
+		if (StringUtil.isBlank(condition.getInvoiceContent())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "在打印发票的情况下,发票内容不能为空");
 		}
-		if(StringUtil.isBlank(condition.getInvoiceKind())) {
+		if (StringUtil.isBlank(condition.getInvoiceKind())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "在打印发票的情况下,发票种类不能为空");
-		}else {
-			if(OrdersConstants.ordOdInvoice.invoiceKind.VAT_SPECIAL_INVOICE.equals(condition.getInvoiceKind())||
-					OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_SPECIAL_INVOICE.equals(condition.getInvoiceKind())) {
-				if(StringUtil.isBlank(condition.getBuyerTaxpayerNumber())) {
+		} else {
+			if (OrdersConstants.ordOdInvoice.invoiceKind.VAT_SPECIAL_INVOICE.equals(condition.getInvoiceKind())
+					|| OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_SPECIAL_INVOICE
+							.equals(condition.getInvoiceKind())) {
+				if (StringUtil.isBlank(condition.getBuyerTaxpayerNumber())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "专用发票时,购货方纳税人识别号不能为空");
 				}
-				if(StringUtil.isBlank(condition.getBuyerBankName())) {
+				if (StringUtil.isBlank(condition.getBuyerBankName())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "专用发票时,购货方开户行名称不能为空");
 				}
-				if(StringUtil.isBlank(condition.getBuyerBankAccount())) {
+				if (StringUtil.isBlank(condition.getBuyerBankAccount())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "专用发票时,购货方开户行账号不能为空");
 				}
 			}
 		}
-		
-		if(OrdersConstants.ordOdInvoice.invoiceType.ZERO.equals(condition.getInvoiceType())) {
-			if(!(OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_ORDINARY_INVOICE.equals(condition.getInvoiceKind())
-					||OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_SPECIAL_INVOICE.equals(condition.getInvoiceKind()))) {
-				throw new BusinessException("","电子发票必须对应相应的发票种类");
+
+		if (OrdersConstants.ordOdInvoice.invoiceType.ZERO.equals(condition.getInvoiceType())) {
+			if (!(OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_ORDINARY_INVOICE
+					.equals(condition.getInvoiceKind())
+					|| OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_SPECIAL_INVOICE
+							.equals(condition.getInvoiceKind()))) {
+				throw new BusinessException("", "电子发票必须对应相应的发票种类");
 			}
-		}else if(OrdersConstants.ordOdInvoice.invoiceType.ONE.equals(condition.getInvoiceType())){
-			if(!(OrdersConstants.ordOdInvoice.invoiceKind.VAT_SPECIAL_INVOICE.equals(condition.getInvoiceKind())||
-					OrdersConstants.ordOdInvoice.invoiceKind.VAT_ORDINARY_INVOICE.equals(condition.getInvoiceKind())||
-					OrdersConstants.ordOdInvoice.invoiceKind.WASTE_INVOICE.equals(condition.getInvoiceKind()))) {
-				throw new BusinessException("","纸质发票必须对应相应的发票种类");
+		} else if (OrdersConstants.ordOdInvoice.invoiceType.ONE.equals(condition.getInvoiceType())) {
+			if (!(OrdersConstants.ordOdInvoice.invoiceKind.VAT_SPECIAL_INVOICE.equals(condition.getInvoiceKind())
+					|| OrdersConstants.ordOdInvoice.invoiceKind.VAT_ORDINARY_INVOICE.equals(condition.getInvoiceKind())
+					|| OrdersConstants.ordOdInvoice.invoiceKind.WASTE_INVOICE.equals(condition.getInvoiceKind()))) {
+				throw new BusinessException("", "纸质发票必须对应相应的发票种类");
 			}
-		}else {
-			throw new BusinessException("","发票类型不符合要求");
+		} else {
+			throw new BusinessException("", "发票类型不符合要求");
 		}
 	}
-	
+
 	/**
 	 * 积分中心回调参数校验
 	 */
@@ -281,14 +284,14 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if (condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单号不能为空");
 		}
-		if(StringUtil.isBlank(condition.getOid())) {
+		if (StringUtil.isBlank(condition.getOid())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "积分中心返回的oid不能为空");
 		}
 	}
-	
+
 	/**
 	 * OFC售后订单状态通知参数校验
 	 */
@@ -296,18 +299,17 @@ public class ValidateUtils {
 		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
 		}
-		if (condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单号不能为空");
 		}
 		if (StringUtil.isBlank(condition.getExternalOrderId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "外部申请单号不能为空");
 		}
-		if(StringUtil.isBlank(condition.getState())) {
+		if (StringUtil.isBlank(condition.getState())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "审核状态不能为空");
 		}
 	}
-	
-	
+
 	/**
 	 * 订单发票修改状态参数校验
 	 */
@@ -318,205 +320,208 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if (condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单号不能为空");
 		}
 		String status = condition.getInvoiceStatus();
-		if(StringUtil.isBlank(status)) {
+		if (StringUtil.isBlank(status)) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印状态不能为空");
-		}else if(!OrdersConstants.ordOdInvoice.invoiceStatus.ONE.equals(status)){
+		} else if (!OrdersConstants.ordOdInvoice.invoiceStatus.ONE.equals(status)) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印状态不属于未打印");
 		}
 	}
-	
+
 	/**
 	 * 未支付订单金额修改参数校验
 	 */
 	public static void validateNotPaidModifyRequest(OrderModifyRequest condition) {
-		if(condition==null) {
+		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 		}
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if(condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		if(StringUtil.isBlank(condition.getOperId())) {
+		if (StringUtil.isBlank(condition.getOperId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "受理工号operId不能为空");
 		}
-		if(condition.getUpdateAmount()<=0) {
+		if (condition.getUpdateAmount() <= 0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额必须大于0");
 		}
 	}
-	
-	
+
 	/**
 	 * 订单发货参数校验
 	 */
 	public static void validateDeliverGoodsRequest(DeliverGoodsRequest condition) {
-		if(condition==null) {
+		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 		}
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if(condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		if(StringUtil.isBlank(condition.getOperId())) {
+		if (StringUtil.isBlank(condition.getOperId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "受理工号operId不能为空");
 		}
-		if(StringUtil.isBlank(condition.getExpressId())) {
+		if (StringUtil.isBlank(condition.getExpressId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流公司id不能为空");
 		}
-		if(StringUtil.isBlank(condition.getExpressOddNumber())) {
+		if (StringUtil.isBlank(condition.getExpressOddNumber())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "物流单号不能为空");
 		}
 	}
+
 	/**
 	 * 售后订单审核参数校验
 	 */
 	public static void validateOrderCheckRequest(OrderCheckRequest condition) {
-		if(condition==null) {
+		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 		}
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if(condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		if(StringUtil.isBlank(condition.getOperId())) {
+		if (StringUtil.isBlank(condition.getOperId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "审核工号operId不能为空");
 		}
-		if(StringUtil.isBlank(condition.getState())) {
+		if (StringUtil.isBlank(condition.getState())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "审核结果不能为空");
 		}
 	}
-	
-	
+
 	/**
 	 * 售后申请参数校验
 	 */
 	public static void validateOrderReturnRequest(OrderReturnRequest condition) {
-		if(condition==null) {
+		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 		}
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if(condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		if(StringUtil.isBlank(condition.getOperId())) {
+		if (StringUtil.isBlank(condition.getOperId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "审核工号operId不能为空");
 		}
-		if(condition.getProdDetalId()==null) {
+		if (condition.getProdDetalId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细Id不能为空");
 		}
-		if(condition.getProdSum()<=0) {
+		if (condition.getProdSum() <= 0) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "售后数量不能小于等于0");
 		}
 		String imageId = condition.getImageId();
 		String afterSaleReason = condition.getAfterSaleReason();
-		if(!StringUtil.isBlank(imageId)) {
-			if(imageId.length()>64) {
+		if (!StringUtil.isBlank(imageId)) {
+			if (imageId.length() > 64) {
 				throw new BusinessException("", "图片id位数不能超过64位");
 			}
-			if(StringUtil.isBlank(condition.getImageType())) {
+			if (StringUtil.isBlank(condition.getImageType())) {
 				throw new BusinessException("", "图片id存在的情况下图片类型不能为空");
 			}
 		}
-		if(!StringUtil.isBlank(afterSaleReason)) {
-			if(afterSaleReason.length()>200) {
+		if (!StringUtil.isBlank(afterSaleReason)) {
+			if (afterSaleReason.length() > 200) {
 				throw new BusinessException("", "退款理由不能超过200字");
 			}
 		}
 	}
-	
+
 	/**
 	 * 提货单打印参数校验
 	 */
 	public static void validateDeliveryOrderPrintRequest(DeliveryOrderPrintRequest condition) {
-		if(condition==null) {
+		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 		}
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if(condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		if(StringUtil.isBlank(condition.getUserId())) {
+		if (StringUtil.isBlank(condition.getUserId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "用户Id不能为空");
 		}
 	}
-	
+
 	/**
 	 * 同意退款参数校验
 	 */
 	public static void validateOrderRefundRequest(OrderRefundRequest condition) {
-		if(condition==null) {
+		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 		}
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if(condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		if(StringUtil.isBlank(condition.getOperId())) {
+		if (StringUtil.isBlank(condition.getOperId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "受理工号不能为空");
 		}
-		if(condition.getUpdateMoney()==null) {
+		if (condition.getUpdateMoney() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额不能为空");
-		}else {
-			if(condition.getUpdateMoney()<0) {
+		} else {
+			if (condition.getUpdateMoney() < 0) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "修改金额不能小于0");
 			}
 		}
 	}
+
 	/**
 	 * 拒绝退款参数校验
 	 */
 	public static void validateOrderRefuseRefundRequest(OrderRefuseRefundRequest condition) {
-		if(condition==null) {
+		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 		}
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if(condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
-		if(StringUtil.isBlank(condition.getOperId())) {
+		if (StringUtil.isBlank(condition.getOperId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "受理工号不能为空");
 		}
-		if(StringUtil.isBlank(condition.getRefuseReason())) {
+		if (StringUtil.isBlank(condition.getRefuseReason())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "拒绝理由不能为空");
 		}
 	}
-	
+
 	/**
 	 * 订单详情查询参数校验
 	 */
 	public static void validateQueryOrder(QueryOrderRequest condition) {
-		if(condition==null) {
+		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 		}
 		if (StringUtil.isBlank(condition.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
-		if(condition.getOrderId()==null) {
+		if (condition.getOrderId() == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
 	}
-	
+
 	/**
 	 * 订单同步查询参数校验
 	 */
 	public static void validateSynchronize(OrderSynchronizeVo vo) {
+		if (StringUtil.isBlank(vo.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户Id不能为空");
+		}
 		if (vo.getOrdOrderVo() != null) {
 			if (vo.getOrdOrderVo().getOrderId() == 0) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
@@ -605,7 +610,7 @@ public class ValidateUtils {
 			if (StringUtil.isBlank(vo.getOrdOdInvoiceVo().getInvoiceStatus())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
-		}else{
+		} else {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单发票信息不能为空");
 		}
 

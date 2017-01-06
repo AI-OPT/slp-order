@@ -1,8 +1,8 @@
 package com.ai.slp.order.api.synchronize.params;
 
-import java.io.Serializable;
+import com.ai.opt.base.vo.BaseInfo;
 
-public class OrderSynchronizeVo implements Serializable {
+public class OrderSynchronizeVo extends BaseInfo {
 
 	private static final long serialVersionUID = 1L;
 

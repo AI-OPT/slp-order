@@ -42,7 +42,7 @@ public class ISyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 		try {
 			if (request.getOrdOrderVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOrderVo(), ordOrder);
-				ordOrder.setTenantId(OrdersConstants.TENANT_ID);
+				ordOrder.setTenantId(request.getTenantId());
 				// 长虹侧无子订单的概念
 				ordOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
 				// 状态变化时间
@@ -56,7 +56,7 @@ public class ISyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				BeanUtils.copyProperties(request.getOrdOdProdVo(), ordOdProd);
 				// 订单商品主键
 				long prodDetailId = SequenceUtil.createProdDetailId();
-				ordOdProd.setTenantId(OrdersConstants.TENANT_ID);
+				ordOdProd.setTenantId(request.getTenantId());
 				// 标准品id
 				ordOdProd.setStandardProdId(OrdersConstants.OrdOdProd.StandProdId.STAND_PROD_ID);
 				ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
@@ -70,20 +70,20 @@ public class ISyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				BeanUtils.copyProperties(request.getOrdOdLogisticVo(), ordOdLogistics);
 				// 订单物流主键
 				ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
-				ordOdLogistics.setTenantId(OrdersConstants.TENANT_ID);
+				ordOdLogistics.setTenantId(request.getTenantId());
 				syncronizeAtomSV.insertSelective(ordOdLogistics);
 			}
 
 			if (request.getOrdOdInvoiceVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOdInvoiceVo(), ordOdInvoice);
-				ordOdInvoice.setTenantId(OrdersConstants.TENANT_ID);
+				ordOdInvoice.setTenantId(request.getTenantId());
 				syncronizeAtomSV.insertSelective(ordOdInvoice);
 			}
 
 			if (request.getOrdOdFeeTotalVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOdFeeTotalVo(), ordOdFeeTotal);
 				// 收退费标识
-				ordOdFeeTotal.setTenantId(OrdersConstants.TENANT_ID);
+				ordOdFeeTotal.setTenantId(request.getTenantId());
 				ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);
 				ordOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 				syncronizeAtomSV.insertSelective(ordOdFeeTotal);
@@ -93,7 +93,7 @@ public class ISyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				BeanUtils.copyProperties(request.getOrdBalanceIfVo(), ordBalacneIf);
 				// 订单支付主键
 				ordBalacneIf.setBalacneIfId(SequenceUtil.createBalacneIfId());
-				ordBalacneIf.setTenantId(OrdersConstants.TENANT_ID);
+				ordBalacneIf.setTenantId(request.getTenantId());
 				ordBalacneIf.setCreateTime(DateUtil.getSysDate());
 				syncronizeAtomSV.insertSelective(ordBalacneIf);
 			}

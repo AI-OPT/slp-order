@@ -33,23 +33,27 @@ public class SyncronizeBusiSVImplTest {
 		OrdBalanceIfVo ordBalacneIf = new OrdBalanceIfVo();
 
 		// 订单表
-		ordOrder.setOrderId(45657568);
+		ordOrder.setOrderId(45657569);
 		ordOrder.setChlId("jingdong");
 		ordOrder.setIfWarning("Y");
 		ordOrder.setBusiCode("1");
+		ordOrder.setFlag("0");
 		ordOrder.setOrderTime(DateUtil.getSysDate());
 		ordOrder.setState("1");
 		ordOrder.setUserId("2342443");
+		ordOrder.setDeliveryFlag("Y");
 		ordOrder.setOrderType("1");
 		ordOrder.setAcctId(2343534);
 		ordOrder.setSubsId(3455564);
+		ordOrder.setUserType("1");
 		ordOrder.setSupplierId("56546345");
 
 		// 商品表
-		ordOdProd.setOrderId(45657568);
+		ordOdProd.setOrderId(45657569);
 		ordOdProd.setProdId("45635345");
 		ordOdProd.setProdName("长虹电视");
 		ordOdProd.setSkuId("3546457");
+		ordOdProd.setProdCode("464565");
 		ordOdProd.setBuySum(100);
 		ordOdProd.setTotalFee(1000);
 		ordOdProd.setDiscountFee(0);
@@ -58,7 +62,7 @@ public class SyncronizeBusiSVImplTest {
 		ordOdProd.setCusServiceFlag("N");
 
 		// 物流表
-		ordOdLogistics.setOrderId(45657568);
+		ordOdLogistics.setOrderId(45657569);
 		// 配送类型,必传
 		ordOdLogistics.setLogisticsType("0");
 		// 买家名称
@@ -71,22 +75,25 @@ public class SyncronizeBusiSVImplTest {
 		ordOdLogistics.setPostcode("453454");
 		
 		//发票信息
-		ordOdInvoice.setOrderId(45657568);
+		ordOdInvoice.setOrderId(45657569);
 		ordOdInvoice.setInvoiceType("0");
 		ordOdInvoice.setInvoiceKind("001");
 		ordOdInvoice.setInvoiceStatus("1");
+		ordOdInvoice.setInvoiceContent("nothings");
+		ordOdInvoice.setInvoiceTitle("title");
 		
 		//费用
-		ordOdFeeTotal.setOrderId(45657568);
+		ordOdFeeTotal.setOrderId(45657569);
 		ordOdFeeTotal.setTotalFee(100);
 		ordOdFeeTotal.setDiscountFee(100);
+		ordOdFeeTotal.setPayStyle("1");
 		ordOdFeeTotal.setOperDiscountFee(0);
 		ordOdFeeTotal.setAdjustFee(1000);
 		ordOdFeeTotal.setPaidFee(100);
 		ordOdFeeTotal.setPayFee(100);
 		
 		//支付接口
-		ordBalacneIf.setOrderId(45657568);
+		ordBalacneIf.setOrderId(45657569);
 		ordBalacneIf.setPayStyle("0");
 		ordBalacneIf.setPayFee(100);
 		ordBalacneIf.setExternalId("65464");
@@ -98,6 +105,7 @@ public class SyncronizeBusiSVImplTest {
 		vo.setOrdOdLogisticVo(ordOdLogistics);
 		vo.setOrdOdProdVo(ordOdProd);
 		vo.setOrdOrderVo(ordOrder);
+		vo.setTenantId("changhong");
 		sv.orderSynchronize(vo);
 	}
 }
