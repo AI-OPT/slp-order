@@ -25,7 +25,7 @@ import com.esotericsoftware.minlog.Log;
 
 @Service
 @Transactional
-public class ISyncronizeBusiSVImpl implements ISyncronizeBusiSV {
+public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 
 	@Autowired
 	private ISyncronizeAtomSV syncronizeAtomSV;
