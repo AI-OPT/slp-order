@@ -522,10 +522,10 @@ public class ValidateUtils {
 		if (StringUtil.isBlank(vo.getTenantId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户Id不能为空");
 		}
+		if (vo.getOrderId() == 0) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单Id不能为空");
+		}
 		if (vo.getOrdOrderVo() != null) {
-			if (vo.getOrdOrderVo().getOrderId() == 0) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-			}
 			if (StringUtil.isBlank(vo.getOrdOrderVo().getFlag())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
@@ -561,9 +561,6 @@ public class ValidateUtils {
 		}
 
 		if (vo.getOrdOdProdVo() != null) {
-			if (vo.getOrdOdProdVo().getOrderId() == 0) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-			}
 			if (StringUtil.isBlank(vo.getOrdOdProdVo().getProdCode())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
@@ -581,9 +578,6 @@ public class ValidateUtils {
 		}
 
 		if (vo.getOrdOdFeeTotalVo() != null) {
-			if (vo.getOrdOdFeeTotalVo().getOrderId() == 0) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-			}
 			if (StringUtil.isBlank(vo.getOrdOdFeeTotalVo().getPayStyle())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
@@ -592,9 +586,6 @@ public class ValidateUtils {
 		}
 
 		if (vo.getOrdOdInvoiceVo() != null) {
-			if (vo.getOrdOdInvoiceVo().getOrderId() == 0) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-			}
 			if (StringUtil.isBlank(vo.getOrdOdInvoiceVo().getInvoiceType())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
@@ -615,9 +606,6 @@ public class ValidateUtils {
 		}
 
 		if (vo.getOrdBalanceIfVo() != null) {
-			if (vo.getOrdBalanceIfVo().getOrderId() == 0) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-			}
 			if (StringUtil.isBlank(vo.getOrdBalanceIfVo().getPayStyle())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
@@ -627,9 +615,6 @@ public class ValidateUtils {
 		}
 
 		if (vo.getOrdOdLogisticVo() != null) {
-			if (vo.getOrdOdLogisticVo().getOrderId() == 0) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-			}
 			if (StringUtil.isBlank(vo.getOrdOdLogisticVo().getLogisticsType())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}

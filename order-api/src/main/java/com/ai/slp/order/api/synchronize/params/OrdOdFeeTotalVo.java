@@ -9,7 +9,7 @@ public class OrdOdFeeTotalVo implements Serializable {
 	/**
 	 * 订单id
 	 */
-	private long orderId;
+	//private long orderId;
 
 	/**
 	 * 租户id
@@ -70,14 +70,6 @@ public class OrdOdFeeTotalVo implements Serializable {
 	 * 运费
 	 */
 	private long freight;
-
-	public long getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(long orderId) {
-		this.orderId = orderId;
-	}
 
 	public long getTotalFee() {
 		return totalFee;

@@ -9,7 +9,7 @@ public class OrdOdInvoiceVo implements Serializable{
 	/**
 	 * 订单信息
 	 */
-	private long orderId;
+	//private long orderId;
 
 	/**
 	 * 租户id
@@ -66,14 +66,6 @@ public class OrdOdInvoiceVo implements Serializable{
      * 购货方开户行帐号
      */
     private String buyerBankAccount;
-
-	public long getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(long orderId) {
-		this.orderId = orderId;
-	}
 
 	public String getInvoiceType() {
 		return invoiceType;

@@ -7,6 +7,11 @@ public class OrderSynchronizeVo extends BaseInfo {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * 订单id
+	 */
+	private long orderId;
+
+	/**
 	 * 订单费用信息
 	 */
 	private OrdOdFeeTotalVo ordOdFeeTotalVo;
@@ -35,6 +40,14 @@ public class OrderSynchronizeVo extends BaseInfo {
 	 * 订单支付信息
 	 */
 	private OrdBalanceIfVo ordBalanceIfVo;
+
+	public long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(long orderId) {
+		this.orderId = orderId;
+	}
 
 	public OrdOdFeeTotalVo getOrdOdFeeTotalVo() {
 		return ordOdFeeTotalVo;

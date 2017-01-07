@@ -1,5 +1,7 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.sql.Timestamp;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,21 +47,24 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 		OrdOdInvoice ordOdInvoice = new OrdOdInvoice();
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
 		OrdBalacneIf ordBalacneIf = new OrdBalacneIf();
+		long orderId = request.getOrderId();
 		try {
 			if (request.getOrdOrderVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOrderVo(), ordOrder);
 				ordOrder.setTenantId(request.getTenantId());
+				ordOrder.setOrderId(orderId);
 				// 长虹侧无子订单的概念
 				ordOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
 				// 状态变化时间
 				ordOrder.setStateChgTime(DateUtil.getSysDate());
+				ordOrder.setOrderTime(Timestamp.valueOf(request.getOrdOrderVo().getOrderTime()));
 				// 客户端显示状态
 				ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
 				ordOrder.setDisplayFlagChgTime(DateUtil.getSysDate());
 				OrdOrderCriteria example = new OrdOrderCriteria();
 				OrdOrderCriteria.Criteria criteria = example.createCriteria();
 				criteria.andTenantIdEqualTo(request.getTenantId());
-				criteria.andOrderIdEqualTo(request.getOrdOrderVo().getOrderId());
+				criteria.andOrderIdEqualTo(orderId);
 				int count = 0;
 				count = syncronizeAtomSV.countByExample(example);
 				if (count == 0) {
@@ -73,6 +78,7 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				// 订单商品主键
 				long prodDetailId = SequenceUtil.createProdDetailId();
 				ordOdProd.setTenantId(request.getTenantId());
+				ordOdProd.setOrderId(orderId);
 				// 标准品id
 				ordOdProd.setStandardProdId(OrdersConstants.OrdOdProd.StandProdId.STAND_PROD_ID);
 				ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
@@ -83,7 +89,7 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				OrdOdProdCriteria example = new OrdOdProdCriteria();
 				OrdOdProdCriteria.Criteria criteria = example.createCriteria();
 				criteria.andTenantIdEqualTo(request.getTenantId());
-				criteria.andOrderIdEqualTo(ordOdProd.getOrderId());
+				criteria.andOrderIdEqualTo(orderId);
 				criteria.andProdCodeEqualTo(ordOdProd.getProdCode());
 				int count = 0;
 				count = syncronizeAtomSV.countByExample(example);
@@ -96,10 +102,11 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				// 订单物流主键
 				ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
 				ordOdLogistics.setTenantId(request.getTenantId());
+				ordOdLogistics.setOrderId(orderId);
 				OrdOdLogisticsCriteria example = new OrdOdLogisticsCriteria();
 				OrdOdLogisticsCriteria.Criteria criteria = example.createCriteria();
 				criteria.andTenantIdEqualTo(request.getTenantId());
-				criteria.andOrderIdEqualTo(request.getOrdOdLogisticVo().getOrderId());
+				criteria.andOrderIdEqualTo(orderId);
 				int count = 0;
 				count = syncronizeAtomSV.countByExample(example);
 				if (count == 0) {
@@ -112,10 +119,11 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 			if (request.getOrdOdInvoiceVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOdInvoiceVo(), ordOdInvoice);
 				ordOdInvoice.setTenantId(request.getTenantId());
+				ordOdInvoice.setOrderId(orderId);
 				OrdOdInvoiceCriteria example = new OrdOdInvoiceCriteria();
 				OrdOdInvoiceCriteria.Criteria criteria = example.createCriteria();
 				criteria.andTenantIdEqualTo(request.getTenantId());
-				criteria.andOrderIdEqualTo(request.getOrdOdInvoiceVo().getOrderId());
+				criteria.andOrderIdEqualTo(orderId);
 				int count = 0;
 				count = syncronizeAtomSV.countByExample(example);
 				if (count == 0) {
@@ -129,12 +137,13 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				BeanUtils.copyProperties(request.getOrdOdFeeTotalVo(), ordOdFeeTotal);
 				// 收退费标识
 				ordOdFeeTotal.setTenantId(request.getTenantId());
+				ordOdFeeTotal.setOrderId(orderId);
 				ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);
 				ordOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
 				OrdOdFeeTotalCriteria example = new OrdOdFeeTotalCriteria();
 				OrdOdFeeTotalCriteria.Criteria criteria = example.createCriteria();
 				criteria.andTenantIdEqualTo(request.getTenantId());
-				criteria.andOrderIdEqualTo(request.getOrdOdFeeTotalVo().getOrderId());
+				criteria.andOrderIdEqualTo(orderId);
 				int count = 0;
 				count = syncronizeAtomSV.countByExample(example);
 				if (count == 0) {
@@ -149,11 +158,12 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				// 订单支付主键
 				ordBalacneIf.setBalacneIfId(SequenceUtil.createBalacneIfId());
 				ordBalacneIf.setTenantId(request.getTenantId());
+				ordBalacneIf.setOrderId(orderId);
 				ordBalacneIf.setCreateTime(DateUtil.getSysDate());
 				OrdBalacneIfCriteria example = new OrdBalacneIfCriteria();
 				OrdBalacneIfCriteria.Criteria criteria = example.createCriteria();
 				criteria.andTenantIdEqualTo(request.getTenantId());
-				criteria.andOrderIdEqualTo(request.getOrdBalanceIfVo().getOrderId());
+				criteria.andOrderIdEqualTo(orderId);
 				int count = 0;
 				count = syncronizeAtomSV.updateByExampleSelective(ordBalacneIf, example);
 				if (count == 0) {

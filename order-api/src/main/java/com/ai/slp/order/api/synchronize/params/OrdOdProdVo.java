@@ -16,7 +16,7 @@ public class OrdOdProdVo implements Serializable {
 	/**
 	 * 订单id
 	 */
-	private long orderId;
+	//private long orderId;
 
 	/**
 	 * 销售品类型
@@ -130,14 +130,6 @@ public class OrdOdProdVo implements Serializable {
 	 * 商品编码
 	 */
 	private String prodCode;
-
-	public long getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(long orderId) {
-		this.orderId = orderId;
-	}
 
 	public String getProdId() {
 		return prodId;
