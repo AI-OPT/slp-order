@@ -11,11 +11,17 @@ import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.synchronize.params.OrderSynchronizeVo;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
+import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
+import com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
+import com.ai.slp.order.dao.mapper.bo.OrdOdLogisticsCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
+import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.ISyncronizeAtomSV;
 import com.ai.slp.order.service.business.interfaces.ISyncronizeBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
@@ -50,7 +56,17 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				// 客户端显示状态
 				ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
 				ordOrder.setDisplayFlagChgTime(DateUtil.getSysDate());
-				syncronizeAtomSV.insertSelective(ordOrder);
+				OrdOrderCriteria example = new OrdOrderCriteria();
+				OrdOrderCriteria.Criteria criteria = example.createCriteria();
+				criteria.andTenantIdEqualTo(request.getTenantId());
+				criteria.andOrderIdEqualTo(request.getOrdOrderVo().getOrderId());
+				int count = 0;
+				count = syncronizeAtomSV.countByExample(example);
+				if (count == 0) {
+					syncronizeAtomSV.insertSelective(ordOrder);
+				} else {
+					syncronizeAtomSV.updateByExampleSelective(ordOrder, example);
+				}
 			}
 			if (request.getOrdOdProdVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOdProdVo(), ordOdProd);
@@ -64,20 +80,49 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				ordOdProd.setProdType(OrdersConstants.OrdOdProd.ProdType.PROD);
 				ordOdProd.setValidTime(DateUtil.getSysDate());
 				ordOdProd.setUpdateTime(DateUtil.getSysDate());
-				syncronizeAtomSV.insertSelective(ordOdProd);
+				OrdOdProdCriteria example = new OrdOdProdCriteria();
+				OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+				criteria.andTenantIdEqualTo(request.getTenantId());
+				criteria.andOrderIdEqualTo(ordOdProd.getOrderId());
+				criteria.andProdCodeEqualTo(ordOdProd.getProdCode());
+				int count = 0;
+				count = syncronizeAtomSV.countByExample(example);
+				if (count == 0) {
+					syncronizeAtomSV.insertSelective(ordOdProd);
+				} 
 			}
 			if (request.getOrdOdLogisticVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOdLogisticVo(), ordOdLogistics);
 				// 订单物流主键
 				ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
 				ordOdLogistics.setTenantId(request.getTenantId());
-				syncronizeAtomSV.insertSelective(ordOdLogistics);
+				OrdOdLogisticsCriteria example = new OrdOdLogisticsCriteria();
+				OrdOdLogisticsCriteria.Criteria criteria = example.createCriteria();
+				criteria.andTenantIdEqualTo(request.getTenantId());
+				criteria.andOrderIdEqualTo(request.getOrdOdLogisticVo().getOrderId());
+				int count = 0;
+				count = syncronizeAtomSV.countByExample(example);
+				if (count == 0) {
+					syncronizeAtomSV.insertSelective(ordOdLogistics);
+				} else {
+					syncronizeAtomSV.updateByExampleSelective(ordOdLogistics, example);
+				}
 			}
 
 			if (request.getOrdOdInvoiceVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOdInvoiceVo(), ordOdInvoice);
 				ordOdInvoice.setTenantId(request.getTenantId());
-				syncronizeAtomSV.insertSelective(ordOdInvoice);
+				OrdOdInvoiceCriteria example = new OrdOdInvoiceCriteria();
+				OrdOdInvoiceCriteria.Criteria criteria = example.createCriteria();
+				criteria.andTenantIdEqualTo(request.getTenantId());
+				criteria.andOrderIdEqualTo(request.getOrdOdInvoiceVo().getOrderId());
+				int count = 0;
+				count = syncronizeAtomSV.countByExample(example);
+				if (count == 0) {
+					syncronizeAtomSV.insertSelective(ordOdInvoice);
+				} else {
+					syncronizeAtomSV.updateByExampleSelective(ordOdInvoice, example);
+				}
 			}
 
 			if (request.getOrdOdFeeTotalVo() != null) {
@@ -86,7 +131,17 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				ordOdFeeTotal.setTenantId(request.getTenantId());
 				ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);
 				ordOdFeeTotal.setUpdateTime(DateUtil.getSysDate());
-				syncronizeAtomSV.insertSelective(ordOdFeeTotal);
+				OrdOdFeeTotalCriteria example = new OrdOdFeeTotalCriteria();
+				OrdOdFeeTotalCriteria.Criteria criteria = example.createCriteria();
+				criteria.andTenantIdEqualTo(request.getTenantId());
+				criteria.andOrderIdEqualTo(request.getOrdOdFeeTotalVo().getOrderId());
+				int count = 0;
+				count = syncronizeAtomSV.countByExample(example);
+				if (count == 0) {
+					syncronizeAtomSV.insertSelective(ordOdFeeTotal);
+				} else {
+					syncronizeAtomSV.updateByExampleSelective(ordOdFeeTotal, example);
+				}
 			}
 
 			if (request.getOrdBalanceIfVo() != null) {
@@ -95,7 +150,17 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				ordBalacneIf.setBalacneIfId(SequenceUtil.createBalacneIfId());
 				ordBalacneIf.setTenantId(request.getTenantId());
 				ordBalacneIf.setCreateTime(DateUtil.getSysDate());
-				syncronizeAtomSV.insertSelective(ordBalacneIf);
+				OrdBalacneIfCriteria example = new OrdBalacneIfCriteria();
+				OrdBalacneIfCriteria.Criteria criteria = example.createCriteria();
+				criteria.andTenantIdEqualTo(request.getTenantId());
+				criteria.andOrderIdEqualTo(request.getOrdBalanceIfVo().getOrderId());
+				int count = 0;
+				count = syncronizeAtomSV.updateByExampleSelective(ordBalacneIf, example);
+				if (count == 0) {
+					syncronizeAtomSV.insertSelective(ordBalacneIf);
+				} else {
+					syncronizeAtomSV.updateByExampleSelective(ordBalacneIf, example);
+				}
 			}
 
 		} catch (Exception e) {
