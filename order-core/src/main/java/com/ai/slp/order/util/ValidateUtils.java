@@ -601,9 +601,9 @@ public class ValidateUtils {
 			if (StringUtil.isBlank(vo.getOrdOdInvoiceVo().getInvoiceStatus())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
-		} else {
+		} /*else {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单发票信息不能为空");
-		}
+		}*/
 
 		if (vo.getOrdBalanceIfVo() != null) {
 			if (StringUtil.isBlank(vo.getOrdBalanceIfVo().getPayStyle())) {
@@ -627,8 +627,8 @@ public class ValidateUtils {
 			if (StringUtil.isBlank(vo.getOrdOdLogisticVo().getAddress())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
-		} else {
+		} /*else {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单费用信息不能为空");
-		}
+		}*/
 	}
 }
