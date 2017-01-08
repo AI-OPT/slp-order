@@ -1,7 +1,6 @@
 package com.ai.slp.order.api.synchronize.params;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 public class OrdOrderVo implements Serializable {
 
@@ -10,7 +9,7 @@ public class OrdOrderVo implements Serializable {
 	/**
 	 * 订单id
 	 */
-	private long orderId;
+	// private long orderId;
 
 	/**
 	 * 租户id
@@ -89,7 +88,7 @@ public class OrdOrderVo implements Serializable {
 	/**
 	 * 下单时间
 	 */
-	private Timestamp orderTime;
+	private String orderTime;
 
 	/**
 	 * 销售商ID
@@ -153,14 +152,6 @@ public class OrdOrderVo implements Serializable {
 	 * 预警类型
 	 */
 	private String warningType;
-
-	public long getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(long orderId) {
-		this.orderId = orderId;
-	}
 
 	public String getBusiCode() {
 		return busiCode;
@@ -314,17 +305,17 @@ public class OrdOrderVo implements Serializable {
 		this.warningType = warningType;
 	}
 
-	public Timestamp getOrderTime() {
-		return orderTime;
-	}
-
-	public void setOrderTime(Timestamp orderTime) {
-		this.orderTime = orderTime;
-	}
-
 	// private String cusServiceFlag;
 
 	// private String accountId;
+
+	public String getOrderTime() {
+		return orderTime;
+	}
+
+	public void setOrderTime(String orderTime) {
+		this.orderTime = orderTime;
+	}
 
 	private String flag;
 

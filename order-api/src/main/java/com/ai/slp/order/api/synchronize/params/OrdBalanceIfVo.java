@@ -14,7 +14,7 @@ public class OrdBalanceIfVo implements Serializable {
 	/**
 	 * 订单id
 	 */
-	private long orderId;
+	//private long orderId;
 	/**
 	 * 支付类型
 	 */
@@ -51,14 +51,6 @@ public class OrdBalanceIfVo implements Serializable {
 
 	public void setBalacneIfId(long balacneIfId) {
 		this.balacneIfId = balacneIfId;
-	}
-
-	public long getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(long orderId) {
-		this.orderId = orderId;
 	}
 
 	public long getPayFee() {

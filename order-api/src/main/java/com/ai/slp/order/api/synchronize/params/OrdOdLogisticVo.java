@@ -16,7 +16,7 @@ public class OrdOdLogisticVo implements Serializable {
 	/**
 	 * 订单id
 	 */
-	private long orderId;
+	//private long orderId;
 
 	/**
 	 * 配送方式
@@ -94,14 +94,6 @@ public class OrdOdLogisticVo implements Serializable {
 	 * 附加信息
 	 */
 	private String remark;
-
-	public long getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(long orderId) {
-		this.orderId = orderId;
-	}
 
 	public String getLogisticsType() {
 		return logisticsType;
