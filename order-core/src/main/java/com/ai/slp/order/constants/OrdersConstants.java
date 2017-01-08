@@ -20,14 +20,19 @@ public final class OrdersConstants {
 
 		public static final class Flag {
 			/**
-			 * 0:OFC
+			 * 0:OFC(定时)
 			 */
-			public static final String OFC = "0";
+			public static final String OFC_DTIME = "0";
 
 			/**
 			 * 1：up平台
 			 */
 			public static final String UPPLATFORM = "1";
+			
+			/**
+			 * 3:OFC(实时)
+			 */
+			public static final String OFC_ACTUAL_TIME  = "3";
 
 		}
 		
