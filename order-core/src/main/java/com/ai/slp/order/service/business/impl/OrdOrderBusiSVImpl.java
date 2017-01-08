@@ -439,7 +439,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					for (OrdOrder ordOrder : orders) {
 						BehindOrdOrderVo orderVo = new BehindOrdOrderVo();
 						// 订单查询OFC
-						if (OrdersConstants.OrdOrder.Flag.OFC.equals(ordOrder.getFlag())) {
+						if (OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(ordOrder.getFlag())) {
 							String logisticsName = null;
 							String logisticsNo = null;
 							JSONObject object = queryOFC(ordOrder);

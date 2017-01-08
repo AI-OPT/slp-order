@@ -96,7 +96,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				prodSum, ordOdProd, OrdersConstants.OrdOdProd.State.RETURN,backOrderId,sysDate,state);
 		//TODO
 		/* 5.组装退货申请单(OFC)*/
-		if(OrdersConstants.OrdOrder.Flag.OFC.equals(order.getFlag())) {
+		if(OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(order.getFlag())) {
 			String params = getOFCAfterSaleOrderCreateParam(order,backOrderId,ordOdProd, sysDate, 
 					backTotalFee, prodSum, OrdersConstants.OFCApplyType.BACK);
 			Map<String, String> header=new HashMap<String, String>(); 
@@ -162,7 +162,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				prodSum, ordOdProd, OrdersConstants.OrdOdProd.State.RETURN,refundOrderId,sysDate,null);
 		//TODO
 		/* 5.组装退款申请单(OFC)*/ 
-		if(OrdersConstants.OrdOrder.Flag.OFC.equals(order.getFlag())) {
+		if(OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(order.getFlag())) {
 			String params = getOFCAfterSaleOrderCreateParam(order,refundOrderId, ordOdProd, sysDate, 
 					refundTotalFee, ordOdProd.getBuySum(), OrdersConstants.OFCApplyType.REFUND);
 			Map<String, String> header=new HashMap<String, String>(); 

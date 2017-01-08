@@ -121,7 +121,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         		ordOrderAtomSV.updateById(ordOrder);
         	}
             /* 5.销售订单创建同步到OFC*/
-            if(OrdersConstants.OrdOrder.Flag.OFC.equals(ordOrder.getFlag())) {
+            if(OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(ordOrder.getFlag())) {
             	/* 获取参数*/
             	for (Long subOrderId : subOrderIds) {
             		String params = this.getOFCRequestParams(request, subOrderId,sysdate);
@@ -666,25 +666,29 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 		}
 		OrdOdLogistics logistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(),
 					order.getOrderId());
-		paramsRequest.setReceiverContact(logistics.getContactName());
-        paramsRequest.setReceiverPhone(logistics.getContactTel());
-        paramsRequest.setProvince(logistics.getProvinceCode()==null?"":iCacheSV.
-        		getAreaName(logistics.getProvinceCode())+"省"); 
-        paramsRequest.setCity(logistics.getCityCode()==null?"":iCacheSV.
-    			getAreaName(logistics.getCityCode())+"市");
-        paramsRequest.setRegion(logistics.getCountyCode()==null?"":iCacheSV.
-    			getAreaName(logistics.getCountyCode()));
-        paramsRequest.setReceiverAddress(logistics.getAddress());
-        paramsRequest.setPostCode(logistics.getPostcode());
+		if(logistics!=null) {
+			paramsRequest.setReceiverContact(logistics.getContactName());
+			paramsRequest.setReceiverPhone(logistics.getContactTel());
+			paramsRequest.setProvince(logistics.getProvinceCode()==null?"":iCacheSV.
+					getAreaName(logistics.getProvinceCode())+"省"); 
+			paramsRequest.setCity(logistics.getCityCode()==null?"":iCacheSV.
+					getAreaName(logistics.getCityCode())+"市");
+			paramsRequest.setRegion(logistics.getCountyCode()==null?"":iCacheSV.
+					getAreaName(logistics.getCountyCode()));
+			paramsRequest.setReceiverAddress(logistics.getAddress());
+			paramsRequest.setPostCode(logistics.getPostcode());
+		}
         OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
 				order.getOrderId());
-        paramsRequest.setPayTime(sysdate.toString());
-        paramsRequest.setPayType(Long.parseLong(request.getPayType())); 
-        paramsRequest.setOrderAmout(ordOdFeeTotal.getTotalFee()/10); //分为单位,订单总金额 ??
-        paramsRequest.setPayAmount(ordOdFeeTotal.getPayFee()/10);//支付金额
-        paramsRequest.setCoupAmount(ordOdFeeTotal.getDiscountFee()/10);//优惠金额
-        paramsRequest.setReceiveAmount(ordOdFeeTotal.getPayFee()/10);
-        paramsRequest.setSellerRemark(ordOdFeeTotal.getOperDiscountDesc()); //TODO 商家备注 减免原因 ?? 
+        if(ordOdFeeTotal!=null) {
+        	paramsRequest.setPayTime(sysdate.toString());
+        	paramsRequest.setPayType(Long.parseLong(request.getPayType())); 
+        	paramsRequest.setOrderAmout(ordOdFeeTotal.getTotalFee()/10); //分为单位,订单总金额 ??
+        	paramsRequest.setPayAmount(ordOdFeeTotal.getPayFee()/10);//支付金额
+        	paramsRequest.setCoupAmount(ordOdFeeTotal.getDiscountFee()/10);//优惠金额
+        	paramsRequest.setReceiveAmount(ordOdFeeTotal.getPayFee()/10);
+        	paramsRequest.setSellerRemark(ordOdFeeTotal.getOperDiscountDesc()); //TODO 商家备注 减免原因 ?? 
+        }
         OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
     	if (ordOdInvoice != null) {
         	paramsRequest.setNeedInvoice(1); //TODO 确定下?
