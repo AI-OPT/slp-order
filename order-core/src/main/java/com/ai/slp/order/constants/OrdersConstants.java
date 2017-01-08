@@ -382,6 +382,12 @@ public final class OrdersConstants {
 	public static final class OrdOdProd {
 		/** 订单商品状态*/
 		public static class State {
+			
+			/**
+			 * prodId
+			 */
+			public static final String PRODID = "1";
+			
 			/**
 			 * 1 销售
 			 */

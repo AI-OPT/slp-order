@@ -26,6 +26,7 @@ import com.ai.slp.order.api.ordertradecenter.param.OrdProductDetailInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
+import com.ai.slp.order.api.synchronize.params.OrdOdProdVo;
 import com.ai.slp.order.api.synchronize.params.OrderSynchronizeVo;
 import com.ai.slp.order.api.warmorder.param.OrderWarmDetailRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
@@ -560,19 +561,22 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单信息不能为空");
 		}
 
-		if (vo.getOrdOdProdVo() != null) {
-			if (StringUtil.isBlank(vo.getOrdOdProdVo().getProdCode())) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+		if (vo.getOrdOdProdList() != null && (!vo.getOrdOdProdList().isEmpty())) {
+			for (OrdOdProdVo ordOdProdVo : vo.getOrdOdProdList()) {
+				if (StringUtil.isBlank(ordOdProdVo.getProdCode())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+				}
+				if (StringUtil.isBlank(ordOdProdVo.getCusServiceFlag())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+				}
+				if (StringUtil.isBlank(ordOdProdVo.getProdName())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+				}
+				if (StringUtil.isBlank(ordOdProdVo.getSkuId())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+				}
 			}
-			if (StringUtil.isBlank(vo.getOrdOdProdVo().getCusServiceFlag())) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-			}
-			if (StringUtil.isBlank(vo.getOrdOdProdVo().getProdName())) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-			}
-			if (StringUtil.isBlank(vo.getOrdOdProdVo().getSkuId())) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
-			}
+
 		} else {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单商品信息不能为空");
 		}
@@ -601,9 +605,11 @@ public class ValidateUtils {
 			if (StringUtil.isBlank(vo.getOrdOdInvoiceVo().getInvoiceStatus())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
-		} /*else {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单发票信息不能为空");
-		}*/
+		} /*
+			 * else { throw new
+			 * BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
+			 * "订单发票信息不能为空"); }
+			 */
 
 		if (vo.getOrdBalanceIfVo() != null) {
 			if (StringUtil.isBlank(vo.getOrdBalanceIfVo().getPayStyle())) {
@@ -627,8 +633,10 @@ public class ValidateUtils {
 			if (StringUtil.isBlank(vo.getOrdOdLogisticVo().getAddress())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
-		} /*else {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单费用信息不能为空");
-		}*/
+		} /*
+			 * else { throw new
+			 * BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
+			 * "订单费用信息不能为空"); }
+			 */
 	}
 }

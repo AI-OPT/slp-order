@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.slp.order.api.synchronize.params.OrdOdProdVo;
 import com.ai.slp.order.api.synchronize.params.OrderSynchronizeVo;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
@@ -42,7 +43,6 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 	public int orderSynchronize(OrderSynchronizeVo request) throws BusinessException, SystemException {
 		ValidateUtils.validateSynchronize(request);
 		OrdOrder ordOrder = new OrdOrder();
-		OrdOdProd ordOdProd = new OrdOdProd();
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 		OrdOdInvoice ordOdInvoice = new OrdOdInvoice();
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
@@ -73,29 +73,34 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 					syncronizeAtomSV.updateByExampleSelective(ordOrder, example);
 				}
 			}
-			if (request.getOrdOdProdVo() != null) {
-				BeanUtils.copyProperties(request.getOrdOdProdVo(), ordOdProd);
-				// 订单商品主键
-				long prodDetailId = SequenceUtil.createProdDetailId();
-				ordOdProd.setTenantId(request.getTenantId());
-				ordOdProd.setOrderId(orderId);
-				// 标准品id
-				ordOdProd.setStandardProdId(OrdersConstants.OrdOdProd.StandProdId.STAND_PROD_ID);
-				ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
-				ordOdProd.setProdDetalId(prodDetailId);
-				ordOdProd.setProdType(OrdersConstants.OrdOdProd.ProdType.PROD);
-				ordOdProd.setValidTime(DateUtil.getSysDate());
-				ordOdProd.setUpdateTime(DateUtil.getSysDate());
-				OrdOdProdCriteria example = new OrdOdProdCriteria();
-				OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-				criteria.andTenantIdEqualTo(request.getTenantId());
-				criteria.andOrderIdEqualTo(orderId);
-				criteria.andProdCodeEqualTo(ordOdProd.getProdCode());
-				int count = 0;
-				count = syncronizeAtomSV.countByExample(example);
-				if (count == 0) {
-					syncronizeAtomSV.insertSelective(ordOdProd);
-				} 
+			if (request.getOrdOdProdList() != null && (!request.getOrdOdProdList().isEmpty())) {
+				for (OrdOdProdVo ordOdProdVo : request.getOrdOdProdList()) {
+					OrdOdProd ordOdProd = new OrdOdProd();
+					BeanUtils.copyProperties(ordOdProdVo, ordOdProd);
+					// 订单商品主键
+					long prodDetailId = SequenceUtil.createProdDetailId();
+					ordOdProd.setTenantId(request.getTenantId());
+					ordOdProd.setOrderId(orderId);
+					// 标准品id
+					ordOdProd.setStandardProdId(OrdersConstants.OrdOdProd.StandProdId.STAND_PROD_ID);
+					ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
+					ordOdProd.setProdId(OrdersConstants.OrdOdProd.State.PRODID);
+					ordOdProd.setProdDetalId(prodDetailId);
+					ordOdProd.setProdType(OrdersConstants.OrdOdProd.ProdType.PROD);
+					ordOdProd.setValidTime(DateUtil.getSysDate());
+					ordOdProd.setUpdateTime(DateUtil.getSysDate());
+					OrdOdProdCriteria example = new OrdOdProdCriteria();
+					OrdOdProdCriteria.Criteria criteria = example.createCriteria();
+					criteria.andTenantIdEqualTo(request.getTenantId());
+					criteria.andOrderIdEqualTo(orderId);
+					criteria.andProdCodeEqualTo(ordOdProd.getProdCode());
+					int count = 0;
+					count = syncronizeAtomSV.countByExample(example);
+					if (count == 0) {
+						syncronizeAtomSV.insertSelective(ordOdProd);
+					}
+				}
+
 			}
 			if (request.getOrdOdLogisticVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOdLogisticVo(), ordOdLogistics);

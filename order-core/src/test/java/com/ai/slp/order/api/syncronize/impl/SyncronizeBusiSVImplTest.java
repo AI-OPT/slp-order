@@ -1,5 +1,8 @@
 package com.ai.slp.order.api.syncronize.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +29,6 @@ public class SyncronizeBusiSVImplTest {
 	@Test
 	public void syncronizeSV() {
 		OrdOrderVo ordOrder = new OrdOrderVo();
-		OrdOdProdVo ordOdProd = new OrdOdProdVo();
 		OrdOdLogisticVo ordOdLogistics = new OrdOdLogisticVo();
 		OrdOdInvoiceVo ordOdInvoice = new OrdOdInvoiceVo();
 		OrdOdFeeTotalVo ordOdFeeTotal = new OrdOdFeeTotalVo();
@@ -48,6 +50,8 @@ public class SyncronizeBusiSVImplTest {
 		ordOrder.setSupplierId("56546345");
 
 		// 商品表
+		List<OrdOdProdVo> list = new ArrayList<>();
+		OrdOdProdVo ordOdProd = new OrdOdProdVo();
 		ordOdProd.setProdId("45635345");
 		ordOdProd.setProdName("长虹电视");
 		ordOdProd.setSkuId("3546457");
@@ -58,6 +62,20 @@ public class SyncronizeBusiSVImplTest {
 		ordOdProd.setOperDiscountFee(0);
 		ordOdProd.setAdjustFee(100);
 		ordOdProd.setCusServiceFlag("N");
+		list.add(ordOdProd);
+		OrdOdProdVo ordOdProd2 = new OrdOdProdVo();
+		ordOdProd2.setProdId("45635345");
+		ordOdProd2.setProdName("长虹电视");
+		ordOdProd2.setSkuId("3546457");
+		ordOdProd2.setProdCode("464565");
+		ordOdProd2.setBuySum(100);
+		ordOdProd2.setTotalFee(1000);
+		ordOdProd2.setDiscountFee(0);
+		ordOdProd2.setOperDiscountFee(0);
+		ordOdProd2.setAdjustFee(100);
+		ordOdProd2.setCusServiceFlag("N");
+		list.add(ordOdProd2);
+		
 
 		// 物流表
 		// 配送类型,必传
@@ -97,7 +115,7 @@ public class SyncronizeBusiSVImplTest {
 		vo.setOrdOdFeeTotalVo(ordOdFeeTotal);
 		vo.setOrdOdInvoiceVo(ordOdInvoice);
 		vo.setOrdOdLogisticVo(ordOdLogistics);
-		vo.setOrdOdProdVo(ordOdProd);
+		vo.setOrdOdProdList(list);
 		vo.setOrdOrderVo(ordOrder);
 		vo.setTenantId("changhong");
 		vo.setOrderId(45657569);

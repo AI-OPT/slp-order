@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.synchronize.params;
 
+import java.util.List;
+
 import com.ai.opt.base.vo.BaseInfo;
 
 public class OrderSynchronizeVo extends BaseInfo {
@@ -27,9 +29,9 @@ public class OrderSynchronizeVo extends BaseInfo {
 	private OrdOdLogisticVo ordOdLogisticVo;
 
 	/**
-	 * 订单商品信息
+	 * 订单商品信息列表
 	 */
-	private OrdOdProdVo ordOdProdVo;
+	private List<OrdOdProdVo> ordOdProdList;
 
 	/**
 	 * 订单信息
@@ -40,6 +42,14 @@ public class OrderSynchronizeVo extends BaseInfo {
 	 * 订单支付信息
 	 */
 	private OrdBalanceIfVo ordBalanceIfVo;
+
+	public List<OrdOdProdVo> getOrdOdProdList() {
+		return ordOdProdList;
+	}
+
+	public void setOrdOdProdList(List<OrdOdProdVo> ordOdProdList) {
+		this.ordOdProdList = ordOdProdList;
+	}
 
 	public long getOrderId() {
 		return orderId;
@@ -71,14 +81,6 @@ public class OrderSynchronizeVo extends BaseInfo {
 
 	public void setOrdOdLogisticVo(OrdOdLogisticVo ordOdLogisticVo) {
 		this.ordOdLogisticVo = ordOdLogisticVo;
-	}
-
-	public OrdOdProdVo getOrdOdProdVo() {
-		return ordOdProdVo;
-	}
-
-	public void setOrdOdProdVo(OrdOdProdVo ordOdProdVo) {
-		this.ordOdProdVo = ordOdProdVo;
 	}
 
 	public OrdOrderVo getOrdOrderVo() {
