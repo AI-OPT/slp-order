@@ -7,6 +7,7 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 
 public interface IDeliveryOrderNoMergePrintBusiSV {
 	
+	//不合并打印
 	public DeliveryOrderPrintResponse noMergePrint(DeliveryOrderPrintRequest request) throws BusinessException, SystemException;
 
 }

@@ -7,6 +7,7 @@ import com.ai.slp.order.api.aftersaleorder.param.OrderJuageResponse;
 
 public interface IOrderAfterSaleJudgeBusiSV {
 	
+	//判断该商品对应的订单所属业务类型
 	public OrderJuageResponse judge(OrderJuageRequest request) throws BusinessException, SystemException;
 
 }

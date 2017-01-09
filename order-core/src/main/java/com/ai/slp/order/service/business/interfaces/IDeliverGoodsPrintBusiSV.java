@@ -8,8 +8,10 @@ import com.ai.slp.order.api.delivergoods.param.DeliverGoodsPrintResponse;
 
 public interface IDeliverGoodsPrintBusiSV {
 	
+	//发货单打印查看
 	public DeliverGoodsPrintResponse deliverGoodsQuery(DeliverGoodsPrintRequest request) throws BusinessException, SystemException;
 	
+	//发货单打印
 	public void deliverGoodsPrint(DeliverGoodsPrintInfosRequest request) throws BusinessException, SystemException;
 
 }
