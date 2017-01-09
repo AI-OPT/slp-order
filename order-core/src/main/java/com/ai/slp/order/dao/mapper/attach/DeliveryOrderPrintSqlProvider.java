@@ -4,6 +4,9 @@ import java.util.Map;
 
 public class DeliveryOrderPrintSqlProvider {
 	
+	/***
+	 *  查询该提货单是否有合并的信息
+	 */
 	public String queryOrderProd(Map<String, Object> param) {
 		StringBuffer seqBuffer = new StringBuffer();
         seqBuffer.append("select od.order_id,od.tenant_id,op.prod_name,op.buy_sum,op.sku_id,op.extend_info from ord_order od,ord_od_prod op "
