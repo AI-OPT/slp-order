@@ -126,6 +126,7 @@ public class OrdOrderSqlProvider {
          return seqBuffer.toString();
     }
     
+    //组合连接信息
     private StringBuffer getConnectStr(Map<String, Object> param, StringBuffer seqBuffer) {
     	if (param.get("orderId") != null)
         	seqBuffer.append(" and oo.order_id =" + param.get("orderId"));
