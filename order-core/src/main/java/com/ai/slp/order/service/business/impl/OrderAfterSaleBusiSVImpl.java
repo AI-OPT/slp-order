@@ -476,44 +476,4 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		orderCreateRequest.setItems(applyItemsVoList);
     	return JSON.toJSONString(orderCreateRequest);
     }
-    
-    
-    /**
-     * 测试OFC售后订单的创建
-     */
-/*    public static void main(String[] args) {
-		OFCAfterSaleOrderCreateRequest orderCreateRequest=new OFCAfterSaleOrderCreateRequest();
-		orderCreateRequest.setOrderNo(String.valueOf(2000001011472557l)); //之前的子订单 
-		orderCreateRequest.setExternalApplyNo(String.valueOf(2000001018727740l)); //售后订单
-		orderCreateRequest.setApplyType(OrdersConstants.OFCApplyType.BACK);
-		orderCreateRequest.setReasonType(16); //其它
-		orderCreateRequest.setDescription("其它"); 
-		orderCreateRequest.setRefundAmount(1); //分为单位
-		orderCreateRequest.setApplyTime(DateUtil.getSysDate().toString());
-		orderCreateRequest.setRemark(""); 
-		List<OrderAfterSaleApplyItemsVo> applyItemsVoList=new ArrayList<OrderAfterSaleApplyItemsVo>();
-		OrderAfterSaleApplyItemsVo applyItemsVo=new OrderAfterSaleApplyItemsVo();
-		applyItemsVo.setProductName("1111111");
-		applyItemsVo.setProductCode("CH067n"); //产品编码
-		applyItemsVo.setApplyQuanlity(1);
-		applyItemsVoList.add(applyItemsVo);
-		//orderCreateRequest.setOrderAfterSaleApplyVo(applyVo);
-		orderCreateRequest.setItems(applyItemsVoList);
-		String params = JSON.toJSONString(orderCreateRequest);
-
-		Map<String, String> header=new HashMap<String, String>(); 
-		header.put("appkey", OrdersConstants.OFC_APPKEY);
-		//发送Post请求,并返回信息
-		try {
-			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
-			JSONObject object = JSON.parseObject(strData);
-			boolean val = object.getBooleanValue("IsValid");
-				if(!val) {
-			throw new BusinessException("", "退货申请同步到OFC错误");
-		}
-		} catch (IOException | URISyntaxException e) {
-			logger.error(e.getMessage());
-			throw new SystemException("", "OFC同步出现异常");
-		}
-	}*/
 }
