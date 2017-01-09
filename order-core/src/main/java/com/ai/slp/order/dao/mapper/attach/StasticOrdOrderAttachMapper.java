@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.SelectProvider;
 
 public interface StasticOrdOrderAttachMapper {
+	
+	//查询订单统计信息
 	@Results({ @Result(id = true, property = "orderId", column = "order_id"),
         @Result(property = "chlId", column = "chl_id"),
         @Result(property = "deliveryFlag", column = "delivery_flag"),
@@ -22,7 +24,7 @@ public interface StasticOrdOrderAttachMapper {
 			@Param("supplierId") String supplierId,@Param("tenantId") String tenantId,
 			@Param("orderTimeBegin") String orderTimeBegin,@Param("orderTimeEnd") String orderTimeEnd);
 	
-	
+	//订单统计个数
 	@SelectProvider(type = StasticOrdOrderSqlProvider.class, method = "stasticCount")
 	    public int getCount( @Param("orderId") Long orderId, @Param("userName") String userName,
 	    		@Param("supplierId") String supplierId, 
