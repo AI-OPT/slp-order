@@ -14,7 +14,8 @@ import org.apache.ibatis.annotations.SelectProvider;
  * 
  */
 public interface OrdOrderAttachMapper {
-
+	
+	//运营后台查询订单信息个数
     @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindCount")
 	public int getBehindCount(@Param("states") String states,@Param("orderId") Long orderId,
 			@Param("chlId") String chlId,@Param("routeId") String routeId,
@@ -22,7 +23,7 @@ public interface OrdOrderAttachMapper {
 			@Param("tenantId") String tenantId,@Param("deliveryFlag") String deliveryFlag,
 			@Param("orderTimeBegin") String orderTimeBegin,@Param("orderTimeEnd") String orderTimeEnd);
     
-    
+    //运营后台查询订单信息
     @Results({ @Result(id = true, property = "orderId", column = "order_id"),
         @Result(property = "chlId", column = "chl_id"),
         @Result(property = "deliveryFlag", column = "delivery_flag"),
