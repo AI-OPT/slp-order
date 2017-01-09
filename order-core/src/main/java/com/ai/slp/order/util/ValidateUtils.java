@@ -11,6 +11,7 @@ import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
+import com.ai.slp.order.api.ofcactual.param.OfcOrderCreateRequest;
 import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
@@ -605,11 +606,7 @@ public class ValidateUtils {
 			if (StringUtil.isBlank(vo.getOrdOdInvoiceVo().getInvoiceStatus())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
-		} /*
-			 * else { throw new
-			 * BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
-			 * "订单发票信息不能为空"); }
-			 */
+		} 
 
 		if (vo.getOrdBalanceIfVo() != null) {
 			if (StringUtil.isBlank(vo.getOrdBalanceIfVo().getPayStyle())) {
@@ -633,10 +630,21 @@ public class ValidateUtils {
 			if (StringUtil.isBlank(vo.getOrdOdLogisticVo().getAddress())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
-		} /*
-			 * else { throw new
-			 * BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
-			 * "订单费用信息不能为空"); }
-			 */
+		} 
+	}
+	
+	/**
+	 * Ofc销售订单创建参数校验
+	 */
+	public static void validateOfcOrderCreateRequest(OfcOrderCreateRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+		if (CollectionUtil.isEmpty(condition.getOrderIds())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
+		}
 	}
 }
