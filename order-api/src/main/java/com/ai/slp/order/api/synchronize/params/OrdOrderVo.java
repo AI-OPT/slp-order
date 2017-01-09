@@ -309,14 +309,6 @@ public class OrdOrderVo implements Serializable {
 
 	// private String accountId;
 
-	public String getOrderTime() {
-		return orderTime;
-	}
-
-	public void setOrderTime(String orderTime) {
-		this.orderTime = orderTime;
-	}
-
 	private String flag;
 
 	public String getFlag() {
@@ -333,6 +325,14 @@ public class OrdOrderVo implements Serializable {
 
 	public void setUserType(String userType) {
 		this.userType = userType;
+	}
+
+	public String getOrderTime() {
+		return orderTime;
+	}
+
+	public void setOrderTime(String orderTime) {
+		this.orderTime = orderTime;
 	}
 
 	// private String tokenId;
