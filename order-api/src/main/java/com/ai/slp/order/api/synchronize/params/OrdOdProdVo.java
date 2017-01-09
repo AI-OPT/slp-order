@@ -16,7 +16,7 @@ public class OrdOdProdVo implements Serializable {
 	/**
 	 * 订单id
 	 */
-	//private long orderId;
+	// private long orderId;
 
 	/**
 	 * 销售品类型
@@ -66,7 +66,7 @@ public class OrdOdProdVo implements Serializable {
 	 */
 	private long buySum;
 
-	// private long salePrice;
+	private long salePrice;
 
 	// private long costPrice;
 
@@ -249,6 +249,14 @@ public class OrdOdProdVo implements Serializable {
 
 	public void setProdType(String prodType) {
 		this.prodType = prodType;
+	}
+
+	public long getSalePrice() {
+		return salePrice;
+	}
+
+	public void setSalePrice(long salePrice) {
+		this.salePrice = salePrice;
 	}
 
 }
