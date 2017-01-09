@@ -38,6 +38,7 @@ public class OrderAfterSaleJudgeBusiSVImpl implements IOrderAfterSaleJudgeBusiSV
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	
+	//判断该商品对应的订单所属业务类型
 	@Override
 	public OrderJuageResponse judge(OrderJuageRequest request) throws BusinessException, SystemException {
 		OrderJuageResponse response=new OrderJuageResponse();

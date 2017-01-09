@@ -71,6 +71,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	@Autowired
 	private IOrderFrameCoreSV orderFrameCoreSV;
 	
+	//提货单查看
 	@Override
 	public DeliveryOrderQueryResponse query(DeliveryOrderPrintRequest request) {
 		DeliveryOrderQueryResponse response=new DeliveryOrderQueryResponse();
@@ -146,6 +147,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		return response;
 	}
 	
+	//提货单展示
 	@Override
 	public DeliveryOrderPrintResponse display(DeliveryOrderPrintRequest request)
 			throws BusinessException, SystemException {
@@ -207,7 +209,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		return response;
 	}
 	
-	
+	//提货单打印
 	@Override
 	public void print(DeliveryOrderPrintInfosRequest request) {
 		/* 参数检验及 查询提货单打印信息*/

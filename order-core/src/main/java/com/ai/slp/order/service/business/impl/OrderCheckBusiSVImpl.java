@@ -50,7 +50,8 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 	
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
-
+	
+	//订单审核
 	@Override
 	public void check(OrderCheckRequest request) throws BusinessException, SystemException {
 		/* 参数校验*/

@@ -50,6 +50,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	@Autowired
 	private IOrdOdFeeTotalAtomSV  ordOdFeeTotalAtomSV;
 	
+	//同意退款
 	public void partRefund(OrderRefundRequest request) throws BusinessException, SystemException {
 		/* 参数检验*/
 		ValidateUtils.validateOrderRefundRequest(request);
@@ -80,6 +81,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		ordOrderAtomSV.updateById(ordOrder);
 	}
 	
+	//拒绝退款
 	@Override
 	public void refuseRefund(OrderRefuseRefundRequest request) throws BusinessException, SystemException {
 		/* 参数校验*/

@@ -62,6 +62,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
     @Autowired
     private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV; 
 	
+    //发票打印列表查看
 	@Override
 	public InvoicePrintResponse queryList(InvoicePrintRequest request) throws BusinessException, SystemException {
 		/* 参数校验*/
@@ -89,7 +90,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	}
 	
 	
-
+	//发票回调,状态修改
 	@Override
 	public void updateInvoiceStatus(InvoiceNoticeRequest request) throws BusinessException, SystemException {	
 		/* 参数检验*/
@@ -167,7 +168,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		ordOdInvoiceAtomSV.updateByPrimaryKey(ordOdInvoice);
 	}
 	
-	
+	//发票报送(打印)
 	@Override
 	public InvoiceSumbitResponse invoiceSubmit(InvoiceSubmitRequest request) throws BusinessException, SystemException {
 		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
@@ -257,7 +258,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 		return response;
 	}
 	
-	
+	 //查询指定信息
 	 private PageInfo<InvoicePrintVo> queryForPage(Integer pageNo,Integer pageSize,Long orderId,
 	            String tenantId, String invoiceTitle, String invoiceStatus) {
 		 String subFlag=OrdersConstants.OrdOrder.SubFlag.YES;
@@ -329,7 +330,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	    }
 
 
-
+	//状态修改
 	@Override
 	public void modifyState(InvoiceModifyRequest request) throws BusinessException, SystemException {
 		/* 参数校验*/

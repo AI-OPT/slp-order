@@ -42,6 +42,7 @@ public class DeliveryOrderNoMergePrintBusiSVImpl implements IDeliveryOrderNoMerg
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
 	
+	//不合并打印
 	@Override
 	public DeliveryOrderPrintResponse noMergePrint(DeliveryOrderPrintRequest request)
 			throws BusinessException, SystemException {

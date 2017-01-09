@@ -25,6 +25,7 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 	@Autowired
 	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
 	
+	//未支付订单修改
 	@Override
 	public void modify(OrderModifyRequest request) throws BusinessException, SystemException {
 		/* 1.检验参数*/

@@ -50,7 +50,8 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
     
     @Autowired
     private IOrderFrameCoreSV orderFrameCoreSV;
-
+    
+    //订单取消
     @Override
     public void orderCancel(OrdOrder ordOrder) throws BusinessException, SystemException {
         LOG.debug("开始处理订单[" + ordOrder.getOrderId() + "]关闭具体服务");

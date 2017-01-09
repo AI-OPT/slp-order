@@ -36,6 +36,7 @@ public class OrderConfirmBusiSVImpl implements IOrderConfirmBusiSV {
 	@Autowired
 	private IOrderFrameCoreSV orderFrameCoreSV;
 	
+	//订单确认
 	@Override
 	public void confirm(OrderConfirmRequest request) throws BusinessException, SystemException {
 		/* 参数校验*/

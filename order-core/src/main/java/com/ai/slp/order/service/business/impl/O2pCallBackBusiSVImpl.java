@@ -4,8 +4,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +24,10 @@ import com.ai.slp.order.service.business.interfaces.IO2pCallBackBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderReturnGoodBusiSV;
 
+/**
+ * o2p回调(已废弃)
+
+ */
 @Service
 @Transactional
 public class O2pCallBackBusiSVImpl implements IO2pCallBackBusiSV {

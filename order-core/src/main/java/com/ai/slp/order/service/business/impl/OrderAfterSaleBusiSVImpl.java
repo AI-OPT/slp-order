@@ -74,6 +74,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	@Autowired
 	private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
 	
+	//订单退货申请
 	@Override
 	public void back(OrderReturnRequest request) throws BusinessException, SystemException {
     	/* 1.参数校验*/
@@ -116,6 +117,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		}
 	}
 
+	//订单换货申请
 	@Override
 	public void exchange(OrderReturnRequest request) throws BusinessException, SystemException {
 		/* 1.参数校验*/
@@ -139,7 +141,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				prodSum, ordOdProd, OrdersConstants.OrdOdProd.State.EXCHANGE,exchangeOrderId,sysDate,state);
 	}
 
-	
+	//订单退款申请
 	@Override
 	public void refund(OrderReturnRequest request) throws BusinessException, SystemException {
 		/* 1.参数校验*/

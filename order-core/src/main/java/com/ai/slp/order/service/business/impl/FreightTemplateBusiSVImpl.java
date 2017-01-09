@@ -47,7 +47,8 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 	
 	@Autowired
 	private IFreightTemplateProdAtomSV freightTemplateProdAtomSV;
-
+	
+	//运费模版添加
 	@Override
 	public void add(FreightTemplateRequest request) throws BusinessException, SystemException {
 		/* 1.生成模版id*/
@@ -58,7 +59,7 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 		this.createFreightTemplateProd(request, templateId);
 	}
 	
-	
+	//运费模版查询
 	@Override
 	public QueryFreightTemplateResponse query(QueryFreightTemplateRequest request)
 			throws BusinessException, SystemException {
@@ -174,7 +175,7 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 		}
 	}
 
-
+	//运费模版更新
 	@Override
 	public void update(FreightTemplateUpdateRequest request) throws BusinessException, SystemException {
 		/* 1.更新运费模版信息*/
@@ -208,6 +209,7 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 		}
 	}
 
+	//运费模版删除
 	@Override
 	public void delete(FreightTemplateDeleteRequest request) {
 		String templateId = request.getTemplateId();
@@ -228,7 +230,8 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 			freightTemplateProdAtomSV.deleteByPrimaryKey(freightTemplateProd.getRegionId());
 		}
 	}
-
+	
+	//运费模版明细删除
 	@Override
 	public void deleteFreightTemplateProd(FreightTemplateProdRequest request) {
 		String regionId = request.getRegionId();

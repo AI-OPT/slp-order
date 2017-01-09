@@ -70,6 +70,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	
+	//发货单打印查看
 	@Override
 	public DeliverGoodsPrintResponse deliverGoodsQuery(DeliverGoodsPrintRequest request) throws BusinessException, SystemException {
 		DeliverGoodsPrintResponse response=new DeliverGoodsPrintResponse();
@@ -159,6 +160,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 		return response;
 	}
 	
+	//发货单打印
 	@Override
 	public void deliverGoodsPrint(DeliverGoodsPrintInfosRequest request)
 			throws BusinessException, SystemException {

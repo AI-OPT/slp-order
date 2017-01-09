@@ -29,7 +29,8 @@ public class OrderFrameCoreSVImpl implements IOrderFrameCoreSV {
 
     @Autowired
     private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
-
+    
+    //订单轨迹记录
     @Override
     public void ordOdStateChg(Long orderId, String tenantId, String orgState, String newState,
             String chgDesc, String orgId, String operId, String operName, Timestamp timestamp)

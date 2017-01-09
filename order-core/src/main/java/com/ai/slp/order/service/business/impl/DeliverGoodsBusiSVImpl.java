@@ -49,6 +49,7 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	
+	//订单发货
 	@Override
 	public void deliverGoods(DeliverGoodsRequest request) throws BusinessException, SystemException {
 		/* 参数校验*/
