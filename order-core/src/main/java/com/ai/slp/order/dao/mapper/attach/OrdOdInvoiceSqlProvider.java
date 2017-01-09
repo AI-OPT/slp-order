@@ -7,7 +7,7 @@ import com.ai.paas.ipaas.util.StringUtil;
 public class OrdOdInvoiceSqlProvider {
 	
 	  /**
-     * 查询配送信息
+     * 查询发票信息
      * 
      * @param param
      * @return
@@ -33,7 +33,7 @@ public class OrdOdInvoiceSqlProvider {
     }
 
     /**
-     * 多表查询订单个数
+     * 多表查询订单发票个数
      */
     public String count(Map<String, Object> param) {
     	 StringBuffer seqBuffer = new StringBuffer();
