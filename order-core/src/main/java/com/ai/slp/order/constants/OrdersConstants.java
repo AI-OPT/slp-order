@@ -30,6 +30,11 @@ public final class OrdersConstants {
 			public static final String UPPLATFORM = "1";
 			
 			/**
+			 * 1：积分平台(同步)
+			 */
+			public static final String JFSYNCH = "2";
+			
+			/**
 			 * 3:OFC(实时)
 			 */
 			public static final String OFC_ACTUAL_TIME  = "3";
