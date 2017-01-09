@@ -10,13 +10,17 @@ import org.apache.ibatis.annotations.SelectProvider;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 
 public interface OrdOdInvoiceAttachMapper {
-	
+	/**
+	 * 发票数量
+	 */
 	@SelectProvider(type = OrdOdInvoiceSqlProvider.class, method = "count")
 	public int count(@Param("subFlag") String subFlag,
 			@Param("orderId") Long orderId, @Param("tenantId") String tenantId,
 			@Param("invoiceTitle") String invoiceTitle, @Param("invoiceStatus") String invoiceStatus);
 	
-	
+	/**
+	 * 查询发票信息
+	 */
 	@SelectProvider(type = OrdOdInvoiceSqlProvider.class, method = "queryInvoice")
 	@Results({ @Result(id = true, property = "orderId", column = "order_id"),
          @Result(property = "tenantId", column = "tenant_id"),
