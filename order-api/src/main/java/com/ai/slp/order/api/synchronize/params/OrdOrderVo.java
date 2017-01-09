@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.synchronize.params;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 public class OrdOrderVo implements Serializable {
 
@@ -88,7 +89,7 @@ public class OrdOrderVo implements Serializable {
 	/**
 	 * 下单时间
 	 */
-	private String orderTime;
+	private Timestamp orderTime;
 
 	/**
 	 * 销售商ID
@@ -309,15 +310,15 @@ public class OrdOrderVo implements Serializable {
 
 	// private String accountId;
 
-	public String getOrderTime() {
+	private String flag;
+
+	public Timestamp getOrderTime() {
 		return orderTime;
 	}
 
-	public void setOrderTime(String orderTime) {
+	public void setOrderTime(Timestamp orderTime) {
 		this.orderTime = orderTime;
 	}
-
-	private String flag;
 
 	public String getFlag() {
 		return flag;

@@ -1,7 +1,5 @@
 package com.ai.slp.order.service.business.impl;
 
-import java.sql.Timestamp;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,7 +55,6 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 				ordOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
 				// 状态变化时间
 				ordOrder.setStateChgTime(DateUtil.getSysDate());
-				ordOrder.setOrderTime(Timestamp.valueOf(request.getOrdOrderVo().getOrderTime()));
 				// 客户端显示状态
 				ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
 				ordOrder.setDisplayFlagChgTime(DateUtil.getSysDate());
