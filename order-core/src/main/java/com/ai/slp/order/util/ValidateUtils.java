@@ -245,7 +245,8 @@ public class ValidateUtils {
 		} else {
 			if (OrdersConstants.ordOdInvoice.invoiceKind.VAT_SPECIAL_INVOICE.equals(condition.getInvoiceKind())
 					|| OrdersConstants.ordOdInvoice.invoiceKind.VAT_ELECTRONIC_SPECIAL_INVOICE
-							.equals(condition.getInvoiceKind())) {
+							.equals(condition.getInvoiceKind())
+					||OrdersConstants.ordOdInvoice.invoiceType.FOUR.equals(condition.getInvoiceType())) { //ofc增票存在的情况
 				if (StringUtil.isBlank(condition.getBuyerTaxpayerNumber())) {
 					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "专用发票时,购货方纳税人识别号不能为空");
 				}
