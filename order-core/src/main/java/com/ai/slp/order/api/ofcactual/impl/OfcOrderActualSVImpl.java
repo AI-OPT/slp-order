@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.ofcactual.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
@@ -11,6 +12,7 @@ import com.ai.slp.order.api.ofcactual.interfaces.IOfcOrderActualSV;
 import com.ai.slp.order.api.ofcactual.param.OfcOrderCreateRequest;
 import com.ai.slp.order.service.business.interfaces.IOfcOrderActualBusiSV;
 
+@Component
 public class OfcOrderActualSVImpl implements IOfcOrderActualSV {
 	
 	@Autowired
