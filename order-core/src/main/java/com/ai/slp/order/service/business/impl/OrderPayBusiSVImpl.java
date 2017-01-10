@@ -290,7 +290,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	long prodOperDiscountFee=(rate.multiply(new BigDecimal(operDiscountFee))).longValue();//商品的减免费用
     		ordOdProd.setOperDiscountFee(prodOperDiscountFee+ordOdProd.getOperDiscountFee()); //减免费用
     		ordOdProd.setDiscountFee(prodOperDiscountFee+discountFee); //优惠费用
-    		ordOdProd.setAdjustFee(ordOdProd.getTotalFee()-(prodOperDiscountFee+discountFee)); //应收费用
+    		long adjustFee=ordOdProd.getTotalFee()-(prodOperDiscountFee+discountFee);
+    		ordOdProd.setAdjustFee(adjustFee<0?0:adjustFee); //应收费用
     		ordOdProdAtomSV.updateById(ordOdProd);
     		/* 5.生成子订单*/
     		this.createEntitySubOrder(tenantId, ordOrder,ordOdProd,map,request,sysdate);
@@ -423,8 +424,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         productInfoQuery.setTenantId(tenantId);
         productInfoQuery.setProductId(productId);
         //TODO
-        if("2000".equals(supplierId)) {
-        	supplierId="-1";
+        if(OrdersConstants.INVOICE_SUPPLIERID.equals(supplierId)) {
+        	supplierId=OrdersConstants.PROD_SUPPLIERID;
         }
         productInfoQuery.setSupplierId(supplierId);
         IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
@@ -485,6 +486,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setTotalFee(ordOdProd.getTotalFee());
     	ordOdFeeTotal.setDiscountFee(ordOdProd.getDiscountFee());
     	long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
+    	if(apaidFee<0) {
+    		apaidFee=0;
+    	}
     	ordOdFeeTotal.setAdjustFee(apaidFee);
     	ordOdFeeTotal.setPaidFee(apaidFee);
     	ordOdFeeTotal.setTotalJf(ordOdProd.getJf());
@@ -560,6 +564,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	ordOdFeeTotal.setTotalFee(pOrdOdFeeTotal.getTotalFee()+ordOdProd.getTotalFee());
     	ordOdFeeTotal.setDiscountFee(pOrdOdFeeTotal.getDiscountFee()+ordOdProd.getDiscountFee());
     	long apaidFee=ordOdProd.getTotalFee()-ordOdProd.getDiscountFee();
+    	if(apaidFee<0) {
+    		apaidFee=0;
+    	}
     	ordOdFeeTotal.setAdjustFee(pOrdOdFeeTotal.getAdjustFee()+apaidFee);
     	ordOdFeeTotal.setPaidFee(pOrdOdFeeTotal.getPaidFee()+apaidFee);
     	ordOdFeeTotal.setTotalJf(pOrdOdFeeTotal.getTotalJf()+ordOdProd.getJf());
