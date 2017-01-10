@@ -728,6 +728,10 @@ public final class OrdersConstants {
 			public static final String ZERO = "0";
 			/** 1：纸质发票 */
 			public static final String ONE = "1";
+			/** 3：普票 (OFC)*/
+			public static final String THREE = "3";
+			/** 4：增票 (OFC)*/
+			public static final String FOUR = "4";
 		}
 		/** 发票种类*/
 		public static class invoiceKind {
