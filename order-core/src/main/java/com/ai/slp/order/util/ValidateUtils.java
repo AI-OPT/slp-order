@@ -278,8 +278,9 @@ public class ValidateUtils {
 						!OrdersConstants.ordOdInvoice.invoiceType.FOUR.equals(condition.getInvoiceType())){
 					throw new BusinessException("", "发票类型不符合要求");
 				}
+			}else {
+				throw new BusinessException("", "发票类型不符合要求");
 			}
-			throw new BusinessException("", "发票类型不符合要求");
 		}
 	}
 
