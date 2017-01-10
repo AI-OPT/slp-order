@@ -181,7 +181,7 @@ public class ValidateUtils {
 			/** 判断是否选择打印发票 */
 			if (ordInvoiceInfo != null) {
 				/** 发票参数校验 */
-				ValidateUtils.validateOrdInvoice(ordInvoiceInfo);
+				ValidateUtils.validateOrdInvoice(ordInvoiceInfo,ordBaseInfo.getFlag());
 			}
 			if (CollectionUtil.isEmpty(ordProductInfoList)) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品信息列表不能为空");
@@ -230,7 +230,7 @@ public class ValidateUtils {
 	/**
 	 * 订单下单时,发票参数检验
 	 */
-	public static void validateOrdInvoice(OrdInvoiceInfo condition) {
+	public static void validateOrdInvoice(OrdInvoiceInfo condition,String flag) {
 		if (StringUtil.isBlank(condition.getInvoiceType())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "在打印发票的情况下,发票类型不能为空");
 		}
@@ -273,6 +273,12 @@ public class ValidateUtils {
 				throw new BusinessException("", "纸质发票必须对应相应的发票种类");
 			}
 		} else {
+			if(OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(flag)) {
+				if (!OrdersConstants.ordOdInvoice.invoiceType.THREE.equals(condition.getInvoiceType())||
+						!OrdersConstants.ordOdInvoice.invoiceType.FOUR.equals(condition.getInvoiceType())){
+					throw new BusinessException("", "发票类型不符合要求");
+				}
+			}
 			throw new BusinessException("", "发票类型不符合要求");
 		}
 	}
