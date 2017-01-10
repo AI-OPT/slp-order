@@ -10,6 +10,12 @@ public final class OrdersConstants {
 	public static final String TENANT_ID = "changhong";
 	/** 定时任务配置信息*/
 	public static final String DTS_SCHEDULE_NAME = "slp-order-dts-sched";
+	/** 发票开具公司代码*/
+	public static final String INVOICE_SUPPLIERID = "1300";
+	/** 发票开具税率*/
+	public static final String INVOICE_RATE = "0.06";
+	/** 商品销售商id*/
+	public static final String PROD_SUPPLIERID = "-1";
 
 	/**
 	 * 属性文件加载对象
