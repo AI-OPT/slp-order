@@ -145,7 +145,7 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
         	paramsRequest.setPayTime(sysdate.toString());
         	paramsRequest.setPayType(Long.parseLong(ordOdFeeTotal.getPayStyle())); 
         	paramsRequest.setOrderAmout(ordOdFeeTotal.getTotalFee()/10); //分为单位,订单总金额 ??
-        	paramsRequest.setPayAmount(ordOdFeeTotal.getPayFee()/10);//支付金额
+        	paramsRequest.setPayAmount(ordOdFeeTotal.getAdjustFee()/10);//支付金额
         	paramsRequest.setCoupAmount(ordOdFeeTotal.getDiscountFee()/10);//优惠金额
         	paramsRequest.setReceiveAmount(ordOdFeeTotal.getPayFee()/10);
         	paramsRequest.setSellerRemark(ordOdFeeTotal.getOperDiscountDesc()); //TODO 商家备注 减免原因 ?? 
