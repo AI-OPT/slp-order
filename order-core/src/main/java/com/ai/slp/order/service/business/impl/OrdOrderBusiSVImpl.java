@@ -21,6 +21,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.CollectionUtil;
+import com.ai.opt.sdk.util.ParseO2pDataUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
@@ -446,38 +447,37 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 							String logisticsNo = null;
 							JSONObject object = queryOFC(ordOrder);
 							// TODO 判断
-							/*
-							 * if(object==null) {
-							 * 
-							 * }else {}
-							 */
-							JSONArray jsonArray = object.getJSONArray("OrderList");
-							for (int i = 0; i < jsonArray.size(); i++) {
-								JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-								String state = jsonObject.getString("DeliveryState");
-								JSONArray shipArray = jsonObject.getJSONArray("ShipOrderList");
-								for (int j = 0; j < shipArray.size(); j++) {
-									JSONObject shipObject = (JSONObject) jsonArray.get(i);
-									logisticsName = shipObject.getString("LogisticsName");
-									logisticsNo = shipObject.getString("LogisticsNo");
-								}
-								if (OrdersConstants.OFCDeliveryState.ALREADY_DELIVER_GOODS.equals(state)
-										|| OrdersConstants.OFCDeliveryState.ALREADY_RECEIVE_GOODS.equals(state)
-										|| OrdersConstants.OFCDeliveryState.PART_DELIVER_GOODS.equals(state)) {
-									OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV
-											.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
-									if (ordOdLogistics == null) {
-										logger.error("配送信息不存在");
-										throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
-												"配送信息不存在[订单id:" + ordOrder.getOrderId() + "]");
+							if(object!=null) {
+								JSONArray jsonArray = object.getJSONArray("OrderList");
+								for (int i = 0; i < jsonArray.size(); i++) {
+									JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+									JSONObject obj = jsonObject.getJSONObject("Order");
+									String state = obj.getString("DeliveryState");
+									JSONArray shipArray = jsonObject.getJSONArray("ShipOrderList");
+									for (int j = 0; j < shipArray.size(); j++) {
+										JSONObject shipObject = (JSONObject) jsonArray.get(i);
+										logisticsName = shipObject.getString("LogisticsName");
+										logisticsNo = shipObject.getString("LogisticsNo");
 									}
-									ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_CONFIRM);
-									ordOdLogistics.setExpressOddNumber(logisticsNo);
-									ordOdLogistics.setContactCompany(logisticsName);// 物流商
-									ordOrderAtomSV.updateById(ordOrder);
-									ordOdLogisticsAtomSV.updateByPrimaryKey(ordOdLogistics);
+									if (OrdersConstants.OFCDeliveryState.ALREADY_DELIVER_GOODS.equals(state)
+											|| OrdersConstants.OFCDeliveryState.ALREADY_RECEIVE_GOODS.equals(state)
+											|| OrdersConstants.OFCDeliveryState.PART_DELIVER_GOODS.equals(state)) {
+										OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV
+												.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
+										if (ordOdLogistics == null) {
+											logger.error("配送信息不存在");
+											throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
+													"配送信息不存在[订单id:" + ordOrder.getOrderId() + "]");
+										}
+										ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_CONFIRM);
+										ordOdLogistics.setExpressOddNumber(logisticsNo);
+										ordOdLogistics.setContactCompany(logisticsName);// 物流商
+										ordOrderAtomSV.updateById(ordOrder);
+										ordOdLogisticsAtomSV.updateByPrimaryKey(ordOdLogistics);
+									}
 								}
 							}
+							 
 						}
 						orderVo.setOrderId(ordOrder.getOrderId());
 						orderVo.setState(ordOrder.getState());
@@ -711,7 +711,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		// 发送Post请求,并返回信息
 		try {
 			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_QUERY_URL, params, header);
-			object = JSON.parseObject(strData);
+			object = ParseO2pDataUtil.getData(strData);
 			// TODO 是否判断
 			/*
 			 * if(object==null) {

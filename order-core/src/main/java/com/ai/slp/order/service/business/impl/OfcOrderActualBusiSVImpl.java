@@ -11,6 +11,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
@@ -18,6 +20,7 @@ import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.opt.sdk.util.ParseO2pDataUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.ofcactual.param.OfcOrderCreateRequest;
@@ -45,6 +48,8 @@ import com.ai.slp.order.vo.OrderItemsVo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+@Service
+@Transactional
 public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
 	
     private static Logger logger = LoggerFactory.getLogger(OfcOrderActualBusiSVImpl.class);
@@ -85,8 +90,9 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
 			header.put("appkey", OrdersConstants.OFC_APPKEY);
 			try {
 				String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_ORDER_CREATE_URL, params, header);
-				JSONObject object = JSON.parseObject(strData);
-				boolean val = object.getBooleanValue("IsValid");
+				JSONObject jsonObject = ParseO2pDataUtil.getData(strData);
+				//JSONObject object = JSON.parseObject(strData);
+				boolean val = jsonObject.getBooleanValue("IsValid");
 				if(!val) {
 					throw new BusinessException("", "销售订单创建同步到OFC错误");
 				}
@@ -112,8 +118,8 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
 			sysdate = order.getStateChgTime();//支付时间
 			SysParam sysParamChlId = InfoTranslateUtil.translateInfo(request.getTenantId(), 
 						"ORD_ORDER", "CHL_ID", order.getChlId(), iCacheSV);
-	        paramsRequest.setShopName(sysParamChlId==null?"":sysParamChlId.getColumnDesc()); 
-	        //paramsRequest.setShopName("长虹官方旗舰店"); 
+	        //paramsRequest.setShopName(sysParamChlId==null?"":sysParamChlId.getColumnDesc()); 
+	        paramsRequest.setShopName("长虹官方旗舰店"); 
 	        String time = DateUtil.getDateString(order.getOrderTime(), DateUtil.DATETIME_FORMAT);
 	        paramsRequest.setOrderTime(time);
 	        paramsRequest.setPayNo(String.valueOf(order.getAcctId())); //支付帐号
@@ -146,8 +152,14 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
         }
         OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
     	if (ordOdInvoice != null) {
-        	paramsRequest.setNeedInvoice(1); //TODO 确定下?
-        	paramsRequest.setInvoiceType(Long.parseLong(ordOdInvoice.getInvoiceType()));
+        	paramsRequest.setNeedInvoice(1); 
+        	String invoiceType = ordOdInvoice.getInvoiceType();
+        	if(OrdersConstants.ordOdInvoice.invoiceType.THREE.equals(invoiceType)) {
+        		paramsRequest.setInvoiceType(1); //普票
+        	}
+        	if(OrdersConstants.ordOdInvoice.invoiceType.FOUR.equals(invoiceType)) {
+        		paramsRequest.setInvoiceType(2); //增票
+        	}
         	paramsRequest.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
         	paramsRequest.setCompanyName(ordOdInvoice.getInvoiceTitle());
         	paramsRequest.setTaxNo(ordOdInvoice.getBuyerTaxpayerNumber());
@@ -163,7 +175,7 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
 			for (OrdOdProd ordOdProd : ordOdProdList) {
 	        	OrderItemsVo orderItemsVo=new OrderItemsVo();
 	        	orderItemsVo.setProductName(ordOdProd.getProdName());
-	        	orderItemsVo.setProductCode(ordOdProd.getProdCode()); //商品编码
+	        	orderItemsVo.setProductCode("CH5007890"); //商品编码
 	        	orderItemsVo.setProductNo("");
 	        	orderItemsVo.setPrice(ordOdProd.getSalePrice());
 	        	orderItemsVo.setQuanlity(ordOdProd.getBuySum());
