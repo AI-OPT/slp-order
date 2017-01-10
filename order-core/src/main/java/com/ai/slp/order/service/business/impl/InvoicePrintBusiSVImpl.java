@@ -243,9 +243,9 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			respVo.setQuantity(String.valueOf(ordOdProd.getBuySum()));
 			respVo.setUnit("");
 			respVo.setDiscountAmount("0.00");
-			respVo.setRate("0.17");
+			respVo.setRate(OrdersConstants.INVOICE_RATE);
 			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000));
-			BigDecimal b1 =taxValue.multiply(new BigDecimal(0.17));  //税金
+			BigDecimal b1 =taxValue.multiply(new BigDecimal(Double.parseDouble(OrdersConstants.INVOICE_RATE)));  //税金
 			BigDecimal b2 = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000)); //含税金额
 			String s=b2.subtract(b1).setScale(2,BigDecimal.ROUND_HALF_UP).toString(); 
 			respVo.setTax(b1.setScale(2,BigDecimal.ROUND_HALF_UP).toString());//税金
@@ -292,8 +292,9 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 					printVo.setInvoiceType(ordOdInvoice.getInvoiceType());
 					printVo.setInvoiceId(ordOdInvoice.getInvoiceId());
 					printVo.setInvoiceNum(ordOdInvoice.getInvoiceNum());
-					printVo.setTaxRate(17l);//17  查看该订单下的商品税率
-					BigDecimal rate = BigDecimal.valueOf(invoiceAmount).multiply(new BigDecimal(0.17));
+					//查看该订单下的商品税率
+					printVo.setTaxRate(new BigDecimal(OrdersConstants.INVOICE_RATE).multiply(new BigDecimal(100)).longValue());
+					BigDecimal rate = BigDecimal.valueOf(invoiceAmount).multiply(new BigDecimal(Double.parseDouble(OrdersConstants.INVOICE_RATE)));
 					BigDecimal scale = rate.setScale(0,BigDecimal.ROUND_HALF_UP);
 					printVo.setTaxAmount(scale.longValue());//税率和金额
 					printVo.setInvoiceAmount(invoiceAmount);
@@ -305,7 +306,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	        pageInfo.setResult(invoicePrintVos);
 	        return pageInfo;
 	    }
-	 
+     
 	 /**
 	  * 判断时间是否符合格式要求
 	  */
