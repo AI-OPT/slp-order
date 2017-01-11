@@ -320,7 +320,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         RouteQueryByGroupIdAndAreaResponse routeResponse = iRouteManageSV.queryRouteInfoByGroupIdAndArea(andAreaRequest);
         if(routeResponse==null||(routeResponse!=null&&!routeResponse.getResponseHeader().getIsSuccess())) {
         	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据仓库组ID["
-                    + routeGroupId + "]省份编码[" + ordOdLogistics.getProvinceCode()+ "]未能查询到仓库id");
+                    + routeGroupId + "]和省份编码[" + ordOdLogistics.getProvinceCode()+ "]未能查询到仓库id");
         }
         
     	String routeId = routeResponse.getRouteId();
