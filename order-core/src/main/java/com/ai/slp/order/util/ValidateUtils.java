@@ -539,6 +539,9 @@ public class ValidateUtils {
 			if (StringUtil.isBlank(vo.getOrdOrderVo().getFlag())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}
+			if (StringUtil.isBlank(vo.getOrdOrderVo().getCusServiceFlag())) {
+				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
+			}
 			if (StringUtil.isBlank(vo.getOrdOrderVo().getSupplierId())) {
 				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数不能为空");
 			}

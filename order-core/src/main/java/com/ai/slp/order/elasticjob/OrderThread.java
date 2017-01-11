@@ -12,6 +12,7 @@ import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
 import com.ai.slp.order.util.PropertiesUtil;
+import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.OfcCodeRequst;
 import com.ai.slp.order.vo.OrdOdFeeTotalVo;
 import com.ai.slp.order.vo.OrdOdLogisticsVo;
@@ -66,10 +67,12 @@ public class OrderThread extends Thread {
 		LOG.error("++++++++++ofc开始设置订单信息数据,时间" + DateUtil.getSysDate());
 		OrdOrderOfcVo record = new OrdOrderOfcVo();
 		OfcCodeRequst requst = new OfcCodeRequst();
+		long orderId = SequenceUtil.createOrderId();
 		requst.setTenantId(PropertiesUtil.getStringByKey("ofc.ordOrder.tenantId"));
 		requst.setSystemId(PropertiesUtil.getStringByKey("ofc.ordOrder.systemId"));
 		// 订单Id
-		record.setOrderId(Long.valueOf(orderData[0]));
+		record.setOrderId(orderId);
+		record.setDownstreamOrderId(orderData[0]);
 		// 下单时间
 		record.setOrderTime(Timestamp.valueOf(orderData[1]));
 		// 订单来源
@@ -147,7 +150,7 @@ public class OrderThread extends Thread {
 		 */
 		OrdOdFeeTotalVo ordOdFeeTotal = new OrdOdFeeTotalVo();
 		// 订单Id
-		ordOdFeeTotal.setOrderId(Long.valueOf(orderData[0]));
+		ordOdFeeTotal.setOrderId(orderId);
 		// 租户Id
 		ordOdFeeTotal.setTenantId(PropertiesUtil.getStringByKey("ofc.ordOrder.tenantId"));
 		// 支付类型,需要解码
@@ -215,7 +218,7 @@ public class OrderThread extends Thread {
 		// 租户Id
 		ordOdLogistics.setTenantId(PropertiesUtil.getStringByKey("ofc.ordOrder.tenantId"));
 		// 订单Id
-		ordOdLogistics.setOrderId(Long.valueOf(orderData[0]));
+		ordOdLogistics.setOrderId(orderId);
 		// 买家名称,长度最大16位
 		if (!StringUtil.isBlank(orderData[20])) {
 			if (orderData[20].length() <= 16) {

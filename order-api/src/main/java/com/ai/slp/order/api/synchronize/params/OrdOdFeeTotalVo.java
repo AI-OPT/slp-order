@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.synchronize.params;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 public class OrdOdFeeTotalVo implements Serializable {
 
@@ -9,12 +10,12 @@ public class OrdOdFeeTotalVo implements Serializable {
 	/**
 	 * 订单id
 	 */
-	//private long orderId;
+	// private long orderId;
 
 	/**
 	 * 租户id
 	 */
-	//private String tenantId;
+	// private String tenantId;
 
 	// private String payFlag;
 
@@ -58,13 +59,25 @@ public class OrdOdFeeTotalVo implements Serializable {
 	 */
 	private String payStyle;
 
-	// private Timestamp updateTime;
+	/**
+	 * 更新时间
+	 */
+	private Timestamp updateTime;
 
-	// private String updateChlId;
+	/**
+	 * 更新渠道
+	 */
+	private String updateChlId;
 
-	// private String updateOperId;
+	/**
+	 * 更新操作员Id
+	 */
+	private String updateOperId;
 
-	// private long totalJf;
+	/**
+	 * 积分总数
+	 */
+	private long totalJf;
 
 	/**
 	 * 运费
@@ -77,6 +90,38 @@ public class OrdOdFeeTotalVo implements Serializable {
 
 	public void setTotalFee(long totalFee) {
 		this.totalFee = totalFee;
+	}
+
+	public Timestamp getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Timestamp updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public String getUpdateChlId() {
+		return updateChlId;
+	}
+
+	public void setUpdateChlId(String updateChlId) {
+		this.updateChlId = updateChlId;
+	}
+
+	public String getUpdateOperId() {
+		return updateOperId;
+	}
+
+	public void setUpdateOperId(String updateOperId) {
+		this.updateOperId = updateOperId;
+	}
+
+	public long getTotalJf() {
+		return totalJf;
+	}
+
+	public void setTotalJf(long totalJf) {
+		this.totalJf = totalJf;
 	}
 
 	public long getDiscountFee() {
