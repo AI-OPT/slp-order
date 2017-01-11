@@ -274,8 +274,8 @@ public class ValidateUtils {
 			}
 		} else {
 			if(OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(flag)) {
-				if (!OrdersConstants.ordOdInvoice.invoiceType.THREE.equals(condition.getInvoiceType())||
-						!OrdersConstants.ordOdInvoice.invoiceType.FOUR.equals(condition.getInvoiceType())){
+				if (!(OrdersConstants.ordOdInvoice.invoiceType.THREE.equals(condition.getInvoiceType())||
+						OrdersConstants.ordOdInvoice.invoiceType.FOUR.equals(condition.getInvoiceType()))){
 					throw new BusinessException("", "发票类型不符合要求");
 				}
 			}else {
