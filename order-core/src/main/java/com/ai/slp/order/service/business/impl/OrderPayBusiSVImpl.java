@@ -318,13 +318,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         andAreaRequest.setRouteGroupId(routeGroupId);
         andAreaRequest.setTenantId(tenantId);
         RouteQueryByGroupIdAndAreaResponse routeResponse = iRouteManageSV.queryRouteInfoByGroupIdAndArea(andAreaRequest);
-        boolean isSuccess = false;
-        if(routeResponse!=null) {
-        	isSuccess = routeResponse.getResponseHeader().getIsSuccess();
-        }else if(!isSuccess||routeResponse==null){
-        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据路由组ID["
-                    + routeGroupId + "]省份编码[" + ordOdLogistics.getProvinceCode()+ "]未能找到供货路由");
-    	}
+        if(routeResponse==null||(routeResponse!=null&&!routeResponse.getResponseHeader().getIsSuccess())) {
+        	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据仓库组ID["
+                    + routeGroupId + "]省份编码[" + ordOdLogistics.getProvinceCode()+ "]未能查询到仓库id");
+        }
+        
     	String routeId = routeResponse.getRouteId();
     	Long subOrderId=null;
     	OrdOdProd ordOdProd =null;
