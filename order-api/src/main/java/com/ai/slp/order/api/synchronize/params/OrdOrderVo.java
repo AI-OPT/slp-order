@@ -28,7 +28,10 @@ public class OrdOrderVo implements Serializable {
 
 	// private String subFlag;
 
-	// private long parentOrderId;
+	/**
+	 * 父订单Id
+	 */
+	private long parentOrderId;
 
 	// private long batchNo;
 
@@ -113,7 +116,10 @@ public class OrdOrderVo implements Serializable {
 
 	// private Timestamp finishTime;
 
-	// private long origOrderId;
+	/**
+	 * 原始订单Id
+	 */
+	private long origOrderId;
 
 	/**
 	 * 订单简要信息
@@ -152,6 +158,46 @@ public class OrdOrderVo implements Serializable {
 	 * 预警类型
 	 */
 	private String warningType;
+
+	public long getParentOrderId() {
+		return parentOrderId;
+	}
+
+	public void setParentOrderId(long parentOrderId) {
+		this.parentOrderId = parentOrderId;
+	}
+
+	public long getOrigOrderId() {
+		return origOrderId;
+	}
+
+	public void setOrigOrderId(long origOrderId) {
+		this.origOrderId = origOrderId;
+	}
+
+	public String getCusServiceFlag() {
+		return cusServiceFlag;
+	}
+
+	public void setCusServiceFlag(String cusServiceFlag) {
+		this.cusServiceFlag = cusServiceFlag;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserTel() {
+		return userTel;
+	}
+
+	public void setUserTel(String userTel) {
+		this.userTel = userTel;
+	}
 
 	public String getBusiCode() {
 		return busiCode;
@@ -305,7 +351,10 @@ public class OrdOrderVo implements Serializable {
 		this.warningType = warningType;
 	}
 
-	// private String cusServiceFlag;
+	/**
+	 * 售后
+	 */
+	private String cusServiceFlag;
 
 	// private String accountId;
 
@@ -337,9 +386,15 @@ public class OrdOrderVo implements Serializable {
 
 	// private String tokenId;
 
-	// private String userName;
+	/**
+	 * 用户名
+	 */
+	private String userName;
 
-	// private String userTel;
+	/**
+	 * 用户联系方式
+	 */
+	private String userTel;
 
 	// private String pointRate;
 

@@ -47,12 +47,13 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 		OrdOdInvoice ordOdInvoice = new OrdOdInvoice();
 		OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
 		OrdBalacneIf ordBalacneIf = new OrdBalacneIf();
-		long orderId = request.getOrderId();
+		long orderId = SequenceUtil.createOrderId();
 		try {
 			if (request.getOrdOrderVo() != null) {
 				BeanUtils.copyProperties(request.getOrdOrderVo(), ordOrder);
 				ordOrder.setTenantId(request.getTenantId());
 				ordOrder.setOrderId(orderId);
+				ordOrder.setDownstreamOrderId(request.getOrderId()+"");
 				// 长虹侧无子订单的概念
 				ordOrder.setSubFlag(OrdersConstants.OrdOrder.SubFlag.NO);
 				// 状态变化时间

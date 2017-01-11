@@ -2,70 +2,92 @@ package com.ai.slp.order.api.synchronize.params;
 
 import java.io.Serializable;
 
-public class OrdOdInvoiceVo implements Serializable{
+public class OrdOdInvoiceVo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 订单信息
 	 */
-	//private long orderId;
+	// private long orderId;
 
 	/**
 	 * 租户id
 	 */
-    //private String tenantId;
+	// private String tenantId;
 
-    /**
-     * 发票类型
-     */
-    private String invoiceType;
+	/**
+	 * 发票类型
+	 */
+	private String invoiceType;
 
-    /**
-     * 发票抬头
-     */
-    private String invoiceTitle;
+	/**
+	 * 发票抬头
+	 */
+	private String invoiceTitle;
 
-    /**
-     * 发票内容类型
-     */
-    private String invoiceContent;
+	/**
+	 * 发票内容类型
+	 */
+	private String invoiceContent;
 
-    /**
-     * 发票状态
-     */
-    private String invoiceStatus;
+	/**
+	 * 发票状态
+	 */
+	private String invoiceStatus;
 
-   //private String invoiceId;
+	/**
+	 * 发票id
+	 */
+	private String invoiceId;
 
-    //private String invoiceNum;
+	/**
+	 * 发票号码
+	 */
+	private String invoiceNum;
 
-    /**
-     * 发票种类
-     */
-    private String invoiceKind;
+	/**
+	 * 发票种类
+	 */
+	private String invoiceKind;
 
-    //private Timestamp invoiceTime;
+	// private Timestamp invoiceTime;
 
-    /**
-     * 纳税人识别号
-     */
-    private String buyerTaxpayerNumber;
+	/**
+	 * 纳税人识别号
+	 */
+	private String buyerTaxpayerNumber;
 
-    /**
-     * 购货方开户行代码
-     */
-    private String buyerBankCode;
+	/**
+	 * 购货方开户行代码
+	 */
+	private String buyerBankCode;
 
-    /**
-     * 购货方开户行名称
-     */
-    private String buyerBankName;
+	/**
+	 * 购货方开户行名称
+	 */
+	private String buyerBankName;
 
-    /**
-     * 购货方开户行帐号
-     */
-    private String buyerBankAccount;
+	/**
+	 * 购货方开户行帐号
+	 */
+	private String buyerBankAccount;
+
+	public String getInvoiceId() {
+		return invoiceId;
+	}
+
+	public void setInvoiceId(String invoiceId) {
+		this.invoiceId = invoiceId;
+	}
+
+	public String getInvoiceNum() {
+		return invoiceNum;
+	}
+
+	public void setInvoiceNum(String invoiceNum) {
+		this.invoiceNum = invoiceNum;
+	}
 
 	public String getInvoiceType() {
 		return invoiceType;
@@ -138,6 +160,5 @@ public class OrdOdInvoiceVo implements Serializable{
 	public void setBuyerBankAccount(String buyerBankAccount) {
 		this.buyerBankAccount = buyerBankAccount;
 	}
-    
-    
+
 }

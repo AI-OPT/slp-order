@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.synchronize.params;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 public class OrdOdProdVo implements Serializable {
 
@@ -25,7 +26,10 @@ public class OrdOdProdVo implements Serializable {
 
 	// private String supplierId;
 
-	// private String sellerId;
+	/**
+	 * 售货商ID
+	 */
+	private String sellerId;
 
 	/**
 	 * 销售品ID
@@ -53,13 +57,25 @@ public class OrdOdProdVo implements Serializable {
 	 */
 	private String storageId;
 
-	// private String routeId;
+	/**
+	 * 仓库Id
+	 */
+	private String routeId;
 
-	// private Timestamp validTime;
+	/**
+	 * 生效时间
+	 */
+	private Timestamp validTime;
 
-	// private Timestamp invalidTime;
+	/**
+	 * 失效时间
+	 */
+	private Timestamp invalidTime;
 
-	// private String state;
+	/**
+	 * state
+	 */
+	private String state;
 
 	/**
 	 * 购买数量
@@ -130,6 +146,46 @@ public class OrdOdProdVo implements Serializable {
 	 * 商品编码
 	 */
 	private String prodCode;
+
+	public String getSellerId() {
+		return sellerId;
+	}
+
+	public void setSellerId(String sellerId) {
+		this.sellerId = sellerId;
+	}
+
+	public String getRouteId() {
+		return routeId;
+	}
+
+	public void setRouteId(String routeId) {
+		this.routeId = routeId;
+	}
+
+	public Timestamp getValidTime() {
+		return validTime;
+	}
+
+	public void setValidTime(Timestamp validTime) {
+		this.validTime = validTime;
+	}
+
+	public Timestamp getInvalidTime() {
+		return invalidTime;
+	}
+
+	public void setInvalidTime(Timestamp invalidTime) {
+		this.invalidTime = invalidTime;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
 
 	public String getProdId() {
 		return prodId;
