@@ -353,7 +353,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		afterOrdOdProd.setJf(afterGiveJf);
     		afterOrdOdProd.setOperDiscountFee(afterOperDiscountFee);
     		afterOrdOdProd.setDiscountFee(discountFee);
-    		afterOrdOdProd.setAdjustFee(afterTotalFee-afterOrdOdProd.getDiscountFee());
+    		long adjustFee=afterTotalFee-afterOrdOdProd.getDiscountFee();
+    		afterOrdOdProd.setAdjustFee(adjustFee<0?0:adjustFee);
     		afterOrdOdProd.setState(prodState); 
     		afterOrdOdProd.setUpdateTime(DateUtil.getSysDate());
     		afterOrdOdProd.setProdDetalId(SequenceUtil.createProdDetailId());
@@ -375,8 +376,9 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		rdOrdOdFeeTotal.setTenantId(request.getTenantId());
     		rdOrdOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.OUT);
     		rdOrdOdFeeTotal.setTotalFee(afterTotalFee);
-    		rdOrdOdFeeTotal.setAdjustFee(afterTotalFee-afterOrdOdProd.getDiscountFee());
-    		rdOrdOdFeeTotal.setPayFee(afterTotalFee-afterOrdOdProd.getDiscountFee());
+    		//long adjustFee=afterTotalFee-afterOrdOdProd.getDiscountFee();
+    		rdOrdOdFeeTotal.setAdjustFee(adjustFee<0?0:adjustFee);
+    		rdOrdOdFeeTotal.setPayFee(adjustFee<0?0:adjustFee);
     		rdOrdOdFeeTotal.setDiscountFee(afterOrdOdProd.getDiscountFee());
     		rdOrdOdFeeTotal.setOperDiscountFee(afterOrdOdProd.getOperDiscountFee());
     		rdOrdOdFeeTotal.setPaidFee(0);
@@ -404,7 +406,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     		balacneIf.setBalacneIfId(balacneIfId);
     		balacneIf.setOrderId(afterOrderId);
     		balacneIf.setPayStyle(odFeeTotal.getPayStyle());
-    		balacneIf.setPayFee(afterTotalFee-afterOrdOdProd.getDiscountFee());
+    		long adjustFee=afterTotalFee-afterOrdOdProd.getDiscountFee();
+    		balacneIf.setPayFee(adjustFee<0?0:adjustFee);
     		balacneIf.setCreateTime(DateUtil.getSysDate());
     		ordBalacneIfAtomSV.insertSelective(balacneIf);
     		long balacneEnd=System.currentTimeMillis();
@@ -446,7 +449,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getCouponFee());//优惠券
     			}else {
     				subOrdOdFeeProd.setPayStyle(ordOdFeeProd.getPayStyle());
-    				subOrdOdFeeProd.setPaidFee(afterOrdOdProd.getTotalFee()-afterOrdOdProd.getDiscountFee());
+    				long paidFee=afterOrdOdProd.getTotalFee()-afterOrdOdProd.getDiscountFee();
+    				subOrdOdFeeProd.setPaidFee(paidFee<0?0:paidFee);
     			}
     			ordOdFeeProdAtomSV.insertSelective(subOrdOdFeeProd);
     		}
