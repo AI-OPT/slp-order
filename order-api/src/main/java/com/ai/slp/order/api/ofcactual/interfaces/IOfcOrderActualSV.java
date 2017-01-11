@@ -11,10 +11,8 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.ofcactual.param.OfcOrderCreateRequest;
 
-
 /**
  * ofc实时相关服务
- * @date 2017年1月9日 
  * @author caofz
  */
 @Path("/ofc")
