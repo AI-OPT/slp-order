@@ -32,5 +32,13 @@ public interface IOfcBusiSV {
 	 * @throws SystemException
 	 */
 	public String parseOfcCode(OfcCodeRequst request) throws BusinessException, SystemException;
+	
+	/**
+	 * 匹配订单Id
+	 * @return
+	 * @throws BusinessException
+	 * @throws SystemException
+	 */
+	public long parseOrderId(String downstreamOrderId)throws BusinessException, SystemException;
 
 }

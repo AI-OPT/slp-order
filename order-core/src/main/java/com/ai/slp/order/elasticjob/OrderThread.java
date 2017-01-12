@@ -26,17 +26,17 @@ public class OrderThread extends Thread {
 
 	private IOfcBusiSV ofcSV;
 
-	private BlockingQueue<String[]> ordOrderQueue;
+	private String[] queue;
 
-	public OrderThread(BlockingQueue<String[]> ordOrderQueue, IOfcBusiSV ofcSV) {
-		this.ordOrderQueue = ordOrderQueue;
+	public OrderThread(String[] queue, IOfcBusiSV ofcSV) {
+		this.queue = queue;
 		this.ofcSV = ofcSV;
 	}
 
 	public void run() {
 		while (true) {
 			try {
-				String[] queue = ordOrderQueue.poll(120, TimeUnit.SECONDS);
+				//String[] queue = ordOrderQueue.poll(120, TimeUnit.SECONDS);
 				if (null == queue) {
 					LOG.error("+++++++++订单信息+++++++++线程OrderThread中断了");
 					break;
