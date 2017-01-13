@@ -1,8 +1,5 @@
 package com.ai.slp.order.elasticjob;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,10 +24,10 @@ public class OrdOdProdThread extends Thread {
 
 	private IOfcBusiSV ofcSV;
 
-	private BlockingQueue<String[]> ordOdProdQueue;
+	private String[] queue;
 
-	public OrdOdProdThread(BlockingQueue<String[]> ordOdProdQueue, IOfcBusiSV ofcSV) {
-		this.ordOdProdQueue = ordOdProdQueue;
+	public OrdOdProdThread(String[] queue, IOfcBusiSV ofcSV) {
+		this.queue = queue;
 		this.ofcSV = ofcSV;
 	}
 
@@ -40,7 +37,7 @@ public class OrdOdProdThread extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				String[] queue = ordOdProdQueue.poll(120, TimeUnit.SECONDS);
+				//String[] queue = ordOdProdQueue.poll(120, TimeUnit.SECONDS);
 				if (null == queue) {
 					LOG.error("++++++++++++++++线程OrdOdProdThread中断了");
 					break;

@@ -15,16 +15,13 @@ public class OrderOfcJob implements SimpleJob {
     private static final Logger log = LoggerFactory.getLogger(OrderOfcJob.class);
 
     @Autowired
-    OrdProdTaskJob ordProdTaskJob;
-    
-    @Autowired
     OrderTaskJob orderTaskJob;
     
     @Override
     public void execute(ShardingContext context)  {
         log.error("执行订单ofc任务");
         orderTaskJob.run();
-        ordProdTaskJob.run();
+        //ordProdTaskJob.run();
         log.error("结束执行订单ofc任务..");
 
     }

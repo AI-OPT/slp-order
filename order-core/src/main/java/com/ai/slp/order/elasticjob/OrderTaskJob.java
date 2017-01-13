@@ -15,10 +15,10 @@ import com.ai.opt.sdk.components.lock.AbstractMutexLock;
 import com.ai.opt.sdk.components.lock.RedisMutexLockFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
+import com.alibaba.fastjson.JSON;
 
 /**
- * 订单Task
- * Date: 2017年1月6日 <br>
+ * 订单Task Date: 2017年1月6日 <br>
  * Copyright (c) 2017 asiainfo.com <br>
  * 
  * @author zhangqiang7
@@ -35,10 +35,13 @@ public class OrderTaskJob {
 
 	public BlockingQueue<String[]> ordOrderQueue;
 
+	public BlockingQueue<String[]> ordOdProdQueue;
+
 	public static ExecutorService handlePool;
 
 	/**
 	 * 分布式锁
+	 * 
 	 * @author zhangqiang7
 	 * @UCUSER
 	 */
@@ -80,23 +83,41 @@ public class OrderTaskJob {
 		try {
 			ordOrderQueue = new LinkedBlockingQueue<String[]>(1000);
 
+			ordOdProdQueue = new LinkedBlockingQueue<String[]>(1000);
+
 			handlePool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+			LOG.error("开始启动读取订单生产者线程");
 			// 生产者
 			Thread producerThred = new Thread(new OrderReadFileThread(ordOrderQueue));
 			producerThred.start();
 			// 消费者
 			LOG.error("开始插入订单信息，当前时间戳：" + DateUtil.getSysDate());
-			for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
-				handlePool.execute(new OrderThread(ordOrderQueue, ofcSV));
+			while(true){
+				String[] queue = ordOrderQueue.poll(30, TimeUnit.SECONDS);
+				if (null == queue) {
+					LOG.error("订单信息队列为空");
+					break;
+				}
+				handlePool.execute(new OrderThread(queue, ofcSV));
+			}
+			LOG.error("开始启动订单商品生产者线程");
+			// 生产者
+			Thread prodProducerThred = new Thread(new OrdProdReadFileThread(ordOdProdQueue));
+			prodProducerThred.start();
+			// 消费者
+			LOG.error("开始插入订单商品信息，当前时间戳：" + DateUtil.getSysDate());
+			while(true){
+				String[] queue = ordOdProdQueue.poll(30, TimeUnit.SECONDS);
+				if (null == queue) {
+					LOG.error("订单信息队列为空");
+					break;
+				}
+				handlePool.execute(new OrdOdProdThread(queue, ofcSV));
 			}
 			// 未消费完等待
-			while (!ordOrderQueue.isEmpty()) {
-				Thread.sleep(10 * 1000);
-			}
-			LOG.error("订单信息队列为空");
-
+			LOG.error("订单商品信息队列为空");
 		} catch (Exception e) {
-			LOG.error("订单信息任务出错了,错误原因" + e.getMessage());
+			LOG.error("订单信息任务出错了,错误原因" + JSON.toJSONString(e));
 		} finally {
 			handlePool.shutdown();
 			LOG.error("订单信息任务结束，当前时间戳：" + DateUtil.getSysDate());

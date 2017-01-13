@@ -13,6 +13,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotalCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
@@ -154,6 +155,20 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			return list.get(0).getCode();
 		}
 		return null;
+	}
+
+	@Override
+	public long parseOrderId(String downstreamOrderId) throws BusinessException, SystemException {
+		OrdOrderCriteria example = new OrdOrderCriteria();
+		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		criteria.andTenantIdEqualTo(OrdersConstants.TENANT_ID);
+		criteria.andDownstreamOrderIdEqualTo(downstreamOrderId);
+		List<OrdOrder>  list = ordOrderAtomSV.selectByExample(example);
+		long orderId = 0;
+		if(list.isEmpty()){
+			orderId = list.get(0).getOrderId();
+		}
+		return orderId;
 	}
 
 }
