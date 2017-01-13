@@ -14,7 +14,7 @@ public class StasticOrdOrderSqlProvider {
 	 */
     public String staticQueryOrdOrder(Map<String, Object> param) {
         StringBuffer seqBuffer = new StringBuffer();
-        seqBuffer.append("select oo.*"
+        seqBuffer.append("select DISTINCT oo.*"
       /*  seqBuffer.append("select DISTINCT oo.order_id,oo.supplier_id,oo.state,oo.tenant_id,oo.chl_id,"
         		+ "oo.delivery_flag,oo.user_name,oo.user_tel"*/
         		+ " from ord_order oo, ord_od_prod prod where"
