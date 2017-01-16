@@ -43,7 +43,9 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
     private IOrdOrderAtomSV iOrdOrderAtomSV;
     @Autowired
 	IOrdOdLogisticsAtomSV iOrdOdLogisticsAtomSV;
-	@Override
+	
+    //获取订单统计信息
+    @Override
 	public PageInfo<StasticParentOrderVo> getStasticOrdPage(StasticsOrderRequest request) {
 		long dubboStart=System.currentTimeMillis();
     	LOG.error("====开始执行StasticsOrderBusiSVImpl中的getStasticOrdPage订单查询dubbo服务，当前时间戳："+dubboStart);
