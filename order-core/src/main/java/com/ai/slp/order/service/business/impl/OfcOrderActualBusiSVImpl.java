@@ -77,7 +77,8 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
     
     @Autowired
     private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
-
+    
+    //ofc销售订单创建
 	@Override
 	public void orderCreate(OfcOrderCreateRequest request) throws BusinessException, SystemException {
 		/* 1.参数校验*/
