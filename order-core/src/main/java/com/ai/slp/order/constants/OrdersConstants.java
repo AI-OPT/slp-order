@@ -6,7 +6,7 @@ public final class OrdersConstants {
 	
 	/** 消息队列配置信息(已废弃)*/
 	public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
-	
+	/** 订单租户id */
 	public static final String TENANT_ID = "changhong";
 	/** 定时任务配置信息*/
 	public static final String DTS_SCHEDULE_NAME = "slp-order-dts-sched";
@@ -23,7 +23,7 @@ public final class OrdersConstants {
 	private static PropertiesLoader loader = new PropertiesLoader("remote_url.properties");
 	/** 订单常量相关信息*/
 	public static final class OrdOrder {
-
+		/** 订单业务标识 */
 		public static final class Flag {
 			/**
 			 * 0:OFC(定时)
@@ -46,7 +46,7 @@ public final class OrdersConstants {
 			public static final String OFC_ACTUAL_TIME  = "3";
 
 		}
-		
+		/** 订单用户类型 */
 		public static final class UserType {
 			/**
 			 * 10:个人
