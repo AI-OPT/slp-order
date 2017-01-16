@@ -184,7 +184,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		}
 	}
 	
-	
+	//ofc售后订单状态回传
 	@Override
 	public void backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException {
 		/*参数校验*/
