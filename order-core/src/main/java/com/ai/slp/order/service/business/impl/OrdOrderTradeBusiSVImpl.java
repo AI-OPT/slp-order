@@ -87,7 +87,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     
     @Autowired
     private IOrderMonitorSV orderMonitorSV;
-
+    
+    //订单提交
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
