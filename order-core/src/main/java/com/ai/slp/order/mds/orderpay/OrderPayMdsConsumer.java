@@ -1,4 +1,4 @@
-package com.ai.slp.order.mds.orderpay;
+/*package com.ai.slp.order.mds.orderpay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,3 +54,4 @@ public class OrderPayMdsConsumer extends AbstractMdsConsumer {
 	}
 
 }
+*/

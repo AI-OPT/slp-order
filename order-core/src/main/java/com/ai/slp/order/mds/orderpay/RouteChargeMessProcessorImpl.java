@@ -1,4 +1,4 @@
-package com.ai.slp.order.mds.orderpay;
+/*package com.ai.slp.order.mds.orderpay;
 
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
@@ -23,12 +23,12 @@ import java.sql.Timestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
+*//**
  * 充值消息处理 Date: 2016年6月16日 <br>
  * Copyright (c) 2016 asiainfo.com <br>
  * 
  * @author zhangxw
- */
+ *//*
 public class RouteChargeMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(RouteChargeMessProcessorImpl.class);
 
@@ -65,7 +65,7 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         String responseData = response.getResponseHeader().getResultMessage();
         Timestamp sysDate = DateUtil.getSysDate();
         if (!response.getResponseHeader().getIsSuccess()) {
-        	/*充值出现错误后则为充值失败*/
+        	充值出现错误后则为充值失败
             logger.info("error...");
             String requestData = request.getRequestData();
             logger.info("requestData:"+requestData);
@@ -79,14 +79,14 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
 			ordOrder.setState(newState);
 			ordOrder.setStateChgTime(sysDate);
 			ordOrder.setFinishTime(sysDate);
-			/* 更新子订单状态*/
+			 更新子订单状态
 			ordOrderAtomSV.updateById(ordOrder);
-			/* 写入订单状态变化轨迹表 */
+			 写入订单状态变化轨迹表 
 			orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
 			          newState, chgDesc, null, null, null, sysDate);
-			/* 如果订单状态为充值失败,则调用退款服务 */
+			 如果订单状态为充值失败,则调用退款服务 
 	        orderReturnGoodBusiSV.orderReturnGoods(ordOrder, sysDate);
-			/*更新父订单状态*/
+			更新父订单状态
 			OrdOrder parentOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), ordOrder.getParentOrderId());
 			String parentOrgState=parentOrdOrder.getState();
 			String parentNewState=OrdersConstants.OrdOrder.State.COMPLETED;
@@ -94,7 +94,7 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
 			parentOrdOrder.setState(parentNewState);
 			parentOrdOrder.setStateChgTime(sysDate);
 			ordOrderAtomSV.updateById(parentOrdOrder);
-			/* 写入订单状态变化轨迹表 */
+			 写入订单状态变化轨迹表 
 			orderFrameCoreSV.ordOdStateChg(parentOrdOrder.getOrderId(), parentOrdOrder.getTenantId(), parentOrgState,
 					parentNewState, parentChgDesc, null, null, null, sysDate);
 			return;
@@ -111,3 +111,4 @@ public class RouteChargeMessProcessorImpl implements IMessageProcessor {
         ordOrderAtomSV.updateById(ordOrder);
     }
 }
+*/
