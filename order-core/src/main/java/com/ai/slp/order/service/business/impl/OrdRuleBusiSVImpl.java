@@ -87,6 +87,8 @@ public class OrdRuleBusiSVImpl implements IOrdRuleBusiSV {
 		//
 		return response;
 	}
+	
+	//订单规则详情查看
 	@Override
 	public OrderRuleDetailResponse findOrderRuleDetail() {
 		List<String> orderRuleIds = new ArrayList<String>();
