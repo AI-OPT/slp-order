@@ -29,6 +29,7 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
 	
+	//待卖家收货确认状态修改 (买家发货快递填写)
 	@Override
 	@Transactional
 	public WaitSellReceiveSureResponse updateWaitSellRecieveSureState(WaitSellReceiveSureRequest request) {
@@ -55,7 +56,9 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		//
 		return response;
 	}
-
+	
+	
+	//待退费状态修改 
 	@Override
 	@Transactional
 	public WaitRebateResponse updateWaitRebateState(WaitRebateRequest request) {
