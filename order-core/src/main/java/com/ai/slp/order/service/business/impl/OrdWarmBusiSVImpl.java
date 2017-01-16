@@ -46,6 +46,8 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 	IOrdOdLogisticsAtomSV iOrdOdLogisticsAtomSV;
 	@Autowired
 	IOrdOdFeeProdAtomSV iOrdOdFeeProdAtomSV;
+	
+	//预警订单列表
 	@Override
 	public PageInfo<OrderWarmVo> selectWarmOrdPage(OrderWarmRequest request) {
 		long start=System.currentTimeMillis();
@@ -94,6 +96,8 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 		}
 		return pageResult;
 	}
+	
+	//预警订单详情查看
 	@Override
 	public OrderWarmVo selectWarmOrdDetail(String tenantId, long orderId) {
 		OrderWarmVo orderWarmVo = new OrderWarmVo();
@@ -144,6 +148,10 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 		
 		return orderWarmVo;
 	}
+	
+	/**
+	 * 获取图片信息
+	 */
 	private ProductImage getProductImage(String tenantId, String skuId) {
         ProductImage productImage = new ProductImage();
         SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
