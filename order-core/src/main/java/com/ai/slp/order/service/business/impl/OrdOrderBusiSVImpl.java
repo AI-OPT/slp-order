@@ -154,7 +154,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	}
 
 	/**
-	 * 
+	 * 获取图片信息
 	 * @param skuId
 	 * @return
 	 * @author zhangxw
@@ -166,14 +166,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		skuInfoQuery.setTenantId(tenantId);
 		skuInfoQuery.setSkuId(skuId);
 		IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
-		//ProductSkuInfo productSkuInfo = iProductServerSV.queryProductSkuById(skuInfoQuery);
 		ProductSkuInfo productSkuInfo =iProductServerSV.queryProductSkuById4ShopCart(skuInfoQuery);
 		productImage.setVfsId(productSkuInfo.getVfsId());
 		productImage.setPicType(productSkuInfo.getPicType());
 		return productImage;
 	}
 
-
+	//订单详情查询
 	@Override
 	public QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException, SystemException {
 		logger.debug("开始订单详情查询..");
@@ -314,7 +313,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		return response;
 	}
 
-
+	//订单列表查询
 	@Override
 	public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
 			throws BusinessException, SystemException {
@@ -542,7 +541,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 
 	
 	
-	
+	//订单判断及状态修改
 	@Override
 	public int updateOrder(OrdOrder request) throws BusinessException, SystemException {
 		/* 获取售后订单 */
