@@ -11,7 +11,7 @@ dependencies {
     optBaseSource "com.ai.opt:opt-base:1.0.1-SNAPSHOT:sources"
     compile "javax.validation:validation-api:1.0.0.GA"
     compile "org.hibernate:hibernate-validator:4.2.0.Final"
-    compile "com.ai.opt.validator:opt-validator:1.0"
+   // compile "com.ai.opt.validator:opt-validator:1.0"
     compile 'org.jboss.resteasy:resteasy-jackson-provider:3.0.11.Final'
 }
 
