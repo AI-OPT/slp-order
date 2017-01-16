@@ -2,8 +2,6 @@ package com.ai.slp.order.elasticjob;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

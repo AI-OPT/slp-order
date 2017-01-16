@@ -187,7 +187,7 @@ public class OrdProdReadFileThread extends Thread {
 				if (ins != null) {
 					ins.close();
 				}
-				SftpUtil.delete(path, fileName, sftp);
+				//SftpUtil.delete(path, fileName, sftp);
 			}
 
 		} catch (Exception e) {
