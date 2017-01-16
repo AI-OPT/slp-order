@@ -611,6 +611,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	return ordOdProd;
     }
     
+    
+    /**
+     * 用户消费积分返回oid
+     */
 	@Override
 	public void returnOid(OrderOidRequest request) throws BusinessException, SystemException {
 		/* 参数校验*/
