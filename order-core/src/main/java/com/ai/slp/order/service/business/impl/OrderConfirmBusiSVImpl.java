@@ -54,7 +54,9 @@ public class OrderConfirmBusiSVImpl implements IOrderConfirmBusiSV {
 		this.updateOrderState(ordOrder, DateUtil.getSysDate());
 	}
 	
-	
+	/**
+	 * 状态修改
+	 */
 	private void updateOrderState(OrdOrder ordOrder, Timestamp sysDate) {
         String orgState = ordOrder.getState();
         if(!OrdersConstants.OrdOrder.State.WAIT_CONFIRM.equals(orgState)) {
