@@ -92,13 +92,24 @@ public class OrderTaskJob {
 			producerThred.start();
 			// 消费者
 			LOG.error("开始插入订单信息，当前时间戳：" + DateUtil.getSysDate());
+			Thread[] thread = new Thread[Runtime.getRuntime().availableProcessors() * 2];
+			for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
+				thread[i] = new OrderThread(ordOrderQueue, ofcSV);
+				handlePool.execute(thread[i]);
+			}
 			while(true){
-				String[] queue = ordOrderQueue.poll(30, TimeUnit.SECONDS);
-				if (null == queue) {
-					LOG.error("订单信息队列为空");
+				int count = 0;
+				for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
+					if(!thread[i].isAlive()){
+						count++;
+					}
+				}
+				if(count!=Runtime.getRuntime().availableProcessors() * 2){
+					Thread.sleep(30*1000);
+				}else{
+					LOG.error("订单信息同步完成"+DateUtil.getCurrentTime());
 					break;
 				}
-				handlePool.execute(new OrderThread(queue, ofcSV));
 			}
 			LOG.error("开始启动订单商品生产者线程");
 			// 生产者
@@ -106,16 +117,11 @@ public class OrderTaskJob {
 			prodProducerThred.start();
 			// 消费者
 			LOG.error("开始插入订单商品信息，当前时间戳：" + DateUtil.getSysDate());
-			while(true){
-				String[] queue = ordOdProdQueue.poll(30, TimeUnit.SECONDS);
-				if (null == queue) {
-					LOG.error("订单信息队列为空");
-					break;
-				}
-				handlePool.execute(new OrdOdProdThread(queue, ofcSV));
+			for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
+				thread[i] = new OrdOdProdThread(ordOdProdQueue, ofcSV);
+				handlePool.execute(thread[i]);
 			}
 			// 未消费完等待
-			LOG.error("订单商品信息队列为空");
 		} catch (Exception e) {
 			LOG.error("订单信息任务出错了,错误原因" + JSON.toJSONString(e));
 		} finally {
