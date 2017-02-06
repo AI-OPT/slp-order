@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
-import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.alibaba.fastjson.JSON;
 
