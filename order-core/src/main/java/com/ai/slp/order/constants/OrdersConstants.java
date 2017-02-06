@@ -838,4 +838,10 @@ public final class OrdersConstants {
 		/** 部分发货 */
 		public static final String PART_DELIVER_GOODS = "18";
 	}
+	public static final class MDSNS {
+		/** 订单系统的消息队列命名空间 */
+		public static final String MDS_NS_ORDER_TOPIC = "MDS_NS_ORDER_TOPIC";
+		/** 订单系统的使用消息队列的标识配置项名称 */
+		public static final String CCS_MQ_FLAG = "/CCS_MQ_FLAG";
+	}
 }
