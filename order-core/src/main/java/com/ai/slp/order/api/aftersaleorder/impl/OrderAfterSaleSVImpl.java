@@ -101,12 +101,25 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 
 	@Override
 	public BaseResponse backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException {
-		BaseResponse response =new BaseResponse();
-		orderAfterSaleBusiSV.backStateOFC(request);
-        ResponseHeader responseHeader = new ResponseHeader(true,
-                ExceptCodeConstants.Special.SUCCESS, "成功");
-        response.setResponseHeader(responseHeader);
-        return response;
+		boolean ccsMqFlag=false;
+		ccsMqFlag = MQConfigUtil.getCCSMqFlag();
+		//非消息模式
+		if(!ccsMqFlag) {
+			BaseResponse response =new BaseResponse();
+			orderAfterSaleBusiSV.backStateOFC(request);
+			ResponseHeader responseHeader = new ResponseHeader(true,
+					ExceptCodeConstants.Special.SUCCESS, "成功");
+			response.setResponseHeader(responseHeader);
+			return response;
+		}else {
+			//消息模式
+			BaseResponse response =new BaseResponse();
+			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(request), 0);
+			ResponseHeader responseHeader = new ResponseHeader(true,
+					ExceptCodeConstants.Special.SUCCESS, "成功");
+			response.setResponseHeader(responseHeader);
+			return response;
+		}
 	}
 	
 }
