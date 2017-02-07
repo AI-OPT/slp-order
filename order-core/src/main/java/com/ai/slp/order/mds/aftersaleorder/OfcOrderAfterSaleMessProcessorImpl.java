@@ -5,19 +5,19 @@ import org.slf4j.LoggerFactory;
 
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
-import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
+import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.alibaba.fastjson.JSON;
 
 /**
- * 订单换货消息处理
+ * OFC售后订单状态消息处理
  */
-public class OrderAfterSaleExchangeMessProcessorImpl implements IMessageProcessor {
-    private static Logger logger = LoggerFactory.getLogger(OrderAfterSaleExchangeMessProcessorImpl.class);
+public class OfcOrderAfterSaleMessProcessorImpl implements IMessageProcessor {
+    private static Logger logger = LoggerFactory.getLogger(OfcOrderAfterSaleMessProcessorImpl.class);
 
     private IOrderAfterSaleBusiSV orderAfterSaleBusiSV;
 
-    public OrderAfterSaleExchangeMessProcessorImpl(IOrderAfterSaleBusiSV orderAfterSaleBusiSV){
+    public OfcOrderAfterSaleMessProcessorImpl(IOrderAfterSaleBusiSV orderAfterSaleBusiSV){
         this.orderAfterSaleBusiSV = orderAfterSaleBusiSV;
     }
 
@@ -29,10 +29,10 @@ public class OrderAfterSaleExchangeMessProcessorImpl implements IMessageProcesso
         logger.info("--Topic:{}\r\n----key:{}\r\n----content:{}"
                 , message.getTopic(),new String(message.getKey(), "UTF-8"),content);
         //转换对象
-        OrderReturnRequest request = JSON.parseObject(content,OrderReturnRequest.class);
+        OrderOFCBackRequest request = JSON.parseObject(content,OrderOFCBackRequest.class);
         if (request==null)
             return;
-        this.orderAfterSaleBusiSV.exchange(request);        
+        this.orderAfterSaleBusiSV.backStateOFC(request);        
     }
 
 }

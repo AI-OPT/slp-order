@@ -10,7 +10,7 @@ import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.alibaba.fastjson.JSON;
 
 /**
- * 购物车消息处理
+ * 订单退款消息处理
  */
 public class OrderAfterSaleRefundMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(OrderAfterSaleRefundMessProcessorImpl.class);
