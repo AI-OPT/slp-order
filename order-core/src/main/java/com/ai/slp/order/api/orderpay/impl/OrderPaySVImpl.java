@@ -63,7 +63,7 @@ public class OrderPaySVImpl implements IOrderPaySV {
 		}else {
 			//消息模式下 异步调用服务
 			 BaseResponse response = new BaseResponse();
-			 MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(request), 0);
+			 MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_RETURNOID_TOPIC).send(JSON.toJSONString(request), 0);
 	         ResponseHeader responseHeader = new ResponseHeader(true,
 	                ExceptCodeConstants.Special.SUCCESS, "成功");
 	         response.setResponseHeader(responseHeader);

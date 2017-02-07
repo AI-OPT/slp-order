@@ -60,7 +60,7 @@ public class IShopCartSVImpl implements IShopCartSV {
     	}else {
     		//消息模式下
     		optRes=new CartProdOptRes();
-            MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(cartProd), 0);
+            MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_SHOPCART_ADD_TOPIC).send(JSON.toJSONString(cartProd), 0);
             ResponseHeader responseHeader = new ResponseHeader(true,
                     ExceptCodeConstants.Special.SUCCESS, "成功");
             optRes.setResponseHeader(responseHeader);
@@ -123,7 +123,7 @@ public class IShopCartSVImpl implements IShopCartSV {
     	}else {
     		//消息模式下
     		optRes=new CartProdOptRes();
-    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(cartProd), 0);
+    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_SHOPCART_UPDATE_TOPIC).send(JSON.toJSONString(cartProd), 0);
     		optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
     		return optRes;
     	}
@@ -159,7 +159,7 @@ public class IShopCartSVImpl implements IShopCartSV {
     	}else {
     		//消息模式下
     		optRes=new CartProdOptRes();
-    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(multiCartProd), 0);
+    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_SHOPCART_DELETE_TOPIC).send(JSON.toJSONString(multiCartProd), 0);
     		optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
     		return optRes;
     	}

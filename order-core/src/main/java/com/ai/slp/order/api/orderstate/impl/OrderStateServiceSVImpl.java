@@ -69,7 +69,7 @@ public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
 			return response;
 		}else {
 			//消息模式 异步调用服务
-			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(request), 0);
+			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).send(JSON.toJSONString(request), 0);
 			responseHeader.setIsSuccess(true);
 			responseHeader.setResultCode("000000");
 			responseHeader.setResultMessage("修改状态成功");

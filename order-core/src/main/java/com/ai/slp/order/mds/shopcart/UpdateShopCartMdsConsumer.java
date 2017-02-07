@@ -38,7 +38,7 @@ public class UpdateShopCartMdsConsumer extends AbstractMdsConsumer {
             }
         };
         IMessageConsumer msgConsumer= MDSClientFactory.getConsumerClient(
-                OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC, msgProcessorHandler);
+                OrdersConstants.MDSNS.MDS_NS_SHOPCART_UPDATE_TOPIC, msgProcessorHandler);
         msgConsumer.start();
         logger.error("成功启动UpdateShopCartMdsConsumer。。。。。");
 

@@ -38,7 +38,7 @@ public class OfcOrderAfterSaleConsumer extends AbstractMdsConsumer {
             }
         };
         IMessageConsumer msgConsumer= MDSClientFactory.getConsumerClient(
-                OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC, msgProcessorHandler);
+                OrdersConstants.MDSNS.MDS_NS_OFCORDER_BACK_TOPIC, msgProcessorHandler);
         msgConsumer.start();
         logger.error("成功启动OfcOrderAfterSaleMdsConsumer。。。。。");
 

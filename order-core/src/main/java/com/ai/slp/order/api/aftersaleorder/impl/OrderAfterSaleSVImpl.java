@@ -43,7 +43,7 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 			//消息模式下，异步调用服务
 			BaseResponse response =new BaseResponse();
 			//发送消息
-			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(request), 0);
+			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_AFTERSALEORDER_BACK_TOPIC).send(JSON.toJSONString(request), 0);
 			ResponseHeader responseHeader = new ResponseHeader(true,
 					ExceptCodeConstants.Special.SUCCESS, "成功");
 			response.setResponseHeader(responseHeader);
@@ -67,7 +67,7 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 			//消息模式下,异步调用服务
 			BaseResponse response =new BaseResponse();
 			//发送消息
-			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(request), 0);
+			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_AFTERSALEORDER_EXCHANGE_TOPIC).send(JSON.toJSONString(request), 0);
 			ResponseHeader responseHeader = new ResponseHeader(true,
 					ExceptCodeConstants.Special.SUCCESS, "成功");
 			response.setResponseHeader(responseHeader);
@@ -91,7 +91,7 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 			//消息模式下
 			BaseResponse response =new BaseResponse();
 			//发送消息
-			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(request), 0);
+			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_AFTERSALEORDER_REFUND_TOPIC).send(JSON.toJSONString(request), 0);
 	        ResponseHeader responseHeader = new ResponseHeader(true,
 	                ExceptCodeConstants.Special.SUCCESS, "成功");
 	        response.setResponseHeader(responseHeader);
@@ -114,7 +114,7 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 		}else {
 			//消息模式
 			BaseResponse response =new BaseResponse();
-			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(request), 0);
+			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_OFCORDER_BACK_TOPIC).send(JSON.toJSONString(request), 0);
 			ResponseHeader responseHeader = new ResponseHeader(true,
 					ExceptCodeConstants.Special.SUCCESS, "成功");
 			response.setResponseHeader(responseHeader);
