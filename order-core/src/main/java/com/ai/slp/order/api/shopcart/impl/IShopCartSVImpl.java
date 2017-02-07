@@ -3,12 +3,17 @@ package com.ai.slp.order.api.shopcart.impl;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
+import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.shopcart.interfaces.IShopCartSV;
 import com.ai.slp.order.api.shopcart.param.*;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IShopCartBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
+import com.ai.slp.order.util.MQConfigUtil;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,16 +41,31 @@ public class IShopCartSVImpl implements IShopCartSV {
     public CartProdOptRes addProd(CartProd cartProd) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(cartProd.getTenantId(),"");
         CartProdOptRes optRes = null;
-        try {
-            optRes = shopCartBusiSV.addCartProd(cartProd);
+    	boolean ccsMqFlag=false;
+    	//从配置中心获取ccsMqFlag
+    	ccsMqFlag=MQConfigUtil.getCCSMqFlag();
+    	
+    	//非消息模式下，同步调用服务
+    	if(!ccsMqFlag){
+    		 try {
+    	            optRes = shopCartBusiSV.addCartProd(cartProd);
+    	            ResponseHeader responseHeader = new ResponseHeader(true,
+    	                    ExceptCodeConstants.Special.SUCCESS, "成功");
+    	            optRes.setResponseHeader(responseHeader);
+    	        }catch (BusinessException|SystemException e){
+    	            optRes = new CartProdOptRes();
+    	            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
+    	        }
+    	        return optRes;
+    	}else {
+    		//消息模式下
+    		optRes=new CartProdOptRes();
+            MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(cartProd), 0);
             ResponseHeader responseHeader = new ResponseHeader(true,
                     ExceptCodeConstants.Special.SUCCESS, "成功");
             optRes.setResponseHeader(responseHeader);
-        }catch (BusinessException|SystemException e){
-            optRes = new CartProdOptRes();
-            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
-        }
-        return optRes;
+    	    return optRes;
+    	}
     }
 
     /**
@@ -87,14 +107,26 @@ public class IShopCartSVImpl implements IShopCartSV {
     public CartProdOptRes updateProdNum(CartProd cartProd) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(cartProd.getTenantId(),"");
         CartProdOptRes optRes = null;
-        try {
-            optRes = shopCartBusiSV.updateCartProd(cartProd);
-            optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
-        }catch (BusinessException|SystemException e){
-            optRes = new CartProdOptRes();
-            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
-        }
-        return optRes;
+        boolean ccsMqFlag=false;
+    	//从配置中心获取ccsMqFlag
+    	ccsMqFlag=MQConfigUtil.getCCSMqFlag();
+    	//非消息模式下，同步调用服务
+    	if(!ccsMqFlag){
+    		try {
+    			optRes = shopCartBusiSV.updateCartProd(cartProd);
+    			optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
+    		}catch (BusinessException|SystemException e){
+    			optRes = new CartProdOptRes();
+    			optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
+    		}
+    		return optRes;
+    	}else {
+    		//消息模式下
+    		optRes=new CartProdOptRes();
+    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(cartProd), 0);
+    		optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
+    		return optRes;
+    	}
     }
 
     /**
@@ -111,14 +143,26 @@ public class IShopCartSVImpl implements IShopCartSV {
     public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(multiCartProd.getTenantId(),"");
         CartProdOptRes optRes = null;
-        try {
-            optRes = shopCartBusiSV.deleteCartProd(multiCartProd.getTenantId(),multiCartProd.getUserId(),multiCartProd.getSkuIdList());
-            optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
-        }catch (BusinessException|SystemException e){
-            optRes = new CartProdOptRes();
-            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
-        }
-        return optRes;
+        boolean ccsMqFlag=false;
+    	//从配置中心获取ccsMqFlag
+    	ccsMqFlag=MQConfigUtil.getCCSMqFlag();
+    	//非消息模式下，同步调用服务
+    	if(!ccsMqFlag){
+    		try {
+    			optRes = shopCartBusiSV.deleteCartProd(multiCartProd.getTenantId(),multiCartProd.getUserId(),multiCartProd.getSkuIdList());
+    			optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
+    		}catch (BusinessException|SystemException e){
+    			optRes = new CartProdOptRes();
+    			optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
+    		}
+    		return optRes;
+    	}else {
+    		//消息模式下
+    		optRes=new CartProdOptRes();
+    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).send(JSON.toJSONString(multiCartProd), 0);
+    		optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
+    		return optRes;
+    	}
     }
 
     /**
