@@ -28,7 +28,7 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
     	boolean ccsMqFlag=false;
-    	//从配置中心获取mq_enable
+    	//从配置中心获取ccsMqFlag
     	ccsMqFlag=MQConfigUtil.getCCSMqFlag();
     	
     	//非消息模式下，同步调用服务
