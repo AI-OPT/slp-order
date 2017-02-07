@@ -1,5 +1,6 @@
 package com.ai.slp.order.mds.shopcart;
 
+import com.ai.opt.base.exception.BusinessException;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
 import com.ai.slp.order.api.shopcart.param.CartProd;
@@ -31,7 +32,12 @@ public class AddShopCartMessProcessorImpl implements IMessageProcessor {
         CartProd cartProd = JSON.parseObject(content,CartProd.class);
         if (cartProd==null)
             return;
-        this.shopCartBusiSV.addCartProd(cartProd);
+        try {
+			this.shopCartBusiSV.addCartProd(cartProd);
+        } catch (BusinessException e) {
+			e.printStackTrace();
+			logger.error("消息处理出现异常:"+e.getMessage());
+		}
     }
 
     public void setCartProdAtomSV(IShopCartBusiSV shopCartBusiSV) {

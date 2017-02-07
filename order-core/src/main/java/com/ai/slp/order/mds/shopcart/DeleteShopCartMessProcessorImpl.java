@@ -1,5 +1,6 @@
 package com.ai.slp.order.mds.shopcart;
 
+import com.ai.opt.base.exception.BusinessException;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
 import com.ai.slp.order.api.shopcart.param.MultiCartProd;
@@ -31,8 +32,13 @@ public class DeleteShopCartMessProcessorImpl implements IMessageProcessor {
         MultiCartProd multiCartProd = JSON.parseObject(content,MultiCartProd.class);
         if (multiCartProd==null)
             return;
-        shopCartBusiSV.deleteCartProd(multiCartProd.getTenantId(),
-        		multiCartProd.getUserId(),multiCartProd.getSkuIdList());
+        try {
+			shopCartBusiSV.deleteCartProd(multiCartProd.getTenantId(),
+					multiCartProd.getUserId(),multiCartProd.getSkuIdList());
+        } catch (BusinessException e) {
+			e.printStackTrace();
+			logger.error("消息处理出现异常:"+e.getMessage());
+		}
     }
 
     public void setCartProdAtomSV(IShopCartBusiSV shopCartBusiSV) {

@@ -3,6 +3,7 @@ package com.ai.slp.order.mds.orderstate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ai.opt.base.exception.BusinessException;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
 import com.ai.slp.order.api.orderstate.param.WaitSellReceiveSureRequest;
@@ -32,7 +33,12 @@ public class OrderStateServiceMessProcessorImpl implements IMessageProcessor {
         WaitSellReceiveSureRequest request = JSON.parseObject(content,WaitSellReceiveSureRequest.class);
         if (request==null)
             return;
-        this.orderStateBusiSV.updateWaitSellRecieveSureState(request);        
+        try {
+			this.orderStateBusiSV.updateWaitSellRecieveSureState(request);
+        } catch (BusinessException e) {
+			e.printStackTrace();
+			logger.error("消息处理出现异常:"+e.getMessage());
+		}                
     }
 
 }
