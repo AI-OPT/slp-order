@@ -10,8 +10,7 @@ import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.alibaba.fastjson.JSON;
 
 /**
- * 购物车消息处理
- * Created by jackieliu on 16/5/19.
+ * 订单提交消息处理
  */
 public class OrderTradeCenterMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(OrderTradeCenterMessProcessorImpl.class);
@@ -35,5 +34,5 @@ public class OrderTradeCenterMessProcessorImpl implements IMessageProcessor {
             return;
         this.ordOrderTradeBusiSV.apply(request);        
     }
-
+ 
 }
