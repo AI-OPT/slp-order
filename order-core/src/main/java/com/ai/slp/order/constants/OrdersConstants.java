@@ -839,8 +839,26 @@ public final class OrdersConstants {
 		public static final String PART_DELIVER_GOODS = "18";
 	}
 	public static final class MDSNS {
-		/** 订单系统的消息队列命名空间 */
+		/** 订单系统的下单的消息队列命名空间 */
 		public static final String MDS_NS_ORDER_TOPIC = "MDS_NS_ORDER_TOPIC";
+		/** 订单系统的售后退货的消息队列命名空间 */
+		public static final String MDS_NS_AFTERSALEORDER_BACK_TOPIC = "MDS_NS_AFTERSALEORDER_BACK_TOPIC";
+		/** 订单系统的售后换货的消息队列命名空间 */
+		public static final String MDS_NS_AFTERSALEORDER_EXCHANGE_TOPIC = "MDS_NS_AFTERSALEORDER_EXCHANGE_TOPIC";
+		/** 订单系统的售后退款的消息队列命名空间 */
+		public static final String MDS_NS_AFTERSALEORDER_REFUND_TOPIC = "MDS_NS_AFTERSALEORDER_REFUND_TOPIC";
+		/** 订单系统的用户消费积分的消息队列命名空间 */
+		public static final String MDS_NS_ORDER_RETURNOID_TOPIC = "MDS_NS_ORDER_RETURNOID_TOPIC";
+		/** 订单系统的OFC售后订单的消息队列命名空间 */
+		public static final String MDS_NS_OFCORDER_BACK_TOPIC = "MDS_NS_OFCORDER_BACK_TOPIC";
+		/** 订单系统买家退换货填写物流的消息队列命名空间 */
+		public static final String MDS_NS_ORDER_STATE_TOPIC = "MDS_NS_ORDER_STATE_TOPIC";
+		/** 订单系统的购物车添加的消息队列命名空间 */
+		public static final String MDS_NS_SHOPCART_ADD_TOPIC = "MDS_NS_SHOPCART_ADD_TOPIC";
+		/** 订单系统的购物车更新的消息队列命名空间 */
+		public static final String MDS_NS_SHOPCART_UPDATE_TOPIC = "MDS_NS_SHOPCART_UPDATE_TOPIC";
+		/** 订单系统的购物车删除的消息队列命名空间 */
+		public static final String MDS_NS_SHOPCART_DELETE_TOPIC = "MDS_NS_SHOPCART_DELETE_TOPIC";
 		/** 订单系统的使用消息队列的标识配置项名称 */
 		public static final String CCS_MQ_FLAG = "/CCS_MQ_FLAG";
 	}
