@@ -31,7 +31,7 @@ public class OfcOrderAfterSaleConsumer extends AbstractMdsConsumer {
                 List<IMessageProcessor> processors = new ArrayList<>();
                 IMessageProcessor processor = null;
                 for (int i = 0; i < paramInt; i++) {
-                    processor = new OrderAfterSaleBackMessProcessorImpl(orderAfterSaleBusiSV);
+                    processor = new OfcOrderAfterSaleMessProcessorImpl(orderAfterSaleBusiSV);
                     processors.add(processor);
                 }
                 return processors.toArray(new IMessageProcessor[processors.size()]);
