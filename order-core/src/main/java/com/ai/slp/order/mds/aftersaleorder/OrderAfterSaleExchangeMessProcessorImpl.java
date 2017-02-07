@@ -3,6 +3,7 @@ package com.ai.slp.order.mds.aftersaleorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ai.opt.base.exception.BusinessException;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
@@ -32,7 +33,12 @@ public class OrderAfterSaleExchangeMessProcessorImpl implements IMessageProcesso
         OrderReturnRequest request = JSON.parseObject(content,OrderReturnRequest.class);
         if (request==null)
             return;
-        this.orderAfterSaleBusiSV.exchange(request);        
+        try {
+			this.orderAfterSaleBusiSV.exchange(request);
+        } catch (BusinessException e) {
+			e.printStackTrace();
+			logger.error("消息处理出现异常:"+e.getMessage());
+		}         
     }
 
 }
