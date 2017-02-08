@@ -73,7 +73,7 @@ public class OrderTaskJob {
 	}
 
 	/**
-	 * 现场启动
+	 * 线程启动
 	 * 
 	 * @author zhangqiang7
 	 * @UCUSER
@@ -97,20 +97,7 @@ public class OrderTaskJob {
 				thread[i] = new OrderThread(ordOrderQueue, ofcSV);
 				handlePool.execute(thread[i]);
 			}
-			while(true){
-				int count = 0;
-				for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
-					if(!thread[i].isAlive()){
-						count++;
-					}
-				}
-				if(count!=Runtime.getRuntime().availableProcessors() * 2){
-					Thread.sleep(30*1000);
-				}else{
-					LOG.error("订单信息同步完成"+DateUtil.getCurrentTime());
-					break;
-				}
-			}
+			Thread.sleep(2*60*60*1000);
 			LOG.error("开始启动订单商品生产者线程");
 			// 生产者
 			Thread prodProducerThred = new Thread(new OrdProdReadFileThread(ordOdProdQueue));
