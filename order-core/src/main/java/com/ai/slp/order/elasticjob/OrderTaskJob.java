@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 
 /**
  * 订单Task Date: 2017年1月6日 <br>
+ * 启动订单生产者和消费者任务
  * Copyright (c) 2017 asiainfo.com <br>
  * 
  * @author zhangqiang7
@@ -97,7 +98,8 @@ public class OrderTaskJob {
 				thread[i] = new OrderThread(ordOrderQueue, ofcSV);
 				handlePool.execute(thread[i]);
 			}
-			Thread.sleep(2*60*60*1000);
+			Thread.sleep(2 * 60 * 60 * 1000);
+			LOG.error("休眠结束" + DateUtil.getSysDate());
 			LOG.error("开始启动订单商品生产者线程");
 			// 生产者
 			Thread prodProducerThred = new Thread(new OrdProdReadFileThread(ordOdProdQueue));

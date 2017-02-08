@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 购物车消息处理
+ * 已废弃
  * Created by jackieliu on 16/5/19.
  */
 public class ShopCartMessProcessorImpl implements IMessageProcessor {

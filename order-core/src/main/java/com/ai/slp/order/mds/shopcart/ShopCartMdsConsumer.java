@@ -17,6 +17,11 @@ import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
 
 //@Component
+/**
+ * 已废弃
+ * @author Zh
+ *
+ */
 public class ShopCartMdsConsumer extends AbstractMdsConsumer {
 	private static Logger logger = LoggerFactory.getLogger(ShopCartMdsConsumer.class);
 
