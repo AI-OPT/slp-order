@@ -30,8 +30,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 
 /**
- * 读取订单商品信息文件
- * Date: 2017年1月6日 <br>
+ * 读取订单商品信息文件 Date: 2017年1月6日 <br>
  * Copyright (c) 2017 asiainfo.com <br>
  * 
  * @author zhangqiang7
@@ -91,30 +90,30 @@ public class OrdProdReadFileThread extends Thread {
 						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
 						deleteFile(localpath + "bak/" + chkName);
-
-						// 生产rpt文件
-						String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
-						File file = new File(localPath);
-						if (!file.exists()) {
-							file.mkdirs();
-						}
-						File rptFile = new File(localPath + errCodeName);
-						if (!rptFile.exists()) {
-							rptFile.createNewFile();
-						}
-						FileWriter fw = new FileWriter(rptFile);
-						bw = new BufferedWriter(fw);
-						bw.write(fileName);
-						bw.write("\n");
-						bw.write(errCode.toString() + "\n");
-						bw.flush();
-						bw.close();
-						fw.close();
-						is = new FileInputStream(rptFile);
-						// 移动rpt文件
-						SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
-						deleteFile(localpath + "rpt/" + errCodeName);
 					}
+
+					// 生产rpt文件
+					String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
+					File file = new File(localPath);
+					if (!file.exists()) {
+						file.mkdirs();
+					}
+					File rptFile = new File(localPath + errCodeName);
+					if (!rptFile.exists()) {
+						rptFile.createNewFile();
+					}
+					FileWriter fw = new FileWriter(rptFile);
+					bw = new BufferedWriter(fw);
+					bw.write(fileName);
+					bw.write("\n");
+					bw.write(errCode.toString() + "\n");
+					bw.flush();
+					bw.close();
+					fw.close();
+					is = new FileInputStream(rptFile);
+					// 移动rpt文件
+					SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
+					deleteFile(localpath + "rpt/" + errCodeName);
 					continue;
 					// 推到ftp上
 				} else {
@@ -145,6 +144,7 @@ public class OrdProdReadFileThread extends Thread {
 
 	/**
 	 * 读取ftp文件
+	 * 
 	 * @param fileName
 	 * @param sftp
 	 * @author zhangqiang7
@@ -187,7 +187,7 @@ public class OrdProdReadFileThread extends Thread {
 				if (ins != null) {
 					ins.close();
 				}
-				//SftpUtil.delete(path, fileName, sftp);
+				// SftpUtil.delete(path, fileName, sftp);
 			}
 
 		} catch (Exception e) {
@@ -199,6 +199,7 @@ public class OrdProdReadFileThread extends Thread {
 
 	/**
 	 * 匹配需要的文件
+	 * 
 	 * @param path
 	 * @param sftp
 	 * @return
@@ -225,6 +226,7 @@ public class OrdProdReadFileThread extends Thread {
 
 	/**
 	 * 删除ftp文件
+	 * 
 	 * @param sPath
 	 * @author zhangqiang7
 	 * @UCUSER
@@ -240,6 +242,7 @@ public class OrdProdReadFileThread extends Thread {
 
 	/**
 	 * 安全关闭资源
+	 * 
 	 * @param fis
 	 * @author zhangqiang7
 	 * @UCUSER
@@ -256,6 +259,7 @@ public class OrdProdReadFileThread extends Thread {
 
 	/**
 	 * 安全关闭资源
+	 * 
 	 * @param fis
 	 * @author zhangqiang7
 	 * @UCUSER
@@ -272,6 +276,7 @@ public class OrdProdReadFileThread extends Thread {
 
 	/**
 	 * 安全关闭资源
+	 * 
 	 * @param fis
 	 * @author zhangqiang7
 	 * @UCUSER
@@ -288,6 +293,7 @@ public class OrdProdReadFileThread extends Thread {
 
 	/**
 	 * 格式化
+	 * 
 	 * @param date
 	 * @return
 	 * @author zhangqiang7
@@ -299,6 +305,7 @@ public class OrdProdReadFileThread extends Thread {
 
 	/**
 	 * 格式化
+	 * 
 	 * @param date
 	 * @return
 	 * @author zhangqiang7
