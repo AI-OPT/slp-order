@@ -20,6 +20,11 @@ import com.ai.slp.order.vo.OrdOrderOfcVo;
 import com.ai.slp.order.vo.OrderOfcVo;
 import com.alibaba.fastjson.JSON;
 
+/**
+ * 同步订单信息入库线程
+ * @author Zh
+ *
+ */
 public class OrderThread extends Thread {
 
 	private static final Log LOG = LogFactory.getLog(OrderThread.class);

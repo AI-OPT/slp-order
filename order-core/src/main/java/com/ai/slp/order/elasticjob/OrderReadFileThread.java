@@ -91,7 +91,7 @@ public class OrderReadFileThread extends Thread {
 						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
 						SftpUtil.delete(path, chkName, sftp);
 						deleteFile(localpath + "bak/" + chkName);
-						
+					}
 						//上传rpt报告
 						String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
 						File file = new File(localPath);
@@ -114,7 +114,6 @@ public class OrderReadFileThread extends Thread {
 						// 移动rpt文件
 						SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
 						deleteFile(localpath + "rpt/" + errCodeName);
-					}
 					continue;
 					// 推到ftp上
 				} else {
