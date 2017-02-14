@@ -225,14 +225,14 @@ public class OrdOrderSqlProvider {
     	                + " oo.tenant_id= '"+ param.get("tenantId") + "'"
     	                +" and oo.flag in('"+ OrdersConstants.OrdOrder.Flag.UPPLATFORM + "','"+ OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME+"')");
     			seqBuffer = getConnectStr(param, seqBuffer);
-    			seqBuffer.append(" and oo.PARENT_ORDER_ID=0 and oo.order_id=ol.order_id and oo.order_id=of.order_id");
+    			seqBuffer.append(" and oo.PARENT_ORDER_ID=0 and oo.order_id=ol.order_id");
     		}else {
     			seqBuffer.append("select count(DISTINCT oo.ORDER_ID) from ord_order oo,ord_order od,ord_od_logistics ol,ord_od_fee_total of where"
     	                + " oo.tenant_id= '"+ param.get("tenantId") + "'"
     	                +" and oo.flag in('"+ OrdersConstants.OrdOrder.Flag.UPPLATFORM + "','"+ OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME+"')");
     			seqBuffer = getConnectStr(param, seqBuffer);
     			seqBuffer.append(" and od.route_id = '" + routeId+"'");
-            	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id");
+            	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id");
     		}
     	}else if (!StringUtil.isBlank(states) && (OrdersConstants.OrdOrder.State.WAIT_PAY.equals(states)||
             		OrdersConstants.OrdOrder.State.CANCEL.equals(states))){   //父状态
@@ -244,7 +244,7 @@ public class OrdOrderSqlProvider {
             	seqBuffer.append(" and oo.state in(" + states + ")");
             	seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id");
          }else {
-        	 	seqBuffer.append("select count(DISTINCT oo.ORDER_ID) from ord_order oo,ord_order od,ord_od_logistics ol,ord_od_fee_total of where"
+        	 	seqBuffer.append("select count(DISTINCT oo.ORDER_ID) from ord_order oo,ord_order od,ord_od_logistics ol where"
  	                + " oo.tenant_id= '"+ param.get("tenantId") + "'"
  	               // +" and oo.flag= '"+ OrdersConstants.OrdOrder.Flag.UPPLATFORM + "'");
  	               +" and oo.flag in('"+ OrdersConstants.OrdOrder.Flag.UPPLATFORM + "','"+ OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME+"')");
@@ -253,7 +253,7 @@ public class OrdOrderSqlProvider {
             		seqBuffer.append(" and od.route_id = '" + routeId+"'");
             	}
             	seqBuffer.append(" and od.state in(" + states + ")");
-            	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id and oo.order_id=of.order_id");
+            	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id");
          }
          return seqBuffer.toString();
     }
