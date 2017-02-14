@@ -266,7 +266,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		OrdOrder afterOrder=new OrdOrder();
 		BeanUtils.copyProperties(afterOrder, order);
 		afterOrder.setBusiCode(busiCode); 
-		afterOrder.setOrderId(afterOrderId); 
+		afterOrder.setOrderId(afterOrderId);
+		afterOrder.setOrderTime(DateUtil.getSysDate());
 		afterOrder.setOperId(request.getOperId());
 		afterOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);//设置售后标识 Y
 		afterOrder.setOrigOrderId(order.getOrderId());
