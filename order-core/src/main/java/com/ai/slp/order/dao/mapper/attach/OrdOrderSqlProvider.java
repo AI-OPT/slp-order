@@ -21,7 +21,6 @@ public class OrdOrderSqlProvider {
         seqBuffer.append("select oo.order_id,oo.state,oo.tenant_id,oo.chl_id,oo.delivery_flag,contact_tel,"
         		        		+ "oo.user_id,oo.user_name,oo.user_tel,discount_fee,adjust_fee from ord_order oo,ord_od_logistics ol,ord_od_fee_total of "
         		        		+ "where oo.order_id IN (select * from(select oo.order_id ");
-        seqBuffer = getConnectStr(param, seqBuffer);  
         if(StringUtil.isBlank(states)) {  //空
         		if(StringUtil.isBlank(routeId)) {
         			seqBuffer.append("from ord_order oo,ord_od_logistics ol where"
