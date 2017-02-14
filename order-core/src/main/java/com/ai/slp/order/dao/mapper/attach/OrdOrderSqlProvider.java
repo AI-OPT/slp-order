@@ -47,7 +47,7 @@ public class OrdOrderSqlProvider {
 	                );
 	         seqBuffer = getConnectStr(param, seqBuffer);
         	seqBuffer.append(" and oo.state in(" + states + ")");
-        	seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=of.order_id");
+        	seqBuffer.append(" and oo.order_id=ol.order_id");
         }else {  
         	seqBuffer.append("from ord_order oo,ord_order od,ord_od_logistics ol where"
 	                + " oo.tenant_id= '"+ param.get("tenantId") + "' and oo.flag "
