@@ -59,7 +59,7 @@ public class OrdOrderSqlProvider {
         	seqBuffer.append(" and od.state in(" + states + ")");
         	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id");
         }
-        seqBuffer.append(" group by oo.order_id order by oo.order_time desc limit "
+        seqBuffer.append(" group by oo.order_id order by oo.ORDER_ID desc limit "
         + param.get("pageCount") + "," + param.get("pageSize")+") as t) and oo.order_id=ol.order_id and oo.order_id=of.order_id");
         return seqBuffer.toString();
     }
