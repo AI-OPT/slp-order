@@ -27,7 +27,7 @@ public class OrdOrderSqlProvider {
     		                		+ "in('"+ OrdersConstants.OrdOrder.Flag.UPPLATFORM + "','"+ OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME+"')"
     		                );
     		         seqBuffer = getConnectStr(param, seqBuffer); 
-        			seqBuffer.append(" and oo.order_id=ol.order_id and oo.PARENT_ORDER_ID=0");
+        			seqBuffer.append(" and oo.order_id=ol.order_id and oo.PARENT_ORDER_ID=0 and oo.order_id=ol.order_id");
         		}else {
         			seqBuffer.append(" where"
     		                + " oo.tenant_id= '"+ param.get("tenantId") + "' and oo.flag "
@@ -45,9 +45,9 @@ public class OrdOrderSqlProvider {
 	                );
 	         seqBuffer = getConnectStr(param, seqBuffer);
         	seqBuffer.append(" and oo.state in(" + states + ")");
-        	seqBuffer.append(" and oo.order_id=ol.order_id");
+        	seqBuffer.append(" and oo.order_id=ol.order_id and oo.order_id=ol.order_id");
         }else {  
-        	seqBuffer.append("from ord_order oo,ord_order od,ord_od_logistics ol where"
+        	seqBuffer.append(" where"
 	                + " oo.tenant_id= '"+ param.get("tenantId") + "' and oo.flag "
 	                		+ "in('"+ OrdersConstants.OrdOrder.Flag.UPPLATFORM + "','"+ OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME+"')"
 	                );
@@ -59,7 +59,7 @@ public class OrdOrderSqlProvider {
         	seqBuffer.append(" and oo.order_id=od.PARENT_ORDER_ID and oo.order_id=ol.order_id");
         }
         seqBuffer.append(" order by oo.ORDER_ID desc limit "
-        + param.get("pageCount") + "," + param.get("pageSize")+") as t) and oo.order_id=ol.order_id and oo.order_id=of.order_id");
+        + param.get("pageCount") + "," + param.get("pageSize"));
         return seqBuffer.toString();
     }
     
