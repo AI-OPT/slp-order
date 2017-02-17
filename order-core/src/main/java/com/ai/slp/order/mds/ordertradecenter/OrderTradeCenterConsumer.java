@@ -16,7 +16,7 @@ import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 
-@Component
+//@Component
 public class OrderTradeCenterConsumer extends AbstractMdsConsumer {
 	private static Logger logger = LoggerFactory.getLogger(OrderTradeCenterConsumer.class);
 
