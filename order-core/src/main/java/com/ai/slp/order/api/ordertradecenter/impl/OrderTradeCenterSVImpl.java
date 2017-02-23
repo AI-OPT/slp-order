@@ -14,6 +14,7 @@ import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.ai.slp.order.util.MQConfigUtil;
+import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 
@@ -27,6 +28,8 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
             throws BusinessException, SystemException {
+    	//参数校验
+    	ValidateUtils.validateOrderTradeCenter(request); 
     	boolean ccsMqFlag=false;
     	//从配置中心获取ccsMqFlag
     	ccsMqFlag=MQConfigUtil.getCCSMqFlag();

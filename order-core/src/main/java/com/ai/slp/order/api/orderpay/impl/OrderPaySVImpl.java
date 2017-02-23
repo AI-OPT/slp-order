@@ -17,6 +17,7 @@ import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.MQConfigUtil;
+import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 
@@ -50,6 +51,8 @@ public class OrderPaySVImpl implements IOrderPaySV {
 
 	@Override
 	public BaseResponse returnOid(OrderOidRequest request) throws BusinessException, SystemException {
+		/* 参数校验*/
+		ValidateUtils.validateReturnOid(request);
 		boolean ccsMqFlag=false;
 		ccsMqFlag = MQConfigUtil.getCCSMqFlag();
 		//非消息模式 同步调用服务

@@ -16,6 +16,7 @@ import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.ai.slp.order.util.MQConfigUtil;
+import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 
@@ -28,6 +29,8 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	
 	@Override
 	public BaseResponse back(OrderReturnRequest request) throws BusinessException, SystemException {
+		/* 参数校验*/
+		ValidateUtils.validateOrderReturnRequest(request);
 		boolean ccsMqFlag=false;
     	//从配置中心获取ccsMqFlag
     	ccsMqFlag=MQConfigUtil.getCCSMqFlag();
@@ -53,6 +56,8 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 
 	@Override
 	public BaseResponse exchange(OrderReturnRequest request) throws BusinessException, SystemException {
+		/* 参数校验*/
+		ValidateUtils.validateOrderReturnRequest(request);
 		boolean ccsMqFlag=false;
 		ccsMqFlag = MQConfigUtil.getCCSMqFlag();
 		if(!ccsMqFlag) {
@@ -77,6 +82,8 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 
 	@Override
 	public BaseResponse refund(OrderReturnRequest request) throws BusinessException, SystemException {
+		/* 参数校验*/
+		ValidateUtils.validateOrderReturnRequest(request);
 		boolean ccsMqFlag=false;
 		ccsMqFlag = MQConfigUtil.getCCSMqFlag();
 		//非消息模式
@@ -101,6 +108,8 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 
 	@Override
 	public BaseResponse backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException {
+		/*参数校验*/
+		ValidateUtils.validateOFCBackRequest(request);
 		boolean ccsMqFlag=false;
 		ccsMqFlag = MQConfigUtil.getCCSMqFlag();
 		//非消息模式
