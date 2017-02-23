@@ -78,7 +78,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	@Override
 	public void back(OrderReturnRequest request) throws BusinessException, SystemException {
     	/* 1.参数校验*/
-		ValidateUtils.validateOrderReturnRequest(request);
+		//ValidateUtils.validateOrderReturnRequest(request);
 		/* 2.查询该商品的子订单*/
 		OrdOrder order = this.getOrdOrder(request);
 		/* 3.查询商品明细信息*/
@@ -121,7 +121,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	@Override
 	public void exchange(OrderReturnRequest request) throws BusinessException, SystemException {
 		/* 1.参数校验*/
-		ValidateUtils.validateOrderReturnRequest(request);
+		//ValidateUtils.validateOrderReturnRequest(request);
 		/* 2.查询该商品的子订单*/
 		OrdOrder order = this.getOrdOrder(request);
 		/* 3.查询商品明细信息*/
@@ -145,7 +145,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	@Override
 	public void refund(OrderReturnRequest request) throws BusinessException, SystemException {
 		/* 1.参数校验*/
-		ValidateUtils.validateOrderReturnRequest(request);
+		//ValidateUtils.validateOrderReturnRequest(request);
 		/* 2.查询该商品的子订单*/
 		OrdOrder order = this.getOrdOrder(request);
 		/* 3.查询商品明细信息*/
@@ -187,8 +187,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	//ofc售后订单状态回传
 	@Override
 	public void backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException {
-		/*参数校验*/
-		ValidateUtils.validateOFCBackRequest(request);
 		OrdOrderCriteria example=new OrdOrderCriteria();
 		OrdOrderCriteria.Criteria criteria = example.createCriteria();
 		criteria.andOrderIdEqualTo(Long.parseLong(request.getExternalOrderId()));

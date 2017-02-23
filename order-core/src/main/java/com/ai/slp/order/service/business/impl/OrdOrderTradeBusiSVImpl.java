@@ -94,8 +94,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             throws BusinessException, SystemException {
     	long orderStart=System.currentTimeMillis();
     	LOG.info("####loadtest####订单提交begin......");
-    	//参数校验
-    	ValidateUtils.validateOrderTradeCenter(request); 
     	//订单异常监控
     	OrderMonitorRequest monitorRequest=new OrderMonitorRequest();
     	OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();

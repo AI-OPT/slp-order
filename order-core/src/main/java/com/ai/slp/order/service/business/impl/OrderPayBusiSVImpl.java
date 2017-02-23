@@ -617,8 +617,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
 	@Override
 	public void returnOid(OrderOidRequest request) throws BusinessException, SystemException {
-		/* 参数校验*/
-		ValidateUtils.validateReturnOid(request);
 		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(order==null) {
 			throw new BusinessException("", "订单信息不存在[订单id:"+request.getOrderId()+
