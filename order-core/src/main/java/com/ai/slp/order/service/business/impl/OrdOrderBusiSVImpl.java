@@ -347,9 +347,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		BehindQueryOrderListResponse response=new BehindQueryOrderListResponse();
 		PageInfo<BehindParentOrdOrderVo> pageInfo=new PageInfo<BehindParentOrdOrderVo>();
 		List<BehindParentOrdOrderVo> results = new ArrayList<BehindParentOrdOrderVo>();
-	//	List<BehindOrdOrderVo> behindOrdOrderVos = new ArrayList<BehindOrdOrderVo>();
-	//	List<BehindOrdProductVo> ordProductVos = new ArrayList<BehindOrdProductVo>();
-		
 		IOrderSearch orderSearch = new OrderSearchImpl();
 		List<SearchCriteria> orderSearchCriteria = commonConditions(orderListRequest);
 		//排序
@@ -358,25 +355,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		sortList.add(sort);
 		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, startSize, maxSize, sortList);
 		List<OrderInfo> ordList = result.getContents();
-		/*for (OrderInfo orderInfo : ordList) {
-			BehindParentOrdOrderVo parentOrdOrderVo=new BehindParentOrdOrderVo();
-			BeanUtils.copyProperties(parentOrdOrderVo, orderInfo);
-			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
-			for (OrdProdExtend ordProdExtend : ordextendes) {
-				BehindOrdOrderVo ordOrderVo=new BehindOrdOrderVo();
-				BeanUtils.copyProperties(ordOrderVo, ordProdExtend);
-				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
-				for (ProdInfo prodInfo : prodinfos) {
-					BehindOrdProductVo ordProductVo=new BehindOrdProductVo();
-					BeanUtils.copyProperties(ordProductVo, prodInfo);
-					ordProductVos.add(ordProductVo);
-				}
-				ordOrderVo.setProductList(ordProductVos);
-				behindOrdOrderVos.add(ordOrderVo);
-			}
-			parentOrdOrderVo.setOrderList(behindOrdOrderVos);
-			results.add(parentOrdOrderVo);
-		}*/
+		for (OrderInfo orderInfo : ordList) {
+			BehindParentOrdOrderVo vo=new BehindParentOrdOrderVo();
+			BeanUtils.copyProperties(vo, orderInfo);
+			results.add(vo);
+		}
 		pageInfo.setPageNo(pageNo);
 		pageInfo.setPageSize(maxSize);
 		pageInfo.setResult(results);
@@ -586,7 +569,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	/**
 	 * 订单下的商品明细信息
 	 */
-	private List<BehindOrdProductVo> getProdList(OrdOrder order, BehindQueryOrderListRequest orderListRequest,
+/*	private List<BehindOrdProductVo> getProdList(OrdOrder order, BehindQueryOrderListRequest orderListRequest,
 			BehindOrdOrderAttach behindOrdOrderAttach, Long orderId) {
 		List<BehindOrdProductVo> productList = new ArrayList<BehindOrdProductVo>();
 		OrdOdProdCriteria example = new OrdOdProdCriteria();
@@ -605,7 +588,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			productList.add(vo);
 		}
 		return productList;
-	}
+	}*/
 
 	
 	
