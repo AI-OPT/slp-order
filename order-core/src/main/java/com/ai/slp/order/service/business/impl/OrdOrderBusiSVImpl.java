@@ -358,6 +358,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		for (OrderInfo orderInfo : ordList) {
 			BehindParentOrdOrderVo vo=new BehindParentOrdOrderVo();
 			BeanUtils.copyProperties(vo, orderInfo);
+			vo.setTenantId(OrdersConstants.TENANT_ID);
 			results.add(vo);
 		}
 		pageInfo.setPageNo(pageNo);
