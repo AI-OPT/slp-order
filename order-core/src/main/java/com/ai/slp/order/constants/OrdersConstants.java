@@ -4,6 +4,11 @@ import com.ai.slp.order.util.PropertiesLoader;
 
 public final class OrdersConstants {
 	
+	/**
+	 * 查询默认开始时间
+	 */
+	public final static String START_TIME = "2000-01-01 00:00:00";
+	
 	/** 消息队列配置信息(已废弃)*/
 	public static final String SLP_CHARGE_TOPIC = "slpChargeTopic";
 	/** 订单租户id */
