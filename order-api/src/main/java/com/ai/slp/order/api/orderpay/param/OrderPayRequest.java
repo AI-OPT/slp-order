@@ -2,10 +2,6 @@ package com.ai.slp.order.api.orderpay.param;
 
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
-
 import com.ai.opt.base.vo.BaseInfo;
 
 /**
@@ -21,25 +17,21 @@ public class OrderPayRequest extends BaseInfo {
     /**
      * 订单ID集
      */
-    @NotNull(message = "订单ID不能为空")
     private List<Long> orderIds;
 
     /**
      * 收费金额
      */
-    @NotNull(message = "收费金额不能为空")
     private Long payFee;
 
     /**
      * 外部流水号
      */
-    @NotBlank(message = "外部流水号不能为空")
     private String externalId;
 
     /**
      * 支付方式
      */
-    @NotBlank(message = "支付方式不能为空")
     private String payType;
 
     public List<Long> getOrderIds() {
