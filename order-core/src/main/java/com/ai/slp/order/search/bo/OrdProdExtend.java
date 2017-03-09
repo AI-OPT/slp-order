@@ -8,7 +8,7 @@ public class OrdProdExtend {
 	private String  state;
 	private String  statename;
 	private String  busicode;
-//	private String  prodsize;
+	private long  prodsize;
 	private List<ProdInfo> prodinfos;
 	public long getOrderid() {
 		return orderid;
@@ -40,12 +40,12 @@ public class OrdProdExtend {
 	public void setBusicode(String busicode) {
 		this.busicode = busicode;
 	}
-/*	public String getProdsize() {
+	public long getProdsize() {
 		return prodsize;
 	}
-	public void setProdsize(String prodsize) {
+	public void setProdsize(long prodsize) {
 		this.prodsize = prodsize;
-	}*/
+	}
 	public List<ProdInfo> getProdinfos() {
 		return prodinfos;
 	}

@@ -16,7 +16,7 @@ public class OrderInfo {
 	private String contacttel;
 	private long points;
 //	private long totalcouponfee;
-//	private long totalprodsize;
+	private long totalprodsize;
 //	private String routeid;
 	private Date ordertime;
 	private List<OrdProdExtend> ordextendes;
@@ -98,14 +98,14 @@ public class OrderInfo {
 	}
 	public void setTotalcouponfee(long totalcouponfee) {
 		this.totalcouponfee = totalcouponfee;
-	}
+	}*/
 	public long getTotalprodsize() {
 		return totalprodsize;
 	}
 	public void setTotalprodsize(long totalprodsize) {
 		this.totalprodsize = totalprodsize;
 	}
-	public String getRouteid() {
+/*	public String getRouteid() {
 		return routeid;
 	}
 	public void setRouteid(String routeid) {
