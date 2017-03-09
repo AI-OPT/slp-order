@@ -2,8 +2,11 @@ package com.ai.slp.order.service.business.impl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +23,15 @@ import com.ai.opt.base.vo.PageInfo;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
+import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.ParseO2pDataUtil;
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.paas.ipaas.search.vo.Result;
+import com.ai.paas.ipaas.search.vo.SearchCriteria;
+import com.ai.paas.ipaas.search.vo.SearchOption;
+import com.ai.paas.ipaas.search.vo.Sort;
+import com.ai.paas.ipaas.search.vo.Sort.SortOrder;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.orderlist.param.BehindOrdOrderVo;
@@ -36,6 +45,7 @@ import com.ai.slp.order.api.orderlist.param.ProductImage;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.dao.mapper.attach.BehindOrdOrderAttach;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria;
@@ -51,6 +61,9 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtendCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
+import com.ai.slp.order.search.bo.OrdProdExtend;
+import com.ai.slp.order.search.bo.OrderInfo;
+import com.ai.slp.order.search.bo.ProdInfo;
 import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
@@ -60,7 +73,9 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdExtendAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAttachAtomSV;
+import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.ValidateUtils;
@@ -317,10 +332,63 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	@Override
 	public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
 			throws BusinessException, SystemException {
+		// 调用搜索引擎进行查询
+		int startSize = 1;
+		int maxSize = 1;
+		// 最大条数设置
+		int pageNo = orderListRequest.getPageNo();
+		int size = orderListRequest.getPageSize();
+		if (pageNo == 1) {
+			startSize = 0;
+		} else {
+			startSize = (pageNo - 1) * size;
+		}
+		maxSize = size;
+		BehindQueryOrderListResponse response=new BehindQueryOrderListResponse();
+		PageInfo<BehindParentOrdOrderVo> pageInfo=new PageInfo<BehindParentOrdOrderVo>();
+		List<BehindParentOrdOrderVo> results = new ArrayList<BehindParentOrdOrderVo>();
+	//	List<BehindOrdOrderVo> behindOrdOrderVos = new ArrayList<BehindOrdOrderVo>();
+	//	List<BehindOrdProductVo> ordProductVos = new ArrayList<BehindOrdProductVo>();
+		
+		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = commonConditions(orderListRequest);
+		//排序
+		List<Sort> sortList = new ArrayList<Sort>();
+		Sort sort = new Sort(SearchFieldConfConstants.ORDER_TIME, SortOrder.DESC);
+		sortList.add(sort);
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, startSize, maxSize, sortList);
+		List<OrderInfo> ordList = result.getContents();
+		/*for (OrderInfo orderInfo : ordList) {
+			BehindParentOrdOrderVo parentOrdOrderVo=new BehindParentOrdOrderVo();
+			BeanUtils.copyProperties(parentOrdOrderVo, orderInfo);
+			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+			for (OrdProdExtend ordProdExtend : ordextendes) {
+				BehindOrdOrderVo ordOrderVo=new BehindOrdOrderVo();
+				BeanUtils.copyProperties(ordOrderVo, ordProdExtend);
+				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
+				for (ProdInfo prodInfo : prodinfos) {
+					BehindOrdProductVo ordProductVo=new BehindOrdProductVo();
+					BeanUtils.copyProperties(ordProductVo, prodInfo);
+					ordProductVos.add(ordProductVo);
+				}
+				ordOrderVo.setProductList(ordProductVos);
+				behindOrdOrderVos.add(ordOrderVo);
+			}
+			parentOrdOrderVo.setOrderList(behindOrdOrderVos);
+			results.add(parentOrdOrderVo);
+		}*/
+		pageInfo.setPageNo(pageNo);
+		pageInfo.setPageSize(maxSize);
+		pageInfo.setResult(results);
+		pageInfo.setCount(Long.valueOf(result.getCount()).intValue());
+		response.setPageInfo(pageInfo);
+		return response;
+		
+		/*
 		long start = System.currentTimeMillis();
 		logger.info("开始执行dubbo订单列表查询behindQueryOrderList，当前时间戳：" + start);
 		logger.debug("开始运营后台订单列表查询..");
-		/* 参数校验 */
+		 参数校验 
 		if (orderListRequest == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
 		}
@@ -330,9 +398,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		PageInfo<BehindParentOrdOrderVo> pageInfo = new PageInfo<BehindParentOrdOrderVo>();
 		String states = "";
 		StringBuffer sb = new StringBuffer("");
-		List<String> stateList = orderListRequest.getStateList();
+		List<Object> stateList = orderListRequest.getStateList();
 		if (!CollectionUtil.isEmpty(stateList)) {
-			for (String state : stateList) {
+			for (Object state : stateList) {
 				sb = sb.append(state).append(",");
 			}
 			states = sb.toString();
@@ -350,7 +418,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		pageInfo.setResult(orderVoList);
 		pageInfo.setCount(count);
 		response.setPageInfo(pageInfo);
-		return response;
+		return response;*/
 	}
 
 	/**
@@ -369,7 +437,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	/**
 	 * 运营后台列表信息
 	 */
-	private List<BehindParentOrdOrderVo> getBehindOrdOrderVos(BehindQueryOrderListRequest orderListRequest,
+	/*private List<BehindParentOrdOrderVo> getBehindOrdOrderVos(BehindQueryOrderListRequest orderListRequest,
 			String states, ICacheSV iCacheSV) {
 		List<BehindParentOrdOrderVo> orderVoList = new ArrayList<BehindParentOrdOrderVo>();
 		long infoStart = System.currentTimeMillis();
@@ -424,7 +492,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				int totalProdSize = 0;
 				if (CollectionUtil.isEmpty(orders)) {
 					BehindOrdOrderVo orderVo = new BehindOrdOrderVo();
-					/* 查询父订单下的商品信息 */
+					 查询父订单下的商品信息 
 					List<BehindOrdProductVo> prodList = this.getProdList(null, orderListRequest, behindOrdOrderAttach,
 							null);
 					orderVo.setProductList(prodList);
@@ -513,7 +581,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			}
 		}
 		return orderVoList;
-	}
+	}*/
 
 	/**
 	 * 订单下的商品明细信息
@@ -727,4 +795,99 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		}
 		return object;
 	}
+	
+	// 搜索引擎数据公共查询条件
+		public List<SearchCriteria> commonConditions(BehindQueryOrderListRequest request) {
+			List<SearchCriteria> searchfieldVos = new ArrayList<SearchCriteria>();
+			// 如果用户名称不为空
+			if (!StringUtil.isBlank(request.getUserName())) {
+				searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.USER_NAME, request.getUserName(),
+						new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+			}
+			// 如果订单id不为空
+			if (request.getOrderId() != null) {
+				searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.PORDER_ID, request.getOrderId().toString(),
+						new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+			}
+			// 如果渠道来源不为空
+			if (!StringUtil.isBlank(request.getChlId())) {
+				searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.CHL_ID, request.getChlId(),
+						new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+			}
+			// 如果是否需要物流不为空
+			if (!StringUtil.isBlank(request.getDeliveryFlag())) {
+				searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.DELIVERY_FLAG, request.getDeliveryFlag(),
+						new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+			}
+			// 如果仓库id不为空
+			if (!StringUtil.isBlank(request.getRouteId())) {
+				searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.ROUTE_ID, request.getRouteId(),
+						new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+			}
+			// 如果收货人联系电话不为空
+			if (!StringUtil.isBlank(request.getContactTel())) {
+				searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.CONTACT_TEL, request.getContactTel(),
+						new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+			}
+
+
+			/*// 如果lsp名称不为空
+			if (!StringUtil.isBlank(request.getLspName())) {
+				searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.LSP_NAME, request.getLspName(),
+						new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.match,
+								SearchOption.TermOperator.AND)));
+			}*/
+
+			// 如果状态变化开始、结束时间不为空
+			if (!StringUtil.isBlank(request.getOrderTimeBegin())  && !StringUtil.isBlank(request.getOrderTimeEnd())) {
+				/*SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
+				String start = sdf.format(request.getStateChgTimeStart());
+				String end = sdf.format(request.getStateChgTimeEnd());*/
+				SearchCriteria searchCriteria = new SearchCriteria();
+				searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
+				searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
+				searchCriteria.addFieldValue(request.getOrderTimeBegin());
+				searchCriteria.addFieldValue(request.getOrderTimeEnd());
+				searchfieldVos.add(searchCriteria);
+			}
+			// 下单开始时间不为空
+			if(!StringUtil.isBlank(request.getOrderTimeBegin())  && StringUtil.isBlank(request.getOrderTimeEnd())) {
+			//if (request.getOrderTimeStart() != null && request.getOrderTimeEnd() == null) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
+				/*String start = sdf.format(request.getOrderTimeStart());*/
+				String end = sdf.format(new Date());
+				SearchCriteria searchCriteria = new SearchCriteria();
+				searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
+				searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
+				searchCriteria.addFieldValue(request.getOrderTimeBegin());
+				searchCriteria.addFieldValue(end);
+				searchfieldVos.add(searchCriteria);
+			}
+			// 下单结束时间不为空
+			if(StringUtil.isBlank(request.getOrderTimeBegin())  && !StringUtil.isBlank(request.getOrderTimeEnd())){
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
+				String end = sdf.format(request.getOrderTimeEnd());
+				Timestamp sTime = Timestamp.valueOf(OrdersConstants.START_TIME);
+				String start = sdf.format(sTime);
+				SearchCriteria searchCriteria = new SearchCriteria();
+				searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
+				searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
+				searchCriteria.addFieldValue(start);
+				searchCriteria.addFieldValue(end);
+				searchfieldVos.add(searchCriteria);
+			}
+		
+			// 状态集合不为空
+			if (!CollectionUtil.isEmpty(request.getStateList())) {
+				SearchCriteria searchCriteria = new SearchCriteria();
+				SearchOption option = new SearchOption();
+				option.setSearchLogic(SearchOption.SearchLogic.must);
+				option.setSearchType(SearchOption.SearchType.term);
+				searchCriteria.setFieldValue(request.getStateList());
+				searchCriteria.setField(SearchFieldConfConstants.ORD_EXTENDES_STATE);
+				searchCriteria.setOption(option);
+				searchfieldVos.add(searchCriteria);
+			}
+			return searchfieldVos;
+		}
 }

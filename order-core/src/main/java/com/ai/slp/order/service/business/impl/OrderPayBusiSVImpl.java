@@ -18,7 +18,6 @@ import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
-import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductInfoQuery;
 import com.ai.slp.product.api.product.param.ProductRoute;
@@ -63,9 +62,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
 
     @Autowired
-    IOrdOdFeeOffsetAtomSV ordOdFeeOffsetAtomSV;
-
-    @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
 
     @Autowired
@@ -90,6 +86,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         /* 1.处理费用信息 */
         OrdOrder ordOrder =null;
         Timestamp sysdate = DateUtil.getSysDate();
+        /* 2.订单收费处理*/
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
             ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
@@ -97,11 +94,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
                         "订单信息不存在[订单ID:" + orderId + "]");
             }
-            /* 2.订单支付完成后，对订单进行处理 */
-            this.execOrders(ordOrder, request.getTenantId(), sysdate);
-        	/* 3.拆分子订单 */
-        	this.resoleOrders(ordOrder, request.getTenantId(),request,sysdate);
-        	/* 4.虚拟商品改变父订单状态*/
+            /* 3.订单支付完成后，对订单进行处理 */
+            List<OrdOdProd> ordOdProds = this.execOrders(ordOrder, sysdate);
+        	/* 4.拆分子订单 */
+        	this.resoleOrders(ordOrder,ordOdProds,request,sysdate);
+        	/* 5.虚拟商品改变父订单状态*/
         	if(OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(ordOrder.getOrderType())) {
         		ordOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
         		ordOrderAtomSV.updateById(ordOrder);
@@ -120,13 +117,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     private void orderCharge(OrderPayRequest request, Timestamp sysdate) throws BusinessException,
             SystemException {
         logger.debug("开始进行订单收费处理..");
-        List<Long> orderIds = request.getOrderIds();
-        if (CollectionUtil.isEmpty(orderIds)) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "待收费订单号为空");
-        }
         List<OrdOdFeeTotal> noPayList = new ArrayList<OrdOdFeeTotal>();
         /* 1.校验订单是否存在未支付的费用 */
-        for (Long orderId : orderIds) {
+        for (Long orderId : request.getOrderIds()) {
             /* 1.1 获取费用总信息 */
             OrdOdFeeTotal ordOdFeeTotal = this.getOrdOdFeeTotal(request.getTenantId(), orderId);
             noPayList.add(ordOdFeeTotal);
@@ -195,9 +188,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     private void chargeAgainst(OrdOdFeeTotal feeTotal, OrderPayRequest request, Timestamp sysdate)
             throws BusinessException, SystemException {
-        if (StringUtil.isBlank(request.getPayType())) {
-            throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "支付类型为空");
-        }
         if ("WEIXIN".equals(request.getPayType())) {
             request.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.WEIXIN);
         } else if ("ZFB".equals(request.getPayType())) {
@@ -206,12 +196,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             request.setPayType(OrdersConstants.OrdOdFeeTotal.PayStyle.YL);
         }
         Long orderId = feeTotal.getOrderId();
-        /* 1.获取该订单的商品明细信息,如果不存在商品明细，则报错 */
-        List<OrdOdProd> ordOdProds= ordOdProdAtomSV.selectByOrd(request.getTenantId(), orderId);
-        if (CollectionUtil.isEmpty(ordOdProds)) {
-            throw new BusinessException("", "订单商品明细不存在[订单ID:" + orderId + "]");
-        }
-        /* 2.为订单创建一个支付机构接口信息 */
+        /* 1.为订单创建一个支付机构接口信息 */
         long balacneIfId = SequenceUtil.createBalacneIfId();
         OrdBalacneIf ordBalacneIf = new OrdBalacneIf();
         ordBalacneIf.setBalacneIfId(balacneIfId);
@@ -223,23 +208,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         ordBalacneIf.setExternalId(request.getExternalId());
         ordBalacneIf.setCreateTime(sysdate);
         ordBalacneIf.setRemark("支付成功");
-        /* 2.1 保存支付机构接口信息 */
+        /* 2 保存支付机构接口信息 */
         ordBalacneIfAtomSV.insertSelective(ordBalacneIf);
-        /* 3.根据费用明细生成冲抵信息 */
-        for (OrdOdProd ordOdProd : ordOdProds) {
-            /* 3.1 对所有存在待支付金额的明细生成冲抵记录 */
-            OrdOdFeeOffset feeOffset = new OrdOdFeeOffset();
-            feeOffset.setFeeOffsetId(SequenceUtil.createFeeOffsetId());
-            feeOffset.setTenantId(request.getTenantId());
-            feeOffset.setBalacneIfId(balacneIfId);
-            feeOffset.setOrderId(orderId);
-            feeOffset.setProdDetalId(ordOdProd.getProdDetalId());
-            feeOffset.setProdId(ordOdProd.getProdId());
-            feeOffset.setOffsetFee(ordOdProd.getAdjustFee());
-            feeOffset.setRemark("");
-            ordOdFeeOffsetAtomSV.insertSelective(feeOffset);
-        }
-        /* 4.将该订单的费用总表信息做已经收费处理 */
+        /* 3.将该订单的费用总表信息做已经收费处理 */
         // 总实收=已经实收的+原来待收的
         feeTotal.setPaidFee(feeTotal.getPaidFee() + feeTotal.getPayFee());
         // 总待售=0
@@ -247,7 +218,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         // 支付方式
         feeTotal.setPayStyle(request.getPayType());
         feeTotal.setUpdateTime(sysdate);
-        /* 5.保存缴费冲抵后的费用总表信息 */
+        /* 4.保存缴费冲抵后的费用总表信息 */
         ordOdFeeTotalAtomSV.updateByOrderId(feeTotal);
 
     }
@@ -263,9 +234,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @throws IllegalAccessException
      * @ApiDocMethod
      */
-    private void resoleOrders(OrdOrder ordOrder, String tenantId,
+    private void resoleOrders(OrdOrder ordOrder,List<OrdOdProd> ordOdProds,
     		OrderPayRequest request,Timestamp sysdate) {
         logger.debug("开始对订单[" + ordOrder.getOrderId() + "]进行拆分..");
+        String tenantId = ordOrder.getTenantId();
     	/* 1.查询费用总表信息*/
     	OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(tenantId, ordOrder.getOrderId());
     	if(odFeeTotal==null) {
@@ -276,14 +248,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	long operDiscountFee = odFeeTotal.getOperDiscountFee();
     	long totalFee = odFeeTotal.getTotalFee();
     	long freight = odFeeTotal.getFreight();
-    	/* 3.查询商品明细表*/
-    	List<OrdOdProd> ordOdProdList =ordOdProdAtomSV.selectByOrd(tenantId, ordOrder.getOrderId());
-    	if(CollectionUtil.isEmpty(ordOdProdList)) {
-    		throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-    				"商品明细信息表不存在[orderId:"+ordOrder.getOrderId()+"]");
-    	}
     	Map<String, Long> map=new HashMap<String,Long>();
-    	for (OrdOdProd ordOdProd : ordOdProdList) {
+    	/* 3.查询商品明细表*/
+    	for (OrdOdProd ordOdProd : ordOdProds) {
     		/* 4.获取单个商品费用占总费用的比例*/
     		long discountFee = ordOdProd.getDiscountFee();
         	BigDecimal rate = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(totalFee-freight),5,BigDecimal.ROUND_HALF_UP);
@@ -294,7 +261,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		ordOdProd.setAdjustFee(adjustFee<0?0:adjustFee); //应收费用
     		ordOdProdAtomSV.updateById(ordOdProd);
     		/* 5.生成子订单*/
-    		this.createEntitySubOrder(tenantId, ordOrder,ordOdProd,map,request,sysdate);
+    		this.createEntitySubOrder(ordOrder,ordOdProd,map,request,sysdate);
     	}
     }
     
@@ -307,22 +274,25 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @param map
      * @author caofz
      */
-    private void createEntitySubOrder(String tenantId, OrdOrder parentOrdOrder,
+    private void createEntitySubOrder(OrdOrder parentOrdOrder,
     		OrdOdProd parentOrdOdProd,Map<String, Long> map,OrderPayRequest request,Timestamp sysdate) {
     	/* 1.根据商品信息获取routeId*/
-    	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),parentOrdOdProd.getSupplierId());
+    	String tenantId = request.getTenantId();
+    	/* 获取仓库组id(路由组id)*/
+    	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),
+    			parentOrdOdProd.getSupplierId());
     	IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
     	OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, parentOrdOrder.getOrderId());
         RouteQueryByGroupIdAndAreaRequest andAreaRequest=new RouteQueryByGroupIdAndAreaRequest();
         andAreaRequest.setProvinceCode(ordOdLogistics.getProvinceCode());
         andAreaRequest.setRouteGroupId(routeGroupId);
         andAreaRequest.setTenantId(tenantId);
+        /* 获取仓库id(路由id)*/
         RouteQueryByGroupIdAndAreaResponse routeResponse = iRouteManageSV.queryRouteInfoByGroupIdAndArea(andAreaRequest);
         if(routeResponse==null||(routeResponse!=null&&!routeResponse.getResponseHeader().getIsSuccess())) {
         	throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "根据仓库组ID["
                     + routeGroupId + "]和省份编码[" + ordOdLogistics.getProvinceCode()+ "]未能查询到仓库id");
         }
-        
     	String routeId = routeResponse.getRouteId();
     	Long subOrderId=null;
     	OrdOdProd ordOdProd =null;
@@ -366,9 +336,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void execOrders(OrdOrder ordOrder, String tenantId, Timestamp sysdate) {
+    private List<OrdOdProd> execOrders(OrdOrder ordOrder, Timestamp sysdate) {
         logger.debug("支付完成，对订单[" + ordOrder.getOrderId() + "]状态进行处理..");
         /* 1.获取订单信息 */
+        String tenantId = ordOrder.getTenantId();
         String oldState = ordOrder.getState();
         /* 2.判断订单状态是否是待支付 */
         if (OrdersConstants.OrdOrder.State.WAIT_PAY.equals(oldState)) {
@@ -386,6 +357,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         for (OrdOdProd ordOdProd : ordOdProds) {
             this.addSaleNumOfProduct(tenantId, ordOdProd.getSkuId(), (int) ordOdProd.getBuySum());
         }
+        return ordOdProds;
     }
 
     /**
