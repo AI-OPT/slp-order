@@ -28,7 +28,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
-import com.alibaba.fastjson.JSON;
 
 
 @Service
@@ -106,6 +105,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 		List<OrdProdExtend> prodExtends=new ArrayList<OrdProdExtend>();
 		//子订单
 		List<OrdOrder> subOrders = ordOrderAtomSV.selectChildOrder(tenantId, parentOrderId);
+		int totalprodsize = 0;
 		if(!CollectionUtil.isEmpty(subOrders)) {
 			//存在子订单
 			for (OrdOrder ordOrder : subOrders) {
@@ -119,6 +119,8 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				// 查询商品信息
 				prodInfos = this.queryOrdProd(prodInfos,tenantId,
 						ordOrder.getOrderId());
+				prodExtend.setProdsize(prodInfos.size());
+				totalprodsize=prodInfos.size()+totalprodsize;
 				prodExtend.setProdinfos(prodInfos);
 				prodExtends.add(prodExtend);
 			}
@@ -134,9 +136,12 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			// 查询商品信息
 			prodInfos = this.queryOrdProd(prodInfos,tenantId,
 					parentOrderId);
+			prodExtend.setProdsize(prodInfos.size());
+			totalprodsize=prodInfos.size()+totalprodsize;
 			prodExtend.setProdinfos(prodInfos);
 			prodExtends.add(prodExtend);
 		}
+		ordInfo.setTotalprodsize(totalprodsize);
 		ordInfo.setOrdextendes(prodExtends);
 		return ordInfo;
 	}
