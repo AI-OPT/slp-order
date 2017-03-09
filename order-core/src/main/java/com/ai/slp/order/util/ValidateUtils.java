@@ -17,6 +17,7 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
 import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
+import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
@@ -26,6 +27,7 @@ import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductDetailInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.ai.slp.order.api.synchronize.params.OrdOdProdVo;
 import com.ai.slp.order.api.synchronize.params.OrderSynchronizeVo;
@@ -656,6 +658,42 @@ public class ValidateUtils {
 		}
 		if (CollectionUtil.isEmpty(condition.getOrderIds())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
+		}
+	}
+	
+	/**
+	 * 搜索引擎参数校验
+	 */
+	public static void validateUpdateSesData(SesDataRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		}
+	}
+	
+	/**
+	 * 订单支付参数校验
+	 */
+	public static void validateOrderPay(OrderPayRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		if(CollectionUtil.isEmpty(condition.getOrderIds())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "待收费订单号为空");
+		}
+		if(condition.getPayFee()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "收费金额不能为空");
+		}
+		if(StringUtil.isBlank(condition.getExternalId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "外部流水号不能为空");
+		}
+		if(StringUtil.isBlank(condition.getPayType())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "支付类型不能为空");
+		}
+		if (StringUtil.isBlank(condition.getTenantId())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
 	}
 }
