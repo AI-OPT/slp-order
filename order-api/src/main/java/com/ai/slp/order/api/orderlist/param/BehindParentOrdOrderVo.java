@@ -14,9 +14,6 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
     private static final long serialVersionUID = 1L;
     
-    /*租户id 参数和搜索引擎一致*/
-    private String tenantid;
-    
     /**
      * 订单来源 (受理渠道)
      */
@@ -217,13 +214,5 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
 	public void setOrdextendes(List<BehindOrdOrderVo> ordextendes) {
 		this.ordextendes = ordextendes;
-	}
-
-	public String getTenantid() {
-		return tenantid;
-	}
-
-	public void setTenantid(String tenantid) {
-		this.tenantid = tenantid;
 	}
 }
