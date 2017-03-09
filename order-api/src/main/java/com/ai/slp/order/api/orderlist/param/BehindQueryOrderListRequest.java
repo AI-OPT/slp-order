@@ -42,7 +42,7 @@ public class BehindQueryOrderListRequest extends BaseInfo{
     /**
      * 订单状态
      */
-    private List<String> stateList;
+    private List<Object> stateList;
     
     /**
      * 订单生成时间开始
@@ -112,11 +112,11 @@ public class BehindQueryOrderListRequest extends BaseInfo{
 		this.deliveryFlag = deliveryFlag;
 	}
 
-	public List<String> getStateList() {
+	public List<Object> getStateList() {
 		return stateList;
 	}
 
-	public void setStateList(List<String> stateList) {
+	public void setStateList(List<Object> stateList) {
 		this.stateList = stateList;
 	}
 
