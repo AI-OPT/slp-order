@@ -11,12 +11,13 @@ public class BehindOrdOrderVo extends BaseInfo{
     /**
      * 业务订单ID
      */
-    private Long orderId;
+    private Long orderid;
     
     /**
      * 父订单id
      */
-    private Long parentOrderId;
+//    private Long parentOrderId;
+    private Long parentorderid;
 
     /**
      * 订单状态(后厂)
@@ -26,34 +27,35 @@ public class BehindOrdOrderVo extends BaseInfo{
     /**
      * 业务类型
      */
-    private String busiCode;
+    private String busicode;
 
     /**
      * 订单状态展示
      */
-    private String stateName;
+    private String statename;
     
     /**
      * 商品SIZE
      */
-    private int prodSize;
+    private long prodsize;
     
-    public String getBusiCode() {
-		return busiCode;
+  //  private List<BehindOrdProductVo> productList;
+    private List<BehindOrdProductVo> prodinfos;
+
+	public Long getOrderid() {
+		return orderid;
 	}
 
-	public void setBusiCode(String busiCode) {
-		this.busiCode = busiCode;
+	public void setOrderid(Long orderid) {
+		this.orderid = orderid;
 	}
 
-	private List<BehindOrdProductVo> productList;
-    
-	public Long getOrderId() {
-		return orderId;
+	public Long getParentorderid() {
+		return parentorderid;
 	}
 
-	public void setOrderId(Long orderId) {
-		this.orderId = orderId;
+	public void setParentorderid(Long parentorderid) {
+		this.parentorderid = parentorderid;
 	}
 
 	public String getState() {
@@ -64,35 +66,35 @@ public class BehindOrdOrderVo extends BaseInfo{
 		this.state = state;
 	}
 
-	public String getStateName() {
-		return stateName;
+	public String getBusicode() {
+		return busicode;
 	}
 
-	public void setStateName(String stateName) {
-		this.stateName = stateName;
+	public void setBusicode(String busicode) {
+		this.busicode = busicode;
 	}
 
-	public List<BehindOrdProductVo> getProductList() {
-		return productList;
+	public String getStatename() {
+		return statename;
 	}
 
-	public void setProductList(List<BehindOrdProductVo> productList) {
-		this.productList = productList;
+	public void setStatename(String statename) {
+		this.statename = statename;
 	}
 
-	public int getProdSize() {
-		return prodSize;
+	public long getProdsize() {
+		return prodsize;
 	}
 
-	public void setProdSize(int prodSize) {
-		this.prodSize = prodSize;
+	public void setProdsize(long prodsize) {
+		this.prodsize = prodsize;
 	}
 
-	public Long getParentOrderId() {
-		return parentOrderId;
+	public List<BehindOrdProductVo> getProdinfos() {
+		return prodinfos;
 	}
 
-	public void setParentOrderId(Long parentOrderId) {
-		this.parentOrderId = parentOrderId;
+	public void setProdinfos(List<BehindOrdProductVo> prodinfos) {
+		this.prodinfos = prodinfos;
 	}
 }

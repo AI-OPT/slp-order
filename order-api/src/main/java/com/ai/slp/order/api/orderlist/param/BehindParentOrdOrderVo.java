@@ -14,63 +14,69 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
     private static final long serialVersionUID = 1L;
     
+    /*租户id 参数和搜索引擎一致*/
+    private String tenantid;
+    
     /**
      * 订单来源 (受理渠道)
      */
-    private String chlId;
+    private String chlid;
+  //  private String chlId;
     
     /**
      * 订单来源展示名称
      */
-    private String chlIdName;
+ //   private String chlIdName;
+    private String chlidname;
     
     /**
      * 父订单id
      */
-    private Long pOrderId;
+  //  private Long pOrderId;
+    private Long porderid;
     
     /**
      * 买家帐号 (userid)
      */
-    private String userId;
+    private String userid;
     
     /**
      * 用户姓名
      */
-    private String userName;
+    private String username;
     
     /**
      * 绑定手机号 (用户相关)
      */
-    private String userTel;
+    private String usertel;
     
     /**
      * 是否需要物流
      */
-    private String deliveryFlag;
+    private String deliveryflag;
     
     /**
      * 是否需要物流展示名称
      */
-    private String deliveryFlagName;
+    private String deliveryflagname;
     
     
     /**
      * 总优惠金额
      */
-    private Long discountFee;
+    private Long discountfee;
 
 
     /**
      * 总实收费用
      */
-    private Long adjustFee;
+    private Long adjustfee;
 
     
     /**
      * 收件人电话
      */
-    private String contactTel;
+    private String contacttel;
     
     /**
      * 积分
@@ -80,91 +86,107 @@ public class BehindParentOrdOrderVo extends BaseInfo {
     /**
      * 优惠券
      */
-    private Long totalCouponFee;
+    private Long totalcouponfee;
     
     /**
      * 父订单对应的子订单下的所有商品数量
      */
-    private int totalProdSize;
+    private long totalprodsize;
     
     /**
      * 订单及商品信息
      */
-    private List<BehindOrdOrderVo> orderList;
+  //  private List<BehindOrdOrderVo> orderList;
+    private List<BehindOrdOrderVo> ordextendes;
 
-	public String getChlId() {
-		return chlId;
-	}
-
-	public void setChlId(String chlId) {
-		this.chlId = chlId;
-	}
-	
-	
-	public String getChlIdName() {
-		return chlIdName;
+	public String getChlid() {
+		return chlid;
 	}
 
-	public void setChlIdName(String chlIdName) {
-		this.chlIdName = chlIdName;
+	public void setChlid(String chlid) {
+		this.chlid = chlid;
 	}
 
-	public Long getpOrderId() {
-		return pOrderId;
+	public String getChlidname() {
+		return chlidname;
 	}
 
-	public void setpOrderId(Long pOrderId) {
-		this.pOrderId = pOrderId;
+	public void setChlidname(String chlidname) {
+		this.chlidname = chlidname;
 	}
 
-	public String getUserTel() {
-		return userTel;
+	public Long getPorderid() {
+		return porderid;
 	}
 
-	public void setUserTel(String userTel) {
-		this.userTel = userTel;
+	public void setPorderid(Long porderid) {
+		this.porderid = porderid;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getUserid() {
+		return userid;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserid(String userid) {
+		this.userid = userid;
 	}
 
-	public String getDeliveryFlag() {
-		return deliveryFlag;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setDeliveryFlag(String deliveryFlag) {
-		this.deliveryFlag = deliveryFlag;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
-	public Long getDiscountFee() {
-		return discountFee;
+	public String getUsertel() {
+		return usertel;
 	}
 
-	public void setDiscountFee(Long discountFee) {
-		this.discountFee = discountFee;
-	}
-	
-	public Long getAdjustFee() {
-		return adjustFee;
+	public void setUsertel(String usertel) {
+		this.usertel = usertel;
 	}
 
-	public void setAdjustFee(Long adjustFee) {
-		this.adjustFee = adjustFee;
+	public String getDeliveryflag() {
+		return deliveryflag;
 	}
 
-	public String getContactTel() {
-		return contactTel;
+	public void setDeliveryflag(String deliveryflag) {
+		this.deliveryflag = deliveryflag;
 	}
 
-	public void setContactTel(String contactTel) {
-		this.contactTel = contactTel;
+	public String getDeliveryflagname() {
+		return deliveryflagname;
 	}
-	
+
+	public void setDeliveryflagname(String deliveryflagname) {
+		this.deliveryflagname = deliveryflagname;
+	}
+
+	public Long getDiscountfee() {
+		return discountfee;
+	}
+
+	public void setDiscountfee(Long discountfee) {
+		this.discountfee = discountfee;
+	}
+
+	public Long getAdjustfee() {
+		return adjustfee;
+	}
+
+	public void setAdjustfee(Long adjustfee) {
+		this.adjustfee = adjustfee;
+	}
+
+	public String getContacttel() {
+		return contacttel;
+	}
+
+	public void setContacttel(String contacttel) {
+		this.contacttel = contacttel;
+	}
+
 	public Long getPoints() {
 		return points;
 	}
@@ -173,43 +195,35 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 		this.points = points;
 	}
 
-	public List<BehindOrdOrderVo> getOrderList() {
-		return orderList;
+	public Long getTotalcouponfee() {
+		return totalcouponfee;
 	}
 
-	public void setOrderList(List<BehindOrdOrderVo> orderList) {
-		this.orderList = orderList;
+	public void setTotalcouponfee(Long totalcouponfee) {
+		this.totalcouponfee = totalcouponfee;
 	}
 
-	public String getDeliveryFlagName() {
-		return deliveryFlagName;
+	public long getTotalprodsize() {
+		return totalprodsize;
 	}
 
-	public void setDeliveryFlagName(String deliveryFlagName) {
-		this.deliveryFlagName = deliveryFlagName;
+	public void setTotalprodsize(long totalprodsize) {
+		this.totalprodsize = totalprodsize;
 	}
 
-	public Long getTotalCouponFee() {
-		return totalCouponFee;
+	public List<BehindOrdOrderVo> getOrdextendes() {
+		return ordextendes;
 	}
 
-	public void setTotalCouponFee(Long totalCouponFee) {
-		this.totalCouponFee = totalCouponFee;
+	public void setOrdextendes(List<BehindOrdOrderVo> ordextendes) {
+		this.ordextendes = ordextendes;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getTenantid() {
+		return tenantid;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public int getTotalProdSize() {
-		return totalProdSize;
-	}
-
-	public void setTotalProdSize(int totalProdSize) {
-		this.totalProdSize = totalProdSize;
+	public void setTenantid(String tenantid) {
+		this.tenantid = tenantid;
 	}
 }

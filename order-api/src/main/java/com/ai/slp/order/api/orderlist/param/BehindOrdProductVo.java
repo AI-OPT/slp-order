@@ -9,26 +9,26 @@ public class BehindOrdProductVo implements Serializable{
 	/**
 	 * 商品名称
 	 */
-	private String prodName;
+	private String prodname;
 	
 	/**
 	 * 数量
 	 */
-	private long buySum;
+	private long buysum;
 
-	public String getProdName() {
-		return prodName;
+	public String getProdname() {
+		return prodname;
 	}
 
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
+	public void setProdname(String prodname) {
+		this.prodname = prodname;
 	}
 
-	public long getBuySum() {
-		return buySum;
+	public long getBuysum() {
+		return buysum;
 	}
 
-	public void setBuySum(long buySum) {
-		this.buySum = buySum;
+	public void setBuysum(long buysum) {
+		this.buysum = buysum;
 	}
 }
