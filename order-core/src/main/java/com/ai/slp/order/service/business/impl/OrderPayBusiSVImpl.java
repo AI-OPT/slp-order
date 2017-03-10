@@ -11,12 +11,14 @@ import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.*;
 import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductInfoQuery;
@@ -69,12 +71,12 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 
     @Autowired
     private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
-    
     @Autowired
     private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
-    
     @Autowired
     private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
+    @Autowired
+    private IOrderIndexBusiSV orderIndexBusiSV;
     
     /**
      * 订单收费
@@ -103,6 +105,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         		ordOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
         		ordOrderAtomSV.updateById(ordOrder);
         	}
+        	//6.导入数据到搜索引擎
+        	SesDataRequest sesReq=new SesDataRequest();
+        	sesReq.setTenantId(request.getTenantId());
+        	sesReq.setParentOrderId(orderId);
+        	this.orderIndexBusiSV.insertSesData(sesReq);
         }
     }
 

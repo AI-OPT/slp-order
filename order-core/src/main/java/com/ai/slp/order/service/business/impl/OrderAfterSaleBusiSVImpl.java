@@ -28,6 +28,7 @@ import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.aftersaleorder.impl.OrderAfterSaleSVImpl;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
@@ -43,8 +44,8 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
-import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.order.vo.OFCAfterSaleOrderCreateRequest;
 import com.ai.slp.order.vo.OrderAfterSaleApplyItemsVo;
 import com.alibaba.fastjson.JSON;
@@ -73,15 +74,17 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	
 	@Autowired
 	private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
+    @Autowired
+    private IOrderIndexBusiSV orderIndexBusiSV;
 	
-	//订单退货申请
+	/**
+	 * 订单退货申请
+	 */
 	@Override
 	public void back(OrderReturnRequest request) throws BusinessException, SystemException {
-    	/* 1.参数校验*/
-		//ValidateUtils.validateOrderReturnRequest(request);
-		/* 2.查询该商品的子订单*/
+		/* 1.查询该商品的子订单*/
 		OrdOrder order = this.getOrdOrder(request);
-		/* 3.查询商品明细信息*/
+		/* 2.查询商品明细信息*/
 		OrdOdProd ordOdProd = this.getOrdOdProd(request);
 		long prodSum = request.getProdSum();
 		if(prodSum>ordOdProd.getBuySum()) {
@@ -91,12 +94,12 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		Timestamp sysDate=DateUtil.getSysDate();
 		String state = order.getState();
 		long backTotalFee = 0;
-		/* 4.创建订单售后信息*/
+		/* 3.创建订单售后信息*/
 		backTotalFee = this.createAfterOrderInfo(order, request,
 				OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER, 
 				prodSum, ordOdProd, OrdersConstants.OrdOdProd.State.RETURN,backOrderId,sysDate,state);
 		//TODO
-		/* 5.组装退货申请单(OFC)*/
+		/* 4.组装退货申请单(OFC)*/
 		if(OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(order.getFlag())) {
 			String params = getOFCAfterSaleOrderCreateParam(order,backOrderId,ordOdProd, sysDate, 
 					backTotalFee, prodSum, OrdersConstants.OFCApplyType.BACK);
@@ -115,6 +118,12 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				throw new SystemException("", "OFC同步出现异常");
 			}
 		}
+		/* 5.刷新搜索引擎数据*/
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(request.getTenantId());
+    	sesReq.setParentOrderId(order.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
+		
 	}
 
 	//订单换货申请
