@@ -10,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.components.ses.SESClientFactory;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.SearchConstants;
@@ -28,6 +31,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.util.InfoTranslateUtil;
 
 
 @Service
@@ -48,6 +52,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
     @Transactional
 	public boolean insertSesData(SesDataRequest request) throws BusinessException, SystemException {
 		 try {	
+				ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 			 	String tenantId = request.getTenantId();
 			 	Long parentOrderId = request.getParentOrderId();
 			 	//父订单信息
@@ -57,11 +62,18 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 					OrderInfo ordInfo = new OrderInfo();
 					ordInfo.setTenantid(tenantId);
 					ordInfo.setChlid(ord.getChlId());
+					//翻译渠道来源
+					SysParam sysParamChlId = InfoTranslateUtil.translateInfo(tenantId,
+							"ORD_ORDER", "CHL_ID", ord.getChlId(), iCacheSV);
+					ordInfo.setChlidname(sysParamChlId == null ? "" : sysParamChlId.getColumnDesc());
 					ordInfo.setPorderid(ord.getOrderId());
 					ordInfo.setUsername(ord.getUserName());
 					ordInfo.setUsertel(ord.getUserTel());
 					ordInfo.setDeliveryflag(ord.getDeliveryFlag());
-					ordInfo.setDeliveryflagname("");
+					//翻译是否需要物流
+					SysParam sysParamDf = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER",
+							"ORD_DELIVERY_FLAG", ord.getDeliveryFlag(), iCacheSV);
+					ordInfo.setDeliveryflagname(sysParamDf == null ? "" : sysParamDf.getColumnDesc());
 					ordInfo.setOrdertime(ord.getOrderTime());
 					// 获取手机号
 					OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, parentOrderId);
@@ -86,9 +98,9 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 						ordInfo.setAdjustfee(ordOdFeeTotal.getAdjustFee());
 						ordInfo.setDiscountfee(ordOdFeeTotal.getDiscountFee());
 					}
-					// 查询其它信息
+					// 查询订单其它信息
 					ordInfo = this.queryOrdProdExtends(ordInfo, ord, 
-							tenantId, parentOrderId);
+							 iCacheSV, parentOrderId);
 					orderList.add(ordInfo);
 					SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
 					
@@ -100,11 +112,11 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
             return true;
 	}
 
-	private OrderInfo queryOrdProdExtends(OrderInfo ordInfo,OrdOrder ord,String tenantId,
+	private OrderInfo queryOrdProdExtends(OrderInfo ordInfo,OrdOrder ord,ICacheSV iCacheSV,
 			Long parentOrderId) {
 		List<OrdProdExtend> prodExtends=new ArrayList<OrdProdExtend>();
 		//子订单
-		List<OrdOrder> subOrders = ordOrderAtomSV.selectChildOrder(tenantId, parentOrderId);
+		List<OrdOrder> subOrders = ordOrderAtomSV.selectChildOrder(ord.getTenantId(), parentOrderId);
 		int totalprodsize = 0;
 		if(!CollectionUtil.isEmpty(subOrders)) {
 			//存在子订单
@@ -112,12 +124,16 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				OrdProdExtend prodExtend=new OrdProdExtend();
 				List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
 				prodExtend.setState(ordOrder.getState());
-				prodExtend.setStatename("");
+				//订单状态翻译
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(ord.getTenantId(),
+						"ORD_ORDER", "STATE",ord.getState(), iCacheSV);
+				prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 				prodExtend.setBusicode(ordOrder.getBusiCode());//父订单
 				prodExtend.setParentorderid(parentOrderId);
 				prodExtend.setOrderid(ordOrder.getOrderId());
+				prodExtend.setRouteid(ordOrder.getRouteId());
 				// 查询商品信息
-				prodInfos = this.queryOrdProd(prodInfos,tenantId,
+				prodInfos = this.queryOrdProd(prodInfos,ord.getTenantId(),
 						ordOrder.getOrderId());
 				prodExtend.setProdsize(prodInfos.size());
 				totalprodsize=prodInfos.size()+totalprodsize;
@@ -129,12 +145,15 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
 			OrdProdExtend prodExtend=new OrdProdExtend();
 			prodExtend.setState(ord.getState());
-			prodExtend.setStatename("");
+			//订单状态翻译
+			SysParam sysParamState = InfoTranslateUtil.translateInfo(ord.getTenantId(),
+					"ORD_ORDER", "STATE",ord.getState(), iCacheSV);
+			prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 			prodExtend.setBusicode(ord.getBusiCode());//父订单
 			prodExtend.setParentorderid(parentOrderId);
 			prodExtend.setOrderid(0);
 			// 查询商品信息
-			prodInfos = this.queryOrdProd(prodInfos,tenantId,
+			prodInfos = this.queryOrdProd(prodInfos,ord.getTenantId(),
 					parentOrderId);
 			prodExtend.setProdsize(prodInfos.size());
 			totalprodsize=prodInfos.size()+totalprodsize;
