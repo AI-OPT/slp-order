@@ -75,6 +75,8 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 							"ORD_DELIVERY_FLAG", ord.getDeliveryFlag(), iCacheSV);
 					ordInfo.setDeliveryflagname(sysParamDf == null ? "" : sysParamDf.getColumnDesc());
 					ordInfo.setOrdertime(ord.getOrderTime());
+					ordInfo.setParentorderstate(ord.getState());
+					ordInfo.setSupplierid(ord.getSupplierId());
 					// 获取手机号
 					OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, parentOrderId);
 					if(ordOdLogistics!=null) {
@@ -103,8 +105,6 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 							 iCacheSV, parentOrderId);
 					orderList.add(ordInfo);
 					SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
-					
-					
 				}
 		 }catch(Exception e){
 			 throw new SystemException("","订单信息加入搜索引擎失败,订单ID:"+request.getParentOrderId());
@@ -125,8 +125,8 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
 				prodExtend.setState(ordOrder.getState());
 				//订单状态翻译
-				SysParam sysParamState = InfoTranslateUtil.translateInfo(ord.getTenantId(),
-						"ORD_ORDER", "STATE",ord.getState(), iCacheSV);
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
 				prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 				prodExtend.setBusicode(ordOrder.getBusiCode());//父订单
 				prodExtend.setParentorderid(parentOrderId);
@@ -151,7 +151,6 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 			prodExtend.setBusicode(ord.getBusiCode());//父订单
 			prodExtend.setParentorderid(parentOrderId);
-			prodExtend.setOrderid(0);
 			// 查询商品信息
 			prodInfos = this.queryOrdProd(prodInfos,ord.getTenantId(),
 					parentOrderId);
