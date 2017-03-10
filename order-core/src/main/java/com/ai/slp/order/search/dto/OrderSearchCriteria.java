@@ -67,17 +67,17 @@ public final class OrderSearchCriteria {
             return this;
         }*/
         //翻译主题（模糊）
-        public OrderSearchCriteriaBuilder translateName(String translateName) {
+     /*   public OrderSearchCriteriaBuilder translateName(String translateName) {
             orderSearchCriteria.searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.TRANSLATE_NAME,
             		translateName, new SearchOption(SearchOption.SearchLogic.should, SearchOption.SearchType.querystring)));
             return this;
-        }
+        }*/
         //企业id
-        public OrderSearchCriteriaBuilder corporaId(String corporaId) {
+       /* public OrderSearchCriteriaBuilder corporaId(String corporaId) {
             orderSearchCriteria.searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.CORPORA_ID,
             		corporaId, new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
             return this;
-        }
+        }*/
         //订单后场状态
         public OrderSearchCriteriaBuilder state(String state) {
             orderSearchCriteria.searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.STATE,
@@ -91,11 +91,11 @@ public final class OrderSearchCriteria {
             return this;
         }
         //译员类型
-        public OrderSearchCriteriaBuilder interperType(String interperType) {
+      /*  public OrderSearchCriteriaBuilder interperType(String interperType) {
             orderSearchCriteria.searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.INTERPER_TYPE,
             		interperType, new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
             return this;
-        }
+        }*/
         //lsp编号
         public OrderSearchCriteriaBuilder lspId(String lspId) {
             orderSearchCriteria.searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.LSP_ID,
