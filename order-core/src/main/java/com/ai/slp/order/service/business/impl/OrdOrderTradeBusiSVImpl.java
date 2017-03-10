@@ -34,6 +34,7 @@ import com.ai.slp.order.api.ordertradecenter.param.OrdProductResInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderResInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
@@ -50,8 +51,8 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
-import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumRes;
 import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
@@ -87,6 +88,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     
     @Autowired
     private IOrderMonitorSV orderMonitorSV;
+    
+    @Autowired
+    private IOrderIndexBusiSV orderIndexBusiSV;
     
     //订单提交
     @Override
@@ -142,14 +146,20 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	orderMonitorSV.afterSubmitOrder(monitorRequest);
         	long orderAWarnEnd=System.currentTimeMillis();
         	LOG.info("####loadtest####订单提交成功后完成监控,当前时间戳>>>>>>>>>>："+orderAWarnEnd+",用时:"+(orderAWarnEnd-orderAWarnStart)+"毫秒");
-        	/* 8.封装返回参数*/
+        	
+        	/* 8.刷新搜索引擎数据*/
+        	SesDataRequest sesReq=new SesDataRequest();
+        	sesReq.setTenantId(request.getTenantId());
+        	sesReq.setParentOrderId(orderId);
+        	this.orderIndexBusiSV.insertSesData(sesReq);
+        	
+        	/* 9.封装返回参数*/
         	orderResInfo.setOrderId(orderId);
         	orderResInfo.setOrdProductResList(ordProductResList);
         	orderResInfos.add(orderResInfo);
         	long orderFori=System.currentTimeMillis();
         	LOG.info("####loadtest####订单提交前完成监控,当前时间戳>>>>>>>>>>i=["+(i++)+"]："+orderFori+",用时:"+(orderFori-orderStart)+"毫秒");
-
-		}
+        }
         /* 10.返回费用总金额*/
         OrdFeeInfo ordFeeInfo = this.buildFeeInfo(request);
         response.setOrdFeeInfo(ordFeeInfo);
