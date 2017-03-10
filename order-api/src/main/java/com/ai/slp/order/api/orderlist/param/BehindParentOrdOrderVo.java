@@ -42,8 +42,10 @@ public class BehindParentOrdOrderVo extends BaseInfo {
     private Long totalcouponfee;
     //父订单对应的子订单下的所有商品数量
     private long totalprodsize;
-    //商品id()
+    //商户id(供应商id)
     private String supplierid;
+    //商户名称
+    private String supplieridname;
     //订单及商品其它信息
     private List<BehindOrdOrderVo> ordextendes;
 
@@ -164,6 +166,13 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
 	public void setSupplierid(String supplierid) {
 		this.supplierid = supplierid;
+	}
+	public String getSupplieridname() {
+		return supplieridname;
+	}
+
+	public void setSupplieridname(String supplieridname) {
+		this.supplieridname = supplieridname;
 	}
 
 	public List<BehindOrdOrderVo> getOrdextendes() {
