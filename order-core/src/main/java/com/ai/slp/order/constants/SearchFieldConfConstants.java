@@ -10,12 +10,12 @@ public class SearchFieldConfConstants {
     public static final String DELIVERY_FLAG = "deliveryflag";
     public static final String ROUTE_ID = "routeid";
     public static final String CONTACT_TEL = "contacttel";
-    public static final String TRANSLATE_NAME = "translatename";
-    public static final String CORPORA_ID = "corpoarid";
+    public static final String SUPPLIER_ID = "supplierid";
+    public static final String PARENT_ORDER_STATE = "parentorderstate";
     public static final String STATE = "state";
     public static final String ORD_EXTENDES_STATE = "ordextendes.state";
     public static final String DISPLAY_FLAG = "displayflag";
-    public static final String INTERPER_TYPE = "interpertype";
+    public static final String PROD_NAME = "prodname";
     public static final String LSP_ID = "lspid";
     public static final String INTERPER_ID = "interperid";
     public static final String KEYWORDS = "keywords";
