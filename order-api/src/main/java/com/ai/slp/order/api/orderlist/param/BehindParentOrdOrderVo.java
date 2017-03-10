@@ -45,7 +45,7 @@ public class BehindParentOrdOrderVo extends BaseInfo {
     //商户id(供应商id)
     private String supplierid;
     //商户名称
-    private String supplieridname;
+    private String suppliername;
     //订单及商品其它信息
     private List<BehindOrdOrderVo> ordextendes;
 
@@ -167,12 +167,12 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 	public void setSupplierid(String supplierid) {
 		this.supplierid = supplierid;
 	}
-	public String getSupplieridname() {
-		return supplieridname;
+	public String getSuppliername() {
+		return suppliername;
 	}
 
-	public void setSupplieridname(String supplieridname) {
-		this.supplieridname = supplieridname;
+	public void setSuppliername(String suppliername) {
+		this.suppliername = suppliername;
 	}
 
 	public List<BehindOrdOrderVo> getOrdextendes() {
