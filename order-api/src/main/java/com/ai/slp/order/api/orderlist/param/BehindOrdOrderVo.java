@@ -8,38 +8,21 @@ public class BehindOrdOrderVo extends BaseInfo{
 
 	private static final long serialVersionUID = 1L;
 	
-    /**
-     * 业务订单ID
-     */
+    //业务订单ID(子订单id)
     private Long orderid;
-    
-    /**
-     * 父订单id
-     */
-//    private Long parentOrderId;
+    //父订单id
     private Long parentorderid;
-
-    /**
-     * 订单状态(后厂)
-     */
+    //订单状态(后台)
     private String state;
-    
-    /**
-     * 业务类型
-     */
+    //业务类型
     private String busicode;
-
-    /**
-     * 订单状态展示
-     */
+    //订单状态展示
     private String statename;
-    
-    /**
-     * 商品SIZE
-     */
+    //仓库id
+    private String routeid;
+    //商品SIZE
     private long prodsize;
     
-  //  private List<BehindOrdProductVo> productList;
     private List<BehindOrdProductVo> prodinfos;
 
 	public Long getOrderid() {
@@ -88,6 +71,13 @@ public class BehindOrdOrderVo extends BaseInfo{
 
 	public void setProdsize(long prodsize) {
 		this.prodsize = prodsize;
+	}
+	public String getRouteid() {
+		return routeid;
+	}
+
+	public void setRouteid(String routeid) {
+		this.routeid = routeid;
 	}
 
 	public List<BehindOrdProductVo> getProdinfos() {
