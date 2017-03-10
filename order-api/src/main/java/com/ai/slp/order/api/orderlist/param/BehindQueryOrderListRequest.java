@@ -40,9 +40,22 @@ public class BehindQueryOrderListRequest extends BaseInfo{
     private String contactTel;
 
     /**
-     * 订单状态
+     * 订单状态(订单处理,售后订单列表)
      */
     private List<Object> stateList;
+    
+    /**
+	 * 商品名称(订单统计)
+	 */
+	private String prodName;
+	/**
+	 * 销售商ID(订单统计)
+	 */
+	private String supplierId;
+	/**
+	 * 父订单状态(订单统计)
+	 */
+	private String parentOrderState;
     
     /**
      * 订单生成时间开始
@@ -152,4 +165,27 @@ public class BehindQueryOrderListRequest extends BaseInfo{
 		this.pageSize = pageSize;
 	}
 
+	public String getProdName() {
+		return prodName;
+	}
+
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
+	public String getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(String supplierId) {
+		this.supplierId = supplierId;
+	}
+
+	public String getParentOrderState() {
+		return parentOrderState;
+	}
+
+	public void setParentOrderState(String parentOrderState) {
+		this.parentOrderState = parentOrderState;
+	}
 }
