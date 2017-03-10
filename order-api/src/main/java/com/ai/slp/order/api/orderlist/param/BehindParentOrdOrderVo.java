@@ -18,18 +18,15 @@ public class BehindParentOrdOrderVo extends BaseInfo {
      * 订单来源 (受理渠道)
      */
     private String chlid;
-  //  private String chlId;
     
     /**
      * 订单来源展示名称
      */
- //   private String chlIdName;
     private String chlidname;
     
     /**
      * 父订单id
      */
-  //  private Long pOrderId;
     private Long porderid;
     
     /**
@@ -93,7 +90,6 @@ public class BehindParentOrdOrderVo extends BaseInfo {
     /**
      * 订单及商品信息
      */
-  //  private List<BehindOrdOrderVo> orderList;
     private List<BehindOrdOrderVo> ordextendes;
 
 	public String getChlid() {
