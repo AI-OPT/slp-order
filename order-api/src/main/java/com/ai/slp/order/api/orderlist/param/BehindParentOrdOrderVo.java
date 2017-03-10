@@ -14,82 +14,35 @@ public class BehindParentOrdOrderVo extends BaseInfo {
 
     private static final long serialVersionUID = 1L;
     
-    /**
-     * 订单来源 (受理渠道)
-     */
+    //订单来源 (受理渠道)
     private String chlid;
-    
-    /**
-     * 订单来源展示名称
-     */
+    //订单来源展示名称
     private String chlidname;
-    
-    /**
-     * 父订单id
-     */
+    //父订单id
     private Long porderid;
-    
-    /**
-     * 买家帐号 (userid)
-     */
+    //买家帐号 (用户id)
     private String userid;
-    
-    /**
-     * 用户姓名
-     */
+    //用户姓名
     private String username;
-    
-    /**
-     * 绑定手机号 (用户相关)
-     */
+    //绑定手机号 (用户相关)
     private String usertel;
-    
-    /**
-     * 是否需要物流
-     */
+    // 是否需要物流
     private String deliveryflag;
-    
-    /**
-     * 是否需要物流展示名称
-     */
+    //是否需要物流展示名称
     private String deliveryflagname;
-    
-    
-    /**
-     * 总优惠金额
-     */
+    //总优惠金额
     private Long discountfee;
-
-
-    /**
-     * 总实收费用
-     */
+    //总实收费用
     private Long adjustfee;
-
-    
-    /**
-     * 收件人电话
-     */
+    //收件人电话
     private String contacttel;
-    
-    /**
-     * 积分
-     */
+    //积分
     private Long points;
-    
-    /**
-     * 优惠券
-     */
+    //优惠券
     private Long totalcouponfee;
-    
-    /**
-     * 父订单对应的子订单下的所有商品数量
-     */
+    //父订单对应的子订单下的所有商品数量
     private long totalprodsize;
-    
-    /**
-     * 订单及商品信息
-     */
+    //订单及商品其它信息
     private List<BehindOrdOrderVo> ordextendes;
 
 	public String getChlid() {
