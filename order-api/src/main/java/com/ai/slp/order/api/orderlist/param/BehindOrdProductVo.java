@@ -6,14 +6,9 @@ public class BehindOrdProductVo implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
-	/**
-	 * 商品名称
-	 */
+	// 商品名称
 	private String prodname;
-	
-	/**
-	 * 数量
-	 */
+	// 商品购买数量
 	private long buysum;
 
 	public String getProdname() {
