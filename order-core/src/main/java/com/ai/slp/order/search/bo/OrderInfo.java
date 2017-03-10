@@ -17,6 +17,8 @@ public class OrderInfo {
 	private long points;
 	private long totalprodsize;
 	private Date ordertime;
+	private String parentorderstate;
+	private String supplierid;
 	private List<OrdProdExtend> ordextendes;
 	
 	public String getTenantid() {
@@ -102,6 +104,18 @@ public class OrderInfo {
 	}
 	public void setOrdertime(Date ordertime) {
 		this.ordertime = ordertime;
+	}
+	public String getParentorderstate() {
+		return parentorderstate;
+	}
+	public void setParentorderstate(String parentorderstate) {
+		this.parentorderstate = parentorderstate;
+	}
+	public String getSupplierid() {
+		return supplierid;
+	}
+	public void setSupplierid(String supplierid) {
+		this.supplierid = supplierid;
 	}
 	public List<OrdProdExtend> getOrdextendes() {
 		return ordextendes;
