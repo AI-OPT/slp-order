@@ -9,6 +9,7 @@ public class OrdProdExtend {
 	private String  statename;
 	private String  busicode;
 	private long  prodsize;
+	private String routeid; 
 	private List<ProdInfo> prodinfos;
 	public long getOrderid() {
 		return orderid;
@@ -51,5 +52,11 @@ public class OrdProdExtend {
 	}
 	public void setProdinfos(List<ProdInfo> prodinfos) {
 		this.prodinfos = prodinfos;
+	}
+	public String getRouteid() {
+		return routeid;
+	}
+	public void setRouteid(String routeid) {
+		this.routeid = routeid;
 	}
 }

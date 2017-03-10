@@ -5,8 +5,8 @@ import java.util.List;
 public class OrderInfo {
 	private String tenantid;
 	private String chlid;
+	private String chlidname;
 	private long porderid;
-//	private String userid;
 	private String username;
 	private String usertel;
 	private String deliveryflag;
@@ -15,9 +15,7 @@ public class OrderInfo {
 	private long adjustfee;
 	private String contacttel;
 	private long points;
-//	private long totalcouponfee;
 	private long totalprodsize;
-//	private String routeid;
 	private Date ordertime;
 	private List<OrdProdExtend> ordextendes;
 	
@@ -33,18 +31,18 @@ public class OrderInfo {
 	public void setChlid(String chlid) {
 		this.chlid = chlid;
 	}
+	public String getChlidname() {
+		return chlidname;
+	}
+	public void setChlidname(String chlidname) {
+		this.chlidname = chlidname;
+	}
 	public long getPorderid() {
 		return porderid;
 	}
 	public void setPorderid(long porderid) {
 		this.porderid = porderid;
 	}
-/*	public String getUserid() {
-		return userid;
-	}
-	public void setUserid(String userid) {
-		this.userid = userid;
-	}*/
 	public String getUsername() {
 		return username;
 	}
@@ -93,24 +91,12 @@ public class OrderInfo {
 	public void setPoints(long points) {
 		this.points = points;
 	}
-/*	public long getTotalcouponfee() {
-		return totalcouponfee;
-	}
-	public void setTotalcouponfee(long totalcouponfee) {
-		this.totalcouponfee = totalcouponfee;
-	}*/
 	public long getTotalprodsize() {
 		return totalprodsize;
 	}
 	public void setTotalprodsize(long totalprodsize) {
 		this.totalprodsize = totalprodsize;
 	}
-/*	public String getRouteid() {
-		return routeid;
-	}
-	public void setRouteid(String routeid) {
-		this.routeid = routeid;
-	}*/
 	public Date getOrdertime() {
 		return ordertime;
 	}
