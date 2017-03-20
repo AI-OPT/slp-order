@@ -1,6 +1,7 @@
 package com.ai.slp.order.api.ordelist.impl;
 
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class OrderListSVImplTest {
     @Test
     public void testQueryOrder() {
     	QueryOrderRequest request=new QueryOrderRequest();
-    	request.setOrderId(2000001249531485l);
+    	request.setOrderId(2000001277189486l);
     	request.setTenantId("changhong");
     	QueryOrderResponse response = orderListSV.queryOrder(request);
     	String str = JSON.toJSONString(response);
@@ -38,15 +39,12 @@ public class OrderListSVImplTest {
     public void behindOrderListTest() {
     	BehindQueryOrderListRequest request = new BehindQueryOrderListRequest();
          request.setTenantId("changhong");
-      //   request.setUserId("7048d255c62e4511");
-        List<String> stateList=new ArrayList<String>();
+      //  request.setUserId("7048d255c62e4511");
+        List<Object> stateList=new ArrayList<Object>();
      //    request.setContactTel("18210680992");
-     //  stateList.add("21,212,213,312,22,23,31,92,93,94,95");
-     //    stateList.add("21");
-    //     stateList.add("13");
-        stateList.add("90");
-     //    stateList.add("15");
-         request.setOrderId(2000001249531485l);
+     //  stateList.add("21");
+    //  request.setOrderId(2000034314177605l);
+     //   request.setProdName("test22");
          request.setPageNo(1);
          request.setPageSize(5);
          request.setStateList(stateList);
@@ -55,7 +53,7 @@ public class OrderListSVImplTest {
         // request.setOrderTimeEnd("2016-08-15 16:16:29");
       //   request.setChlId("9001");
       //   request.setContactTel("");
-      //   request.setDeliveryFlag("Y");
+       //  request.setDeliveryFlag("Y");
       //   request.setUserId("7048d255c62e4511");
       	
          

@@ -29,8 +29,9 @@ public class DeliveryOrderPrintSVImplTest {
 	@Test
 	public void testQuery() {
 		DeliveryOrderPrintRequest request=new DeliveryOrderPrintRequest();
-		request.setOrderId(2000001256210756l);
-		request.setUserId("2ecee85451c3460a");
+		//request.setOrderId(2000034324143088l);
+		request.setOrderId(2000034324272696l);
+		request.setUserId("112233");
 		request.setTenantId("changhong");
 		DeliveryOrderQueryResponse response = deliveryOrderPrintSV.query(request);
 		System.out.println(response);
@@ -43,18 +44,27 @@ public class DeliveryOrderPrintSVImplTest {
 		List<DeliveryProdPrintVo> deliveryProdPrintVos=new ArrayList<DeliveryProdPrintVo>();
 		DeliveryOrderPrintInfosRequest request=new DeliveryOrderPrintInfosRequest();
 		DeliveryProdPrintVo dp=new DeliveryProdPrintVo();
-		request.setOrderId(2000001070521943l);
+		DeliveryProdPrintVo dp1=new DeliveryProdPrintVo();
+		request.setOrderId(	2000034324817339l);
 		request.setTenantId("changhong");
 		request.setContactName("小志918");
-		dp.setBuySum(4);
+		dp.setBuySum(1);
 		dp.setExtendInfo("件");
-		dp.setProdName("test1017");
-		dp.setSalePrice(5000);
-		dp.setSkuId("0000000000000286");
-		List<Long> list=new ArrayList<Long>();
-		list.add(2000001070626360l);
-		dp.setHorOrderId(list);
-		deliveryProdPrintVos.add(dp);
+		dp.setProdName("test1018");
+		dp.setSalePrice(50000);
+		dp.setSkuId("0000000000000287");
+		dp1.setBuySum(2);
+		dp1.setExtendInfo("件");
+		dp1.setProdName("test1017");
+		dp1.setSalePrice(5000);
+		dp1.setSkuId("0000000000000286");
+		List<Long> list1=new ArrayList<Long>();
+	//	List<Long> list2=new ArrayList<Long>();
+		list1.add(2000034323751477l);
+		dp1.setHorOrderId(list1);
+	//	dp1.setHorOrderId(list2);
+	//	deliveryProdPrintVos.add(dp);
+		deliveryProdPrintVos.add(dp1);
 		request.setDeliveryProdPrintVos(deliveryProdPrintVos);
 		BaseResponse response = deliveryOrderPrintSV.print(request);
 		System.out.println(response);
@@ -63,8 +73,8 @@ public class DeliveryOrderPrintSVImplTest {
 	@Test
 	public void testDisplay() {
 		DeliveryOrderPrintRequest request=new DeliveryOrderPrintRequest();
-		request.setOrderId(2000001070521943l);
-		request.setUserId("2ecee85451c3460a");
+		request.setOrderId(2000034324272696l);
+		request.setUserId("112233");
 		request.setTenantId("changhong");
 		DeliveryOrderPrintResponse response = deliveryOrderPrintSV.display(request);
 		System.out.println(JSON.toJSON(response));

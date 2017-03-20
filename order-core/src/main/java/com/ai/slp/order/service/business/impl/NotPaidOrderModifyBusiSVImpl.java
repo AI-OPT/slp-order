@@ -11,7 +11,7 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.components.ses.SESClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.paas.ipaas.search.common.JsonBuilder;
-import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
+import com.ai.slp.order.api.orderpricemodify.param.OrderModifyRequest;
 import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
