@@ -140,11 +140,6 @@ public class OrdOrderVo extends BaseInfo {
 	private Timestamp orderTime;
 
 	/**
-	 * 手机个数
-	 */
-	private Integer phoneCount;
-
-	/**
 	 * 总费用
 	 */
 	private Long totalFee;
@@ -435,14 +430,6 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setPayDataList(List<OrderPayVo> payDataList) {
 		this.payDataList = payDataList;
-	}
-
-	public Integer getPhoneCount() {
-		return phoneCount;
-	}
-
-	public void setPhoneCount(Integer phoneCount) {
-		this.phoneCount = phoneCount;
 	}
 
 	public long getOperDiscountFee() {
