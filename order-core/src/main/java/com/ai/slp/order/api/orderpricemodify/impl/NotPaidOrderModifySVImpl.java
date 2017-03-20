@@ -1,4 +1,4 @@
-package com.ai.slp.order.api.ordermodify.impl;
+package com.ai.slp.order.api.orderpricemodify.impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +9,8 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
-import com.ai.slp.order.api.ordermodify.interfaces.INotPaidOrderModifySV;
-import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
+import com.ai.slp.order.api.orderpricemodify.interfaces.INotPaidOrderModifySV;
+import com.ai.slp.order.api.orderpricemodify.param.OrderModifyRequest;
 import com.ai.slp.order.service.business.interfaces.INotPaidOrderModifyBusiSV;
 import com.ai.slp.order.util.ValidateUtils;
 
