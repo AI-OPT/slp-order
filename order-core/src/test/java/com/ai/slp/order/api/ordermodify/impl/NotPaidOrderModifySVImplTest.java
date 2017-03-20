@@ -9,8 +9,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.opt.base.vo.BaseResponse;
-import com.ai.slp.order.api.ordermodify.interfaces.INotPaidOrderModifySV;
-import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
+import com.ai.slp.order.api.orderpricemodify.interfaces.INotPaidOrderModifySV;
+import com.ai.slp.order.api.orderpricemodify.param.OrderModifyRequest;
 import com.alibaba.fastjson.JSON;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -23,8 +23,8 @@ public class NotPaidOrderModifySVImplTest {
 	@Test
 	public void test() {
         OrderModifyRequest request=new OrderModifyRequest();
-        request.setOrderId(3345703912l);
-		request.setUpdateAmount(3600l);
+        request.setOrderId(2000034325121491l);
+		request.setUpdateAmount(12000l);
 		request.setTenantId("changhong");
 		request.setOperId("1212");
 		request.setUpdateRemark("测试.....");
