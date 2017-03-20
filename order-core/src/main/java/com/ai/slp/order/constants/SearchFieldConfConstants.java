@@ -14,6 +14,7 @@ public class SearchFieldConfConstants {
     public static final String PARENT_ORDER_STATE = "parentorderstate";
     public static final String STATE = "state";
     public static final String ORD_EXTENDES_STATE = "ordextendes.state";
+    public static final String ORD_EXTENDES_STATE_NAME = "ordextendes.statename";
     public static final String DISPLAY_FLAG = "displayflag";
     public static final String PROD_NAME = "ordextendes.prodinfos.prodname";
     public static final String DISCOUNT_FEE = "discountfee";
