@@ -2,11 +2,7 @@ package com.ai.slp.order.service.business.impl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,16 +22,12 @@ import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.ParseO2pDataUtil;
-import com.ai.opt.sdk.util.StringUtil;
 import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
-import com.ai.paas.ipaas.search.vo.SearchOption;
 import com.ai.paas.ipaas.search.vo.Sort;
 import com.ai.paas.ipaas.search.vo.Sort.SortOrder;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
-import com.ai.slp.order.api.orderlist.param.BehindOrdOrderVo;
-import com.ai.slp.order.api.orderlist.param.BehindOrdProductVo;
 import com.ai.slp.order.api.orderlist.param.BehindParentOrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
@@ -46,37 +38,29 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.SearchFieldConfConstants;
-import com.ai.slp.order.dao.mapper.attach.BehindOrdOrderAttach;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria.Criteria;
-import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
-import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtendCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
-import com.ai.slp.order.search.bo.OrdProdExtend;
 import com.ai.slp.order.search.bo.OrderInfo;
-import com.ai.slp.order.search.bo.ProdInfo;
+import com.ai.slp.order.search.dto.SearchCriteriaStructure;
 import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdExtendAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOrderAttachAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
-import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
@@ -86,7 +70,6 @@ import com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV;
 import com.ai.slp.route.api.routemanage.param.RouteIdParamRequest;
 import com.ai.slp.route.api.routemanage.param.RouteResponse;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 @Service
@@ -94,31 +77,18 @@ import com.alibaba.fastjson.JSONObject;
 public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 
 	private static final Logger logger = LoggerFactory.getLogger(OrdOrderBusiSVImpl.class);
-
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
-
 	@Autowired
 	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
-
-	@Autowired
-	private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
-
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
-
 	@Autowired
 	private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
-
-	@Autowired
-	private IOrdOrderAttachAtomSV ordOrderAttachAtomSV;
-
 	@Autowired
 	private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
-
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
-
 	@Autowired
 	private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
 
@@ -348,7 +318,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		PageInfo<BehindParentOrdOrderVo> pageInfo=new PageInfo<BehindParentOrdOrderVo>();
 		List<BehindParentOrdOrderVo> results = new ArrayList<BehindParentOrdOrderVo>();
 		IOrderSearch orderSearch = new OrderSearchImpl();
-		List<SearchCriteria> orderSearchCriteria = commonConditions(orderListRequest);
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.commonConditions(orderListRequest);
 		//排序
 		List<Sort> sortList = new ArrayList<Sort>();
 		Sort sort = new Sort(SearchFieldConfConstants.ORDER_TIME, SortOrder.DESC);
@@ -367,42 +337,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		pageInfo.setCount(Long.valueOf(result.getCount()).intValue());
 		response.setPageInfo(pageInfo);
 		return response;
-		
-		/*
-		long start = System.currentTimeMillis();
-		logger.info("开始执行dubbo订单列表查询behindQueryOrderList，当前时间戳：" + start);
-		logger.debug("开始运营后台订单列表查询..");
-		 参数校验 
-		if (orderListRequest == null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
-		}
-		CommonCheckUtils.checkTenantId(orderListRequest.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
-		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
-		BehindQueryOrderListResponse response = new BehindQueryOrderListResponse();
-		PageInfo<BehindParentOrdOrderVo> pageInfo = new PageInfo<BehindParentOrdOrderVo>();
-		String states = "";
-		StringBuffer sb = new StringBuffer("");
-		List<Object> stateList = orderListRequest.getStateList();
-		if (!CollectionUtil.isEmpty(stateList)) {
-			for (Object state : stateList) {
-				sb = sb.append(state).append(",");
-			}
-			states = sb.toString();
-			states = states.substring(0, sb.length() - 1);
-		}
-		long countStart = System.currentTimeMillis();
-		logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList，获取订单列表数量,当前时间戳：" + countStart);
-		int count = ordOrderAttachAtomSV.behindQueryCount(orderListRequest, states);
-		long countEnd = System.currentTimeMillis();
-		logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList，获取订单列表数量,当前时间戳：" + countEnd + ",用时:"
-				+ (countEnd - countStart) + "毫秒");
-		List<BehindParentOrdOrderVo> orderVoList = this.getBehindOrdOrderVos(orderListRequest, states, iCacheSV);
-		pageInfo.setPageNo(orderListRequest.getPageNo());
-		pageInfo.setPageSize(orderListRequest.getPageSize());
-		pageInfo.setResult(orderVoList);
-		pageInfo.setCount(count);
-		response.setPageInfo(pageInfo);
-		return response;*/
 	}
 
 	/**
@@ -417,181 +351,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
 		return ordOdProdExtendList;
 	}
-
-	/**
-	 * 运营后台列表信息
-	 */
-	/*private List<BehindParentOrdOrderVo> getBehindOrdOrderVos(BehindQueryOrderListRequest orderListRequest,
-			String states, ICacheSV iCacheSV) {
-		List<BehindParentOrdOrderVo> orderVoList = new ArrayList<BehindParentOrdOrderVo>();
-		long infoStart = System.currentTimeMillis();
-		logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList，获取订单列表信息,当前时间戳：" + infoStart);
-		List<BehindOrdOrderAttach> parentList = ordOrderAttachAtomSV.behindQueryOrderBySearch(orderListRequest, states);
-		long infoEnd = System.currentTimeMillis();
-		logger.info("开始执行dubbo后场订单列表查询behindQueryOrderList，获取订单列表信息,当前时间戳：" + infoEnd + ",用时:" + (infoEnd - infoStart)
-				+ "毫秒");
-		if (!CollectionUtil.isEmpty(parentList)) {
-			for (BehindOrdOrderAttach behindOrdOrderAttach : parentList) {
-				BehindParentOrdOrderVo pOrderVo = new BehindParentOrdOrderVo();
-				List<BehindOrdOrderVo> orderList = new ArrayList<BehindOrdOrderVo>();
-				pOrderVo.setpOrderId(behindOrdOrderAttach.getOrderId());
-				pOrderVo.setChlId(behindOrdOrderAttach.getChlId());
-				SysParam sysParamChlId = InfoTranslateUtil.translateInfo(behindOrdOrderAttach.getTenantId(),
-						"ORD_ORDER", "CHL_ID", behindOrdOrderAttach.getChlId(), iCacheSV);
-				pOrderVo.setChlIdName(sysParamChlId == null ? "" : sysParamChlId.getColumnDesc());
-				pOrderVo.setContactTel(behindOrdOrderAttach.getContactTel());
-				pOrderVo.setUserId(behindOrdOrderAttach.getUserId());
-				pOrderVo.setUserName(behindOrdOrderAttach.getUserName());
-				pOrderVo.setUserTel(behindOrdOrderAttach.getUserTel());
-				pOrderVo.setDeliveryFlag(behindOrdOrderAttach.getDeliveryFlag());
-				SysParam sysParamDf = InfoTranslateUtil.translateInfo(behindOrdOrderAttach.getTenantId(), "ORD_ORDER",
-						"ORD_DELIVERY_FLAG", behindOrdOrderAttach.getDeliveryFlag(), iCacheSV);
-				pOrderVo.setDeliveryFlagName(sysParamDf == null ? "" : sysParamDf.getColumnDesc());
-				String arr = "21,212,213,312,22,23,31,92,93,94,95"; // 售后状态
-				String[] str = arr.split(",");
-				List<String> list = Arrays.asList(str);
-				boolean flag = arr.equals(states);
-				if (!(list.contains(states) || flag)) {
-					pOrderVo.setAdjustFee(behindOrdOrderAttach.getAdjustFee());
-					pOrderVo.setDiscountFee(behindOrdOrderAttach.getDiscountFee());// 优惠金额
-				}
-				OrdOrderCriteria exampleOrder = new OrdOrderCriteria();
-				OrdOrderCriteria.Criteria criteriaOrder = exampleOrder.createCriteria();
-				criteriaOrder.andParentOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
-				criteriaOrder.andTenantIdEqualTo(orderListRequest.getTenantId());
-				if (!StringUtil.isBlank(orderListRequest.getRouteId())) {
-					criteriaOrder.andRouteIdEqualTo(orderListRequest.getRouteId());
-				}
-				if (!StringUtil.isBlank(states)) {
-					String[] strState = states.split(",");
-					List<String> asList = Arrays.asList(strState);
-					criteriaOrder.andStateIn(asList);
-				}
-				if (!(list.contains(states) || flag)) {
-					criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO);
-				} else {
-					criteriaOrder.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.YES);
-				}
-				List<OrdOrder> orders = ordOrderAtomSV.selectByExample(exampleOrder);
-				int totalProdSize = 0;
-				if (CollectionUtil.isEmpty(orders)) {
-					BehindOrdOrderVo orderVo = new BehindOrdOrderVo();
-					 查询父订单下的商品信息 
-					List<BehindOrdProductVo> prodList = this.getProdList(null, orderListRequest, behindOrdOrderAttach,
-							null);
-					orderVo.setProductList(prodList);
-					orderVo.setProdSize(prodList.size());
-					totalProdSize = prodList.size() + totalProdSize;
-					orderVo.setState(behindOrdOrderAttach.getState());
-					orderVo.setParentOrderId(behindOrdOrderAttach.getOrderId());
-					SysParam sysParamState = InfoTranslateUtil.translateInfo(orderListRequest.getTenantId(),
-							"ORD_ORDER", "STATE", behindOrdOrderAttach.getState(), iCacheSV);
-					orderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
-					orderList.add(orderVo);
-					pOrderVo.setOrderList(orderList);
-				} else {
-					for (OrdOrder ordOrder : orders) {
-						BehindOrdOrderVo orderVo = new BehindOrdOrderVo();
-						// 订单查询OFC
-						if (OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(ordOrder.getFlag())) {
-							String logisticsName = null;
-							String logisticsNo = null;
-							JSONObject object = queryOFC(ordOrder);
-							// TODO 判断
-							if(object!=null) {
-								JSONArray jsonArray = object.getJSONArray("OrderList");
-								for (int i = 0; i < jsonArray.size(); i++) {
-									JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-									JSONObject obj = jsonObject.getJSONObject("Order");
-									String state = obj.getString("DeliveryState");
-									JSONArray shipArray = jsonObject.getJSONArray("ShipOrderList");
-									for (int j = 0; j < shipArray.size(); j++) {
-										JSONObject shipObject = (JSONObject) jsonArray.get(i);
-										logisticsName = shipObject.getString("LogisticsName");
-										logisticsNo = shipObject.getString("LogisticsNo");
-									}
-									if (OrdersConstants.OFCDeliveryState.ALREADY_DELIVER_GOODS.equals(state)
-											|| OrdersConstants.OFCDeliveryState.ALREADY_RECEIVE_GOODS.equals(state)
-											|| OrdersConstants.OFCDeliveryState.PART_DELIVER_GOODS.equals(state)) {
-										OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV
-												.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
-										if (ordOdLogistics == null) {
-											logger.error("配送信息不存在");
-											throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
-													"配送信息不存在[订单id:" + ordOrder.getOrderId() + "]");
-										}
-										ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_CONFIRM);
-										ordOdLogistics.setExpressOddNumber(logisticsNo);
-										ordOdLogistics.setContactCompany(logisticsName);// 物流商
-										ordOrderAtomSV.updateById(ordOrder);
-										ordOdLogisticsAtomSV.updateByPrimaryKey(ordOdLogistics);
-									}
-								}
-							}
-							 
-						}
-						orderVo.setOrderId(ordOrder.getOrderId());
-						orderVo.setState(ordOrder.getState());
-						orderVo.setBusiCode(ordOrder.getBusiCode());
-						SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(), "ORD_ORDER",
-								"STATE", ordOrder.getState(), iCacheSV);
-						orderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
-						List<BehindOrdProductVo> prodList = this.getProdList(ordOrder, orderListRequest,
-								behindOrdOrderAttach, ordOrder.getOrderId());
-						orderVo.setProdSize(prodList.size());
-						totalProdSize = prodList.size() + totalProdSize;
-						orderVo.setProductList(prodList);
-						orderList.add(orderVo);
-					}
-					pOrderVo.setOrderList(orderList);
-				}
-				if (!(list.contains(states) || flag)) {
-					OrdOdFeeProdCriteria exampleFeeProd = new OrdOdFeeProdCriteria();
-					OrdOdFeeProdCriteria.Criteria criteriaFeeProd = exampleFeeProd.createCriteria();
-					criteriaFeeProd.andOrderIdEqualTo(behindOrdOrderAttach.getOrderId()); // 父订单id
-					List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByExample(exampleFeeProd);
-					long points = 0; // 积分
-					if (!CollectionUtil.isEmpty(orderFeeProdList)) {
-						for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) {
-							if (OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
-								points += ordOdFeeProd.getPaidFee();
-							}
-						}
-					}
-					pOrderVo.setPoints(points);
-				}
-				pOrderVo.setTotalProdSize(totalProdSize);
-				orderVoList.add(pOrderVo);
-			}
-		}
-		return orderVoList;
-	}*/
-
-	/**
-	 * 订单下的商品明细信息
-	 */
-/*	private List<BehindOrdProductVo> getProdList(OrdOrder order, BehindQueryOrderListRequest orderListRequest,
-			BehindOrdOrderAttach behindOrdOrderAttach, Long orderId) {
-		List<BehindOrdProductVo> productList = new ArrayList<BehindOrdProductVo>();
-		OrdOdProdCriteria example = new OrdOdProdCriteria();
-		OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(orderListRequest.getTenantId());
-		if (order == null) {
-			criteria.andOrderIdEqualTo(behindOrdOrderAttach.getOrderId());
-		} else {
-			criteria.andOrderIdEqualTo(orderId);
-		}
-		List<OrdOdProd> OrdOdProds = ordOdProdAtomSV.selectByExample(example);
-		for (OrdOdProd ordOdProd : OrdOdProds) {
-			BehindOrdProductVo vo = new BehindOrdProductVo();
-			vo.setBuySum(ordOdProd.getBuySum());
-			vo.setProdName(ordOdProd.getProdName());
-			productList.add(vo);
-		}
-		return productList;
-	}*/
-
-	
 	
 	//订单判断及状态修改
 	@Override
@@ -778,101 +537,5 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			throw new SystemException("", "OFC订单查询出现异常");
 		}
 		return object;
-	}
-	
-	// 搜索引擎数据公共查询条件
-	public List<SearchCriteria> commonConditions(BehindQueryOrderListRequest request) {
-		List<SearchCriteria> searchfieldVos = new ArrayList<SearchCriteria>();
-		// 如果用户名称不为空
-		if (!StringUtil.isBlank(request.getUserName())) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.USER_NAME, request.getUserName(),
-					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
-		}
-		// 如果订单id不为空
-		if (request.getOrderId() != null) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.PORDER_ID, request.getOrderId().toString(),
-					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
-		}
-		// 如果渠道来源不为空
-		if (!StringUtil.isBlank(request.getChlId())) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.CHL_ID, request.getChlId(),
-					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
-		}
-		// 如果是否需要物流不为空
-		if (!StringUtil.isBlank(request.getDeliveryFlag())) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.DELIVERY_FLAG, request.getDeliveryFlag(),
-					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
-		}
-		// 如果仓库id不为空
-		if (!StringUtil.isBlank(request.getRouteId())) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.ROUTE_ID, request.getRouteId(),
-					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
-		}
-		// 如果收货人联系电话不为空
-		if (!StringUtil.isBlank(request.getContactTel())) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.CONTACT_TEL, request.getContactTel(),
-					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
-		}
-		
-		// 如果供应商id不为空
-		if (!StringUtil.isBlank(request.getSupplierId())) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.SUPPLIER_ID, request.getSupplierId(),
-					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
-		}
-		// 如果商品名称不为空
-		if (!StringUtil.isBlank(request.getProdName())) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.PROD_NAME, request.getProdName(),
-					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
-		}
-		// 如果父订单状态不为空
-		if (!StringUtil.isBlank(request.getParentOrderState())) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.PARENT_ORDER_STATE, request.getParentOrderState(),
-					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
-		}
-		// 如果状态变化开始、结束时间不为空
-		if (!StringUtil.isBlank(request.getOrderTimeBegin())  && !StringUtil.isBlank(request.getOrderTimeEnd())) {
-			SearchCriteria searchCriteria = new SearchCriteria();
-			searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
-			searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
-			searchCriteria.addFieldValue(request.getOrderTimeBegin());
-			searchCriteria.addFieldValue(request.getOrderTimeEnd());
-			searchfieldVos.add(searchCriteria);
-		}
-		// 下单开始时间不为空
-		if(!StringUtil.isBlank(request.getOrderTimeBegin())  && StringUtil.isBlank(request.getOrderTimeEnd())) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
-			String end = sdf.format(new Date());
-			SearchCriteria searchCriteria = new SearchCriteria();
-			searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
-			searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
-			searchCriteria.addFieldValue(request.getOrderTimeBegin());
-			searchCriteria.addFieldValue(end);
-			searchfieldVos.add(searchCriteria);
-		}
-		// 下单结束时间不为空
-		if(StringUtil.isBlank(request.getOrderTimeBegin())  && !StringUtil.isBlank(request.getOrderTimeEnd())){
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
-			String end = sdf.format(request.getOrderTimeEnd());
-			Timestamp sTime = Timestamp.valueOf(OrdersConstants.START_TIME);
-			String start = sdf.format(sTime);
-			SearchCriteria searchCriteria = new SearchCriteria();
-			searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
-			searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
-			searchCriteria.addFieldValue(start);
-			searchCriteria.addFieldValue(end);
-			searchfieldVos.add(searchCriteria);
-		}
-		// 状态集合不为空
-		if (!CollectionUtil.isEmpty(request.getStateList())) {
-			SearchCriteria searchCriteria = new SearchCriteria();
-			SearchOption option = new SearchOption();
-			option.setSearchLogic(SearchOption.SearchLogic.must);
-			option.setSearchType(SearchOption.SearchType.term);
-			searchCriteria.setFieldValue(request.getStateList());
-			searchCriteria.setField(SearchFieldConfConstants.ORD_EXTENDES_STATE);
-			searchCriteria.setOption(option);
-			searchfieldVos.add(searchCriteria);
-		}
-		return searchfieldVos;
 	}
 }

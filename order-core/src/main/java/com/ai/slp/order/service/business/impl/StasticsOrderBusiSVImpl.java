@@ -87,22 +87,6 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 					BeanUtils.copyProperties(staticProdVo, prod);
 					parentProdList.add(staticProdVo);
 				}
-				/*long userStart=System.currentTimeMillis();
-				LOG.info("开始执行ChUserUtil.getUserInfo的查询服务,通过O2p获取用户信息，当前时间戳："+userStart);
-				//获取绑定手机号
-				JSONObject dataJson = ChUserUtil.getUserInfo(order.getUserId());
-				Object userName=null;
-        		Object phone=null;
-                if(dataJson!=null) {
-                  	//获取用户名,绑定手机号
-                  	userName =dataJson.get("userName");
-                  	phone =dataJson.get("phone");
-                 }
-				parentOrderVo.setUserTel(phone==null?null:phone.toString());
-        		parentOrderVo.setUserName(userName==null?null:userName.toString()); 
-        		long userEnd=System.currentTimeMillis();
-        		LOG.info("完成执行ChUserUtil.getUserInfo的查询服务,通过O2p获取用户信息，当前时间戳："+userEnd+
-						",用时:"+(userEnd-userStart)+"毫秒");*/
 				//获取子订单
         		long childListStart=System.currentTimeMillis();
 		    	LOG.error("开始执行iOrdOrderAtomSV.selectChildOrder的查询服务，当前时间戳："+childListStart);

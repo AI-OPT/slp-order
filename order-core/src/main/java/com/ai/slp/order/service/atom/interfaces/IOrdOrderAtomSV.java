@@ -21,6 +21,8 @@ public interface IOrdOrderAtomSV {
     
     List<OrdOrder> selectChildOrder(String tenantId,long parentId);
     
+    List<OrdOrder> selectSaleOrder(String tenantId,long orderId);
+    
     public void updateStateByOrderId(String tenantId,Long orderId,String state);
     
     List<OrdOrder> selectByBatchNo(long orderId,String tenantId,long batchNo);
@@ -28,4 +30,6 @@ public interface IOrdOrderAtomSV {
     List<OrdOrder> selectMergeOrderByBatchNo(long orderId,String tenantId, long batchNo,String state) ;
     
     int updateByExampleSelective(@Param("record") OrdOrder record, @Param("example") OrdOrderCriteria example);
+    
+    public List<OrdOrder> selectOrderByOrigOrderId(long externalOrderId, long orderId);
 }

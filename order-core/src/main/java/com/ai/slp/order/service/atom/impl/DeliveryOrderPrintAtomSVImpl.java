@@ -13,7 +13,8 @@ import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
 import com.ai.slp.order.dao.mapper.bo.DeliverInfoProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfoCriteria;
-import com.ai.slp.order.dao.mapper.factory.MapperFactory;
+import com.ai.slp.order.dao.mapper.interfaces.DeliverInfoProdMapper;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdDeliverInfoMapper;
 import com.ai.slp.order.service.atom.interfaces.IDeliveryOrderPrintAtomSV;
 
 @Component
@@ -21,6 +22,10 @@ public class DeliveryOrderPrintAtomSVImpl implements IDeliveryOrderPrintAtomSV {
 	
 	@Autowired
 	DeliveryOrderPrintAttachMapper deliveryOrderPrintAttachMapper;
+	@Autowired
+	OrdOdDeliverInfoMapper ordOdDeliverInfoMapper;
+	@Autowired
+	DeliverInfoProdMapper deliverInfoProdMapper;
 
 	@Override
 	public List<OrdOrderProdAttach> query(String userId,String tenantId, String skuId, String routeId, 
@@ -31,26 +36,36 @@ public class DeliveryOrderPrintAtomSVImpl implements IDeliveryOrderPrintAtomSV {
 
 	@Override
 	public int insertSelective(OrdOdDeliverInfo record) {
-		return MapperFactory.getOrdOdDeliverInfoMapper().insertSelective(record);
+		return ordOdDeliverInfoMapper.insertSelective(record);
 	}
 
 	@Override
 	public List<OrdOdDeliverInfo> selectByExample(OrdOdDeliverInfoCriteria example) {
-		return MapperFactory.getOrdOdDeliverInfoMapper().selectByExample(example);
+		return ordOdDeliverInfoMapper.selectByExample(example);
 	}
 
 	@Override
 	public int insert(DeliverInfoProd record) {
-		return MapperFactory.getDeliverInfoProdMapper().insert(record);
+		return deliverInfoProdMapper.insert(record);
 	}
 
 	@Override
 	public int insertSelective(DeliverInfoProd record) {
-		return MapperFactory.getDeliverInfoProdMapper().insertSelective(record);
+		return deliverInfoProdMapper.insertSelective(record);
 	}
 
 	@Override
 	public List<DeliverInfoProd> selectByExample(DeliverInfoProdCriteria example) {
-		return MapperFactory.getDeliverInfoProdMapper().selectByExample(example);
+		return deliverInfoProdMapper.selectByExample(example);
+	}
+
+	@Override
+	public List<OrdOdDeliverInfo> selectOrdOdDeliverInfo(long orderId) {
+		// TODO Auto-generated method stub
+		OrdOdDeliverInfoCriteria exampleDeliver=new OrdOdDeliverInfoCriteria();
+		OrdOdDeliverInfoCriteria.Criteria criteriaDeliver = exampleDeliver.createCriteria();
+		criteriaDeliver.andOrderIdEqualTo(orderId);
+		criteriaDeliver.andPrintInfoEqualTo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
+		return ordOdDeliverInfoMapper.selectByExample(exampleDeliver);
 	}
 }

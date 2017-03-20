@@ -20,6 +20,7 @@ import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
+import com.ai.slp.order.api.orderstate.param.WaitSellReceiveSureRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdFeeTotalProdInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdInvoiceInfo;
@@ -27,7 +28,6 @@ import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductDetailInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.ai.slp.order.api.synchronize.params.OrdOdProdVo;
 import com.ai.slp.order.api.synchronize.params.OrderSynchronizeVo;
@@ -662,14 +662,23 @@ public class ValidateUtils {
 	}
 	
 	/**
-	 * 搜索引擎参数校验
+	 * 买家填写物流参数校验
 	 */
-	public static void validateUpdateSesData(SesDataRequest condition) {
-		if (condition == null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+	public static void validateUpdateWaitSellState(WaitSellReceiveSureRequest condition) {
+		if(null == condition){
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"请求参数不能为空");
 		}
-		if (StringUtil.isBlank(condition.getTenantId())) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
+		if(StringUtil.isBlank(condition.getTenantId())){
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"租户id不能为空");
+		}
+		if(null == condition.getOrderId()){
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"租户id不能为空");
+		}
+		if(StringUtil.isBlank(condition.getExpressId())){
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"快递Id不能为空");
+		}
+		if(StringUtil.isBlank(condition.getExpressOddNumber())){
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"快递Number不能为空");
 		}
 	}
 	

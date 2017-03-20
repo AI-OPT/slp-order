@@ -14,7 +14,6 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.orderpay.interfaces.IOrderPaySV;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
@@ -46,13 +45,6 @@ public class OrderPaySVImpl implements IOrderPaySV {
         ValidateUtils.validateOrderPay(request);
         BaseResponse response = new BaseResponse();
         orderPayBusiSV.orderPay(request);
-        //导入数据到搜索引擎
-        for (Long orderId : request.getOrderIds()) {
-        	SesDataRequest sesReq=new SesDataRequest();
-        	sesReq.setTenantId(request.getTenantId());
-        	sesReq.setParentOrderId(orderId);
-        	this.orderIndexBusiSV.insertSesData(sesReq);
-		}
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
         response.setResponseHeader(responseHeader);
@@ -64,7 +56,7 @@ public class OrderPaySVImpl implements IOrderPaySV {
 		/* 参数校验*/
 		ValidateUtils.validateReturnOid(request);
 		boolean ccsMqFlag=false;
-		ccsMqFlag = MQConfigUtil.getCCSMqFlag();
+		//ccsMqFlag = MQConfigUtil.getCCSMqFlag();
 		//非消息模式 同步调用服务
 		if(!ccsMqFlag) {
 			 BaseResponse response = new BaseResponse();

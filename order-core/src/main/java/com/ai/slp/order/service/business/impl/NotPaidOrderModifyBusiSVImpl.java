@@ -1,6 +1,5 @@
 package com.ai.slp.order.service.business.impl;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.sdk.components.ses.SESClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.paas.ipaas.search.common.JsonBuilder;
 import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
+import com.ai.slp.order.constants.SearchConstants;
+import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.business.interfaces.INotPaidOrderModifyBusiSV;
-import com.ai.slp.order.util.ValidateUtils;
 
 @Service
 @Transactional
@@ -24,17 +26,15 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 	
 	@Autowired
 	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
-	
 	//未支付订单修改
 	@Override
 	public void modify(OrderModifyRequest request) throws BusinessException, SystemException {
-		/* 1.检验参数*/
-		ValidateUtils.validateNotPaidModifyRequest(request);
-		/* 2.修改金额和备注*/
+		/* 1.修改金额和备注*/
 		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(odFeeTotal==null) {
 			logger.warn("未能查询到指定的订单费用总表信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,"未能查询到指定的订单费用总表信息[订单id:"+request.getOrderId()+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
+					"未能查询到指定的订单费用总表信息[订单id:"+request.getOrderId()+"]");
 		}
 		long updateAmount = request.getUpdateAmount();
 		if(updateAmount>odFeeTotal.getAdjustFee()) {
@@ -51,7 +51,18 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 		odFeeTotal.setDiscountFee(odFeeTotal.getDiscountFee()+operDiscountFee); //总优惠金额
 		odFeeTotal.setUpdateOperId(request.getOperId());
 		odFeeTotal.setPayFee(updateAmount);
-		/* 3.修改金额和备注信息*/
+		/* 2.修改金额和备注信息*/
 		ordOdFeeTotalAtomSV.updateByOrderId(odFeeTotal);
+		/* 3.导入数据到搜索引擎*/
+		try {
+			SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).
+				upsert(String.valueOf(request.getOrderId()), 
+						new JsonBuilder().startObject().field(SearchFieldConfConstants.DISCOUNT_FEE, 
+								odFeeTotal.getDiscountFee()).
+						field(SearchFieldConfConstants.ADJUST_FEE, updateAmount).endObject());
+		} catch (Exception e) {
+			logger.error("导入数据到搜索引擎失败.......");
+			throw new SystemException("导入数据到搜索引擎失败..."+request.getOrderId());
+		}
 	}
 }

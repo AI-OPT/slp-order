@@ -22,8 +22,6 @@ public class SesDataUpdateSVImpl implements ISesDataUpdateSV {
 	public BaseResponse updateSesData(SesDataRequest request) throws BusinessException, SystemException {
 		BaseResponse baseResponse = new BaseResponse();
 		ResponseHeader responseHeader = null;
-		//有效性校验
-		ValidateUtils.validateUpdateSesData(request);
 		boolean flag = orderIndexBusiSV.insertSesData(request);
 		if(flag){
 			 responseHeader = new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "数据刷新成功");

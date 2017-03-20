@@ -11,8 +11,6 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.slp.order.api.orderstate.param.WaitRebateRequest;
 import com.ai.slp.order.api.orderstate.param.WaitRebateResponse;
-import com.ai.slp.order.api.orderstate.param.WaitSellReceiveSureRequest;
-import com.ai.slp.order.api.orderstate.param.WaitSellReceiveSureResponse;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
@@ -20,7 +18,6 @@ import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
-import com.ai.slp.order.util.SequenceUtil;
 @Service
 public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 
@@ -32,29 +29,13 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 	//待卖家收货确认状态修改 (买家发货快递填写)
 	@Override
 	@Transactional
-	public WaitSellReceiveSureResponse updateWaitSellRecieveSureState(WaitSellReceiveSureRequest request) {
-		WaitSellReceiveSureResponse response = new WaitSellReceiveSureResponse();
+	public void updateWaitSellRecieveSureState(OrdOrder ordOrder,
+			OrdOdLogistics ordOdLogistics) {
 		//
-		String tenantId = request.getTenantId();
-		Long orderId = request.getOrderId();
-		String expressId = request.getExpressId();
-		String expressOddNumber = request.getExpressOddNumber();
-		//
-		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
-		ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
 		this.ordOrderAtomSV.updateById(ordOrder);
-		//
-		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
-		ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
-		ordOdLogistics.setTenantId(tenantId);
-		ordOdLogistics.setOrderId(orderId);
-		ordOdLogistics.setExpressId(expressId);
-		ordOdLogistics.setExpressOddNumber(expressOddNumber);
-		ordOdLogistics.setLogisticsType("0");
 		//
 		this.ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		//
-		return response;
 	}
 	
 	

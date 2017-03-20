@@ -11,27 +11,20 @@ import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.ordermodify.interfaces.INotPaidOrderModifySV;
 import com.ai.slp.order.api.ordermodify.param.OrderModifyRequest;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.service.business.interfaces.INotPaidOrderModifyBusiSV;
-import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.util.ValidateUtils;
 
 @Component
 public class NotPaidOrderModifySVImpl implements INotPaidOrderModifySV{
 	@Autowired
 	private INotPaidOrderModifyBusiSV notPaidOrderModifyBusiSV;
-	@Autowired
-	private IOrderIndexBusiSV orderIndexBusiSV;
-	
 	@Override
 	public BaseResponse modify(OrderModifyRequest request) throws BusinessException, SystemException {
 		BaseResponse response=new BaseResponse();
-		//1.修改金额
+		/* 1.检验参数*/
+		ValidateUtils.validateNotPaidModifyRequest(request);
+		/* 2.修改金额*/
 		notPaidOrderModifyBusiSV.modify(request);
-		//2.导入数据到搜索引擎
-		SesDataRequest sesReq=new SesDataRequest();
-		sesReq.setTenantId(request.getTenantId());
-		sesReq.setParentOrderId(request.getOrderId());
-		this.orderIndexBusiSV.insertSesData(sesReq);
 		ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
 		response.setResponseHeader(responseHeader);

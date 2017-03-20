@@ -2,50 +2,54 @@ package com.ai.slp.order.service.atom.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
-import com.ai.slp.order.dao.mapper.factory.MapperFactory;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 
 @Component
 public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
+	
+	@Autowired
+	private OrdOrderMapper ordOrderMapper;
 
     @Override
     public List<OrdOrder> selectByExample(OrdOrderCriteria example) {
-        return MapperFactory.getOrdOrderMapper().selectByExample(example);
+        return ordOrderMapper.selectByExample(example);
     }
 
     @Override
     public int countByExample(OrdOrderCriteria example) {
-        return MapperFactory.getOrdOrderMapper().countByExample(example);
+        return ordOrderMapper.countByExample(example);
     }
 
     @Override
     public int insertSelective(OrdOrder record) {
-        return MapperFactory.getOrdOrderMapper().insertSelective(record);
+        return ordOrderMapper.insertSelective(record);
     }
 
     @Override
     public OrdOrder selectByOrderId(String tenantId, long orderId) {
         OrdOrderCriteria example = new OrdOrderCriteria();
         example.createCriteria().andTenantIdEqualTo(tenantId).andOrderIdEqualTo(orderId);
-        List<OrdOrder> ordOrders = MapperFactory.getOrdOrderMapper().selectByExample(example);
+        List<OrdOrder> ordOrders = ordOrderMapper.selectByExample(example);
         return ordOrders == null || ordOrders.isEmpty() ? null : ordOrders.get(0);
     }
 
     @Override
     public int updateById(OrdOrder ordOrder) {
-        return MapperFactory.getOrdOrderMapper().updateByPrimaryKey(ordOrder);
+        return ordOrderMapper.updateByPrimaryKey(ordOrder);
     }
 
 	@Override
 	public List<OrdOrder> selectChildOrder(String tenantId, long parentId) {
 		 OrdOrderCriteria example = new OrdOrderCriteria();
 	     example.createCriteria().andTenantIdEqualTo(tenantId).andParentOrderIdEqualTo(parentId);
-	     return MapperFactory.getOrdOrderMapper().selectByExample(example);
+	     return ordOrderMapper.selectByExample(example);
 	}
 
 	@Override
@@ -53,7 +57,7 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 		OrdOrder record = new OrdOrder();
 		record.setState(state);
 		record.setOrderId(orderId);
-		MapperFactory.getOrdOrderMapper().updateByPrimaryKeySelective(record);
+		ordOrderMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
@@ -61,7 +65,7 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 		OrdOrderCriteria example = new OrdOrderCriteria();
         example.createCriteria().andTenantIdEqualTo(tenantId).andBatchNoEqualTo(batchNo).andOrderIdNotEqualTo(orderId)
         .andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO);
-        return MapperFactory.getOrdOrderMapper().selectByExample(example);
+        return ordOrderMapper.selectByExample(example);
 	}
 	
 	@Override
@@ -69,12 +73,31 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 		OrdOrderCriteria example = new OrdOrderCriteria();
 		example.createCriteria().andTenantIdEqualTo(tenantId).andBatchNoEqualTo(batchNo).andOrderIdNotEqualTo(orderId)
 		.andCusServiceFlagEqualTo(OrdersConstants.OrdOrder.cusServiceFlag.NO).andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_SEND);
-		return MapperFactory.getOrdOrderMapper().selectByExample(example);
+		return ordOrderMapper.selectByExample(example);
 	}
 
 	@Override
 	public int updateByExampleSelective(OrdOrder record, OrdOrderCriteria example) {
-		return MapperFactory.getOrdOrderMapper().updateByExampleSelective(record, example);
+		return ordOrderMapper.updateByExampleSelective(record, example);
+	}
+	
+	@Override
+	public List<OrdOrder> selectOrderByOrigOrderId(long externalOrderId, long orderId) {
+		OrdOrderCriteria example=new OrdOrderCriteria();
+		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		criteria.andOrderIdEqualTo(externalOrderId);
+		criteria.andOrigOrderIdEqualTo(orderId);
+	    return ordOrderMapper.selectByExample(example);
+	}
+
+	@Override
+	public List<OrdOrder> selectSaleOrder(String tenantId, long orderId) {
+		// TODO Auto-generated method stub
+		OrdOrderCriteria example=new OrdOrderCriteria();
+		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		criteria.andOrigOrderIdEqualTo(orderId);
+		criteria.andTenantIdEqualTo(tenantId);
+		return ordOrderMapper.selectByExample(example);
 	}
 	
 }

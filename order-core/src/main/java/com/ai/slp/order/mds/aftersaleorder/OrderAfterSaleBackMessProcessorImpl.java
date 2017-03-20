@@ -34,7 +34,7 @@ public class OrderAfterSaleBackMessProcessorImpl implements IMessageProcessor {
         if (request==null)
             return;
         try {
-			this.orderAfterSaleBusiSV.back(request);
+		//	this.orderAfterSaleBusiSV.back(request);
         } catch (BusinessException e) {
 			e.printStackTrace();
 			logger.error("消息处理出现异常:"+e.getMessage());

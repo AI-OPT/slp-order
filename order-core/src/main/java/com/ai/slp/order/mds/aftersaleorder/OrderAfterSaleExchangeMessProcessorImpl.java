@@ -34,7 +34,7 @@ public class OrderAfterSaleExchangeMessProcessorImpl implements IMessageProcesso
         if (request==null)
             return;
         try {
-			this.orderAfterSaleBusiSV.exchange(request);
+		//	this.orderAfterSaleBusiSV.exchange(request);
         } catch (BusinessException e) {
 			e.printStackTrace();
 			logger.error("消息处理出现异常:"+e.getMessage());

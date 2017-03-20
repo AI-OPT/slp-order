@@ -15,9 +15,9 @@ public class SearchFieldConfConstants {
     public static final String STATE = "state";
     public static final String ORD_EXTENDES_STATE = "ordextendes.state";
     public static final String DISPLAY_FLAG = "displayflag";
-    public static final String PROD_NAME = "prodname";
-    public static final String LSP_ID = "lspid";
-    public static final String INTERPER_ID = "interperid";
+    public static final String PROD_NAME = "ordextendes.prodinfos.prodname";
+    public static final String DISCOUNT_FEE = "discountfee";
+    public static final String ADJUST_FEE = "adjustfee";
     public static final String KEYWORDS = "keywords";
     public static final String UPDATE_FLAG = "updateflag";
     public static final String LANGUNGE_ID = "ordextendes.langungeid";
@@ -38,8 +38,4 @@ public class SearchFieldConfConstants {
     public static final String ESEND_TIME = "esendtime";  
     public static final String EVALUATE_TIME = "evaluatetime";
     public static final String BUSI_TYPE = "busitype";
-    
-    
-    
-    
 }

@@ -32,7 +32,6 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeOffsetAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
@@ -62,9 +61,6 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
 
     @Autowired
     IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
-
-    @Autowired
-    IOrdOdFeeOffsetAtomSV ordOdFeeOffsetAtomSV;
 
     @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;

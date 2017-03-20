@@ -97,17 +97,17 @@ public final class OrderSearchCriteria {
             return this;
         }*/
         //lsp编号
-        public OrderSearchCriteriaBuilder lspId(String lspId) {
+   /*     public OrderSearchCriteriaBuilder lspId(String lspId) {
             orderSearchCriteria.searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.LSP_ID,
             		lspId, new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
             return this;
-        }
+        }*/
         //领取人（译员）id
-        public OrderSearchCriteriaBuilder interperId(String interperId) {
+     /*   public OrderSearchCriteriaBuilder interperId(String interperId) {
             orderSearchCriteria.searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.INTERPER_ID,
             		interperId, new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
             return this;
-        }
+        }*/
         //关键词
         public OrderSearchCriteriaBuilder keywords(String keywords) {
             orderSearchCriteria.searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.KEYWORDS,

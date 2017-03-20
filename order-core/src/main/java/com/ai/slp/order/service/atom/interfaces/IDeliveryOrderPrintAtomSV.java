@@ -26,6 +26,8 @@ public interface IDeliveryOrderPrintAtomSV {
 	int insertSelective(OrdOdDeliverInfo record);
 
 	List<OrdOdDeliverInfo> selectByExample(OrdOdDeliverInfoCriteria example);
+	
+	List<OrdOdDeliverInfo> selectOrdOdDeliverInfo(long orderId);
 
 	int insert(DeliverInfoProd record);
 

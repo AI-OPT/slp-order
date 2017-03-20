@@ -14,10 +14,14 @@ public interface IOrdOdProdAtomSV {
     int insertSelective(OrdOdProd record);
 
     List<OrdOdProd> selectByExample(OrdOdProdCriteria example);
+   
+    List<OrdOdProd> selectOrdProd(String tenantId,long orderId,String cusServiceFlag);
 
     int updateById(OrdOdProd ordOdProd);
     
     OrdOdProd selectByPrimaryKey(long prodDetalId);
+    
+    List<OrdOdProd> selectSaleProd(String tenantId,long orderId,String skuId);
     
     List<OrdOdProd> selectByOrd(String tenantId,long orderId);
     

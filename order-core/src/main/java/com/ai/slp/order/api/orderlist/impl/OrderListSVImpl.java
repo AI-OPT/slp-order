@@ -13,6 +13,7 @@ import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
+import com.ai.slp.order.util.CommonCheckUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(validation = "true")
@@ -35,6 +36,11 @@ public class OrderListSVImpl implements IOrderListSV {
 	@Override
 	public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
 			throws BusinessException, SystemException {
+		/* 参数校验*/
+		if (orderListRequest == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		CommonCheckUtils.checkTenantId(orderListRequest.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
 		BehindQueryOrderListResponse response = ordOrderBusiSV.behindQueryOrderList(orderListRequest);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");

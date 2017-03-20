@@ -17,8 +17,13 @@ import com.ai.slp.order.api.orderstate.param.WaitRebateResponse;
 import com.ai.slp.order.api.orderstate.param.WaitSellReceiveSureRequest;
 import com.ai.slp.order.api.orderstate.param.WaitSellReceiveSureResponse;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
+import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
 import com.ai.slp.order.util.MQConfigUtil;
+import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 @Service
@@ -27,34 +32,38 @@ public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
 	private static final Logger LOG = LoggerFactory.getLogger(OrderStateServiceSVImpl.class);
 
 	@Autowired
+	private IOrdOrderAtomSV ordOrderAtomSV;
+	@Autowired
 	private IOrderStateBusiSV orderStateBusiSV;
 	@Override
 	public WaitSellReceiveSureResponse updateWaitSellRecieveSureState(WaitSellReceiveSureRequest request)
 			throws BusinessException, SystemException {
 		WaitSellReceiveSureResponse response = new WaitSellReceiveSureResponse();
 		ResponseHeader responseHeader = new ResponseHeader();
-		if(null == request){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"请求参数不能为空");
-		}
-		if(StringUtil.isBlank(request.getTenantId())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"租户id不能为空");
-		}
-		if(null == request.getOrderId()){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"租户id不能为空");
-		}
-		if(StringUtil.isBlank(request.getExpressId())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"快递Id不能为空");
-		}
-		if(StringUtil.isBlank(request.getExpressOddNumber())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"快递Number不能为空");
-		}
+		//参数校验
+		ValidateUtils.validateUpdateWaitSellState(request);
 		boolean ccsMqFlag=false;
 		//从配置中心获取消息启动标识ccsMqFlag
-		ccsMqFlag = MQConfigUtil.getCCSMqFlag();
+		//ccsMqFlag = MQConfigUtil.getCCSMqFlag();
 		//非消息模式 同步调用服务
 		if(!ccsMqFlag) {
 			try{
-				response = this.orderStateBusiSV.updateWaitSellRecieveSureState(request);
+				String tenantId = request.getTenantId();
+				Long orderId = request.getOrderId();
+				String expressId = request.getExpressId();
+				String expressOddNumber = request.getExpressOddNumber();
+				//
+				OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+				ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
+				//
+				OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
+				ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
+				ordOdLogistics.setTenantId(tenantId);
+				ordOdLogistics.setOrderId(orderId);
+				ordOdLogistics.setExpressId(expressId);
+				ordOdLogistics.setExpressOddNumber(expressOddNumber);
+				ordOdLogistics.setLogisticsType("0");
+				this.orderStateBusiSV.updateWaitSellRecieveSureState(ordOrder,ordOdLogistics);
 				responseHeader.setIsSuccess(true);
 				responseHeader.setResultCode("000000");
 				responseHeader.setResultMessage("修改状态成功");
