@@ -34,7 +34,7 @@ public class OrderStateServiceMessProcessorImpl implements IMessageProcessor {
         if (request==null)
             return;
         try {
-			this.orderStateBusiSV.updateWaitSellRecieveSureState(request);
+			//this.orderStateBusiSV.updateWaitSellRecieveSureState(request);
         } catch (BusinessException e) {
 			e.printStackTrace();
 			logger.error("消息处理出现异常:"+e.getMessage());
