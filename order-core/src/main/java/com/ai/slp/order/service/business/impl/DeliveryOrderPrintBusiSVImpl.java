@@ -17,10 +17,13 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.components.ses.SESClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.paas.ipaas.search.common.JsonBuilder;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintInfosRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
@@ -46,6 +49,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdRuleAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliveryOrderPrintBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.fastjson.JSON;
@@ -233,15 +237,12 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 				  if(allOrderIds.size()==1 ) { 
 					  //不合并 批次号为0
 					  if(signFlag) {
-						  this.updateOrderState(mergeId,request.getTenantId(), 
-								  DateUtil.getSysDate(),batchNo);
+						  this.updateOrderState(mergeId,request.getTenantId(),batchNo);
 					  }else {
-						  this.updateOrderState(mergeId,request.getTenantId(), 
-								  DateUtil.getSysDate(),0l);
+						  this.updateOrderState(mergeId,request.getTenantId(),0l);
 					  }
 				  }else {
-					  this.updateOrderState(mergeId,request.getTenantId(), 
-							  DateUtil.getSysDate(),batchNo);//第一次,第二次
+					  this.updateOrderState(mergeId,request.getTenantId(),batchNo);//第一次,第二次
 					  signFlag=true;
 				  }
 				  temp.clear();
@@ -326,7 +327,9 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
       * 
       */
 	  private void updateOrderState(Long mergeId,String tenantId, 
-			  Timestamp sysDate,Long batchNo ) {
+			 Long batchNo ) {
+		ICacheSV iCacheSV=DubboConsumerFactory.getService(ICacheSV.class);
+		Timestamp sysDate = DateUtil.getSysDate();
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, mergeId);
 		if(ordOrder==null) {
 			logger.warn("未能查询到指定的订单信息[订单id:"+ mergeId+"]");
@@ -346,10 +349,14 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		ordOrderAtomSV.updateById(ordOrder);
 		//写入搜索引擎
 		try {
+			//翻译
+			SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+					"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
 			SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).
 				upsert(String.valueOf(ordOrder.getParentOrderId()), 
-						new JsonBuilder().startObject().field(SearchFieldConfConstants.STATE, 
-								newState).endObject());
+						new JsonBuilder().startObject().field(SearchFieldConfConstants.ORD_EXTENDES_STATE, 
+								newState).field(SearchFieldConfConstants.ORD_EXTENDES_STATE_NAME, 
+										sysParamState.getColumnDesc()).endObject());
 		} catch (Exception e) {
 			logger.error("导入数据到搜索引擎失败.......");
 			throw new SystemException("导入数据到搜索引擎失败..."+ordOrder.getParentOrderId());
