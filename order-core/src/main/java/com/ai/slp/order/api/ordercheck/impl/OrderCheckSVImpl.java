@@ -11,6 +11,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.ordercheck.interfaces.IOrderCheckSV;
 import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
 import com.ai.slp.order.service.business.interfaces.IOrderCheckBusiSV;
+import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(validation = "true")
@@ -21,6 +22,8 @@ public class OrderCheckSVImpl implements IOrderCheckSV {
 	private IOrderCheckBusiSV orderCheckBusiSV;
 	@Override
 	public BaseResponse check(OrderCheckRequest request) throws BusinessException, SystemException {
+		/* 参数校验*/
+		ValidateUtils.validateOrderCheckRequest(request);
 		BaseResponse response =new BaseResponse();
 		orderCheckBusiSV.check(request);
         ResponseHeader responseHeader = new ResponseHeader(true,

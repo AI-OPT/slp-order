@@ -20,6 +20,7 @@ import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.aftersaleorder.impl.OrderAfterSaleSVImpl;
 import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
@@ -30,7 +31,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderCheckBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
-import com.ai.slp.order.util.ValidateUtils;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
 import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
@@ -44,18 +45,16 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 	
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
-	
 	@Autowired
 	private IOrderFrameCoreSV orderFrameCoreSV;
-	
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
+	@Autowired
+	private IOrderIndexBusiSV orderIndexBusiSV;
 	
 	//订单审核
 	@Override
 	public void check(OrderCheckRequest request) throws BusinessException, SystemException {
-		/* 参数校验*/
-		ValidateUtils.validateOrderCheckRequest(request);
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(ordOrder==null) {
 			logger.error("未能查询到相对应的订单信息[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
@@ -148,6 +147,11 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 	        ordOrderAtomSV.updateById(ordOrder);
 			this.updateOrderState(ordOrder, orgState,newState, chgDesc, request);
 		}
+		// 刷新搜索引擎数据
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(request.getTenantId());
+    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
 	}
 	
 	/**

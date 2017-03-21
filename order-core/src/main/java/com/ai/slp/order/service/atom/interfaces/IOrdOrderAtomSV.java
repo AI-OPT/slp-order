@@ -13,6 +13,8 @@ public interface IOrdOrderAtomSV {
 
     List<OrdOrder> selectByExample(OrdOrderCriteria example);
     
+    List<OrdOrder> selectOtherOrders(OrdOrder ordOrder);
+    
     public OrdOrder selectByOrderId(String tenantId,long orderId);
 
     int insertSelective(OrdOrder record);

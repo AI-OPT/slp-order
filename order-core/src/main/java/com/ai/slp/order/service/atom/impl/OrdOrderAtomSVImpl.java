@@ -105,5 +105,15 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 		// TODO Auto-generated method stub
 		return ordOrderMapper.updateByPrimaryKeySelective(record);
 	}
+
+	@Override
+	public List<OrdOrder> selectOtherOrders(OrdOrder ordOrder) {
+		OrdOrderCriteria example = new OrdOrderCriteria();
+        OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        criteria.andTenantIdEqualTo(ordOrder.getTenantId()).andOrderIdNotEqualTo(ordOrder.getOrderId());
+        criteria.andParentOrderIdEqualTo(ordOrder.getParentOrderId());
+        criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
+		return ordOrderMapper.selectByExample(example);
+	}
 	
 }

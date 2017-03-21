@@ -36,6 +36,7 @@ import com.ai.slp.order.api.orderlist.param.OrdProductVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
@@ -60,6 +61,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdExtendAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.ValidateUtils;
@@ -91,6 +93,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
 	@Autowired
 	private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
+	@Autowired
+	private IOrderIndexBusiSV orderIndexBusiSV;
 
 	/**
 	 * 商品集合
@@ -477,7 +481,15 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				}
 			}
 		}
-		return ordOrderAtomSV.updateById(afterOrdOrder);
+		int updateById = ordOrderAtomSV.updateById(afterOrdOrder);
+		
+		// 刷新搜索引擎数据
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(request.getTenantId());
+    	sesReq.setParentOrderId(afterOrdOrder.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
+		
+		return updateById;
 	}
 	
 	
