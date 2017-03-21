@@ -27,6 +27,7 @@ import com.ai.slp.order.api.delivergoods.param.DeliverGoodsPrintInfosRequest;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsPrintRequest;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsPrintResponse;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsPrintVo;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
@@ -45,6 +46,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliverGoodsPrintBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.SequenceUtil;
 import com.alibaba.fastjson.JSON;
@@ -54,25 +56,23 @@ import com.alibaba.fastjson.JSON;
 public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 	
 	private static final Logger logger=LoggerFactory.getLogger(DeliveryOrderPrintBusiSVImpl.class);
-
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
-	
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
-	
 	@Autowired
 	private IOrderFrameCoreSV orderFrameCoreSV;
-	
 	@Autowired
 	private IDeliveryOrderPrintAtomSV deliveryOrderPrintAtomSV;
-	
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
+	@Autowired
+	private IOrderIndexBusiSV orderIndexBusiSV;
 	
 	//发货单打印查看
 	@Override
-	public DeliverGoodsPrintResponse deliverGoodsQuery(DeliverGoodsPrintRequest request) throws BusinessException, SystemException {
+	public DeliverGoodsPrintResponse deliverGoodsQuery(DeliverGoodsPrintRequest request) 
+			throws BusinessException, SystemException {
 		DeliverGoodsPrintResponse response=new DeliverGoodsPrintResponse();
 		/* 参数校验*/
 		List<OrdOdDeliverInfo> infos = this.checkParamAndQueryInfos(request.getOrderId(), request.getTenantId());
@@ -185,7 +185,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 				deliverInfoProd.setDeliverInfoId(invoiceInfoId);
 				deliveryOrderPrintAtomSV.insertSelective(deliverInfoProd);
 				/* 更新合并订单状态并写入订单状态变化轨迹*/
-				this.updateOrderState(mergeId, request.getTenantId(), DateUtil.getSysDate());
+				this.updateOrderState(mergeId, request.getTenantId());
 				 temp.clear();
 			}
 		}
@@ -203,31 +203,37 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 		return logistics;
 	 }
 	 
-	 private void updateOrderState(Long mergeId,String tenantId, Timestamp sysDate) {
-				OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, mergeId);
-				if(ordOrder==null) {
-					logger.warn("未能查询到指定的订单信息[订单id:"+ mergeId+"]");
-					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-							"未能查询到指定的订单信息[订单id:"+ mergeId+"]");
-				}
-				String orgState = ordOrder.getState();
-				if(OrdersConstants.OrdOrder.State.WAIT_SEND.equals(orgState)) {
-					return;
-				}
-				String state1 = OrdersConstants.OrdOrder.State.INVOICE_FINISH_PRINT;
-			    String state2 = OrdersConstants.OrdOrder.State.FINISH_DELIVERY;
-			    String newState = OrdersConstants.OrdOrder.State.WAIT_SEND;
-				ordOrder.setState(newState);
-				ordOrder.setStateChgTime(sysDate);
-				ordOrderAtomSV.updateById(ordOrder);
-				// 写入订单状态变化轨迹表
-		        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, state1,
-		                OrdOdStateChg.ChgDesc.INVOICE_ORDER_TO_PRINT, null, null, null, sysDate);
-		        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state1, state2,
-		                OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_LOGISTICS_DELIVERY, null, null, null, sysDate);
-		        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state2, newState,
-		                OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_SEND, null, null, null, sysDate);
-		 }
+	 private void updateOrderState(Long mergeId,String tenantId) {
+		Timestamp sysDate = DateUtil.getSysDate();
+		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, mergeId);
+		if(ordOrder==null) {
+			logger.warn("未能查询到指定的订单信息[订单id:"+ mergeId+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单信息[订单id:"+ mergeId+"]");
+		}
+		String orgState = ordOrder.getState();
+		if(OrdersConstants.OrdOrder.State.WAIT_SEND.equals(orgState)) {
+			return;
+		}
+		String state1 = OrdersConstants.OrdOrder.State.INVOICE_FINISH_PRINT;
+	    String state2 = OrdersConstants.OrdOrder.State.FINISH_DELIVERY;
+	    String newState = OrdersConstants.OrdOrder.State.WAIT_SEND;
+		ordOrder.setState(newState);
+		ordOrder.setStateChgTime(sysDate);
+		ordOrderAtomSV.updateByPrimaryKeySelective(ordOrder);
+		////写入搜索引擎
+		SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(tenantId);
+    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
+		// 写入订单状态变化轨迹表
+        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, state1,
+                OrdOdStateChg.ChgDesc.INVOICE_ORDER_TO_PRINT, null, null, null, sysDate);
+        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state1, state2,
+                OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_LOGISTICS_DELIVERY, null, null, null, sysDate);
+        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state2, newState,
+                OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_SEND, null, null, null, sysDate);
+	 }
 	 
 	 
 		/**
@@ -263,109 +269,109 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 		
 		
 		
-		  /**
-		   * 获取商品对应的售后订单状态
-		   */
-		  public List<OrdOrder> createAfterOrder(OrdOdProd ordOdProd) {
-			  	List<OrdOrder> orderList=new ArrayList<>();
-			  	//获取售后订单
-				OrdOrderCriteria example=new OrdOrderCriteria();
-				OrdOrderCriteria.Criteria criteria = example.createCriteria();
-				criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
-				criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
-				List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
-				if(CollectionUtil.isEmpty(ordOrderList)) {
-					logger.error("没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
-					throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-							"没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+	  /**
+	   * 获取商品对应的售后订单状态
+	   */
+	  public List<OrdOrder> createAfterOrder(OrdOdProd ordOdProd) {
+		  	List<OrdOrder> orderList=new ArrayList<>();
+		  	//获取售后订单
+			OrdOrderCriteria example=new OrdOrderCriteria();
+			OrdOrderCriteria.Criteria criteria = example.createCriteria();
+			criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
+			criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
+			List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+			if(CollectionUtil.isEmpty(ordOrderList)) {
+				logger.error("没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+				throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+						"没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
+			}
+			for (OrdOrder ordOrder : ordOrderList) {
+				//获取skuid对应的售后商品信息
+				OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
+				OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
+				prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
+				prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId());
+				prodCriteria.andSkuIdEqualTo(ordOdProd.getSkuId());
+				List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
+				if(!CollectionUtil.isEmpty(prodList)) {
+					OrdOdProd prod = prodList.get(0);
+					OrdOrder order = ordOrderAtomSV.selectByOrderId(prod.getTenantId(),
+							prod.getOrderId());
+					orderList.add(order);
 				}
-				for (OrdOrder ordOrder : ordOrderList) {
-					//获取skuid对应的售后商品信息
-					OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
-					OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
-					prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
-					prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId());
-					prodCriteria.andSkuIdEqualTo(ordOdProd.getSkuId());
-					List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
-					if(!CollectionUtil.isEmpty(prodList)) {
-						OrdOdProd prod = prodList.get(0);
-						OrdOrder order = ordOrderAtomSV.selectByOrderId(prod.getTenantId(),
-								prod.getOrderId());
-						orderList.add(order);
-					}
-				}
-			return orderList;
-		  }
+			}
+		return orderList;
+	  }
 		  
-		  /**
-		   * 获取售后商品的信息
-		 * @return 
-		   */
-		  public Map<String, Long> getAfterOrderInfos(OrdOrder order,Map<String,Long> prodSkuMap) {
-			  boolean flag=false;
-			  List<OrdOdProd> ordOdProds = this.getOrdOdProds(order.getTenantId(),order.getOrderId());
-			  for (OrdOdProd ordOdProd : ordOdProds) {
-				  if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
-					  //判断该订单下的商品是否存在售后商品
-					  flag=true; 
-					  /* 判断该商品对应的售后订单状态*/
-					  List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
-					  for (OrdOrder ordOrder : ordOrderList) {
-						  if(ordOrderList.size()>1) { //多个售后订单 可能存在多个第一次审核失败的情况
-							  if(OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(ordOrder.getState())) {
-								  continue;
-							  }
-						  }
-						  if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(ordOrder.getState())||
-								  OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(ordOrder.getState())||
-								  OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(ordOrder.getState())||
-								  OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
-							  //该商品为售后标识 不可打印
-							  throw new BusinessException("", "订单下商品处于售后未完成状态,不可打印");
-						  }
-					  }
-				  }
-			  }
-			  if(flag) {
-				  OrdOrderCriteria example=new OrdOrderCriteria();
-				  OrdOrderCriteria.Criteria criteria = example.createCriteria();
-				  criteria.andOrigOrderIdEqualTo(order.getOrderId());
-				  criteria.andTenantIdEqualTo(order.getTenantId());
-				  criteria.andStateNotEqualTo( OrdersConstants.OrdOrder.State.AUDIT_FAILURE);
-				  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
-				  if(!CollectionUtil.isEmpty(ordOrderList)) {
-					  for (OrdOrder ordOrder : ordOrderList) {
-						  //退费单 审核失败(213)情况下
-						  if(OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(ordOrder.getBusiCode())&&
-								  OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState())) {
+	  /**
+	   * 获取售后商品的信息
+	 * @return 
+	   */
+	  public Map<String, Long> getAfterOrderInfos(OrdOrder order,Map<String,Long> prodSkuMap) {
+		  boolean flag=false;
+		  List<OrdOdProd> ordOdProds = this.getOrdOdProds(order.getTenantId(),order.getOrderId());
+		  for (OrdOdProd ordOdProd : ordOdProds) {
+			  if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+				  //判断该订单下的商品是否存在售后商品
+				  flag=true; 
+				  /* 判断该商品对应的售后订单状态*/
+				  List<OrdOrder> ordOrderList = this.createAfterOrder(ordOdProd);
+				  for (OrdOrder ordOrder : ordOrderList) {
+					  if(ordOrderList.size()>1) { //多个售后订单 可能存在多个第一次审核失败的情况
+						  if(OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(ordOrder.getState())) {
 							  continue;
 						  }
-						  OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
-						  OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
-						  prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
-						  prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId()); 
-						  List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
-						  if(!CollectionUtil.isEmpty(prodList)) {
-							  OrdOdProd ordOdProd = prodList.get(0);
-							  long buySum = ordOdProd.getBuySum();
-							  String skuId = ordOdProd.getSkuId();
-							  if(!prodSkuMap.isEmpty()) {
-								  Set<String> keySet = prodSkuMap.keySet();
-								  if(keySet.contains(skuId)) {
-									  Long mergeBuySum = prodSkuMap.get(skuId)+buySum;
-									  prodSkuMap.put(skuId, mergeBuySum);
-								  }else {
-									  prodSkuMap.put(skuId, buySum);
-								  }
+					  }
+					  if(!(OrdersConstants.OrdOrder.State.FINISH_REFUND.equals(ordOrder.getState())||
+							  OrdersConstants.OrdOrder.State.REFUND_AUDIT.equals(ordOrder.getState())||
+							  OrdersConstants.OrdOrder.State.EXCHANGE_AUDIT.equals(ordOrder.getState())||
+							  OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState()))) {
+						  //该商品为售后标识 不可打印
+						  throw new BusinessException("", "订单下商品处于售后未完成状态,不可打印");
+					  }
+				  }
+			  }
+		  }
+		  if(flag) {
+			  OrdOrderCriteria example=new OrdOrderCriteria();
+			  OrdOrderCriteria.Criteria criteria = example.createCriteria();
+			  criteria.andOrigOrderIdEqualTo(order.getOrderId());
+			  criteria.andTenantIdEqualTo(order.getTenantId());
+			  criteria.andStateNotEqualTo( OrdersConstants.OrdOrder.State.AUDIT_FAILURE);
+			  List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+			  if(!CollectionUtil.isEmpty(ordOrderList)) {
+				  for (OrdOrder ordOrder : ordOrderList) {
+					  //退费单 审核失败(213)情况下
+					  if(OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER.equals(ordOrder.getBusiCode())&&
+							  OrdersConstants.OrdOrder.State.AUDIT_AGAIN_FAILURE.equals(ordOrder.getState())) {
+						  continue;
+					  }
+					  OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
+					  OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
+					  prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
+					  prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId()); 
+					  List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
+					  if(!CollectionUtil.isEmpty(prodList)) {
+						  OrdOdProd ordOdProd = prodList.get(0);
+						  long buySum = ordOdProd.getBuySum();
+						  String skuId = ordOdProd.getSkuId();
+						  if(!prodSkuMap.isEmpty()) {
+							  Set<String> keySet = prodSkuMap.keySet();
+							  if(keySet.contains(skuId)) {
+								  Long mergeBuySum = prodSkuMap.get(skuId)+buySum;
+								  prodSkuMap.put(skuId, mergeBuySum);
 							  }else {
-								  prodSkuMap.put(ordOdProd.getSkuId(), buySum);
+								  prodSkuMap.put(skuId, buySum);
 							  }
+						  }else {
+							  prodSkuMap.put(ordOdProd.getSkuId(), buySum);
 						  }
 					  }
 				  }
 			  }
-			  return prodSkuMap;
-		}
+		  }
+		  return prodSkuMap;
+	}
 		  
 		  
 	/**
