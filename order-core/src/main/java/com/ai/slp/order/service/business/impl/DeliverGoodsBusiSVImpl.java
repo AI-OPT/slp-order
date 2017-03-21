@@ -17,6 +17,7 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
@@ -29,7 +30,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliverGoodsBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
-import com.ai.slp.order.util.ValidateUtils;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 
 @Service
 @Transactional
@@ -39,32 +40,18 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
-	
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
-	
 	@Autowired
 	private IOrderFrameCoreSV orderFrameCoreSV;
-	
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
+	@Autowired
+	IOrderIndexBusiSV orderIndexBusiSV;
 	
 	//订单发货
 	@Override
-	public void deliverGoods(DeliverGoodsRequest request) throws BusinessException, SystemException {
-		/* 参数校验*/
-		ValidateUtils.validateDeliverGoodsRequest(request);
-		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(ordOrder==null) {
-			logger.error("未能查询到指定的订单主表信息[订单id:"+request.getOrderId()+" ,租户id:"+request.getTenantId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"未能查询到指定的订单主表信息[订单id:"+request.getOrderId()+" ,租户id:"+request.getTenantId()+"]");
-		}
-		if(!OrdersConstants.OrdOrder.State.WAIT_SEND.equals(ordOrder.getState())) {
-			logger.error("请确认该订单是否已经打印发货单[订单状态:"+ordOrder.getState()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"请确认该订单是否已经打印发货单!");
-		}
+	public void deliverGoods(DeliverGoodsRequest request,OrdOrder ordOrder) throws BusinessException, SystemException {
 		List<OrdOdProd> ordOdProds = this.getOrdOdProds(request.getTenantId(), request.getOrderId());
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
@@ -151,6 +138,11 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
         Timestamp sysDate=DateUtil.getSysDate();
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.updateById(ordOrder);
+    	//刷新搜索引擎数据
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(ordOrder.getTenantId());
+    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
         // 写入订单状态变化轨迹表
         orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, newState,
                 OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_LOGISTICS_DELIVERY, null, operId, null, sysDate);
