@@ -152,32 +152,50 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	public DeliveryOrderPrintResponse display(DeliveryOrderPrintRequest request)
 			throws BusinessException, SystemException {
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
-		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
+		/* 参数校验*/
+		OrdOrder order = this.checkParamAndQueryOrder(request);
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
 		long sum = 0;
 		// 获取订单下的商品信息
 		List<OrdOdProd> ordOdProds = getOrdOdProds(request);
+		//订单规则
+		OrdRule ordRule = ordRuleAtomSV.getOrdRule(OrdRuleConstants.MERGE_ORDER_SETTING_ID);
+		if(ordRule==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单规则信息[订单规则id:"+OrdRuleConstants.MERGE_ORDER_SETTING_ID+"]");
+		}
+		// 根据订单规则获取合并前后时间
+		Timestamp timeBefore = getOrderListInTime(-ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
+		Timestamp timeAfter = getOrderListInTime(ordRule.getMonitorTime(),order.getOrderTime(),ordRule.getTimeType());
 		//获取地址信息
-		OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(request.getTenantId(),
-				request.getOrderId());
+		OrdOdLogistics odLogistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
   		if(odLogistics==null) {
-  			logger.warn("未能查询到指定的订单配送信息[订单id:"+request.getOrderId()+"]");
+  			logger.warn("未能查询到指定的订单配送信息[订单id:"+order.getOrderId()+"]");
   			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
-  					"未能查询到指定的订单配送信息[订单id:"+request.getOrderId()+"]");
+  					"未能查询到指定的订单配送信息[订单id:"+order.getOrderId()+"]");
   		}
-		String mergeInfo = cacheClient.get(String.valueOf(request.getOrderId()));
-		List<OrdOrderProdAttach> orderProdAttachs = JSON.parseArray(mergeInfo, OrdOrderProdAttach.class);
+		String addressInfo = getAddressInfo(odLogistics);
+		// 组装订单商品信息集合
+		List<OrdOrderProdAttach> originalAttachs = createOriginalAttachs(ordOdProds);
+		List<Long> orderList =null;
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			long buySum=ordOdProd.getBuySum();
 			sum+=buySum;
 			List<Long> mergeOrderIds=new ArrayList<Long>();
+			// 多表多条件查询
+			List<OrdOrderProdAttach> orderProdAttachs = deliveryOrderPrintAtomSV.query(request.getUserId(),
+					request.getTenantId(),ordOdProd.getSkuId(),ordOdProd.getRouteId(),ordOdProd.getOrderId(),
+					OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,timeBefore,timeAfter,
+					OrdersConstants.OrdOrder.cusServiceFlag.NO);
 			if(!CollectionUtil.isEmpty(orderProdAttachs)) {
-				for (OrdOrderProdAttach ordOrderProdAttach : orderProdAttachs) {
-						if(ordOdProd.getSkuId().equals(ordOrderProdAttach.getSkuId())) {
-							buySum+=ordOrderProdAttach.getBuySum();
-							sum+=ordOrderProdAttach.getBuySum();
-							mergeOrderIds.add(ordOrderProdAttach.getOrderId());
-						}
+				// 筛选不符合合并规则的订单
+				orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList,addressInfo);
+				if(!CollectionUtil.isEmpty(orderProdAttachs)) {
+					for (OrdOrderProdAttach ordOrderProdAttach : orderProdAttachs) {
+						buySum+=ordOrderProdAttach.getBuySum();
+						sum+=ordOrderProdAttach.getBuySum();
+						mergeOrderIds.add(ordOrderProdAttach.getOrderId());
+					}
 				}
 			}
 			// 组装订单提货明细信息
@@ -188,13 +206,13 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		response.setSum(sum);
 		response.setOrderId(request.getOrderId());
 		response.setDeliveryProdPrintVos(list);
+		
 		return response;
 	}
 	
 	//提货单打印
 	@Override
 	public void print(DeliveryOrderPrintInfosRequest request) {
-		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
 		List<DeliveryProdPrintVo> deliveryProdPrintVos = request.getDeliveryProdPrintVos();
 		/* 生成批次号*/
 		Long batchNo = SequenceUtil.createBatchNo();
@@ -236,8 +254,6 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 					  signFlag=true;
 				  }
 				  temp.clear();
-				  //清理已经打印的信息
-				  cacheClient.del(String.valueOf(mergeId));
 		  	  }
 		}
 		
