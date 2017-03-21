@@ -108,10 +108,15 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			OrdOdProd ordOdProd) throws BusinessException, SystemException {
 		long exchangeOrderId=SequenceUtil.createOrderId();
 		Timestamp sysDate=DateUtil.getSysDate();
-		/* 创建订单售后信息*/
+		/* 1.创建订单售后信息*/
 		this.createAfterOrderInfo(order, request,
 				OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER, 
 				ordOdProd, OrdersConstants.OrdOdProd.State.EXCHANGE,exchangeOrderId,sysDate);
+		/* 2.刷新搜索引擎数据*/
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(request.getTenantId());
+    	sesReq.setParentOrderId(order.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
 	}
 
 	//订单退款申请
@@ -120,12 +125,12 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 			OrdOdProd ordOdProd) throws BusinessException, SystemException {
 		long refundOrderId=SequenceUtil.createOrderId();
 		Timestamp sysDate=DateUtil.getSysDate();
-		/* 创建订单售后信息*/
+		/* 1.创建订单售后信息*/
 		long refundTotalFee = this.createAfterOrderInfo(order, request,
 				OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER, 
 				ordOdProd, OrdersConstants.OrdOdProd.State.RETURN,refundOrderId,sysDate);
 		//TODO
-		/* 组装退款申请单(OFC)*/ 
+		/* 2.组装退款申请单(OFC)*/ 
 		if(OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(order.getFlag())) {
 			String params = getOFCAfterSaleOrderCreateParam(order,refundOrderId, ordOdProd, sysDate, 
 					refundTotalFee, ordOdProd.getBuySum(), OrdersConstants.OFCApplyType.REFUND);
@@ -141,6 +146,12 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				throw new SystemException("", "OFC同步出现异常");
 			}
 		}
+		
+		/* 3.刷新搜索引擎数据*/
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(request.getTenantId());
+    	sesReq.setParentOrderId(order.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
 	}
 	
 	
