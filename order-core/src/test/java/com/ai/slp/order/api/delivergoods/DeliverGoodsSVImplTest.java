@@ -26,7 +26,7 @@ public class DeliverGoodsSVImplTest {
 		request.setTenantId("changhong");
 		request.setOperId("11111");
 		System.out.println(JSON.toJSONString(request));
-		deliverGoodsBusiSV.deliverGoods(request);
+	//	deliverGoodsBusiSV.deliverGoods(request);
 	}
 
 }
