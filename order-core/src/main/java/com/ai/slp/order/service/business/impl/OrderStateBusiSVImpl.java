@@ -11,6 +11,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.slp.order.api.orderstate.param.WaitRebateRequest;
 import com.ai.slp.order.api.orderstate.param.WaitRebateResponse;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
@@ -18,6 +19,7 @@ import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 @Service
 public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 
@@ -25,6 +27,8 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 	private IOrdOrderAtomSV ordOrderAtomSV;
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
+	@Autowired
+	private IOrderIndexBusiSV orderIndexBusiSV;
 	
 	//待卖家收货确认状态修改 (买家发货快递填写)
 	@Override
@@ -35,7 +39,11 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		this.ordOrderAtomSV.updateById(ordOrder);
 		//
 		this.ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
-		//
+		//刷新搜索引擎数据
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(ordOrder.getTenantId());
+    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
 	}
 	
 	
