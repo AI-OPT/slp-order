@@ -15,25 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
-import com.ai.opt.sdk.components.ses.SESClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
-import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
-import com.ai.paas.ipaas.search.common.JsonBuilder;
-import com.ai.platform.common.api.cache.interfaces.ICacheSV;
-import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintInfosRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryProdPrintVo;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.MonitorCoonstants;
 import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.constants.OrdersConstants;
-import com.ai.slp.order.constants.SearchConstants;
-import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.attach.OrdOrderProdAttach;
 import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
@@ -49,7 +43,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdRuleAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliveryOrderPrintBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
-import com.ai.slp.order.util.InfoTranslateUtil;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.fastjson.JSON;
@@ -59,24 +53,20 @@ import com.alibaba.fastjson.JSON;
 public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	
 	private static final Logger logger=LoggerFactory.getLogger(DeliveryOrderPrintBusiSVImpl.class);
-
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
-	
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
-	
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
-	
 	@Autowired
 	private IDeliveryOrderPrintAtomSV deliveryOrderPrintAtomSV;
-	
 	@Autowired
 	private IOrdRuleAtomSV ordRuleAtomSV;
-	
 	@Autowired
 	private IOrderFrameCoreSV orderFrameCoreSV;
+	@Autowired
+	private IOrderIndexBusiSV orderIndexBusiSV;
 	
 	//提货单查看
 	@Override
@@ -328,7 +318,6 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
       */
 	  private void updateOrderState(Long mergeId,String tenantId, 
 			 Long batchNo ) {
-		ICacheSV iCacheSV=DubboConsumerFactory.getService(ICacheSV.class);
 		Timestamp sysDate = DateUtil.getSysDate();
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, mergeId);
 		if(ordOrder==null) {
@@ -346,21 +335,12 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		ordOrder.setState(newState);
 		ordOrder.setStateChgTime(sysDate);
 		ordOrder.setBatchNo(batchNo);
-		ordOrderAtomSV.updateById(ordOrder);
+		ordOrderAtomSV.updateByPrimaryKeySelective(ordOrder);
 		//写入搜索引擎
-		try {
-			//翻译
-			SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
-					"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
-			SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).
-				upsert(String.valueOf(ordOrder.getParentOrderId()), 
-						new JsonBuilder().startObject().field(SearchFieldConfConstants.ORD_EXTENDES_STATE, 
-								newState).field(SearchFieldConfConstants.ORD_EXTENDES_STATE_NAME, 
-										sysParamState.getColumnDesc()).endObject());
-		} catch (Exception e) {
-			logger.error("导入数据到搜索引擎失败.......");
-			throw new SystemException("导入数据到搜索引擎失败..."+ordOrder.getParentOrderId());
-		}
+		SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(tenantId);
+    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
 		// 写入订单状态变化轨迹表
 		orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, state1,
 				OrdOdStateChg.ChgDesc.ORDER_TO_PRINT, null, null, null, sysDate);
