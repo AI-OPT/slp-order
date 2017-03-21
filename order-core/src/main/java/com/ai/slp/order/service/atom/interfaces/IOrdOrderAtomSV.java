@@ -32,4 +32,6 @@ public interface IOrdOrderAtomSV {
     int updateByExampleSelective(@Param("record") OrdOrder record, @Param("example") OrdOrderCriteria example);
     
     public List<OrdOrder> selectOrderByOrigOrderId(long externalOrderId, long orderId);
+    
+    int updateByPrimaryKeySelective(OrdOrder record);
 }

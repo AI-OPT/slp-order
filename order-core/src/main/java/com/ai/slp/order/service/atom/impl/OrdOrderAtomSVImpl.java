@@ -99,5 +99,11 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 		criteria.andTenantIdEqualTo(tenantId);
 		return ordOrderMapper.selectByExample(example);
 	}
+
+	@Override
+	public int updateByPrimaryKeySelective(OrdOrder record) {
+		// TODO Auto-generated method stub
+		return ordOrderMapper.updateByPrimaryKeySelective(record);
+	}
 	
 }
