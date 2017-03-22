@@ -14,6 +14,7 @@ import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
+import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(validation = "true")
@@ -26,6 +27,8 @@ public class OrderListSVImpl implements IOrderListSV {
     @Override
     public QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException,
             SystemException {
+    	/* 订单信息查询-参数校验 */
+		ValidateUtils.validateQueryOrder(orderRequest);
         QueryOrderResponse response = ordOrderBusiSV.queryOrder(orderRequest);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
