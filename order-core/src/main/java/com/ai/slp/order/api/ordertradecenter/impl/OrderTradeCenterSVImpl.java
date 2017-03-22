@@ -30,7 +30,7 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     	ValidateUtils.validateOrderTradeCenter(request); 
     	boolean ccsMqFlag=false;
     	//从配置中心获取ccsMqFlag
-    	ccsMqFlag=MQConfigUtil.getCCSMqFlag();
+    	//ccsMqFlag=MQConfigUtil.getCCSMqFlag();
     	//非消息模式下，同步调用服务
     	if(!ccsMqFlag){
     		OrderTradeCenterResponse response = ordOrderTradeBusiSV.apply(request);
