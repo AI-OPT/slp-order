@@ -4,9 +4,22 @@ import java.sql.Timestamp;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.slp.order.vo.OrderStateChgVo;
 
 public interface IOrderFrameCoreSV {
 
+    /**
+     * 记录订单轨迹2
+     * @param stateChgVo
+     * @throws BusinessException
+     * @throws SystemException
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    public void ordOdStateChg(OrderStateChgVo stateChgVo) throws BusinessException, SystemException;
+    
     /**
      * 记录订单轨迹
      * 
@@ -26,7 +39,8 @@ public interface IOrderFrameCoreSV {
     public void ordOdStateChg(Long orderId, String tenantId, String orgState, String newState,
             String chgDesc, String orgId, String operId, String operName, Timestamp timestamp)
             throws BusinessException, SystemException;
-
+    
+    
     /**
      * 创建订单扩展信息
      * 
