@@ -114,26 +114,16 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         int i=0;
         for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
         	OrderResInfo orderResInfo=new OrderResInfo();
-        	//积分账户id
-        	String accountId = ordProductDetailInfo.getAccountId();
-        	//积分令牌id
-        	String tokenId=ordProductDetailInfo.getTokenId();
-        	String pointRate = ordProductDetailInfo.getPointRate();
-        	String remark = ordProductDetailInfo.getRemark();
-        	String supplierId = ordProductDetailInfo.getSupplierId();
         	/* 1.创建业务订单,并返回订单Id*/
-        	OrdOrder ordOrder = this.createOrder(ordBaseInfo,accountId,beforSubmitOrder,
-        			request.getTenantId(),sysDate,remark,supplierId,tokenId,pointRate);
+        	OrdOrder ordOrder = this.createOrder(ordBaseInfo,beforSubmitOrder,
+        			request.getTenantId(),sysDate,ordProductDetailInfo);
         	long orderId=ordOrder.getOrderId();
         	/* 2.创建商品明细,费用明细信息 */
         	Map<String, Object> mapProduct = this.createProdInfo(request,ordProductDetailInfo, sysDate, 
-        			orderId,supplierId);
+        			orderId);
         	ordProductResList = (List<OrdProductResInfo>) mapProduct.get("ordProductResList");
-        	long totalFee = (long) mapProduct.get("totalFee");
-        	long totalJf = (long) mapProduct.get("totalJf");
-        	long discountFee = (long) mapProduct.get("discountFee");
         	/* 3.费用信息 */
-        	this.createFeeInfo(request,ordProductDetailInfo, sysDate, orderId,totalFee,totalJf,discountFee);
+        	this.createFeeInfo(request,ordProductDetailInfo, sysDate, orderId,mapProduct);
         	/* 4.创建发票信息 */
         	this.createOrderFeeInvoice(request,ordProductDetailInfo, sysDate, orderId);
         	/* 5. 处理配送信息，存在则写入 */
@@ -179,8 +169,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private OrdOrder createOrder(OrdBaseInfo ordBaseInfo,String accountId,OrderMonitorBeforResponse beforSubmitOrder,
-    		String tenantId,Timestamp sysDate,String remark,String supplierId,String tokenId,String pointRate ) {
+    private OrdOrder createOrder(OrdBaseInfo ordBaseInfo,OrderMonitorBeforResponse beforSubmitOrder,
+    		String tenantId,Timestamp sysDate,OrdProductDetailInfo ordProductDetailInfo ) {
         OrdOrder ordOrder = new OrdOrder();
         long orderId = SequenceUtil.createOrderId();
         ordOrder.setOrderId(orderId);
@@ -194,8 +184,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setUserType(ordBaseInfo.getUserType());
         ordOrder.setIpAddress(ordBaseInfo.getIpAddress());
         ordOrder.setAcctId(ordBaseInfo.getAcctId());
-        ordOrder.setAccountId(accountId);
-        ordOrder.setTokenId(tokenId);// 积分令牌Id
+        //积分账户id
+        ordOrder.setAccountId(ordProductDetailInfo.getAccountId());
+        //积分令牌id
+        ordOrder.setTokenId(ordProductDetailInfo.getTokenId());
         ordOrder.setProvinceCode(ordBaseInfo.getProvinceCode());
         ordOrder.setCityCode(ordBaseInfo.getCityCode());
         ordOrder.setChlId(ordBaseInfo.getChlId()); 
@@ -207,14 +199,14 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setOrderTime(sysDate);
         ordOrder.setOrderDesc(ordBaseInfo.getOrderDesc());
         ordOrder.setKeywords(ordBaseInfo.getKeywords());
-        ordOrder.setRemark(remark);
-        ordOrder.setSupplierId(supplierId);
+        ordOrder.setRemark(ordProductDetailInfo.getRemark());
+        ordOrder.setSupplierId(ordProductDetailInfo.getSupplierId());
         ordOrder.setIfWarning(beforSubmitOrder.getIfWarning());
         ordOrder.setWarningType(beforSubmitOrder.getWarningType());
         ordOrder.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
         ordOrder.setFlag(ordBaseInfo.getFlag());
-        ordOrder.setPointRate(pointRate);//积分比率
-       // ordOrderAtomSV.insertSelective(ordOrder);
+        //积分比率
+        ordOrder.setPointRate(ordProductDetailInfo.getPointRate());
         return ordOrder;
     }
 
@@ -229,7 +221,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private Map<String,Object> createProdInfo(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
-    		Timestamp sysDate, long orderId,String supplierId) {
+    		Timestamp sysDate, long orderId) {
         LOG.debug("开始处理订单商品明细[" + orderId + "]和订单费用明细资料信息..");
         List<OrdProductResInfo> ordProductResList = new ArrayList<OrdProductResInfo>();
         List<OrdOdProd> ordOdProds = new ArrayList<OrdOdProd>();
@@ -290,7 +282,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setSkuStorageId(JSON.toJSONString(storageNum));
             ordOdProd.setValidTime(sysDate);
             ordOdProd.setInvalidTime(DateUtil.getFutureTime());
-            ordOdProd.setSupplierId(supplierId);
+            ordOdProd.setSupplierId(ordProductDetailInfo.getSupplierId());
             ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
             ordOdProd.setBuySum(ordProductInfo.getBuySum());
             ordOdProd.setSalePrice(storageNumRes.getSalePrice());
@@ -347,8 +339,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private void createFeeInfo(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
-    		Timestamp sysDate,long orderId,long totalFee,long totalJf,long discountFee) {
-        OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
+    		Timestamp sysDate,long orderId,Map<String, Object> mapProduct) {
+    	OrdOdFeeTotal ordOdFeeTotal = new OrdOdFeeTotal();
+    	long totalFee = (long) mapProduct.get("totalFee");
+    	long totalJf = (long) mapProduct.get("totalJf");
+    	long discountFee = (long) mapProduct.get("discountFee");
         ordOdFeeTotal.setOrderId(orderId);
         ordOdFeeTotal.setTenantId(request.getTenantId());
         ordOdFeeTotal.setPayFlag(OrdersConstants.OrdOdFeeTotal.payFlag.IN);

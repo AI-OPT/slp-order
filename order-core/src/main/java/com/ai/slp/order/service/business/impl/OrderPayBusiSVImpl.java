@@ -3,6 +3,7 @@ package com.ai.slp.order.service.business.impl;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
+import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
@@ -19,7 +20,9 @@ import com.ai.slp.order.service.atom.interfaces.*;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.vo.OrderStateChgVo;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductInfoQuery;
 import com.ai.slp.product.api.product.param.ProductRoute;
@@ -28,6 +31,7 @@ import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
 import com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV;
 import com.ai.slp.route.api.routemanage.param.RouteQueryByGroupIdAndAreaRequest;
 import com.ai.slp.route.api.routemanage.param.RouteQueryByGroupIdAndAreaResponse;
+import com.alibaba.fastjson.JSON;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,27 +89,25 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
     @Override
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
-        /* 1.处理费用信息 */
-        OrdOrder ordOrder =null;
         Timestamp sysdate = DateUtil.getSysDate();
-        /* 2.订单收费处理*/
+        /* 1.订单收费处理*/
         this.orderCharge(request, sysdate);
         for (Long orderId : request.getOrderIds()) {
-            ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
+        	OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
             if (ordOrder == null) {
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,
                         "订单信息不存在[订单ID:" + orderId + "]");
             }
-            /* 3.订单支付完成后，对订单进行处理 */
+            /* 2.订单支付完成后，对订单进行处理 */
             List<OrdOdProd> ordOdProds = this.execOrders(ordOrder, sysdate);
-        	/* 4.拆分子订单 */
+        	/* 3.拆分子订单 */
         	this.resoleOrders(ordOrder,ordOdProds,request,sysdate);
-        	/* 5.虚拟商品改变父订单状态*/
+        	/* 4.虚拟商品改变父订单状态*/
         	if(OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(ordOrder.getOrderType())) {
         		ordOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
         		ordOrderAtomSV.updateById(ordOrder);
         	}
-        	//6.导入数据到搜索引擎
+        	/* 5.导入数据到搜索引擎*/
         	SesDataRequest sesReq=new SesDataRequest();
         	sesReq.setTenantId(request.getTenantId());
         	sesReq.setParentOrderId(orderId);
@@ -355,9 +357,13 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             ordOrder.setState(newState);
             ordOrder.setStateChgTime(sysdate);
             ordOrderAtomSV.updateById(ordOrder);
-            /* 2.2 记入订单轨迹表 */
-            orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, oldState, newState,
+            /* 2.2 封装订单轨迹信息 */
+            OrderStateChgVo stateChgVo= OrderStateChgUtil.getOrderStateChg(ordOrder.getOrderId(), 
+            		tenantId, oldState, newState,
                     OrdOdStateChg.ChgDesc.ORDER_PAID, null, null, null, sysdate);
+            /* 2.3 发送消息,记入订单轨迹信息*/
+    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
+    				send(JSON.toJSONString(stateChgVo), 0);
         }
         /* 3.增加商品销量 */
         List<OrdOdProd> ordOdProds =ordOdProdAtomSV.selectByOrd(tenantId, ordOrder.getOrderId());

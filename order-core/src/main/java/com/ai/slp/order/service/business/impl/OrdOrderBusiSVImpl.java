@@ -40,14 +40,10 @@ import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
-import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria;
-import com.ai.slp.order.dao.mapper.bo.OrdBalacneIfCriteria.Criteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtendCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.search.bo.OrderInfo;
@@ -57,14 +53,12 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdProdExtendAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
-import com.ai.slp.order.util.ValidateUtils;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
@@ -86,8 +80,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	@Autowired
-	private IOrdOdProdExtendAtomSV ordOdProdExtendAtomSV;
-	@Autowired
 	private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
@@ -96,77 +88,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	@Autowired
 	private IOrderIndexBusiSV orderIndexBusiSV;
 
-	/**
-	 * 商品集合
-	 * 
-	 * @param orderId
-	 * @return
-	 * @author zhangxw
-	 * @param tenantId
-	 * @ApiDocMethod
-	 */
-	private List<OrdProductVo> getOrdProductList(String tenantId, long orderId) {
-		List<OrdProductVo> productList = new ArrayList<OrdProductVo>();
-		List<OrdOdProd> ordOdProdList=ordOdProdAtomSV.selectByOrd(tenantId, orderId);
-		if (!CollectionUtil.isEmpty(ordOdProdList)) {
-			for (OrdOdProd ordOdProd : ordOdProdList) {
-				OrdProductVo ordProductVo = new OrdProductVo();
-				ordProductVo.setOrderId(orderId);
-				ordProductVo.setProdDetalId(ordOdProd.getProdDetalId());
-				ordProductVo.setSkuId(ordOdProd.getSkuId());
-				ordProductVo.setState(ordOdProd.getState());
-				ordProductVo.setProdName(ordOdProd.getProdName());
-				ordProductVo.setSalePrice(ordOdProd.getSalePrice());
-				ordProductVo.setBuySum(ordOdProd.getBuySum());
-				ordProductVo.setTotalFee(ordOdProd.getTotalFee());
-				ordProductVo.setDiscountFee(ordOdProd.getDiscountFee());
-				ordProductVo.setAdjustFee(ordOdProd.getAdjustFee());
-				ordProductVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
-				ordProductVo.setCouponFee(ordOdProd.getCouponFee()); // 优惠费用
-				ordProductVo.setCusServiceFlag(ordOdProd.getCusServiceFlag()); // 商品是否售后标识
-				ordProductVo.setJfFee(ordOdProd.getJfFee()); // 消费积分
-				ordProductVo.setGiveJF(ordOdProd.getJf()); // 赠送积分
-				ordProductVo.setProdCode(ordOdProd.getProdCode()); // 商品编码
-				ordProductVo.setSkuStorageId(ordOdProd.getSkuStorageId());// 仓库id
-				long start = System.currentTimeMillis();
-				logger.info("开始执行商品信息查询>>>>>>>>>>>>>>：" + start);
-				ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
-				long end = System.currentTimeMillis();
-				logger.info("结束执行商品信息查询>>>>>>>>>>>>>>:" + end + ",用时:"+ (end - start) + "毫秒");
-				ordProductVo.setProductImage(productImage);
-				ordProductVo.setImageUrl(ordOdProd.getProdDesc()); // 图片id
-				ordProductVo.setProdExtendInfo(ordOdProd.getProdSn()); // 图片类型
-				productList.add(ordProductVo);
-			}
-		}
-		return productList;
-	}
-
-	/**
-	 * 获取图片信息
-	 * @param skuId
-	 * @return
-	 * @author zhangxw
-	 * @ApiDocMethod
-	 */
-	private ProductImage getProductImage(String tenantId, String skuId) {
-		ProductImage productImage = new ProductImage();
-		SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
-		skuInfoQuery.setTenantId(tenantId);
-		skuInfoQuery.setSkuId(skuId);
-		IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
-		ProductSkuInfo productSkuInfo =iProductServerSV.queryProductSkuById4ShopCart(skuInfoQuery);
-		productImage.setVfsId(productSkuInfo.getVfsId());
-		productImage.setPicType(productSkuInfo.getPicType());
-		return productImage;
-	}
-
+	
 	//订单详情查询
 	@Override
 	public QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException, SystemException {
 		logger.debug("开始订单详情查询..");
-		/* 1.订单信息查询-参数校验 */
-		ValidateUtils.validateQueryOrder(orderRequest);
 		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 		QueryOrderResponse response = new QueryOrderResponse();
 		OrdOrder order = ordOrderAtomSV.selectByOrderId(orderRequest.getTenantId(),
@@ -180,6 +106,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					order.getOrderType(), iCacheSV);
 			ordOrderVo.setOrderTypeName(sysParamOrderType == null ? "" : sysParamOrderType.getColumnDesc());
 			ordOrderVo.setBusiCode(order.getBusiCode());
+			// 获取业务类型
+			SysParam sysParamBusiCode = InfoTranslateUtil.translateInfo(order.getTenantId(), "ORD_ORDER", "BUSI_CODE",
+					order.getBusiCode(), iCacheSV);
+			ordOrderVo.setBusiCodeName(sysParamBusiCode == null ? "" : sysParamBusiCode.getColumnDesc());
 			ordOrderVo.setState(order.getState());
 			SysParam sysParamState = InfoTranslateUtil.translateInfo(order.getTenantId(), "ORD_ORDER", "STATE",
 					ordOrderVo.getState(), iCacheSV);
@@ -204,99 +134,82 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			ordOrderVo.setOperId(order.getOperId());
 			ordOrderVo.setAcctId(order.getAcctId());
 			ordOrderVo.setOrderTime(order.getOrderTime());
-			// 获取业务类型
-			SysParam sysParamBusiCode = InfoTranslateUtil.translateInfo(order.getTenantId(), "ORD_ORDER", "BUSI_CODE",
-					order.getBusiCode(), iCacheSV);
-			ordOrderVo.setBusiCodeName(sysParamBusiCode == null ? "" : sysParamBusiCode.getColumnDesc());
-			/* 2.订单费用信息查询 */
-			OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
-					order.getOrderId());
-			if (ordOdFeeTotal!=null) {
-				ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
-				ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
-				ordOrderVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
-				ordOrderVo.setOperDiscountDesc(ordOdFeeTotal.getOperDiscountDesc());
-				ordOrderVo.setPaidFee(ordOdFeeTotal.getPaidFee());
-				ordOrderVo.setPayFee(ordOdFeeTotal.getPayFee());
-				ordOrderVo.setPayStyle(ordOdFeeTotal.getPayStyle());
-				SysParam sysParam = InfoTranslateUtil.translateInfo(ordOdFeeTotal.getTenantId(), "ORD_OD_FEE_TOTAL",
-						"PAY_STYLE", ordOdFeeTotal.getPayStyle(), iCacheSV);
-				ordOrderVo.setPayStyleName(sysParam == null ? "" : sysParam.getColumnDesc());
-				ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
-				ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());
-				ordOrderVo.setFreight(ordOdFeeTotal.getFreight()); // 运费
-				/* 3.订单发票信息查询 */
-				OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
-				if (ordOdInvoice != null) {
-					ordOrderVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
-					ordOrderVo.setInvoiceType(ordOdInvoice.getInvoiceType());
-					SysParam sysParamInvoice = InfoTranslateUtil.translateInfo(order.getTenantId(), "ORD_OD_INVOICE",
-							"INVOICE_TYPE", ordOdInvoice.getInvoiceType(), iCacheSV);
-					ordOrderVo.setInvoiceTypeName(sysParamInvoice == null ? "" : sysParamInvoice.getColumnDesc());
-					ordOrderVo.setInvoiceContent(ordOdInvoice.getInvoiceContent());
-					ordOrderVo.setBuyerTaxpayerNumber(ordOdInvoice.getBuyerTaxpayerNumber());
-					ordOrderVo.setBuyerBankName(ordOdInvoice.getBuyerBankName());
-					ordOrderVo.setBuyerBankAccount(ordOdInvoice.getBuyerBankAccount());
-					ordOrderVo.setInvoiceStatus(ordOdInvoice.getInvoiceStatus());
-				}
-				/* 4.订单配送信息查询 */
-				OrdOdLogistics ordOdLogistics = null;
-				OrdOdLogistics afterLogistics = null;
-				if (!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(order.getBusiCode())) {
-					// 售后单获取子订单配送信息
-					afterLogistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrigOrderId());
-					StringBuffer sbf = new StringBuffer();
-					sbf.append(afterLogistics.getProvinceCode() == null ? ""
-							: iCacheSV.getAreaName(afterLogistics.getProvinceCode()));
-					sbf.append(afterLogistics.getCityCode() == null ? ""
-							: iCacheSV.getAreaName(afterLogistics.getCityCode()));
-					sbf.append(afterLogistics.getCountyCode() == null ? ""
-							: iCacheSV.getAreaName(afterLogistics.getCountyCode()));
-					sbf.append(afterLogistics.getAddress());
-					ordOrderVo.setAftercontactTel(afterLogistics.getContactTel());
-					ordOrderVo.setAftercontactInfo(sbf.toString());
-				}
-				ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
-				if (ordOdLogistics != null) {
-					ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
-					ordOrderVo.setContactCompany(ordOdLogistics.getContactCompany());
-					ordOrderVo.setLogisticsType(ordOdLogistics.getLogisticsType());
-					ordOrderVo.setContactName(ordOdLogistics.getContactName());
-					ordOrderVo.setContactTel(ordOdLogistics.getContactTel());
-					ordOrderVo.setProvinceCode(ordOdLogistics.getProvinceCode() == null ? ""
-							: iCacheSV.getAreaName(ordOdLogistics.getProvinceCode()));
-					ordOrderVo.setCityCode(ordOdLogistics.getCityCode() == null ? ""
-							: iCacheSV.getAreaName(ordOdLogistics.getCityCode()));
-					ordOrderVo.setCountyCode(ordOdLogistics.getCountyCode() == null ? ""
-							: iCacheSV.getAreaName(ordOdLogistics.getCountyCode()));
-					ordOrderVo.setPostCode(ordOdLogistics.getPostcode());
-					ordOrderVo.setAreaCode(ordOdLogistics.getAreaCode() == null ? ""
-							: iCacheSV.getAreaName(ordOdLogistics.getAreaCode()));
-					ordOrderVo.setAddress(ordOdLogistics.getAddress());
-					ordOrderVo.setExpressId(ordOdLogistics.getExpressId());
-				}
-				/* 5.订单商品明细查询 */
-				List<OrdProductVo> productList = this.getOrdProductList(order.getTenantId(), order.getOrderId());
-				ordOrderVo.setProductList(productList);
-				/* 6.订单支付机构查询 */
-				OrdBalacneIfCriteria exampleBalance = new OrdBalacneIfCriteria();
-				Criteria criteriaBalance = exampleBalance.createCriteria();
-				criteriaBalance.andTenantIdEqualTo(order.getTenantId());
-				if (OrdersConstants.OrdOrder.State.WAIT_PAY.equals(order.getState())
-						|| OrdersConstants.OrdOrder.State.CANCEL.equals(order.getState())
-						|| (OrdersConstants.OrdOrder.State.COMPLETED.equals(order.getState())&& 
-								OrdersConstants.OrdOrder.Flag.JFSYNCH.equals(order.getFlag()))) {
-					criteriaBalance.andOrderIdEqualTo(order.getOrderId());
-				} else {
-					criteriaBalance.andOrderIdEqualTo(order.getParentOrderId());
-				}
-				List<OrdBalacneIf> ordBalacneIfs = ordBalacneIfAtomSV.selectByExample(exampleBalance);
-				if (!CollectionUtil.isEmpty(ordBalacneIfs)) {
-					OrdBalacneIf ordBalacneIf = ordBalacneIfs.get(0);
-					ordOrderVo.setBalacneIfId(ordBalacneIf.getBalacneIfId());
-					ordOrderVo.setExternalId(ordBalacneIf.getExternalId());
-				}
-			}
+		}
+		/* 2.订单费用信息查询 */
+		OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
+				order.getOrderId());
+		if (ordOdFeeTotal!=null) {
+			ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
+			ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
+			ordOrderVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
+			ordOrderVo.setOperDiscountDesc(ordOdFeeTotal.getOperDiscountDesc());
+			ordOrderVo.setPaidFee(ordOdFeeTotal.getPaidFee());
+			ordOrderVo.setPayFee(ordOdFeeTotal.getPayFee());
+			ordOrderVo.setPayStyle(ordOdFeeTotal.getPayStyle());
+			SysParam sysParam = InfoTranslateUtil.translateInfo(ordOdFeeTotal.getTenantId(), "ORD_OD_FEE_TOTAL",
+					"PAY_STYLE", ordOdFeeTotal.getPayStyle(), iCacheSV);
+			ordOrderVo.setPayStyleName(sysParam == null ? "" : sysParam.getColumnDesc());
+			ordOrderVo.setPayTime(ordOdFeeTotal.getUpdateTime());
+			ordOrderVo.setTotalFee(ordOdFeeTotal.getTotalFee());
+			ordOrderVo.setFreight(ordOdFeeTotal.getFreight()); // 运费 
+		}
+		/* 3.订单发票信息查询 */
+		OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
+		if (ordOdInvoice != null) {
+			ordOrderVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
+			ordOrderVo.setInvoiceType(ordOdInvoice.getInvoiceType());
+			SysParam sysParamInvoice = InfoTranslateUtil.translateInfo(order.getTenantId(), "ORD_OD_INVOICE",
+					"INVOICE_TYPE", ordOdInvoice.getInvoiceType(), iCacheSV);
+			ordOrderVo.setInvoiceTypeName(sysParamInvoice == null ? "" : sysParamInvoice.getColumnDesc());
+			ordOrderVo.setInvoiceContent(ordOdInvoice.getInvoiceContent());
+			ordOrderVo.setBuyerTaxpayerNumber(ordOdInvoice.getBuyerTaxpayerNumber());
+			ordOrderVo.setBuyerBankName(ordOdInvoice.getBuyerBankName());
+			ordOrderVo.setBuyerBankAccount(ordOdInvoice.getBuyerBankAccount());
+			ordOrderVo.setInvoiceStatus(ordOdInvoice.getInvoiceStatus());
+		}
+		/* 4.订单配送信息查询 */
+		if (!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(order.getBusiCode())) {
+			// 售后单获取子订单配送信息
+			OrdOdLogistics afterLogistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrigOrderId());
+			StringBuffer sbf = new StringBuffer();
+			sbf.append(afterLogistics.getProvinceCode() == null ? ""
+					: iCacheSV.getAreaName(afterLogistics.getProvinceCode()));
+			sbf.append(afterLogistics.getCityCode() == null ? ""
+					: iCacheSV.getAreaName(afterLogistics.getCityCode()));
+			sbf.append(afterLogistics.getCountyCode() == null ? ""
+					: iCacheSV.getAreaName(afterLogistics.getCountyCode()));
+			sbf.append(afterLogistics.getAddress());
+			ordOrderVo.setAftercontactTel(afterLogistics.getContactTel());
+			ordOrderVo.setAftercontactInfo(sbf.toString());
+		}
+		OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
+		if (ordOdLogistics != null) {
+			ordOrderVo.setExpressOddNumber(ordOdLogistics.getExpressOddNumber());
+			ordOrderVo.setContactCompany(ordOdLogistics.getContactCompany());
+			ordOrderVo.setLogisticsType(ordOdLogistics.getLogisticsType());
+			ordOrderVo.setContactName(ordOdLogistics.getContactName());
+			ordOrderVo.setContactTel(ordOdLogistics.getContactTel());
+			ordOrderVo.setProvinceCode(ordOdLogistics.getProvinceCode() == null ? ""
+					: iCacheSV.getAreaName(ordOdLogistics.getProvinceCode()));
+			ordOrderVo.setCityCode(ordOdLogistics.getCityCode() == null ? ""
+					: iCacheSV.getAreaName(ordOdLogistics.getCityCode()));
+			ordOrderVo.setCountyCode(ordOdLogistics.getCountyCode() == null ? ""
+					: iCacheSV.getAreaName(ordOdLogistics.getCountyCode()));
+			ordOrderVo.setPostCode(ordOdLogistics.getPostcode());
+			ordOrderVo.setAreaCode(ordOdLogistics.getAreaCode() == null ? ""
+					: iCacheSV.getAreaName(ordOdLogistics.getAreaCode()));
+			ordOrderVo.setAddress(ordOdLogistics.getAddress());
+			ordOrderVo.setExpressId(ordOdLogistics.getExpressId());
+		}
+		/* 5.订单商品明细查询 */
+		List<OrdProductVo> productList = this.getOrdProductList(order.getTenantId(), order.getOrderId());
+		ordOrderVo.setProductList(productList);
+		/* 6.订单支付机构查询 */
+		List<OrdBalacneIf> ordBalacneIfs = ordBalacneIfAtomSV.selectBalacneIf(order);
+		if (!CollectionUtil.isEmpty(ordBalacneIfs)) {
+			OrdBalacneIf ordBalacneIf = ordBalacneIfs.get(0);
+			ordOrderVo.setBalacneIfId(ordBalacneIf.getBalacneIfId());
+			ordOrderVo.setExternalId(ordBalacneIf.getExternalId());
 		}
 		response.setOrdOrderVo(ordOrderVo);
 		return response;
@@ -342,20 +255,69 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		response.setPageInfo(pageInfo);
 		return response;
 	}
+	
+	
+	/**
+	 * 商品集合
+	 * 
+	 * @param orderId
+	 * @return
+	 * @author zhangxw
+	 * @param tenantId
+	 * @ApiDocMethod
+	 */
+	private List<OrdProductVo> getOrdProductList(String tenantId, long orderId) {
+		List<OrdProductVo> productList = new ArrayList<OrdProductVo>();
+		List<OrdOdProd> ordOdProdList=ordOdProdAtomSV.selectByOrd(tenantId, orderId);
+		if (!CollectionUtil.isEmpty(ordOdProdList)) {
+			for (OrdOdProd ordOdProd : ordOdProdList) {
+				OrdProductVo ordProductVo = new OrdProductVo();
+				ordProductVo.setOrderId(orderId);
+				ordProductVo.setProdDetalId(ordOdProd.getProdDetalId());
+				ordProductVo.setSkuId(ordOdProd.getSkuId());
+				ordProductVo.setState(ordOdProd.getState());
+				ordProductVo.setProdName(ordOdProd.getProdName());
+				ordProductVo.setSalePrice(ordOdProd.getSalePrice());
+				ordProductVo.setBuySum(ordOdProd.getBuySum());
+				ordProductVo.setTotalFee(ordOdProd.getTotalFee());
+				ordProductVo.setDiscountFee(ordOdProd.getDiscountFee());
+				ordProductVo.setAdjustFee(ordOdProd.getAdjustFee());
+				ordProductVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
+				ordProductVo.setCouponFee(ordOdProd.getCouponFee()); // 优惠费用
+				ordProductVo.setCusServiceFlag(ordOdProd.getCusServiceFlag()); // 商品是否售后标识
+				ordProductVo.setJfFee(ordOdProd.getJfFee()); // 消费积分
+				ordProductVo.setGiveJF(ordOdProd.getJf()); // 赠送积分
+				ordProductVo.setProdCode(ordOdProd.getProdCode()); // 商品编码
+				ordProductVo.setSkuStorageId(ordOdProd.getSkuStorageId());// 仓库id
+				ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
+				ordProductVo.setProductImage(productImage);
+				ordProductVo.setImageUrl(ordOdProd.getProdDesc()); // 图片id
+				ordProductVo.setProdExtendInfo(ordOdProd.getProdSn()); // 图片类型
+				productList.add(ordProductVo);
+			}
+		}
+		return productList;
+	}
 
 	/**
-	 * 订单商品明细信息扩展表
+	 * 获取图片信息
+	 * @param skuId
+	 * @return
+	 * @author zhangxw
+	 * @ApiDocMethod
 	 */
-	public List<OrdOdProdExtend> getOrdOdProdExtendList(String tenantId, long orderId, long prodDetalId) {
-		OrdOdProdExtendCriteria example = new OrdOdProdExtendCriteria();
-		OrdOdProdExtendCriteria.Criteria criteria = example.createCriteria();
-		criteria.andTenantIdEqualTo(tenantId);
-		criteria.andOrderIdEqualTo(orderId);
-		criteria.andProdDetalIdEqualTo(prodDetalId);
-		List<OrdOdProdExtend> ordOdProdExtendList = ordOdProdExtendAtomSV.selectByExample(example);
-		return ordOdProdExtendList;
+	private ProductImage getProductImage(String tenantId, String skuId) {
+		ProductImage productImage = new ProductImage();
+		SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
+		skuInfoQuery.setTenantId(tenantId);
+		skuInfoQuery.setSkuId(skuId);
+		IProductServerSV iProductServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
+		ProductSkuInfo productSkuInfo =iProductServerSV.queryProductSkuById4ShopCart(skuInfoQuery);
+		productImage.setVfsId(productSkuInfo.getVfsId());
+		productImage.setPicType(productSkuInfo.getPicType());
+		return productImage;
 	}
-	
+
 	//订单判断及状态修改
 	@Override
 	public int updateOrder(OrdOrder request) throws BusinessException, SystemException {
@@ -535,11 +497,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_QUERY_URL, params, header);
 			object = ParseO2pDataUtil.getData(strData);
 			// TODO 是否判断
-			/*
-			 * if(object==null) {
-			 * 
-			 * }else {}
-			 */
 			boolean val = object.getBooleanValue("IsValid");// 操作是否成功
 			if (!val) {
 				throw new BusinessException("", "OFC订单查询失败");

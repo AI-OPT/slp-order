@@ -17,6 +17,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdExtendAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdStateChgAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.vo.OrderStateChgVo;
 
 @Service
 @Transactional
@@ -79,4 +80,21 @@ public class OrderFrameCoreSVImpl implements IOrderFrameCoreSV {
         ordOdProdExtendAtomSV.insertSelective(bean);
     }
 
+	@Override
+	public void ordOdStateChg(OrderStateChgVo stateChgVo) throws BusinessException, SystemException {
+		// TODO Auto-generated method stub
+		OrdOdStateChg bean = new OrdOdStateChg();
+        Long stateChgId = SequenceUtil.createStateChgId();
+        bean.setStateChgId(stateChgId);
+        bean.setOrderId(stateChgVo.getOrderId());
+        bean.setTenantId(stateChgVo.getTenantId());
+        bean.setOrgState(stateChgVo.getOrgState());
+        bean.setNewState(stateChgVo.getNewState());
+        bean.setChgDesc(stateChgVo.getChgDesc());
+        bean.setOrgId(stateChgVo.getOrgId());
+        bean.setOperId(stateChgVo.getOperId());
+        bean.setOperName(stateChgVo.getOperName());
+        bean.setStateChgTime(stateChgVo.getTimestamp());
+        ordOdStateChgAtomSV.insertSelective(bean);
+	}
 }
