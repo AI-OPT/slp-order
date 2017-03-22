@@ -16,8 +16,6 @@ import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
-import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
-import com.ai.slp.order.util.MQConfigUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.fastjson.JSON;
 
@@ -32,9 +30,6 @@ public class OrderPaySVImpl implements IOrderPaySV {
     private static Logger logger = LoggerFactory.getLogger(OrderPaySVImpl.class);
     @Autowired
     private IOrderPayBusiSV orderPayBusiSV;
-    @Autowired
-    private IOrderIndexBusiSV orderIndexBusiSV;
-
     /**
      * 订单收费
      */
