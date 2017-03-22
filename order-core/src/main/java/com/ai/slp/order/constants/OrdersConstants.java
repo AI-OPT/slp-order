@@ -856,7 +856,7 @@ public final class OrdersConstants {
 		public static final String MDS_NS_ORDER_RETURNOID_TOPIC = "MDS_NS_ORDER_RETURNOID_TOPIC";
 		/** 订单系统的OFC售后订单的消息队列命名空间 */
 		public static final String MDS_NS_OFCORDER_BACK_TOPIC = "MDS_NS_OFCORDER_BACK_TOPIC";
-		/** 订单系统买家退换货填写物流的消息队列命名空间 */
+		/** 订单系统订单状态轨迹的消息队列命名空间 */
 		public static final String MDS_NS_ORDER_STATE_TOPIC = "MDS_NS_ORDER_STATE_TOPIC";
 		/** 订单系统的购物车添加的消息队列命名空间 */
 		public static final String MDS_NS_SHOPCART_ADD_TOPIC = "MDS_NS_SHOPCART_ADD_TOPIC";
