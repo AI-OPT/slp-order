@@ -22,7 +22,6 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.BeanUtils;
-import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
@@ -315,18 +314,11 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     
     //ofc售后订单状态回传
   	@Override
-  	public void backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException {
-  		//查询
-  		List<OrdOrder> orderList =ordOrderAtomSV.selectOrderByOrigOrderId(
-  				Long.parseLong(request.getExternalOrderId()), Long.parseLong(request.getOrderId()));
-  		if(CollectionUtil.isEmpty(orderList)) {
-  			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-  					"订单信息不存在[订单id:"+request.getOrderId()+"]");
-  		}
-  		OrdOrder ordOrder = orderList.get(0);
+  	public void backStateOFC(OrderOFCBackRequest request,OrdOrder ordOrder) 
+  			throws BusinessException, SystemException {
   		ordOrder.setState(request.getState());
   		ordOrder.setRemark(request.getReasonDesc());
   		//更新数据
-  		ordOrderAtomSV.updateById(ordOrder);
+  		ordOrderAtomSV.updateByPrimaryKeySelective(ordOrder);
   	}
 }

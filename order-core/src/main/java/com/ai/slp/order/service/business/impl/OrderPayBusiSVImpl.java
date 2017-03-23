@@ -17,7 +17,6 @@ import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.*;
 import com.ai.slp.order.service.atom.interfaces.*;
-import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.OrderStateChgUtil;
@@ -69,10 +68,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 
     @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
-
-    @Autowired
-    private IOrderFrameCoreSV orderFrameCoreSV;
-
     @Autowired
     private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
     @Autowired
@@ -332,10 +327,14 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		subOrderId = map.get(routeId);
     		ordOdProd = this.updateFeeTotal(subOrderId, parentOrdOrder, parentOrdOdProd, routeId);
     	}
-    	/* 3.写入订单状态变化轨迹表 */
+        /* 3.1 封装订单轨迹信息 */
     	String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DISTRIBUTION;
-    	orderFrameCoreSV.ordOdStateChg(subOrderId, tenantId, parentOrdOrder.getState(),
-    			OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION, chgDesc, null, null, null, DateUtil.getSysDate());
+        OrderStateChgVo stateChgVo= OrderStateChgUtil.getOrderStateChg(subOrderId, tenantId, 
+        		parentOrdOrder.getState(),OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,
+        		chgDesc, null, null, null, DateUtil.getSysDate());
+        /* 3.2 发送消息,记入订单轨迹信息*/
+		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
+				send(JSON.toJSONString(stateChgVo), 0);
     }
     
     /**
@@ -601,13 +600,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * 用户消费积分返回oid
      */
 	@Override
-	public void returnOid(OrderOidRequest request) throws BusinessException, SystemException {
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(order==null) {
-			throw new BusinessException("", "订单信息不存在[订单id:"+request.getOrderId()+
-					",租户id:"+request.getTenantId()+"]");
-		}
-		order.setDownstreamOrderId(request.getOid());
-		ordOrderAtomSV.updateById(order);
+	public void returnOid(OrderOidRequest request,OrdOrder order) throws BusinessException, SystemException {
+		ordOrderAtomSV.updateByPrimaryKeySelective(order);
 	}
 }
