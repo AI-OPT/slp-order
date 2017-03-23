@@ -1,6 +1,8 @@
 package com.ai.slp.order.api.aftersaleorder.impl;
 
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.slp.order.api.aftersaleorder.interfaces.IOrderAfterSaleSV;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
@@ -98,7 +101,15 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 		//非消息模式
 		if(!ccsMqFlag) {
 			BaseResponse response =new BaseResponse();
-			orderAfterSaleBusiSV.backStateOFC(request);
+			//查询
+	  		List<OrdOrder> orderList =ordOrderAtomSV.selectOrderByOrigOrderId(
+	  				Long.parseLong(request.getExternalOrderId()), Long.parseLong(request.getOrderId()));
+	  		if(CollectionUtil.isEmpty(orderList)) {
+	  			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+	  					"订单信息不存在[订单id:"+request.getOrderId()+"]");
+	  		}
+	  		OrdOrder ordOrder = orderList.get(0);
+			orderAfterSaleBusiSV.backStateOFC(request,ordOrder);
 			ResponseHeader responseHeader = new ResponseHeader(true,
 					ExceptCodeConstants.Special.SUCCESS, "成功");
 			response.setResponseHeader(responseHeader);
