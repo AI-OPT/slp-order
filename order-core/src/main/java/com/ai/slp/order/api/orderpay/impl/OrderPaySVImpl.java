@@ -15,6 +15,8 @@ import com.ai.slp.order.api.orderpay.interfaces.IOrderPaySV;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.fastjson.JSON;
@@ -27,9 +29,14 @@ import com.alibaba.fastjson.JSON;
  */
 @Component
 public class OrderPaySVImpl implements IOrderPaySV {
+	
     private static Logger logger = LoggerFactory.getLogger(OrderPaySVImpl.class);
+    
     @Autowired
     private IOrderPayBusiSV orderPayBusiSV;
+    @Autowired
+    private IOrdOrderAtomSV ordOrderAtomSV;
+    
     /**
      * 订单收费
      */
@@ -54,12 +61,18 @@ public class OrderPaySVImpl implements IOrderPaySV {
 		//ccsMqFlag = MQConfigUtil.getCCSMqFlag();
 		//非消息模式 同步调用服务
 		if(!ccsMqFlag) {
-			 BaseResponse response = new BaseResponse();
-	         orderPayBusiSV.returnOid(request);
-	         ResponseHeader responseHeader = new ResponseHeader(true,
+			BaseResponse response = new BaseResponse();
+			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+			if(order==null) {
+				throw new BusinessException("", "订单信息不存在[订单id:"+request.getOrderId()+
+						",租户id:"+request.getTenantId()+"]");
+			}
+			order.setDownstreamOrderId(request.getOid());
+	        orderPayBusiSV.returnOid(request,order);
+	        ResponseHeader responseHeader = new ResponseHeader(true,
 	                ExceptCodeConstants.Special.SUCCESS, "成功");
-	         response.setResponseHeader(responseHeader);
-		     return response;  
+	        response.setResponseHeader(responseHeader);
+		    return response;  
 		}else {
 			//消息模式下 异步调用服务
 			 BaseResponse response = new BaseResponse();
