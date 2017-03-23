@@ -17,6 +17,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
@@ -25,6 +26,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderCancelBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
 import com.alibaba.fastjson.JSON;
@@ -44,17 +46,17 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
 
     @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
-
     @Autowired
     IOrdOdProdAtomSV ordOdProdAtomSV;
-    
     @Autowired
     private IOrderFrameCoreSV orderFrameCoreSV;
+    @Autowired
+    private IOrderIndexBusiSV orderIndexBusiSV;
     
     //订单取消
     @Override
     public void orderCancel(OrdOrder ordOrder) throws BusinessException, SystemException {
-        LOG.debug("开始处理订单[" + ordOrder.getOrderId() + "]关闭具体服务");
+    	LOG.debug("开始处理订单[" + ordOrder.getOrderId() + "]关闭具体服务");
         /* 1.更新订单表中状态为“取消” */
         String orgState=ordOrder.getState();
         String newState=OrdersConstants.OrdOrder.State.CANCEL;
@@ -65,7 +67,14 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
         /* 2.写入订单状态变化轨迹表 */
         orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState,
                 newState, OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_CANCEL, null, null, null, sysDate);
-        /* 3.库存回退 */
+       
+        /* 3.刷新搜索引擎数据*/
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(ordOrder.getTenantId());
+    	sesReq.setParentOrderId(ordOrder.getOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
+    	
+        /* 4.库存回退 */
         List<OrdOdProd> ordOdProds = this.getOrdOdProds(ordOrder.getOrderId());
         if (CollectionUtil.isEmpty(ordOdProds))
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息["
