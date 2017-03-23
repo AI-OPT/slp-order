@@ -1,4 +1,4 @@
-package com.ai.slp.order.dts.main;
+/*package com.ai.slp.order.dts.main;
 
 import com.ai.opt.sdk.dts.constants.DTSConstants;
 import com.ai.opt.sdk.dts.main.DTSMain;
@@ -13,3 +13,4 @@ public class SlpOrderDtsMain {
     
     public void init() { SlpOrderDtsMain.main(null);; }
 }
+*/

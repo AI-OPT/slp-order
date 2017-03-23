@@ -1,4 +1,4 @@
-package com.ai.slp.order.distributedtask;
+/*package com.ai.slp.order.distributedtask;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,12 +11,12 @@ import com.ai.opt.sdk.dts.base.ITask;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV;
 
-/**
+*//**
  * 未支付订单超过30分钟自动关闭 Date: 2016年6月23日 <br>
  * Copyright (c) 2016 asiainfo.com <br>
  * 
  * @author zhangxw
- */
+ *//*
 @DisallowConcurrentExecution
 @PersistJobDataAfterExecution
 public class NoPayOrderAutoCancelTask implements ITask {
@@ -32,3 +32,4 @@ public class NoPayOrderAutoCancelTask implements ITask {
     }
 
 }
+*/
