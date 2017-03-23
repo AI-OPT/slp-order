@@ -18,5 +18,6 @@ public interface IOrderAfterSaleBusiSV {
 	public void refund(OrderReturnRequest request,OrdOrder order,
 			OrdOdProd ordOdProd) throws BusinessException, SystemException;
 
-	public void backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException;
+	public void backStateOFC(OrderOFCBackRequest request,OrdOrder ordOrder)
+			throws BusinessException, SystemException;
 }
