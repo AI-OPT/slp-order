@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.DateUtil;
@@ -50,9 +51,10 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
-import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
+import com.ai.slp.order.vo.OrderStateChgVo;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumRes;
 import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
@@ -74,9 +76,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     @Autowired
     private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
 
-    @Autowired
-    private IOrderFrameCoreSV orderFrameCoreSV;
-    
     @Autowired
     private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
     
@@ -475,8 +474,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.insertSelective(ordOrder);
         // 写入订单状态变化轨迹表
-        orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), tenantId, orgState, newState,
+        OrderStateChgVo stateChgVo= OrderStateChgUtil.getOrderStateChg(ordOrder.getOrderId(), tenantId, orgState, newState,
                 OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null, null, null, sysDate);
+        /* 3.2 发送消息,记入订单轨迹信息*/
+		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
+				send(JSON.toJSONString(stateChgVo), 0);
     }
 
     /**
