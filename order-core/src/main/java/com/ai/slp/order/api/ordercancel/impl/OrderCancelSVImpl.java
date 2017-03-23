@@ -74,7 +74,7 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
 		List<OrdOrder> orders=null;
 		/* 2.获取未支付的订单*/
 		try {
-			orders = this.getNoPayOrderList(ordOrderAtomSV,request);
+			orders = ordOrderAtomSV.selectNotPayOrders(request.getTenantId(),request.getOrderId());
 		} catch (Exception e) {
 			log.error("待取消订单失败", e);
 			throw new SystemException(e);
@@ -105,35 +105,16 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
         Timestamp sysDate = DateUtil.getSysDate();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(sysDate);
-        calendar.add(Calendar.MINUTE, -30);
-        OrdOrderCriteria example = new OrdOrderCriteria();
+        calendar.add(Calendar.MINUTE, -1);
+   /*     OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
         criteria.andOrderTimeLessThan(new Timestamp(calendar.getTimeInMillis()));
         criteria.andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_PAY);
         criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
         example.setLimitStart(0);
-        example.setLimitEnd(100);
-        List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
+        example.setLimitEnd(100);*/
+        List<OrdOrder> list = ordOrderAtomSV.selectNotPayOrdersByTime(new Timestamp(calendar.getTimeInMillis()));
+      //  List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         return list;
-    }
-    
-    
-    /**
-     * 获取未支付的订单列表(手动)
-     * 
-     * @return
-     * @author caofz
-     * @param ordOrderAtomSV,request
-     * @ApiDocMethod
-     */
-    public List<OrdOrder> getNoPayOrderList(IOrdOrderAtomSV ordOrderAtomSV,OrderCancelRequest request) {
-    	OrdOrderCriteria example=new OrdOrderCriteria();
-    	OrdOrderCriteria.Criteria criteria = example.createCriteria();
-    	criteria.andTenantIdEqualTo(request.getTenantId());
-    	criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
-    	criteria.andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_PAY);
-    	criteria.andOrderIdEqualTo(request.getOrderId());
-    	List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
-    	return list;
     }
 }
