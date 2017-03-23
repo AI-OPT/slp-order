@@ -34,7 +34,7 @@ public class OrderReturnOidMessProcessorImpl implements IMessageProcessor {
         if (request==null)
             return;
         try {
-			this.orderPayBusiSV.returnOid(request);
+		//	this.orderPayBusiSV.returnOid(request);
         } catch (BusinessException e) {
 			e.printStackTrace();
 			logger.error("消息处理出现异常:"+e.getMessage());
