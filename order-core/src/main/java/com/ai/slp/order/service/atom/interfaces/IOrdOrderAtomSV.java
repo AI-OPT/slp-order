@@ -1,5 +1,6 @@
 package com.ai.slp.order.service.atom.interfaces;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -12,6 +13,10 @@ public interface IOrdOrderAtomSV {
     int countByExample(OrdOrderCriteria example);
 
     List<OrdOrder> selectByExample(OrdOrderCriteria example);
+    
+    List<OrdOrder> selectNotPayOrders(String tenantId,long orderId);
+    
+    List<OrdOrder> selectNotPayOrdersByTime(Timestamp time);
     
     List<OrdOrder> selectOtherOrders(OrdOrder ordOrder);
     

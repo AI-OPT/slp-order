@@ -1,5 +1,6 @@
 package com.ai.slp.order.service.atom.impl;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,31 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
         criteria.andTenantIdEqualTo(ordOrder.getTenantId()).andOrderIdNotEqualTo(ordOrder.getOrderId());
         criteria.andParentOrderIdEqualTo(ordOrder.getParentOrderId());
         criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
+		return ordOrderMapper.selectByExample(example);
+	}
+
+	@Override
+	public List<OrdOrder> selectNotPayOrders(String tenantId, long orderId) {
+		// TODO Auto-generated method stub
+		OrdOrderCriteria example=new OrdOrderCriteria();
+    	OrdOrderCriteria.Criteria criteria = example.createCriteria();
+    	criteria.andTenantIdEqualTo(tenantId);
+    	criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
+    	criteria.andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_PAY);
+    	criteria.andOrderIdEqualTo(orderId);
+		return ordOrderMapper.selectByExample(example);
+	}
+
+	@Override
+	public List<OrdOrder> selectNotPayOrdersByTime(Timestamp time) {
+		// TODO Auto-generated method stub
+		OrdOrderCriteria example = new OrdOrderCriteria();
+        OrdOrderCriteria.Criteria criteria = example.createCriteria();
+        criteria.andOrderTimeLessThan(time);
+        criteria.andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_PAY);
+        criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
+        example.setLimitStart(0);
+        example.setLimitEnd(100);
 		return ordOrderMapper.selectByExample(example);
 	}
 	
