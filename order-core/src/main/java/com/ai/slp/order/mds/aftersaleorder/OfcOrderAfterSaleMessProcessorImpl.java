@@ -34,7 +34,7 @@ public class OfcOrderAfterSaleMessProcessorImpl implements IMessageProcessor {
         if (request==null)
             return;
         try {
-			this.orderAfterSaleBusiSV.backStateOFC(request);
+			//this.orderAfterSaleBusiSV.backStateOFC(request);
 	    } catch (BusinessException e) {
 			e.printStackTrace();
 			logger.error("消息处理出现异常:"+e.getMessage());
