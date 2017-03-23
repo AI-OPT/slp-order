@@ -105,7 +105,7 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
         Timestamp sysDate = DateUtil.getSysDate();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(sysDate);
-        calendar.add(Calendar.MINUTE, -30);
+        calendar.add(Calendar.MINUTE, -1);
         OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
         criteria.andOrderTimeLessThan(new Timestamp(calendar.getTimeInMillis()));
