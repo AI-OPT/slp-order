@@ -43,7 +43,7 @@ public class IShopCartSVImpl implements IShopCartSV {
         CartProdOptRes optRes = null;
     	boolean ccsMqFlag=false;
     	//从配置中心获取ccsMqFlag
-    	ccsMqFlag=MQConfigUtil.getCCSMqFlag();
+    	//ccsMqFlag=MQConfigUtil.getCCSMqFlag();
     	
     	//非消息模式下，同步调用服务
     	if(!ccsMqFlag){
@@ -109,7 +109,7 @@ public class IShopCartSVImpl implements IShopCartSV {
         CartProdOptRes optRes = null;
         boolean ccsMqFlag=false;
     	//从配置中心获取ccsMqFlag
-    	ccsMqFlag=MQConfigUtil.getCCSMqFlag();
+    	//ccsMqFlag=MQConfigUtil.getCCSMqFlag();
     	//非消息模式下，同步调用服务
     	if(!ccsMqFlag){
     		try {
@@ -145,7 +145,7 @@ public class IShopCartSVImpl implements IShopCartSV {
         CartProdOptRes optRes = null;
         boolean ccsMqFlag=false;
     	//从配置中心获取ccsMqFlag
-    	ccsMqFlag=MQConfigUtil.getCCSMqFlag();
+    	//ccsMqFlag=MQConfigUtil.getCCSMqFlag();
     	//非消息模式下，同步调用服务
     	if(!ccsMqFlag){
     		try {
