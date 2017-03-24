@@ -141,5 +141,26 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
         example.setLimitEnd(100);
 		return ordOrderMapper.selectByExample(example);
 	}
+
+	@Override
+	public List<OrdOrder> selectNotAuditFailureOrd(String tenantId, long orderId, String state) {
+		// TODO Auto-generated method stub
+	    OrdOrderCriteria example=new OrdOrderCriteria();
+	    OrdOrderCriteria.Criteria criteria = example.createCriteria();
+	    criteria.andOrigOrderIdEqualTo(orderId);
+	    criteria.andTenantIdEqualTo(tenantId);
+	    criteria.andStateNotEqualTo(state);
+		return ordOrderMapper.selectByExample(example);
+	}
+
+	@Override
+	public List<OrdOrder> selectSubSaleOrder(long origOrderId, long orderId) {
+		// TODO Auto-generated method stub
+		OrdOrderCriteria example=new OrdOrderCriteria();
+		OrdOrderCriteria.Criteria criteria = example.createCriteria();
+		criteria.andOrigOrderIdEqualTo(origOrderId);
+		criteria.andOrderIdNotEqualTo(orderId);
+		return ordOrderMapper.selectByExample(example);
+	}
 	
 }

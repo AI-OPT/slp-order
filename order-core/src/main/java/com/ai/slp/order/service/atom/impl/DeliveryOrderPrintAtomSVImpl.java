@@ -60,12 +60,21 @@ public class DeliveryOrderPrintAtomSVImpl implements IDeliveryOrderPrintAtomSV {
 	}
 
 	@Override
-	public List<OrdOdDeliverInfo> selectOrdOdDeliverInfo(long orderId) {
+	public List<OrdOdDeliverInfo> selectDeliverByPrintInfo(long orderId, String pringInfo) {
 		// TODO Auto-generated method stub
-		OrdOdDeliverInfoCriteria exampleDeliver=new OrdOdDeliverInfoCriteria();
-		OrdOdDeliverInfoCriteria.Criteria criteriaDeliver = exampleDeliver.createCriteria();
+		OrdOdDeliverInfoCriteria example=new OrdOdDeliverInfoCriteria();
+		OrdOdDeliverInfoCriteria.Criteria criteriaDeliver = example.createCriteria();
 		criteriaDeliver.andOrderIdEqualTo(orderId);
-		criteriaDeliver.andPrintInfoEqualTo(OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
-		return ordOdDeliverInfoMapper.selectByExample(exampleDeliver);
+		criteriaDeliver.andPrintInfoEqualTo(pringInfo);
+		return ordOdDeliverInfoMapper.selectByExample(example);
+	}
+
+	@Override
+	public List<DeliverInfoProd> selectDeliverInfoProd(long deliverInfoId) {
+		// TODO Auto-generated method stub
+		DeliverInfoProdCriteria exampleInfo=new DeliverInfoProdCriteria();
+		DeliverInfoProdCriteria.Criteria criteriaInfo = exampleInfo.createCriteria();
+		criteriaInfo.andDeliverInfoIdEqualTo(deliverInfoId);
+		return deliverInfoProdMapper.selectByExample(exampleInfo);
 	}
 }
