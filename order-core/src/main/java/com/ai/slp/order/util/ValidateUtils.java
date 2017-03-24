@@ -1,8 +1,11 @@
 package com.ai.slp.order.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import com.ai.opt.base.exception.BusinessException;
+import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
@@ -11,6 +14,7 @@ import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
+import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
 import com.ai.slp.order.api.ofcactual.param.OfcOrderCreateRequest;
 import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
@@ -705,4 +709,68 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
 		}
 	}
+	
+	/**
+	 * 发票回调,状态修改参数校验
+	 */
+	public static void validateInvoiceNotice(InvoiceNoticeRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		if(null==condition.getCompanyId()) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "公司代码(销售方)不能为空");
+		}
+		if(StringUtil.isBlank(condition.getInvoiceStatus())) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票状态不能为空");
+		}
+		if(condition.getInvoiceTotalFee()<=0){
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票总额必须大于0");
+		}else {
+			String status = condition.getInvoiceStatus();
+			if(OrdersConstants.ordOdInvoice.invoiceStatus.THREE.equals(status)) {
+				if(StringUtil.isBlank(condition.getInvoiceId())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票代码不能为空");
+				}
+				if(StringUtil.isBlank(condition.getInvoiceNum())) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票号码不能为空");
+				}
+				if(condition.getInvoiceTime()==null) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印日期不能为空");
+				}else {
+					boolean valiFlag = isValidDate(condition.getInvoiceTime(), "yyyy-MM-dd");
+					if(!valiFlag) {
+						throw new BusinessException("", "打印日期格式有误,请根据yyyy-MM-dd格式");
+					}
+				}
+			}
+			if(!(OrdersConstants.ordOdInvoice.invoiceStatus.THREE.equals(status)||
+					OrdersConstants.ordOdInvoice.invoiceStatus.FOUR.equals(status))) {
+				throw new BusinessException("", "发票状态不符合要求");
+			}
+		}
+	}
+	
+	
+	
+	 /**
+	  * 判断时间是否符合格式要求
+	  */
+	  private static boolean isValidDate(String str, String fomat) throws SystemException {
+	        if (StringUtil.isBlank(str)) {
+	            throw new SystemException("请指定时间字符");
+	        }
+	        if (StringUtil.isBlank(fomat)) {
+	            throw new SystemException("请指定格式");
+	        }
+	        boolean flag = true;
+	        try {
+	            SimpleDateFormat sdf = new SimpleDateFormat(fomat);
+	            sdf.setLenient(false);
+	            sdf.parse(str);
+	            flag = true;
+	        } catch (ParseException e) {
+	            flag = false;
+	        }
+	        return flag;
+	    }
 }
