@@ -12,6 +12,10 @@ import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
+import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.ValidateUtils;
@@ -23,13 +27,23 @@ public class OrderListSVImpl implements IOrderListSV {
 
     @Autowired
     private IOrdOrderBusiSV ordOrderBusiSV;
+    @Autowired
+    private IOrdOrderAtomSV ordOrderAtomSV;
+    @Autowired
+    private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
 
     @Override
     public QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException,
             SystemException {
-    	/* 订单信息查询-参数校验 */
+    	/* 参数校验 */
 		ValidateUtils.validateQueryOrder(orderRequest);
-        QueryOrderResponse response = ordOrderBusiSV.queryOrder(orderRequest);
+		/* 订单主表信息查询*/
+		OrdOrder order = ordOrderAtomSV.selectByOrderId(orderRequest.getTenantId(),
+				orderRequest.getOrderId());
+		/* 订单费用查询*/
+		OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
+				order.getOrderId());
+        QueryOrderResponse response = ordOrderBusiSV.queryOrder(ordOdFeeTotal,order);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
         response.setResponseHeader(responseHeader);
