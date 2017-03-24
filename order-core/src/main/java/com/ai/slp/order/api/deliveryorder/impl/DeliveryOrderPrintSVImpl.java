@@ -16,6 +16,7 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintInfosRequ
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
 import com.ai.slp.order.service.atom.interfaces.IDeliveryOrderPrintAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliveryOrderNoMergePrintBusiSV;
@@ -76,7 +77,8 @@ public class DeliveryOrderPrintSVImpl implements IDeliveryOrderPrintSV {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
 		/* 判断是否存在提货单打印信息*/
-		List<OrdOdDeliverInfo> queryInfos = deliveryOrderPrintAtomSV.selectOrdOdDeliverInfo(request.getOrderId());
+		List<OrdOdDeliverInfo> queryInfos =deliveryOrderPrintAtomSV.selectDeliverByPrintInfo(request.getOrderId(),
+				OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
 		if(!CollectionUtil.isEmpty(queryInfos)) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"提货单已经打印,不能重复打印[订单id:"+request.getOrderId()+"]");
