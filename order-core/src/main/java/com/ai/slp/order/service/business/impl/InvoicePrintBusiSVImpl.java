@@ -1,8 +1,6 @@
 package com.ai.slp.order.service.business.impl;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +17,6 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
-import com.ai.opt.sdk.util.StringUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
@@ -31,8 +28,6 @@ import com.ai.slp.order.api.invoiceprint.param.InvoiceSumbitResponse;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceSumbitVo;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
-import com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria;
-import com.ai.slp.order.dao.mapper.bo.OrdOdInvoiceCriteria.Criteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
@@ -42,7 +37,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IInvoicePrintBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
-import com.ai.slp.order.util.ValidateUtils;
 
 @Service
 @Transactional
@@ -65,22 +59,8 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
     //发票打印列表查看
 	@Override
 	public InvoicePrintResponse queryList(InvoicePrintRequest request) throws BusinessException, SystemException {
-		/* 参数校验*/
-		if (request == null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
-		}
-		if (StringUtil.isBlank(request.getTenantId())) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "租户ID不能为空");
-		}
 		Integer pageNo = request.getPageNo();
 		Integer pageSize = request.getPageSize();
-		if (pageNo==null||(pageNo!=null && pageNo<1)) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码不能为空或者不能小于1");
-		}
-		if (pageSize==null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码大小不能为空");
-		}
-		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
 		InvoicePrintResponse response = new InvoicePrintResponse();
 		/* 发票列表信息*/
 		PageInfo<InvoicePrintVo> pageInfo = queryForPage(pageNo, pageSize, request.getOrderId(), 
@@ -92,79 +72,8 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	
 	//发票回调,状态修改
 	@Override
-	public void updateInvoiceStatus(InvoiceNoticeRequest request) throws BusinessException, SystemException {	
-		/* 参数检验*/
-		if (request == null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
-		}
-		if(null==request.getCompanyId()) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "公司代码(销售方)不能为空");
-		}
-		if(StringUtil.isBlank(request.getInvoiceStatus())) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票状态不能为空");
-		}
-		if(request.getInvoiceTotalFee()<=0){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票总额必须大于0");
-		}else {
-			String status = request.getInvoiceStatus();
-			if(OrdersConstants.ordOdInvoice.invoiceStatus.THREE.equals(status)) {
-				if(StringUtil.isBlank(request.getInvoiceId())) {
-					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票代码不能为空");
-				}
-				if(StringUtil.isBlank(request.getInvoiceNum())) {
-					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票号码不能为空");
-				}
-				if(request.getInvoiceTime()==null) {
-					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "发票打印日期不能为空");
-				}else {
-					boolean valiFlag = this.isValidDate(request.getInvoiceTime(), "yyyy-MM-dd");
-					if(!valiFlag) {
-						throw new BusinessException("", "打印日期格式有误,请根据yyyy-MM-dd格式");
-					}
-				}
-			}
-			if(!(OrdersConstants.ordOdInvoice.invoiceStatus.THREE.equals(status)||
-					OrdersConstants.ordOdInvoice.invoiceStatus.FOUR.equals(status))) {
-				throw new BusinessException("", "发票状态不符合要求");
-			}
-		}
-		long orderId = request.getOrderId();
-		List<OrdOdProd> prods = ordOdProdAtomSV.selectByOrd(null, orderId);
-		if(CollectionUtil.isEmpty(prods)) {
-			logger.error("商品信息不存在[订单id:"+orderId+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"商品信息不存在[订单id:"+orderId+"]");
-		}
-		double invoiceAmount=0;
-		String supplierId = null;
-		//计算发票金额
-		for (OrdOdProd ordOdProd : prods) {
-		  String amount=BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000))
-					.setScale(2,BigDecimal.ROUND_HALF_UP).toString();//含税金额
-		  invoiceAmount=Double.parseDouble(amount)+invoiceAmount;
-		  supplierId = ordOdProd.getSupplierId();
-		}
-		if((request.getCompanyId().equals(supplierId))) {
-			throw new BusinessException("", "公司代码(销售方id)和商品中的销售方id不一致");
-		}
-		if(invoiceAmount!=request.getInvoiceTotalFee()) {
-			throw new BusinessException("", "发票总额和商品获取的额度不一致,实际发票金额:"+
-					invoiceAmount+",传入的金额:"+request.getInvoiceTotalFee());
-		}
-		OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
-		if(ordOdInvoice==null) {
-			logger.error("发票信息不存在[订单id:"+orderId+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "发票信息不存在[订单id:"+orderId+"]");
-		}
-		ordOdInvoice.setInvoiceId(request.getInvoiceId());
-		ordOdInvoice.setInvoiceNum(request.getInvoiceNum());
-		String invoiceTime = request.getInvoiceTime();
-		if(StringUtil.isBlank(invoiceTime)) {
-			ordOdInvoice.setInvoiceTime(null);
-		}else {
-			ordOdInvoice.setInvoiceTime(DateUtil.getTimestamp(DateUtil.str2Date(invoiceTime).getTime()));
-		}
-		ordOdInvoice.setInvoiceStatus(request.getInvoiceStatus());
+	public void updateInvoiceStatus(InvoiceNoticeRequest request,OrdOdInvoice ordOdInvoice) 
+			throws BusinessException, SystemException {	
 		ordOdInvoiceAtomSV.updateByPrimaryKey(ordOdInvoice);
 	}
 	
@@ -247,7 +156,6 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000));
 			BigDecimal b1 =taxValue.multiply(new BigDecimal(Double.parseDouble(OrdersConstants.INVOICE_RATE)));  //税金
 			BigDecimal b2 = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000)); //含税金额
-			//String s=b2.subtract(b1).setScale(2,BigDecimal.ROUND_HALF_UP).toString(); 
 			respVo.setTax(b1.setScale(2,BigDecimal.ROUND_HALF_UP).toString());//税金
 			respVo.setAmount(salePrice.setScale(2,BigDecimal.ROUND_HALF_UP).toString()); //不含税金额   发票云修改为商品单价
 			respVo.setTaxAmount(b2.setScale(2,BigDecimal.ROUND_HALF_UP).toString()); //含税金额
@@ -261,93 +169,55 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	 //查询指定信息
 	 private PageInfo<InvoicePrintVo> queryForPage(Integer pageNo,Integer pageSize,Long orderId,
 	            String tenantId, String invoiceTitle, String invoiceStatus) {
-		 String subFlag=OrdersConstants.OrdOrder.SubFlag.YES;
-		 int count = ordOdInvoiceAtomSV.count(subFlag,orderId,tenantId, 
+		String subFlag=OrdersConstants.OrdOrder.SubFlag.YES;
+		int count = ordOdInvoiceAtomSV.count(subFlag,orderId,tenantId, 
 				 invoiceTitle, invoiceStatus);
-		 List<OrdOdInvoice> invoiceList = ordOdInvoiceAtomSV.selectByCondition(subFlag,pageNo, 
+		List<OrdOdInvoice> invoiceList = ordOdInvoiceAtomSV.selectByCondition(subFlag,pageNo, 
 				 pageSize,orderId,tenantId, invoiceTitle, invoiceStatus);
-		 List<InvoicePrintVo> invoicePrintVos=new ArrayList<InvoicePrintVo>();
-	     PageInfo<InvoicePrintVo> pageInfo = new PageInfo<InvoicePrintVo>();
-	        //设置总数
-	        pageInfo.setCount(count);
-			if(!CollectionUtil.isEmpty(invoiceList)) {
-				for (OrdOdInvoice ordOdInvoice : invoiceList) {
-					InvoicePrintVo printVo=new InvoicePrintVo();
-					List<OrdOdProd> prods = ordOdProdAtomSV.selectByOrd(ordOdInvoice.getTenantId(), ordOdInvoice.getOrderId());
-					if(CollectionUtil.isEmpty(prods)) {
-						logger.error("商品信息不存在[订单id:"+ordOdInvoice.getOrderId()+"]");
-						throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-								"商品信息不存在[订单id:"+ordOdInvoice.getOrderId()+"]");
-					}
-					long invoiceAmount=0;
-					//计算发票金额
-					for (OrdOdProd ordOdProd : prods) {
-						//TODO 通过商品信息计算税率
-						invoiceAmount=ordOdProd.getAdjustFee()+invoiceAmount;
-					}
-					printVo.setOrderId(ordOdInvoice.getOrderId());
-					printVo.setInvoiceContent(ordOdInvoice.getInvoiceContent());
-					printVo.setInvoiceStatus(ordOdInvoice.getInvoiceStatus());
-					printVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
-					printVo.setInvoiceType(ordOdInvoice.getInvoiceType());
-					printVo.setInvoiceId(ordOdInvoice.getInvoiceId());
-					printVo.setInvoiceNum(ordOdInvoice.getInvoiceNum());
-					//查看该订单下的商品税率
-					printVo.setTaxRate(new BigDecimal(OrdersConstants.INVOICE_RATE).multiply(new BigDecimal(100)).longValue());
-					BigDecimal rate = BigDecimal.valueOf(invoiceAmount).multiply(new BigDecimal(Double.parseDouble(OrdersConstants.INVOICE_RATE)));
-					BigDecimal scale = rate.setScale(0,BigDecimal.ROUND_HALF_UP);
-					printVo.setTaxAmount(scale.longValue());//税率和金额
-					printVo.setInvoiceAmount(invoiceAmount);
-					invoicePrintVos.add(printVo);
+		List<InvoicePrintVo> invoicePrintVos=new ArrayList<InvoicePrintVo>();
+	    PageInfo<InvoicePrintVo> pageInfo = new PageInfo<InvoicePrintVo>();
+        //设置总数
+        pageInfo.setCount(count);
+		if(!CollectionUtil.isEmpty(invoiceList)) {
+			for (OrdOdInvoice ordOdInvoice : invoiceList) {
+				InvoicePrintVo printVo=new InvoicePrintVo();
+				List<OrdOdProd> prods = ordOdProdAtomSV.selectByOrd(ordOdInvoice.getTenantId(), ordOdInvoice.getOrderId());
+				if(CollectionUtil.isEmpty(prods)) {
+					logger.error("商品信息不存在[订单id:"+ordOdInvoice.getOrderId()+"]");
+					throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+							"商品信息不存在[订单id:"+ordOdInvoice.getOrderId()+"]");
 				}
+				long invoiceAmount=0;
+				//计算发票金额
+				for (OrdOdProd ordOdProd : prods) {
+					//TODO 通过商品信息计算税率
+					invoiceAmount=ordOdProd.getAdjustFee()+invoiceAmount;
+				}
+				printVo.setOrderId(ordOdInvoice.getOrderId());
+				printVo.setInvoiceContent(ordOdInvoice.getInvoiceContent());
+				printVo.setInvoiceStatus(ordOdInvoice.getInvoiceStatus());
+				printVo.setInvoiceTitle(ordOdInvoice.getInvoiceTitle());
+				printVo.setInvoiceType(ordOdInvoice.getInvoiceType());
+				printVo.setInvoiceId(ordOdInvoice.getInvoiceId());
+				printVo.setInvoiceNum(ordOdInvoice.getInvoiceNum());
+				//查看该订单下的商品税率
+				printVo.setTaxRate(new BigDecimal(OrdersConstants.INVOICE_RATE).multiply(new BigDecimal(100)).longValue());
+				BigDecimal rate = BigDecimal.valueOf(invoiceAmount).multiply(new BigDecimal(Double.parseDouble(OrdersConstants.INVOICE_RATE)));
+				BigDecimal scale = rate.setScale(0,BigDecimal.ROUND_HALF_UP);
+				printVo.setTaxAmount(scale.longValue());//税率和金额
+				printVo.setInvoiceAmount(invoiceAmount);
+				invoicePrintVos.add(printVo);
 			}
-	        pageInfo.setPageNo(pageNo);
-	        pageInfo.setPageSize(pageSize);
-	        pageInfo.setResult(invoicePrintVos);
-	        return pageInfo;
+		}
+        pageInfo.setPageNo(pageNo);
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setResult(invoicePrintVos);
+        return pageInfo;
 	    }
      
-	 /**
-	  * 判断时间是否符合格式要求
-	  */
-	  private boolean isValidDate(String str, String fomat) throws SystemException {
-	        if (StringUtil.isBlank(str)) {
-	            throw new SystemException("请指定时间字符");
-	        }
-	        if (StringUtil.isBlank(fomat)) {
-	            throw new SystemException("请指定格式");
-	        }
-	        boolean flag = true;
-	        try {
-	            SimpleDateFormat sdf = new SimpleDateFormat(fomat);
-	            sdf.setLenient(false);
-	            sdf.parse(str);
-	            flag = true;
-	        } catch (ParseException e) {
-	        	logger.error(e.getMessage(), e);
-	            flag = false;
-	        }
-	        return flag;
-	    }
-
-
 	//状态修改
 	@Override
-	public void modifyState(InvoiceModifyRequest request) throws BusinessException, SystemException {
-		/* 参数校验*/
-		ValidateUtils.validateModifyRequest(request);
-		/* 查询订单信息*/
-		OrdOdInvoiceCriteria example=new OrdOdInvoiceCriteria();
-		Criteria criteria = example.createCriteria();
-		criteria.andOrderIdEqualTo(request.getOrderId());
-		criteria.andTenantIdEqualTo(request.getTenantId());
-		List<OrdOdInvoice> invoiceList = ordOdInvoiceAtomSV.selectByExample(example);
-		if(CollectionUtil.isEmpty(invoiceList)) {
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"发票信息不存在[订单id: "+request.getOrderId()+",租户id: "+request.getTenantId()+"]");
-		}
-		OrdOdInvoice ordOdInvoice = invoiceList.get(0);
-		ordOdInvoice.setInvoiceStatus(OrdersConstants.ordOdInvoice.invoiceStatus.TWO);
+	public void modifyState(InvoiceModifyRequest request,OrdOdInvoice ordOdInvoice) throws BusinessException, SystemException {
 		ordOdInvoiceAtomSV.updateByPrimaryKey(ordOdInvoice);
 	}
 }
