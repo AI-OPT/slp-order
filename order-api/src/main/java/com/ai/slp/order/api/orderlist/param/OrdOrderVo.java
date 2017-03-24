@@ -24,17 +24,14 @@ public class OrdOrderVo extends BaseInfo {
 	 * 仓库ID
 	 */
 	private String routeId;
-
 	/**
 	 * 仓库信息
 	 */
 	private String routeName;
-
 	/**
 	 * 父订单id
 	 */
 	private Long parentOrderId;
-
 	/**
 	 * 支付流水号
 	 */
@@ -108,67 +105,54 @@ public class OrdOrderVo extends BaseInfo {
 	 * 订单类型展示名称
 	 */
 	private String orderTypeName;
-
 	/**
 	 * 订单状态(后厂)
 	 */
 	private String state;
-
 	/**
 	 * 订单状态展示
 	 */
 	private String stateName;
-
 	/**
 	 * 支付方式
 	 */
 	private String payStyle;
-
 	/**
 	 * 支付方式显示值
 	 */
 	private String payStyleName;
-
 	/**
 	 * 支付时间
 	 */
 	private Timestamp payTime;
-
 	/**
 	 * 下单时间
 	 */
 	private Timestamp orderTime;
-
 	/**
 	 * 总费用
 	 */
 	private Long totalFee;
-
 	/**
 	 * 总优惠金额
 	 */
 	private Long discountFee;
-
 	/**
 	 * 减免金额
 	 */
 	private long operDiscountFee;
-
 	/**
 	 * 减免原因
 	 */
 	private String operDiscountDesc;
-
 	/**
 	 * 总应收费用
 	 */
 	private Long adjustFee;
-
 	/**
 	 * 总实收费用
 	 */
 	private Long paidFee;
-
 	/**
 	 * 总待收费用
 	 */
@@ -203,27 +187,22 @@ public class OrdOrderVo extends BaseInfo {
 	 * 发票打印状态
 	 */
 	private String invoiceStatus;
-
 	/**
 	 * 物流单号
 	 */
 	private String expressOddNumber;
-
 	/**
 	 * 到件方公司
 	 */
 	private String contactCompany;
-
 	/**
 	 * 收件人姓名
 	 */
 	private String contactName;
-	
 	/**
 	 * 售后页面客户手机
 	 */
 	private String aftercontactTel;
-	
 	/**
 	 * 售后页面收货信息
 	 */
@@ -293,12 +272,6 @@ public class OrdOrderVo extends BaseInfo {
 	 * 购货方开户行帐号
 	 */
 	private String buyerBankAccount;
-
-	/**
-	 * 支付信息(订单费用总表信息)
-	 */
-	private List<OrderPayVo> payDataList;
-
 	/**
 	 * 商品集合
 	 */
@@ -422,14 +395,6 @@ public class OrdOrderVo extends BaseInfo {
 
 	public void setPayFee(Long payFee) {
 		this.payFee = payFee;
-	}
-
-	public List<OrderPayVo> getPayDataList() {
-		return payDataList;
-	}
-
-	public void setPayDataList(List<OrderPayVo> payDataList) {
-		this.payDataList = payDataList;
 	}
 
 	public long getOperDiscountFee() {

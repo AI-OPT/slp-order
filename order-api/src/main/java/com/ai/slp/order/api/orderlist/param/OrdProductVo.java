@@ -68,31 +68,6 @@ public class OrdProductVo extends BaseInfo{
     private Long adjustFee;
     
     /**
-     * 运营商(商品附加信息)
-     */
-    private String basicOrgId;
-    
-    /**
-     * 运营商
-     */
-    private String basicOrgName;
-
-    /**
-     * 省份(商品附加信息)
-     */
-    private String provinceCode;
-    
-    /**
-     * 省份
-     */
-    private String provinceName;
-
-    /**
-     * 充值面额(商品附加信息)
-     */
-    private String chargeFee;
-    
-    /**
      * 商品图片
      */
     private ProductImage productImage;
@@ -192,52 +167,12 @@ public class OrdProductVo extends BaseInfo{
 		this.adjustFee = adjustFee;
 	}
 
-	public String getBasicOrgId() {
-		return basicOrgId;
-	}
-
-	public void setBasicOrgId(String basicOrgId) {
-		this.basicOrgId = basicOrgId;
-	}
-
-	public String getProvinceCode() {
-		return provinceCode;
-	}
-
-	public void setProvinceCode(String provinceCode) {
-		this.provinceCode = provinceCode;
-	}
-
-	public String getChargeFee() {
-		return chargeFee;
-	}
-
-	public void setChargeFee(String chargeFee) {
-		this.chargeFee = chargeFee;
-	}
-
 	public ProductImage getProductImage() {
 		return productImage;
 	}
 
 	public void setProductImage(ProductImage productImage) {
 		this.productImage = productImage;
-	}
-
-	public String getBasicOrgName() {
-		return basicOrgName;
-	}
-
-	public void setBasicOrgName(String basicOrgName) {
-		this.basicOrgName = basicOrgName;
-	}
-
-	public String getProvinceName() {
-		return provinceName;
-	}
-
-	public void setProvinceName(String provinceName) {
-		this.provinceName = provinceName;
 	}
 
 	public String getProdName() {
