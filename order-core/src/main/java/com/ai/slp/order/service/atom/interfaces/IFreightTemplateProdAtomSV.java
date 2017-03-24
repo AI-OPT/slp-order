@@ -15,6 +15,8 @@ public interface IFreightTemplateProdAtomSV {
 	  
 	  List<FreightTemplateProd> selectByExample(FreightTemplateProdCriteria example);
 	  
+	  List<FreightTemplateProd> selectTemplatesByTemplateId(String templateId);
+	  
 	  int updateByExampleSelective(@Param("record") FreightTemplateProd record, @Param("example") FreightTemplateProdCriteria example);
 
 	  FreightTemplateProd selectByPrimaryKey(String regionId);

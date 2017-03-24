@@ -29,6 +29,8 @@ public interface IOrdOrderAtomSV {
     List<OrdOrder> selectChildOrder(String tenantId,long parentId);
     
     List<OrdOrder> selectSaleOrder(String tenantId,long orderId);
+
+    List<OrdOrder> selectNotAuditFailureOrd(String tenantId,long orderId,String state);
     
     public void updateStateByOrderId(String tenantId,Long orderId,String state);
     
@@ -41,4 +43,6 @@ public interface IOrdOrderAtomSV {
     public List<OrdOrder> selectOrderByOrigOrderId(long externalOrderId, long orderId);
     
     int updateByPrimaryKeySelective(OrdOrder record);
+    
+    List<OrdOrder> selectSubSaleOrder(long origOrderId,long orderId);
 }

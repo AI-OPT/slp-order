@@ -12,6 +12,10 @@ public interface IFreightTemplateAtomSV {
     int insertSelective(FreightTemplate record);
     
     List<FreightTemplate> selectByExample(FreightTemplateCriteria example);
+    
+    List<FreightTemplate> selectFreightTemplate(String supplierId,Integer pageInt,Integer pageSize);
+    
+    int countFreightTemplate(String supplierId);
 
     FreightTemplate selectByPrimaryKey(String templateId);
     
