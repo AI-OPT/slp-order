@@ -34,7 +34,6 @@ import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
 import com.ai.slp.order.api.orderlist.param.OrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.OrdProductVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
-import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
 import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -45,11 +44,9 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
-import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.search.bo.OrderInfo;
 import com.ai.slp.order.search.dto.SearchCriteriaStructure;
 import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
-import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
@@ -76,8 +73,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
 	@Autowired
-	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
-	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	@Autowired
 	private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
@@ -91,13 +86,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	
 	//订单详情查询
 	@Override
-	public QueryOrderResponse queryOrder(QueryOrderRequest orderRequest) throws BusinessException, SystemException {
+	public QueryOrderResponse queryOrder(OrdOdFeeTotal ordOdFeeTotal, OrdOrder order) 
+			throws BusinessException, SystemException {
 		logger.debug("开始订单详情查询..");
 		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 		QueryOrderResponse response = new QueryOrderResponse();
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(orderRequest.getTenantId(),
-				orderRequest.getOrderId());
 		OrdOrderVo ordOrderVo = null;
+		/* 1.订单主表信息 */
 		if (order!=null) {
 			ordOrderVo = new OrdOrderVo();
 			ordOrderVo.setOrderId(order.getOrderId());
@@ -106,16 +101,17 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					order.getOrderType(), iCacheSV);
 			ordOrderVo.setOrderTypeName(sysParamOrderType == null ? "" : sysParamOrderType.getColumnDesc());
 			ordOrderVo.setBusiCode(order.getBusiCode());
-			// 获取业务类型
+			// 翻译业务类型
 			SysParam sysParamBusiCode = InfoTranslateUtil.translateInfo(order.getTenantId(), "ORD_ORDER", "BUSI_CODE",
 					order.getBusiCode(), iCacheSV);
 			ordOrderVo.setBusiCodeName(sysParamBusiCode == null ? "" : sysParamBusiCode.getColumnDesc());
 			ordOrderVo.setState(order.getState());
+			// 翻译订单状态
 			SysParam sysParamState = InfoTranslateUtil.translateInfo(order.getTenantId(), "ORD_ORDER", "STATE",
 					ordOrderVo.getState(), iCacheSV);
 			ordOrderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
-			ordOrderVo.setChlId(order.getChlId()); // 订单来源
-			ordOrderVo.setRouteId(order.getRouteId());// 仓库ID
+			ordOrderVo.setChlId(order.getChlId()); 
+			ordOrderVo.setRouteId(order.getRouteId());
 			IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
 			RouteIdParamRequest routeRequest = new RouteIdParamRequest();
 			if (order.getRouteId() != null) {
@@ -124,7 +120,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				ordOrderVo.setRouteName(routeInfo.getRouteName()); // 仓库信息
 			}
 			ordOrderVo.setParentOrderId(order.getParentOrderId());
-			ordOrderVo.setUserId(order.getUserId());// 买家帐号(用户号)
+			ordOrderVo.setUserId(order.getUserId());
 			ordOrderVo.setAccountId(order.getAccountId());
 			ordOrderVo.setToken(order.getTokenId());// 积分令牌
 			ordOrderVo.setDownstreamOrderId(order.getDownstreamOrderId());
@@ -135,9 +131,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			ordOrderVo.setAcctId(order.getAcctId());
 			ordOrderVo.setOrderTime(order.getOrderTime());
 		}
-		/* 2.订单费用信息查询 */
-		OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
-				order.getOrderId());
+		/* 2.订单费用信息 */
 		if (ordOdFeeTotal!=null) {
 			ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
 			ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
@@ -351,11 +345,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				}
 			}
 			/* 获取子订单下的所有售后订单 */
-			OrdOrderCriteria example = new OrdOrderCriteria();
-			OrdOrderCriteria.Criteria criteria = example.createCriteria();
-			criteria.andOrigOrderIdEqualTo(afterOrdOrder.getOrigOrderId());
-			criteria.andOrderIdNotEqualTo(request.getOrderId());
-			List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(example);
+			List<OrdOrder> orderList =ordOrderAtomSV.selectSubSaleOrder(afterOrdOrder.getOrigOrderId(),request.getOrderId());
 			OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), order.getParentOrderId()); // 父订单
 			if (cusFlag) {
 				if (CollectionUtil.isEmpty(orderList)) {
@@ -460,12 +450,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
      */
     private boolean judgeState(OrdOrder order) {
     	//父订单下的其它子订单
-        OrdOrderCriteria example = new OrdOrderCriteria();
-        OrdOrderCriteria.Criteria criteria = example.createCriteria();
-        criteria.andTenantIdEqualTo(order.getTenantId()).andOrderIdNotEqualTo(order.getOrderId());
-        criteria.andParentOrderIdEqualTo(order.getParentOrderId());
-        criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
-        List<OrdOrder> childOrders = ordOrderAtomSV.selectByExample(example);
+        List<OrdOrder> childOrders = ordOrderAtomSV.selectOtherOrders(order);
 	    if(!CollectionUtil.isEmpty(childOrders)) {
 	    	for (OrdOrder ordOrder : childOrders) {
 	    		//其它子订单状态不是'完成'

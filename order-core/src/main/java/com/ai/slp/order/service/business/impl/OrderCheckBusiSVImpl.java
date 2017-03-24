@@ -24,8 +24,6 @@ import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria.Criteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
@@ -174,12 +172,8 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 					"未能查询到相关商品信息[订单id:"+ordOrder.getOrderId()+"]");
 		}
 		OrdOdProd ordOdProd = prodList.get(0);
-		OrdOdProdCriteria example=new OrdOdProdCriteria();
-		Criteria criteria = example.createCriteria();
-		criteria.andOrderIdEqualTo(ordOrder.getOrigOrderId());
-		criteria.andSkuIdEqualTo(ordOdProd.getSkuId());
-		criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
-		List<OrdOdProd> origProdList = ordOdProdAtomSV.selectByExample(example);
+		List<OrdOdProd> origProdList =ordOdProdAtomSV.selectSaleProd(ordOdProd.getTenantId(), 
+				ordOrder.getOrigOrderId(), ordOdProd.getSkuId());
 		if(CollectionUtil.isEmpty(origProdList)) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"未能查询到相关商品信息[原始订单id:"+ordOrder.getOrigOrderId()+" ,skuId:"+ordOdProd.getSkuId()+"]");

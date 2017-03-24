@@ -22,9 +22,7 @@ import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
-import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
@@ -167,11 +165,8 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 	  public List<OrdOrder> createAfterOrder(OrdOdProd ordOdProd) {
 		  	List<OrdOrder> orderList=new ArrayList<>();
 		  	//获取售后订单
-			OrdOrderCriteria example=new OrdOrderCriteria();
-			OrdOrderCriteria.Criteria criteria = example.createCriteria();
-			criteria.andOrigOrderIdEqualTo(ordOdProd.getOrderId());
-			criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
-			List<OrdOrder> ordOrderList = ordOrderAtomSV.selectByExample(example);
+			List<OrdOrder> ordOrderList = ordOrderAtomSV.selectSaleOrder(
+					ordOdProd.getTenantId(), ordOdProd.getOrderId());
 			if(CollectionUtil.isEmpty(ordOrderList)) {
 				logger.error("没有查询到相应的售后订单详情[原始订单id:"+ordOdProd.getOrderId()+"]");
 				throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
@@ -179,12 +174,8 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 			}
 			for (OrdOrder ordOrder : ordOrderList) {
 				//获取skuid对应的售后商品信息
-				OrdOdProdCriteria prodExample=new OrdOdProdCriteria();
-				OrdOdProdCriteria.Criteria prodCriteria = prodExample.createCriteria();
-				prodCriteria.andOrderIdEqualTo(ordOrder.getOrderId());
-				prodCriteria.andTenantIdEqualTo(ordOrder.getTenantId());
-				prodCriteria.andSkuIdEqualTo(ordOdProd.getSkuId());
-				List<OrdOdProd> prodList = ordOdProdAtomSV.selectByExample(prodExample);
+				List<OrdOdProd> prodList = ordOdProdAtomSV.selectSaleProd(ordOrder.getTenantId(),
+						ordOrder.getOrderId(), ordOdProd.getSkuId());
 				if(!CollectionUtil.isEmpty(prodList)) {
 					OrdOdProd prod = prodList.get(0);
 					OrdOrder order = ordOrderAtomSV.selectByOrderId(prod.getTenantId(),

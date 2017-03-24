@@ -15,7 +15,6 @@ import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
-import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
@@ -66,11 +65,7 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		//	this.ordOrderAtomSV.updateStateByOrderId(tenantId, orderId, OrdersConstants.OrdOrder.State.REFUND_AUDIT);
 			//换货完成之后判断子订单下的信息
 			/* 获取子订单下的所有售后订单*/
-			OrdOrderCriteria example=new OrdOrderCriteria();
-			OrdOrderCriteria.Criteria criteria = example.createCriteria();
-			criteria.andOrigOrderIdEqualTo(ordOrder.getOrigOrderId());
-			criteria.andOrderIdNotEqualTo(request.getOrderId());
-			List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(example);
+			List<OrdOrder> orderList =ordOrderAtomSV.selectSubSaleOrder(ordOrder.getOrigOrderId(),request.getOrderId());
 			boolean flag=false;
 			for (OrdOrder order : orderList) {  //表示有售后订单存在
 				String state = order.getState();
@@ -115,12 +110,7 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
      */
     private boolean judgeState(OrdOrder order) {
     	//父订单下的其它子订单
-        OrdOrderCriteria example = new OrdOrderCriteria();
-        OrdOrderCriteria.Criteria criteria = example.createCriteria();
-        criteria.andTenantIdEqualTo(order.getTenantId()).andOrderIdNotEqualTo(order.getOrderId());
-        criteria.andParentOrderIdEqualTo(order.getParentOrderId());
-        criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
-        List<OrdOrder> childOrders = ordOrderAtomSV.selectByExample(example);
+        List<OrdOrder> childOrders =ordOrderAtomSV.selectOtherOrders(order);
 	    if(!CollectionUtil.isEmpty(childOrders)) {
 	    	for (OrdOrder ordOrder : childOrders) {
 	    		//其它子订单状态不是'完成'

@@ -28,7 +28,6 @@ import com.ai.slp.order.api.freighttemplate.param.FreightTemplateVo;
 import com.ai.slp.order.api.freighttemplate.param.QueryFreightTemplateRequest;
 import com.ai.slp.order.api.freighttemplate.param.QueryFreightTemplateResponse;
 import com.ai.slp.order.dao.mapper.bo.FreightTemplate;
-import com.ai.slp.order.dao.mapper.bo.FreightTemplateCriteria;
 import com.ai.slp.order.dao.mapper.bo.FreightTemplateProd;
 import com.ai.slp.order.dao.mapper.bo.FreightTemplateProdCriteria;
 import com.ai.slp.order.service.atom.interfaces.IFreightTemplateAtomSV;
@@ -72,18 +71,13 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 		if(request.getPageNo()!=null&&request.getPageNo()<=0) {
 			throw new BusinessException("", "pageNo必须大于0");
 		}
-		FreightTemplateCriteria example=new FreightTemplateCriteria();
-		FreightTemplateCriteria.Criteria criteria = example.createCriteria();
-		criteria.andSupplierIdEqualTo(request.getSupplierId());
 		/* 2.查询运费模版总的个数*/
-		int count=freightTemplateAtomSV.countByExample(example);
+		int count=freightTemplateAtomSV.countFreightTemplate(request.getSupplierId());
 		Integer pageNo=(null==request.getPageNo())?1:request.getPageNo();
 		Integer pageSize=(null==request.getPageSize())?5:request.getPageSize();
-		example.setLimitStart((pageNo-1)*pageSize);
-		example.setLimitEnd(pageSize);
-		example.setOrderByClause("TIME DESC");
 		/* 3.获取运费模版信息*/
-		List<FreightTemplate> freightTemplates = freightTemplateAtomSV.selectByExample(example);
+		List<FreightTemplate> freightTemplates =freightTemplateAtomSV.selectFreightTemplate(request.getSupplierId(), 
+				(pageNo-1)*pageSize, pageSize);
 		if(CollectionUtil.isEmpty(freightTemplates)) {
 			logger.warn("未能找到相应的运费模版信息,[销售商id:"+request.getSupplierId()+"]");
 			throw new BusinessException("", "未能找到相应的运费模版信息,[销售商id:"+request.getSupplierId()+"]");
@@ -96,11 +90,8 @@ public class FreightTemplateBusiSVImpl implements IFreightTemplateBusiSV {
 			freightTemplateVo.setTemplateName(freightTemplate.getTemplateName());
 			freightTemplateVo.setValuationType(freightTemplate.getValuationType());
 			freightTemplateVo.setTime(freightTemplate.getTime());
-			FreightTemplateProdCriteria exampleProd=new FreightTemplateProdCriteria();
-			FreightTemplateProdCriteria.Criteria criteriaProd = exampleProd.createCriteria();
-			criteriaProd.andTemplateIdEqualTo(freightTemplate.getTemplateId());
 			/* 5.获取运费模版明细信息*/
-			List<FreightTemplateProd> ftProds = freightTemplateProdAtomSV.selectByExample(exampleProd);
+			List<FreightTemplateProd> ftProds =freightTemplateProdAtomSV.selectTemplatesByTemplateId(freightTemplate.getTemplateId());
 			List<FreightTemplateProdVo> templateProdList=new ArrayList<FreightTemplateProdVo>();
 			for (FreightTemplateProd source : ftProds) {
 				FreightTemplateProdVo target= new FreightTemplateProdVo();

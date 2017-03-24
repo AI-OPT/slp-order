@@ -20,7 +20,6 @@ import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
@@ -75,7 +74,7 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
     	this.orderIndexBusiSV.insertSesData(sesReq);
     	
         /* 4.库存回退 */
-        List<OrdOdProd> ordOdProds = this.getOrdOdProds(ordOrder.getOrderId());
+        List<OrdOdProd> ordOdProds =  ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
         if (CollectionUtil.isEmpty(ordOdProds))
             throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品明细信息["
                     + ordOrder.getOrderId() + "]");
@@ -84,25 +83,6 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
                     new TypeReference<Map<String, Integer>>(){});
             this.backStorageNum(ordOdProd.getTenantId(), ordOdProd.getSkuId(), storageNum);
         }
-    }
-
-    /**
-     * 获取订单商品费用明细
-     * 
-     * @param orderId
-     * @return
-     * @throws Exception
-     * @author zhangxw
-     * @ApiDocMethod
-     */
-    private List<OrdOdProd> getOrdOdProds(Long orderId) throws BusinessException, SystemException {
-        OrdOdProdCriteria example = new OrdOdProdCriteria();
-        OrdOdProdCriteria.Criteria criteria = example.createCriteria();
-        // 添加搜索条件
-        if (orderId != null && orderId.intValue() != 0) {
-            criteria.andOrderIdEqualTo(orderId);
-        }
-        return ordOdProdAtomSV.selectByExample(example);
     }
 
     /**

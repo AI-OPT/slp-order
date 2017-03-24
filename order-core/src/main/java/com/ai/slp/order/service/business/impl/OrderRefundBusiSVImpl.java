@@ -21,10 +21,7 @@ import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
-import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
-import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria.Criteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
@@ -119,11 +116,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     			}
     		}
     		/* 获取子订单下的所有售后订单*/
-    		OrdOrderCriteria example=new OrdOrderCriteria();
-    		OrdOrderCriteria.Criteria criteria = example.createCriteria();
-    		criteria.andOrigOrderIdEqualTo(ordOrder.getOrigOrderId());
-    		/*criteria.andOrderIdNotEqualTo(request.getOrderId());*/
-    		List<OrdOrder> orderList = ordOrderAtomSV.selectByExample(example);
+    		List<OrdOrder> orderList =ordOrderAtomSV.selectSaleOrder(ordOrder.getTenantId(), ordOrder.getOrigOrderId());
     		OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
     				 order.getParentOrderId()); //父订单
     		boolean flag=false;
@@ -201,12 +194,8 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 					"未能查询到相关商品信息[订单id:"+ordOrder.getOrderId()+"]");
 		}
 		OrdOdProd ordOdProd = prodList.get(0);
-		OrdOdProdCriteria example=new OrdOdProdCriteria();
-		Criteria criteria = example.createCriteria();
-		criteria.andOrderIdEqualTo(ordOrder.getOrigOrderId());
-		criteria.andSkuIdEqualTo(ordOdProd.getSkuId());
-		criteria.andTenantIdEqualTo(ordOdProd.getTenantId());
-		List<OrdOdProd> origProdList = ordOdProdAtomSV.selectByExample(example);
+		List<OrdOdProd> origProdList =ordOdProdAtomSV.selectSaleProd(ordOdProd.getTenantId(),
+				ordOrder.getOrigOrderId(), ordOdProd.getSkuId());
 		if(CollectionUtil.isEmpty(origProdList)) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"未能查询到相关商品信息[原始订单id:"+ordOrder.getOrigOrderId()+" ,skuId:"+ordOdProd.getSkuId()+"]");
@@ -221,12 +210,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
      */
     private boolean judgeState(OrdOrder order) {
     	//父订单下的其它子订单
-        OrdOrderCriteria example = new OrdOrderCriteria();
-        OrdOrderCriteria.Criteria criteria = example.createCriteria();
-        criteria.andTenantIdEqualTo(order.getTenantId()).andOrderIdNotEqualTo(order.getOrderId());
-        criteria.andParentOrderIdEqualTo(order.getParentOrderId());
-        criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
-        List<OrdOrder> childOrders = ordOrderAtomSV.selectByExample(example);
+        List<OrdOrder> childOrders =ordOrderAtomSV.selectOtherOrders(order);
 	    if(!CollectionUtil.isEmpty(childOrders)) {
 	    	for (OrdOrder ordOrder : childOrders) {
 	    		//其它子订单状态不是'完成'
