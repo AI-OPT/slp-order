@@ -18,9 +18,7 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV;
 import com.ai.slp.order.api.ordercancel.param.OrderCancelRequest;
-import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
-import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderCancelBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
@@ -106,15 +104,7 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(sysDate);
         calendar.add(Calendar.MINUTE, -1);
-   /*     OrdOrderCriteria example = new OrdOrderCriteria();
-        OrdOrderCriteria.Criteria criteria = example.createCriteria();
-        criteria.andOrderTimeLessThan(new Timestamp(calendar.getTimeInMillis()));
-        criteria.andStateEqualTo(OrdersConstants.OrdOrder.State.WAIT_PAY);
-        criteria.andBusiCodeEqualTo(OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER);
-        example.setLimitStart(0);
-        example.setLimitEnd(100);*/
         List<OrdOrder> list = ordOrderAtomSV.selectNotPayOrdersByTime(new Timestamp(calendar.getTimeInMillis()));
-      //  List<OrdOrder> list = ordOrderAtomSV.selectByExample(example);
         return list;
     }
 }
