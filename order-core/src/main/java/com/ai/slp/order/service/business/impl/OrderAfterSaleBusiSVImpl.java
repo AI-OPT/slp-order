@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.BeanUtils;
@@ -37,11 +38,12 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
-import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.OFCAfterSaleOrderCreateRequest;
 import com.ai.slp.order.vo.OrderAfterSaleApplyItemsVo;
+import com.ai.slp.order.vo.OrderStateChgVo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -55,8 +57,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	private IOrdOrderAtomSV ordOrderAtomSV;
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
-	@Autowired
-	private IOrderFrameCoreSV orderFrameCoreSV;
 	@Autowired
 	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
 	@Autowired
@@ -172,8 +172,12 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     	ordOrder.setState(newState);
     	ordOrder.setStateChgTime(sysDate);
 		ordOrderAtomSV.insertSelective(ordOrder);
-		orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, 
-				newState,chgDesc, ordOrder.getOperId(), null, null,sysDate);
+		 // 写入订单状态变化轨迹表
+        OrderStateChgVo stateChgVo= OrderStateChgUtil.getOrderStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, 
+				newState,chgDesc,null, ordOrder.getOperId(), null,sysDate);
+        /* 3.2 发送消息,记入订单轨迹信息*/
+		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
+				send(JSON.toJSONString(stateChgVo), 0);
     }
     
     /**
