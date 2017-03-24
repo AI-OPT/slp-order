@@ -2,7 +2,6 @@ package com.ai.slp.order.util;
 
 import java.sql.Timestamp;
 
-import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.vo.OrderStateChgVo;
 
 /**
@@ -18,7 +17,7 @@ public class OrderStateChgUtil {
            stateChgVo.setTenantId(tenantId);
            stateChgVo.setOrgState(orgState);
            stateChgVo.setNewState(newState);
-           stateChgVo.setChgDesc( OrdOdStateChg.ChgDesc.ORDER_PAID);
+           stateChgVo.setChgDesc(chgDesc);
            stateChgVo.setOrgId(orgId);
            stateChgVo.setOperId(operId);
            stateChgVo.setOperName(operName);
