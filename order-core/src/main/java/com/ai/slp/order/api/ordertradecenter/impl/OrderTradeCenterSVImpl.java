@@ -8,7 +8,11 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.slp.order.api.orderrule.interfaces.IOrderMonitorSV;
+import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
+import com.ai.slp.order.api.orderrule.param.OrderMonitorRequest;
 import com.ai.slp.order.api.ordertradecenter.interfaces.IOrderTradeCenterSV;
+import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -22,6 +26,8 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
 
     @Autowired
     private IOrdOrderTradeBusiSV ordOrderTradeBusiSV;
+    @Autowired
+    private IOrderMonitorSV orderMonitorSV;
     
     @Override
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
@@ -33,7 +39,14 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
     	//ccsMqFlag=MQConfigUtil.getCCSMqFlag();
     	//非消息模式下，同步调用服务
     	if(!ccsMqFlag){
-    		OrderTradeCenterResponse response = ordOrderTradeBusiSV.apply(request);
+    	 	//订单下单前异常监控
+        	OrderMonitorRequest monitorRequest=new OrderMonitorRequest();
+        	OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
+        	monitorRequest.setUserId(ordBaseInfo.getUserId());
+        	monitorRequest.setIpAddress(ordBaseInfo.getIpAddress());
+        	OrderMonitorBeforResponse beforSubmitOrder = orderMonitorSV.beforSubmitOrder(monitorRequest);
+    		OrderTradeCenterResponse response = ordOrderTradeBusiSV.apply(request,
+    				beforSubmitOrder,monitorRequest);
     		ResponseHeader responseHeader = new ResponseHeader(true,
     				ExceptCodeConstants.Special.SUCCESS, "成功");
     		response.setResponseHeader(responseHeader);
