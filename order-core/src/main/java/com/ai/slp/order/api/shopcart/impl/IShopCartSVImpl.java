@@ -3,17 +3,24 @@ package com.ai.slp.order.api.shopcart.impl;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
+import com.ai.opt.sdk.components.ccs.CCSClientFactory;
+import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.paas.ipaas.ccs.constants.ConfigException;
+import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.shopcart.interfaces.IShopCartSV;
 import com.ai.slp.order.api.shopcart.param.*;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.service.business.interfaces.IShopCartBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
+import com.ai.slp.order.util.IPassMcsUtils;
 import com.ai.slp.order.util.MQConfigUtil;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,10 +55,18 @@ public class IShopCartSVImpl implements IShopCartSV {
     	//非消息模式下，同步调用服务
     	if(!ccsMqFlag){
     		 try {
-    	            optRes = shopCartBusiSV.addCartProd(cartProd);
-    	            ResponseHeader responseHeader = new ResponseHeader(true,
-    	                    ExceptCodeConstants.Special.SUCCESS, "成功");
-    	            optRes.setResponseHeader(responseHeader);
+				 	//若购买数量为空,或小于0,则设置默认为1
+			        if (cartProd.getBuyNum() == null
+			                || cartProd.getBuyNum()<=0)
+			            cartProd.setBuyNum(1l);
+			        String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
+			        
+			        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+			        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
+		            optRes = shopCartBusiSV.addCartProd(cartProd,iCacheClient,cartUserId);
+		            ResponseHeader responseHeader = new ResponseHeader(true,
+		                    ExceptCodeConstants.Special.SUCCESS, "成功");
+		            optRes.setResponseHeader(responseHeader);
     	        }catch (BusinessException|SystemException e){
     	            optRes = new CartProdOptRes();
     	            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
@@ -113,7 +128,19 @@ public class IShopCartSVImpl implements IShopCartSV {
     	//非消息模式下，同步调用服务
     	if(!ccsMqFlag){
     		try {
-    			optRes = shopCartBusiSV.updateCartProd(cartProd);
+    			//若购买数量为空,或小于0,则设置默认为1
+    	        if (cartProd.getBuyNum() == null
+    	                || cartProd.getBuyNum()<=0)
+    	            cartProd.setBuyNum(1l);
+    	        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+    	        String cartUserId = IPassMcsUtils.genShopCartUserId(cartProd.getTenantId(),cartProd.getUserId());
+    	        //购物车单个商品数量限制
+    	        int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
+    	        //达到购物车单个商品数量上线
+    	        if (skuNumLimit>0 && cartProd.getBuyNum()>skuNumLimit){
+    	            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
+    	        }
+    			optRes = shopCartBusiSV.updateCartProd(cartProd,iCacheClient,cartUserId);
     			optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
     		}catch (BusinessException|SystemException e){
     			optRes = new CartProdOptRes();
@@ -187,5 +214,26 @@ public class IShopCartSVImpl implements IShopCartSV {
             optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
         }
         return optRes;
+    }
+    
+    /**
+     * 获取购物车中数量限制
+     *
+     * @param limitParams
+     * @return -1表示没有限制
+     */
+    public int getShopCartLimitNum(String limitParams){
+        if (StringUtils.isBlank(limitParams))
+            return -1;
+        String ccsParams = limitParams;
+        if (!limitParams.startsWith("/"))
+            ccsParams = "/"+ccsParams;
+        String limitNum = null;
+        try {
+            limitNum = CCSClientFactory.getDefaultConfigClient().get(ccsParams);
+        } catch (ConfigException e) {
+            e.printStackTrace();
+        }
+        return Integer.parseInt(limitNum);
     }
 }
