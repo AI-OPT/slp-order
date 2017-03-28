@@ -19,24 +19,6 @@ public class SearchFieldConfConstants {
     public static final String PROD_NAME = "ordextendes.prodinfos.prodname";
     public static final String DISCOUNT_FEE = "discountfee";
     public static final String ADJUST_FEE = "adjustfee";
-    public static final String KEYWORDS = "keywords";
-    public static final String UPDATE_FLAG = "updateflag";
-    public static final String LANGUNGE_ID = "ordextendes.langungeid";
-    public static final String USE_CODE = "usecode";
-    public static final String FIELD_CODE = "field";    
-    public static final String LSP_NAME = "lspname";
     public static final String PAY_STYLE = "paystyle";
-    public static final String UPDATE_OPER_NAME = "updatename";
-    public static final String LOCK_TIME = "locktime";
-    public static final String PAY_TIME = "paytime";
-    public static final String UPDATE_TIME = "updatetime";
-    public static final String STATE_TIME = "starttime";
-    public static final String OPER_ID = "operid";
-    public static final String TAKE_DAY = "takeday";
-    public static final String TAKE_TIME = "taketime";
     public static final String TOTAL_FEE = "totalfee";
-    public static final String INTERPER_NAME = "interpername";
-    public static final String ESEND_TIME = "esendtime";  
-    public static final String EVALUATE_TIME = "evaluatetime";
-    public static final String BUSI_TYPE = "busitype";
 }
