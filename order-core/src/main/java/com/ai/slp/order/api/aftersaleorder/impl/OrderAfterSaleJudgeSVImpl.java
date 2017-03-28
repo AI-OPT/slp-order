@@ -11,6 +11,7 @@ import com.ai.slp.order.api.aftersaleorder.interfaces.IOrderAfterSaleJudgeSV;
 import com.ai.slp.order.api.aftersaleorder.param.OrderJuageRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderJuageResponse;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleJudgeBusiSV;
+import com.ai.slp.order.util.CommonCheckUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(validation = "true")
@@ -21,6 +22,7 @@ public class OrderAfterSaleJudgeSVImpl implements IOrderAfterSaleJudgeSV {
 	private IOrderAfterSaleJudgeBusiSV orderAfterSaleJudgeBusiSV;
 	@Override
 	public OrderJuageResponse judge(OrderJuageRequest request) throws BusinessException, SystemException {
+		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
 		OrderJuageResponse response = orderAfterSaleJudgeBusiSV.judge(request);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
