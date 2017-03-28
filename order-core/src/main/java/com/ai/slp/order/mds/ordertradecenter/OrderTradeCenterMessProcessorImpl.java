@@ -34,7 +34,7 @@ public class OrderTradeCenterMessProcessorImpl implements IMessageProcessor {
         if (request==null)
             return;
         try {
-			this.ordOrderTradeBusiSV.apply(request);
+		//	this.ordOrderTradeBusiSV.apply(request);
         } catch (BusinessException e) {
 			e.printStackTrace();
 			logger.error("消息处理出现异常:"+e.getMessage());

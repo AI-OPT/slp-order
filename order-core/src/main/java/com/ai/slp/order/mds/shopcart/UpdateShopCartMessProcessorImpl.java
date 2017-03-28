@@ -33,7 +33,7 @@ public class UpdateShopCartMessProcessorImpl implements IMessageProcessor {
         if (cartProd==null)
             return;
         try {
-			this.shopCartBusiSV.updateCartProd(cartProd);
+		//	this.shopCartBusiSV.updateCartProd(cartProd);
         } catch (BusinessException e) {
 			e.printStackTrace();
 			logger.error("消息处理出现异常:"+e.getMessage());
