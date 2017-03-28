@@ -1,5 +1,6 @@
 package com.ai.slp.order.service.business.interfaces;
 
+import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
@@ -25,14 +26,14 @@ public interface IShopCartBusiSV {
      * @param cartProd
      * @return
      */
-    public CartProdOptRes addCartProd(CartProd cartProd);
+    public CartProdOptRes addCartProd(CartProd cartProd, ICacheClient iCacheClient, String cartUserId);
 
     /**
      * 更新购物车中商品数量
      * @param cartProd
      * @return
      */
-    public CartProdOptRes updateCartProd(CartProd cartProd);
+    public CartProdOptRes updateCartProd(CartProd cartProd, ICacheClient iCacheClient, String cartUserId);
 
     /**
      * 删除购物车中商品
