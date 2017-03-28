@@ -12,6 +12,7 @@ import com.ai.slp.order.api.orderrefund.interfaces.IOrderRefundSV;
 import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
 import com.ai.slp.order.service.business.interfaces.IOrderRefundBusiSV;
+import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(validation="true")
@@ -23,6 +24,8 @@ public class OrderRefundSVImpl implements IOrderRefundSV {
 
 	@Override
 	public BaseResponse partRefund(OrderRefundRequest request) throws BusinessException, SystemException {
+		/* 参数检验*/
+		ValidateUtils.validateOrderRefundRequest(request);
 		BaseResponse response=new BaseResponse();
 		orderRefundBusiSV.partRefund(request);
 	    ResponseHeader responseHeader = new ResponseHeader(true,
@@ -33,6 +36,8 @@ public class OrderRefundSVImpl implements IOrderRefundSV {
 
 	@Override
 	public BaseResponse refuseRefund(OrderRefuseRefundRequest request) throws BusinessException, SystemException {
+		/* 参数校验*/
+		ValidateUtils.validateOrderRefuseRefundRequest(request);
 		BaseResponse response=new BaseResponse();
 		orderRefundBusiSV.refuseRefund(request);
 	    ResponseHeader responseHeader = new ResponseHeader(true,

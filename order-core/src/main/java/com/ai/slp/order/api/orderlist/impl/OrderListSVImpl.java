@@ -7,6 +7,8 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.slp.order.api.orderlist.interfaces.IOrderListSV;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
@@ -43,7 +45,8 @@ public class OrderListSVImpl implements IOrderListSV {
 		/* 订单费用查询*/
 		OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
 				order.getOrderId());
-        QueryOrderResponse response = ordOrderBusiSV.queryOrder(ordOdFeeTotal,order);
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+        QueryOrderResponse response = ordOrderBusiSV.queryOrder(ordOdFeeTotal,order,iCacheSV);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
         response.setResponseHeader(responseHeader);

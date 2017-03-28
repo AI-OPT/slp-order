@@ -18,7 +18,11 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
+import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
+import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IDeliveryOrderPrintAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliveryOrderNoMergePrintBusiSV;
 import com.ai.slp.order.service.business.interfaces.IDeliveryOrderPrintBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
@@ -31,7 +35,10 @@ public class DeliveryOrderPrintSVImpl implements IDeliveryOrderPrintSV {
 	
 	@Autowired
 	private IDeliveryOrderPrintBusiSV deliveryOrderPrintBusiSV;
-	
+	@Autowired
+	private IOrdOrderAtomSV ordOrderAtomSV;
+	@Autowired
+	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	@Autowired
 	private IDeliveryOrderNoMergePrintBusiSV deliveryOrderNoMergePrintBusiSV;
 	@Autowired
@@ -40,7 +47,19 @@ public class DeliveryOrderPrintSVImpl implements IDeliveryOrderPrintSV {
 	
 	@Override
 	public DeliveryOrderQueryResponse query(DeliveryOrderPrintRequest request) throws BusinessException, SystemException {
-		DeliveryOrderQueryResponse response = deliveryOrderPrintBusiSV.query(request);
+		//参数校验
+		ValidateUtils.validateDeliveryOrderPrintRequest(request);
+		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+		if(order==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单信息[订单id:"+request.getTenantId()+"]");
+		} 
+		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByOrd(request.getTenantId(), request.getOrderId());
+		if(CollectionUtil.isEmpty(ordOdProds)) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+		}
+		DeliveryOrderQueryResponse response = deliveryOrderPrintBusiSV.query(request,order,ordOdProds);
 		ResponseHeader responseHeader = new ResponseHeader(true,
 	                ExceptCodeConstants.Special.SUCCESS, "成功");
 	    response.setResponseHeader(responseHeader);
@@ -51,13 +70,26 @@ public class DeliveryOrderPrintSVImpl implements IDeliveryOrderPrintSV {
 	public DeliveryOrderPrintResponse display(DeliveryOrderPrintRequest request) throws BusinessException, SystemException {
 		//参数校验
 		ValidateUtils.validateDeliveryOrderPrintRequest(request);
-		DeliveryOrderPrintResponse response = deliveryOrderPrintBusiSV.display(request);
+		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+		if(order==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单信息[订单id:"+request.getTenantId()+"]");
+		} 
+		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectOrdProd(request.getTenantId(), request.getOrderId(), 
+				OrdersConstants.OrdOrder.cusServiceFlag.NO);
+		if(CollectionUtil.isEmpty(ordOdProds)) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
+		}
+		DeliveryOrderPrintResponse response = deliveryOrderPrintBusiSV.display(request,order,ordOdProds);
 		ResponseHeader responseHeader = new ResponseHeader(true,
 	                ExceptCodeConstants.Special.SUCCESS, "成功");
 	    response.setResponseHeader(responseHeader);
 		return response;
 	}
 
+	
+	
 	@Override
 	public DeliveryOrderPrintResponse noMergePrint(DeliveryOrderPrintRequest request) throws BusinessException, SystemException {
 		/* 参数校验*/
@@ -68,6 +100,8 @@ public class DeliveryOrderPrintSVImpl implements IDeliveryOrderPrintSV {
 	    response.setResponseHeader(responseHeader);
 		return response;
 	}
+	
+	
 
 	@Override
 	public BaseResponse print(DeliveryOrderPrintInfosRequest request)throws BusinessException, SystemException {
