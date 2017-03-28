@@ -28,6 +28,8 @@ public interface IDeliveryOrderPrintAtomSV {
 	List<OrdOdDeliverInfo> selectByExample(OrdOdDeliverInfoCriteria example);
 	
 	List<OrdOdDeliverInfo> selectDeliverByPrintInfo(long orderId,String pringInfo);
+	
+	List<OrdOdDeliverInfo> selectDeliverByPrintInfoByHor(long orderId,String pringInfo);
 
 	int insert(DeliverInfoProd record);
 
