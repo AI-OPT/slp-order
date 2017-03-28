@@ -1,5 +1,19 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
@@ -22,15 +36,6 @@ import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.text.Collator;
-import java.util.*;
 
 /**
  * Created by jackieliu on 16/5/17.
@@ -65,17 +70,9 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * @return
      */
     @Override
-    public CartProdOptRes addCartProd(CartProd cartProd) {
+    public CartProdOptRes addCartProd(CartProd cartProd,ICacheClient iCacheClient, String cartUserId) {
     	CartProdOptRes cartProdOptRes = null;
-        //若购买数量为空,或小于0,则设置默认为1
-        if (cartProd.getBuyNum() == null
-                || cartProd.getBuyNum()<=0)
-            cartProd.setBuyNum(1l);
-        String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
-        
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
-        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
-
+    	String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
         //查询用户购物车概览
         ShopCartCachePointsVo pointsVo = queryCartPoints(iCacheClient,tenantId,userId);
         String cartProdStr = iCacheClient.hget(cartUserId,cartProd.getSkuId());
@@ -107,6 +104,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         else if (skuNumLimit>0 && odCartProd.getBuySum()>skuNumLimit){
             throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
         }
+        //TODO 查询商品信息需要优化
         ProductSkuInfo skuInfo = querySkuInfo(tenantId,cartProd.getSkuId());
         checkSkuInfoTotal(skuInfo,odCartProd.getBuySum());
         if (StringUtils.isBlank(cartProdStr))
@@ -144,24 +142,12 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * @return
      */
     @Override
-    public CartProdOptRes updateCartProd(CartProd cartProd) {
-        //若购买数量为空,或小于0,则设置默认为1
-        if (cartProd.getBuyNum() == null
-                || cartProd.getBuyNum()<=0)
-            cartProd.setBuyNum(1l);
+    public CartProdOptRes updateCartProd(CartProd cartProd, ICacheClient iCacheClient, String cartUserId) {
         String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
         checkSkuInfoTotal(tenantId,cartProd.getSkuId(),cartProd.getBuyNum());
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
-        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
         //若不存在,则直接进行添加操作
         if (!iCacheClient.hexists(cartUserId,cartProd.getSkuId())){
-            return addCartProd(cartProd);
-        }
-        //购物车单个商品数量限制
-        int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
-        //达到购物车单个商品数量上线
-        if (skuNumLimit>0 && cartProd.getBuyNum()>skuNumLimit){
-            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
+            return addCartProd(cartProd,iCacheClient,cartUserId);
         }
         String cartProdStr = iCacheClient.hget(cartUserId,cartProd.getSkuId());
         //更新商品数量
@@ -190,8 +176,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 cartProdAtomSV.updateCartProdById(cartProd0);
             }
         }
-
-
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
@@ -252,7 +236,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
 
     /**
      * 查询用户购物车中商品的信息
-     *
      * @param tenantId
      * @param userId
      * @return
@@ -261,11 +244,11 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     public List<CartProdInfo> queryCartProdOfUser(String tenantId, String userId) {
         ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
-        //若不存在购物车信息缓存,则建立缓存
+        /*//若不存在购物车信息缓存,则建立缓存
         if (!iCacheClient.exists(cartUserId)){
             //从数据库中查询,建立缓存
-            addShopCartCache(tenantId,userId);
-        }
+            addShopCartCache(tenantId,userId,iCacheClient);
+        }*/
         //查询出缓存中购物车所有商品信息
         Map<String,String> cartProdMap = iCacheClient.hgetAll(cartUserId);
         //删除概览信息
@@ -330,11 +313,10 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         //若不存在购物车信息缓存,则建立缓存
         if (!iCacheClient.exists(cartUserId)){
             //从数据库中查询,建立缓存
-            addShopCartCache(tenantId,userId);
+            addShopCartCache(tenantId,userId,iCacheClient);
         }
         //查询概览信息
-        String cartPrefix = iCacheClient.hget(IPassMcsUtils.genShopCartUserId(tenantId,userId)
-                , ShopCartConstants.McsParams.CART_POINTS);
+        String cartPrefix = iCacheClient.hget(cartUserId, ShopCartConstants.McsParams.CART_POINTS);
         ShopCartCachePointsVo pointsVo = JSON.parseObject(cartPrefix, ShopCartCachePointsVo.class);
         return pointsVo;
     }
@@ -345,8 +327,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * @param tenantId
      * @param userId
      */
-    private void addShopCartCache(String tenantId,String userId){
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+    private void addShopCartCache(String tenantId,String userId,ICacheClient iCacheClient){
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
         //查询用户购物车商品列表
         List<OrdOdCartProd> cartProdList = cartProdAtomSV.queryCartProdsOfUser(tenantId,userId);

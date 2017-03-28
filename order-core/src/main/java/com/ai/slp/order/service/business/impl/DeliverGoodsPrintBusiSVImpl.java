@@ -42,7 +42,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliverGoodsPrintBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
-import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.SequenceUtil;
 import com.alibaba.fastjson.JSON;
 
@@ -66,21 +65,9 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 	
 	//发货单打印查看
 	@Override
-	public DeliverGoodsPrintResponse deliverGoodsQuery(DeliverGoodsPrintRequest request) 
-			throws BusinessException, SystemException {
+	public DeliverGoodsPrintResponse deliverGoodsQuery(DeliverGoodsPrintRequest request,
+			List<OrdOdDeliverInfo> deliverInfos,OrdOrder order) throws BusinessException, SystemException {
 		DeliverGoodsPrintResponse response=new DeliverGoodsPrintResponse();
-		/* 参数校验*/
-		List<OrdOdDeliverInfo> infos = this.checkParamAndQueryInfos(request.getOrderId(), request.getTenantId());
-		if(CollectionUtil.isEmpty(infos)) {
-			logger.warn("未查询到相应的信息,请查看提货单信息是否已经打印.");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "未查询到相应的信息,请查看提货单信息是否已经打印.");
-		}
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(order==null) {
-			logger.warn("未能查询到指定的订单信息[订单id:"+ request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单信息[订单id:"+ request.getOrderId()+"]");
-		}
 		Map<String,Long> prodSkuMap=new HashMap<String,Long>();
 		/* 获取子订单下的售后订单商品数量*/
 		prodSkuMap = this.getAfterOrderInfos(order,prodSkuMap);
@@ -90,11 +77,16 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 					order.getTenantId(), order.getBatchNo());
 			for (OrdOrder mergeOrder : mergeOrders) {
 				prodSkuMap = this.getAfterOrderInfos(mergeOrder,prodSkuMap);
+				//TODO
+				List<OrdOdDeliverInfo> merDeliverInfos =deliveryOrderPrintAtomSV.
+						selectDeliverByPrintInfoByHor(mergeOrder.getOrderId(),
+						OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
+				deliverInfos.addAll(merDeliverInfos);
 			}
 		}
 		List<DeliverGoodsPrintVo> list=new ArrayList<DeliverGoodsPrintVo>();
 		long sum=0;
-		for (OrdOdDeliverInfo ordOdDeliverInfo : infos) {
+		for (OrdOdDeliverInfo ordOdDeliverInfo : deliverInfos) {
 			/* 查询提发货明细信息*/
 			List<DeliverInfoProd> deliverInfoProds =deliveryOrderPrintAtomSV.selectDeliverInfoProd(
 					ordOdDeliverInfo.getDeliverInfoId());
@@ -173,7 +165,7 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 				deliveryOrderPrintAtomSV.insertSelective(deliverInfoProd);
 				/* 更新合并订单状态并写入订单状态变化轨迹*/
 				this.updateOrderState(mergeId, request.getTenantId());
-				 temp.clear();
+				temp.clear();
 			}
 		}
 	}
@@ -211,33 +203,18 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 	 }
 	 
 	 
-		/**
-		 * 参数检验
-		 */
-		private List<OrdOdDeliverInfo> checkParamAndQueryInfos(long orderId,String tenantId) {
-			CommonCheckUtils.checkTenantId(tenantId, "");
-			if(orderId==0) {
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
-			}
-			/* 判断是否存在提货单打印信息*/
-			List<OrdOdDeliverInfo> deliverInfos =deliveryOrderPrintAtomSV.selectDeliverByPrintInfo(orderId,
-					OrdersConstants.OrdOdDeliverInfo.printInfo.ONE);
-			return deliverInfos;
+	/**
+	 * 获取订单下的商品信息
+	 */
+	private List<OrdOdProd> getOrdOdProds(String tenantId,long orderId) {
+		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByOrd(tenantId, orderId);
+		if(CollectionUtil.isEmpty(ordOdProds)) {
+			logger.error("未能查询到指定的订单商品明细信息[订单id:"+orderId+"]");
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+					"未能查询到指定的订单商品明细信息[订单id:"+orderId+"]");
 		}
-		
-		
-	  /**
-	   * 获取订单下的商品信息
-	   */
-		private List<OrdOdProd> getOrdOdProds(String tenantId,long orderId) {
-			List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByOrd(tenantId, orderId);
-			if(CollectionUtil.isEmpty(ordOdProds)) {
-				logger.warn("未能查询到指定的订单商品明细信息[订单id:"+orderId+"]");
-				throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-						"未能查询到指定的订单商品明细信息[订单id:"+orderId+"]");
-			}
-			return ordOdProds;
-		}
+		return ordOdProds;
+	}
 		
 		
 		
@@ -339,10 +316,10 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 			,OrdOdDeliverInfo ordOdDeliverInfo,List<DeliverGoodsPrintVo> list){ 
 		if(deliverInfoProd.getSalePrice() == 0){
 			invoicePrintVo.setSalePrice("0.00");;
-        }else {
-        	BigDecimal balance = BigDecimal.valueOf(deliverInfoProd.getSalePrice()).divide(new BigDecimal(1000L),2,BigDecimal.ROUND_HALF_UP);
-        	invoicePrintVo.setSalePrice(balance.toString());//厘转元
-        }
+	    }else {
+	    	BigDecimal balance = BigDecimal.valueOf(deliverInfoProd.getSalePrice()).divide(new BigDecimal(1000L),2,BigDecimal.ROUND_HALF_UP);
+	    	invoicePrintVo.setSalePrice(balance.toString());//厘转元
+	    }
 		List<Long> parseLong = (List<Long>) JSON.parse(ordOdDeliverInfo.getHorOrderId());
 		invoicePrintVo.setHorOrderId(parseLong);
 		list.add(invoicePrintVo);

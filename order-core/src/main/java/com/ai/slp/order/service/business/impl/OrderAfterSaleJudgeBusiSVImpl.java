@@ -40,9 +40,7 @@ public class OrderAfterSaleJudgeBusiSVImpl implements IOrderAfterSaleJudgeBusiSV
 	@Override
 	public OrderJuageResponse judge(OrderJuageRequest request) throws BusinessException, SystemException {
 		OrderJuageResponse response=new OrderJuageResponse();
-		/* 参数校验*/
 		List<OrdOrder> orderList=new ArrayList<>();
-		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
 		List<OrdOrder> ordOrderList = ordOrderAtomSV.selectSaleOrder(request.getTenantId(), request.getOrderId());
 		if(CollectionUtil.isEmpty(ordOrderList)) {
 			logger.error("没有查询到相应的售后订单详情[原始订单id:"+request.getOrderId()+"]");

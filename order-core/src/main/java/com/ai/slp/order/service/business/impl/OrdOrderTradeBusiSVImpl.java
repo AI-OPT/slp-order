@@ -93,28 +93,19 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     
     //订单提交
     @Override
-    public OrderTradeCenterResponse apply(OrderTradeCenterRequest request)
-            throws BusinessException, SystemException {
-    	long orderStart=System.currentTimeMillis();
+    public OrderTradeCenterResponse apply(OrderTradeCenterRequest request,	
+    		OrderMonitorBeforResponse beforSubmitOrder,
+    		OrderMonitorRequest monitorRequest) throws BusinessException, SystemException {
     	LOG.info("####loadtest####订单提交begin......");
-    	//订单异常监控
-    	OrderMonitorRequest monitorRequest=new OrderMonitorRequest();
-    	OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
-    	monitorRequest.setUserId(ordBaseInfo.getUserId());
-    	monitorRequest.setIpAddress(ordBaseInfo.getIpAddress());
-    	OrderMonitorBeforResponse beforSubmitOrder = orderMonitorSV.beforSubmitOrder(monitorRequest);
-    	long orderBWarnEnd=System.currentTimeMillis();
-    	LOG.info("####loadtest####订单提交前完成监控,当前时间戳>>>>>>>>>>："+orderBWarnEnd+",用时:"+(orderBWarnEnd-orderStart)+"毫秒");
-        OrderTradeCenterResponse response = new OrderTradeCenterResponse();
+    	OrderTradeCenterResponse response = new OrderTradeCenterResponse();
         List<OrderResInfo> orderResInfos=new ArrayList<OrderResInfo>();
         List<OrdProductResInfo> ordProductResList =null;
         Timestamp sysDate = DateUtil.getSysDate();
         List<OrdProductDetailInfo> ordProductDetailInfos = request.getOrdProductDetailInfos();
-        int i=0;
         for (OrdProductDetailInfo ordProductDetailInfo : ordProductDetailInfos) {
         	OrderResInfo orderResInfo=new OrderResInfo();
         	/* 1.创建业务订单,并返回订单Id*/
-        	OrdOrder ordOrder = this.createOrder(ordBaseInfo,beforSubmitOrder,
+        	OrdOrder ordOrder = this.createOrder(request.getOrdBaseInfo(),beforSubmitOrder,
         			request.getTenantId(),sysDate,ordProductDetailInfo);
         	long orderId=ordOrder.getOrderId();
         	/* 2.创建商品明细,费用明细信息 */
@@ -129,12 +120,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	this.createOrderLogistics(request, sysDate, orderId);
         	/* 6. 记录一条订单创建轨迹记录,并处理订单信息 */
         	this.writeOrderCreateStateChg(request.getTenantId(), sysDate, ordOrder);
-        	long orderAWarnStart=System.currentTimeMillis();
-        	LOG.info("####loadtest####订单提交成功后进行监控,当前时间戳>>>>>>>>>>："+orderAWarnStart);
         	/* 7.订单提交成功后监控服务*/
         	orderMonitorSV.afterSubmitOrder(monitorRequest);
-        	long orderAWarnEnd=System.currentTimeMillis();
-        	LOG.info("####loadtest####订单提交成功后完成监控,当前时间戳>>>>>>>>>>："+orderAWarnEnd+",用时:"+(orderAWarnEnd-orderAWarnStart)+"毫秒");
         	
         	/* 8.刷新搜索引擎数据*/
         	SesDataRequest sesReq=new SesDataRequest();
@@ -146,15 +133,11 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	orderResInfo.setOrderId(orderId);
         	orderResInfo.setOrdProductResList(ordProductResList);
         	orderResInfos.add(orderResInfo);
-        	long orderFori=System.currentTimeMillis();
-        	LOG.info("####loadtest####订单提交前完成监控,当前时间戳>>>>>>>>>>i=["+(i++)+"]："+orderFori+",用时:"+(orderFori-orderStart)+"毫秒");
         }
         /* 10.返回费用总金额*/
         OrdFeeInfo ordFeeInfo = this.buildFeeInfo(request);
         response.setOrdFeeInfo(ordFeeInfo);
         response.setOrderResInfos(orderResInfos);
-        long orderEnd=System.currentTimeMillis();
-    	LOG.info("####loadtest####订单提交end......,当前时间戳>"+(orderEnd-orderStart)+"毫秒");
         return response;
     }
     
@@ -253,12 +236,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         long totalJf=0;
         long prodTotalFee=0;
         for (OrdProductInfo ordProductInfo : ordProductInfoList) {
-        	long skuStart=System.currentTimeMillis();
-        	LOG.info("####loadtest####开始查询sku单品信息,当前时间戳>>>>>>>>>>："+skuStart);
             StorageNumRes storageNumRes = this.querySkuInfo(request.getTenantId(),
                     ordProductInfo.getSkuId(), ordProductInfo.getBuySum());
-            long skuEnd=System.currentTimeMillis();
-            LOG.info("####loadtest####完成查询sku单品信息,当前时间戳>>>>>>>>>>："+skuEnd+",用时:"+(skuEnd-skuStart)+"毫秒");
             boolean isSuccess = storageNumRes.getResponseHeader().getIsSuccess();
             if(!isSuccess){
             	throw new BusinessException(storageNumRes.getResponseHeader().getResultCode(), 

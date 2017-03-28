@@ -14,18 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
-import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintInfosRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryProdPrintVo;
 import com.ai.slp.order.api.sesdata.param.SesDataRequest;
-import com.ai.slp.order.constants.MonitorCoonstants;
 import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
@@ -45,7 +42,6 @@ import com.ai.slp.order.service.business.interfaces.IDeliveryOrderPrintBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
-import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.fastjson.JSON;
 
 @Service
@@ -70,18 +66,9 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	
 	//提货单查看
 	@Override
-	public DeliveryOrderQueryResponse query(DeliveryOrderPrintRequest request) {
-		/* 参数校验*/
-		OrdOrder order = this.checkParamAndQueryOrder(request);
-		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
+	public DeliveryOrderQueryResponse query(DeliveryOrderPrintRequest request,
+			OrdOrder order,List<OrdOdProd> ordOdProds) {
 		DeliveryOrderQueryResponse response=new DeliveryOrderQueryResponse();
-		/* 获取订单下的商品信息*/
-		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByOrd(request.getTenantId(), request.getOrderId());
-		if(CollectionUtil.isEmpty(ordOdProds)) {
-			logger.warn("未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
-		}
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
 				/* 判断该商品对应的售后订单状态*/
@@ -134,8 +121,6 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 				orderList = this.judgeOrder(originalAttachs,orderProdAttachs,orderList,addressInfo);
 				if(!CollectionUtil.isEmpty(orderProdAttachs)) {
 					response.setMark(OrdersConstants.printMark.CAN_MERGE);
-					//存入缓存中 
-					cacheClient.set(String.valueOf(request.getOrderId()), JSON.toJSONString(orderProdAttachs));
 					break;
 				}else {
 					response.setMark(OrdersConstants.printMark.NOT_MERGE);
@@ -149,15 +134,12 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	
 	//提货单展示
 	@Override
-	public DeliveryOrderPrintResponse display(DeliveryOrderPrintRequest request)
+	public DeliveryOrderPrintResponse display(DeliveryOrderPrintRequest request,
+			OrdOrder order,List<OrdOdProd> ordOdProds)
 			throws BusinessException, SystemException {
 		DeliveryOrderPrintResponse response=new DeliveryOrderPrintResponse();
-		/* 参数校验*/
-		OrdOrder order = this.checkParamAndQueryOrder(request);
 		List<DeliveryProdPrintVo> list=new ArrayList<DeliveryProdPrintVo>();
 		long sum = 0;
-		// 获取订单下的商品信息
-		List<OrdOdProd> ordOdProds = getOrdOdProds(request);
 		//订单规则
 		OrdRule ordRule = ordRuleAtomSV.getOrdRule(OrdRuleConstants.MERGE_ORDER_SETTING_ID);
 		if(ordRule==null) {
@@ -206,7 +188,6 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		response.setSum(sum);
 		response.setOrderId(request.getOrderId());
 		response.setDeliveryProdPrintVos(list);
-		
 		return response;
 	}
 	
@@ -259,37 +240,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		
 	}
 	
-	/**
-	 * 参数检验及获取订单信息
-	 */
-	private OrdOrder checkParamAndQueryOrder(DeliveryOrderPrintRequest request) {
-		ValidateUtils.validateDeliveryOrderPrintRequest(request);
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
-		if(order==null) {
-			logger.warn("未能查询到指定的订单信息[订单id:"+ request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单信息[订单id:"+request.getTenantId()+"]");
-		} 
-		return order;
-	}
-	
-	
-  /**
-   * 获取订单下的商品信息
-   */
-	private List<OrdOdProd> getOrdOdProds(DeliveryOrderPrintRequest request) {
-		String tenantId = request.getTenantId();
-		Long orderId = request.getOrderId();
-		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectOrdProd(tenantId, orderId, 
-				OrdersConstants.OrdOrder.cusServiceFlag.NO);
-		if(CollectionUtil.isEmpty(ordOdProds)) {
-			logger.warn("未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单商品明细信息[订单id:"+request.getOrderId()+"]");
-		}
-		return ordOdProds;
-	}
-	
+			
 	/**
 	 *  组装订单商品信息集合
 	 */
@@ -342,9 +293,9 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 					"未能查询到指定的订单信息[订单id:"+ mergeId+"]");
 		}
 		String orgState = ordOrder.getState();
-		if(OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(orgState)) {
+	/*	if(OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(orgState)) {
 			return;
-		}
+		}*/
 		String state1 = OrdersConstants.OrdOrder.State.LADING_BILL_FINISH_PRINT;
 		String state2 = OrdersConstants.OrdOrder.State.FINISH_DISTRIBUTION;
 		String newState = OrdersConstants.OrdOrder.State.WAIT_DELIVERY;

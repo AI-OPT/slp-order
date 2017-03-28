@@ -27,7 +27,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderRefundBusiSV;
-import com.ai.slp.order.util.ValidateUtils;
 
 @Service
 @Transactional
@@ -49,8 +48,6 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	
 	//同意退款
 	public void partRefund(OrderRefundRequest request) throws BusinessException, SystemException {
-		/* 参数检验*/
-		ValidateUtils.validateOrderRefundRequest(request);
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(ordOrder==null) {
 			logger.error("订单信息不存在[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
@@ -81,8 +78,6 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	//拒绝退款
 	@Override
 	public void refuseRefund(OrderRefuseRefundRequest request) throws BusinessException, SystemException {
-		/* 参数校验*/
-		ValidateUtils.validateOrderRefuseRefundRequest(request);
 		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
 		if(ordOrder==null) {
 			logger.error("订单信息不存在[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");

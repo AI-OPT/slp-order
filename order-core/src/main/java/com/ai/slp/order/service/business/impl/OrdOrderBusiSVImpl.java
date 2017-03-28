@@ -86,14 +86,14 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	
 	//订单详情查询
 	@Override
-	public QueryOrderResponse queryOrder(OrdOdFeeTotal ordOdFeeTotal, OrdOrder order) 
+	public QueryOrderResponse queryOrder(OrdOdFeeTotal ordOdFeeTotal, OrdOrder order,ICacheSV iCacheSV ) 
 			throws BusinessException, SystemException {
 		logger.debug("开始订单详情查询..");
-		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 		QueryOrderResponse response = new QueryOrderResponse();
 		OrdOrderVo ordOrderVo = null;
 		/* 1.订单主表信息 */
 		if (order!=null) {
+			logger.info("订单主表信息存在>>>>>>>>>");
 			ordOrderVo = new OrdOrderVo();
 			ordOrderVo.setOrderId(order.getOrderId());
 			ordOrderVo.setOrderType(order.getOrderType());
@@ -112,12 +112,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			ordOrderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
 			ordOrderVo.setChlId(order.getChlId()); 
 			ordOrderVo.setRouteId(order.getRouteId());
+			// 查询仓库名称
 			IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
 			RouteIdParamRequest routeRequest = new RouteIdParamRequest();
 			if (order.getRouteId() != null) {
 				routeRequest.setRouteId(order.getRouteId());
 				RouteResponse routeInfo = iRouteManageSV.findRouteInfo(routeRequest);
-				ordOrderVo.setRouteName(routeInfo.getRouteName()); // 仓库信息
+				ordOrderVo.setRouteName(routeInfo.getRouteName()); 
 			}
 			ordOrderVo.setParentOrderId(order.getParentOrderId());
 			ordOrderVo.setUserId(order.getUserId());
@@ -133,6 +134,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		}
 		/* 2.订单费用信息 */
 		if (ordOdFeeTotal!=null) {
+			logger.info("订单费用信息存在>>>>>>>>>");
 			ordOrderVo.setAdjustFee(ordOdFeeTotal.getAdjustFee());
 			ordOrderVo.setDiscountFee(ordOdFeeTotal.getDiscountFee());
 			ordOrderVo.setOperDiscountFee(ordOdFeeTotal.getOperDiscountFee());
@@ -252,8 +254,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	
 	
 	/**
-	 * 商品集合
-	 * 
+	 * 订单下面的商品信息
 	 * @param orderId
 	 * @return
 	 * @author zhangxw
@@ -282,7 +283,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				ordProductVo.setJfFee(ordOdProd.getJfFee()); // 消费积分
 				ordProductVo.setGiveJF(ordOdProd.getJf()); // 赠送积分
 				ordProductVo.setProdCode(ordOdProd.getProdCode()); // 商品编码
-				ordProductVo.setSkuStorageId(ordOdProd.getSkuStorageId());// 仓库id
+				ordProductVo.setSkuStorageId(ordOdProd.getSkuStorageId());
 				ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
 				ordProductVo.setProductImage(productImage);
 				ordProductVo.setImageUrl(ordOdProd.getProdDesc()); // 图片id

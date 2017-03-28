@@ -178,11 +178,4 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 		}
 		return prodInfos;
 	}
-
-	
-	@Override
-	public List<OrderInfo> orderFillQuery(List<OrdOrder> ordList) throws BusinessException, SystemException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
