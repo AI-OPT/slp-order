@@ -844,8 +844,10 @@ public final class OrdersConstants {
 		public static final String PART_DELIVER_GOODS = "18";
 	}
 	public static final class MDSNS {
-		/** 订单系统的下单的消息队列命名空间 */
+		/** 订单系统的下单预警的消息队列命名空间 */
 		public static final String MDS_NS_ORDER_TOPIC = "MDS_NS_ORDER_TOPIC";
+		/** 订单系统订单状态轨迹的消息队列命名空间 */
+		public static final String MDS_NS_ORDER_STATE_TOPIC = "MDS_NS_ORDER_STATE_TOPIC";
 		/** 订单系统的售后退货的消息队列命名空间 */
 		public static final String MDS_NS_AFTERSALEORDER_BACK_TOPIC = "MDS_NS_AFTERSALEORDER_BACK_TOPIC";
 		/** 订单系统的售后换货的消息队列命名空间 */
@@ -856,8 +858,6 @@ public final class OrdersConstants {
 		public static final String MDS_NS_ORDER_RETURNOID_TOPIC = "MDS_NS_ORDER_RETURNOID_TOPIC";
 		/** 订单系统的OFC售后订单的消息队列命名空间 */
 		public static final String MDS_NS_OFCORDER_BACK_TOPIC = "MDS_NS_OFCORDER_BACK_TOPIC";
-		/** 订单系统订单状态轨迹的消息队列命名空间 */
-		public static final String MDS_NS_ORDER_STATE_TOPIC = "MDS_NS_ORDER_STATE_TOPIC";
 		/** 订单系统的购物车添加的消息队列命名空间 */
 		public static final String MDS_NS_SHOPCART_ADD_TOPIC = "MDS_NS_SHOPCART_ADD_TOPIC";
 		/** 订单系统的购物车更新的消息队列命名空间 */
