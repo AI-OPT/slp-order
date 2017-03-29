@@ -20,7 +20,6 @@ import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.DateUtil;
-import com.ai.slp.order.api.orderrule.interfaces.IOrderMonitorSV;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
@@ -69,25 +68,16 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 
     @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
-
     @Autowired
     private IOrdOdProdAtomSV ordOdProdAtomSV;
-
     @Autowired
     private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
-
     @Autowired
     private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
-    
     @Autowired
     private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
-    
     @Autowired
     private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
-    
-    @Autowired
-    private IOrderMonitorSV orderMonitorSV;
-    
     @Autowired
     private IOrderIndexBusiSV orderIndexBusiSV;
     
@@ -120,8 +110,12 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	this.createOrderLogistics(request, sysDate, orderId);
         	/* 6. 记录一条订单创建轨迹记录,并处理订单信息 */
         	this.writeOrderCreateStateChg(request.getTenantId(), sysDate, ordOrder);
-        	/* 7.订单提交成功后监控服务*/
-        	orderMonitorSV.afterSubmitOrder(monitorRequest);
+        	
+        	/* 7.订单提交成功后监控服务  */
+        	//orderMonitorSV.afterSubmitOrder(monitorRequest);
+        	//异步处理 发送消息
+    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).
+    				send(JSON.toJSONString(monitorRequest), 0);
         	
         	/* 8.刷新搜索引擎数据*/
         	SesDataRequest sesReq=new SesDataRequest();
