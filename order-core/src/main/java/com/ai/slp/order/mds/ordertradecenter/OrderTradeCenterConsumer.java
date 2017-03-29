@@ -13,16 +13,17 @@ import com.ai.opt.sdk.components.mds.base.AbstractMdsConsumer;
 import com.ai.paas.ipaas.mds.IMessageConsumer;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
+import com.ai.slp.order.api.orderrule.interfaces.IOrderMonitorSV;
 import com.ai.slp.order.constants.OrdersConstants;
-import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 
-//@Component
+@Component
 public class OrderTradeCenterConsumer extends AbstractMdsConsumer {
 	private static Logger logger = LoggerFactory.getLogger(OrderTradeCenterConsumer.class);
 
-	@Autowired
-    private IOrdOrderTradeBusiSV ordOrderTradeBusiSV;
-	@Override
+    @Autowired
+    private IOrderMonitorSV orderMonitorSV;
+	
+    @Override
 	public void startMdsConsumer() throws Exception {
 		logger.error("开始启动OrderTradeCenterMdsConsumer。。。。。");
 		IMsgProcessorHandler msgProcessorHandler=new IMsgProcessorHandler() {
@@ -31,7 +32,7 @@ public class OrderTradeCenterConsumer extends AbstractMdsConsumer {
                 List<IMessageProcessor> processors = new ArrayList<>();
                 IMessageProcessor processor = null;
                 for (int i = 0; i < paramInt; i++) {
-                    processor = new OrderTradeCenterMessProcessorImpl(ordOrderTradeBusiSV);
+                    processor = new OrderTradeCenterMessProcessorImpl(orderMonitorSV);
                     processors.add(processor);
                 }
                 return processors.toArray(new IMessageProcessor[processors.size()]);
