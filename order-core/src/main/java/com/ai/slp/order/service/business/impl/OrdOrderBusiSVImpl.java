@@ -85,6 +85,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 
 	
 	//订单详情查询
+	@Transactional(readOnly=true)
 	@Override
 	public QueryOrderResponse queryOrder(OrdOdFeeTotal ordOdFeeTotal, OrdOrder order,ICacheSV iCacheSV ) 
 			throws BusinessException, SystemException {
