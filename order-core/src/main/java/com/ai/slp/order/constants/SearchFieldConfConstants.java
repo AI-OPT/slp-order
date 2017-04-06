@@ -6,6 +6,7 @@ public class SearchFieldConfConstants {
     public static final String ORDER_TIME = "ordertime";
     public static final String PORDER_ID = "porderid";
     public static final String USER_NAME = "username";
+    public static final String FLAG = "flag";
     public static final String CHL_ID = "chlid";
     public static final String DELIVERY_FLAG = "deliveryflag";
     public static final String ROUTE_ID = "routeid";
