@@ -29,7 +29,6 @@ public interface INotPaidOrderModifySV {
 	  * @throws BusinessException
 	  * @throws SystemException
 	  * @author caofz
-	  * @ApiDocMethod
 	  * @ApiCode NOTPAYORDER_MODIFY_001
 	  * @RestRelativeURL notpayorder/modify
 	  */
