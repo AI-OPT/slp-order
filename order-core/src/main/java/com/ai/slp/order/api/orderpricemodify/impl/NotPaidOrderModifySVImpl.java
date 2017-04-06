@@ -13,7 +13,9 @@ import com.ai.slp.order.api.orderpricemodify.interfaces.INotPaidOrderModifySV;
 import com.ai.slp.order.api.orderpricemodify.param.OrderModifyRequest;
 import com.ai.slp.order.service.business.interfaces.INotPaidOrderModifyBusiSV;
 import com.ai.slp.order.util.ValidateUtils;
+import com.alibaba.dubbo.config.annotation.Service;
 
+@Service
 @Component
 public class NotPaidOrderModifySVImpl implements INotPaidOrderModifySV{
 	@Autowired
