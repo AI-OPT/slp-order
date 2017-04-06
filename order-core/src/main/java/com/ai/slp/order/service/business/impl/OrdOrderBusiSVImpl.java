@@ -85,8 +85,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 
 	
 	//订单详情查询
-	@Transactional(readOnly=true)
 	@Override
+	@Transactional(readOnly=true)
 	public QueryOrderResponse queryOrder(OrdOdFeeTotal ordOdFeeTotal, OrdOrder order,ICacheSV iCacheSV ) 
 			throws BusinessException, SystemException {
 		logger.debug("开始订单详情查询..");
@@ -214,6 +214,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 
 	//订单列表查询
 	@Override
+	@Transactional(readOnly=true)
 	public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
 			throws BusinessException, SystemException {
 		// 调用搜索引擎进行查询
