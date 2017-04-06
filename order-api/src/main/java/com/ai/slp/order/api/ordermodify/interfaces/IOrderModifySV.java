@@ -22,9 +22,9 @@ public interface IOrderModifySV {
 	 * @throws SystemException
 	 * @author zhanglh
 	 * @ApiCode ORDER_MODIFY_002
-	 * @RestRelativeURL order/stateModify
+	 * @RestRelativeURL order/modify
 	 */
 	 @POST
-	 @Path("/stateModify")
+	 @Path("/modify")
 	 public BaseResponse modify(OrdRequest request)throws BusinessException,SystemException; 
 }
