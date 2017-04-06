@@ -28,7 +28,7 @@
 	<!-- 提供者超时时间设置 -->
 	<dubbo:provider timeout="${dubbo.provider.timeout}" retries="0" threads="300" />
 	<!-- 注解方式 -->
-	<dubbo:annotation package="com.ai.slp.order.api.orderpricemodify" />
+	<dubbo:annotation package="com.ai.slp.order.api" />
 	<!-- 引入其它xml文件 -->
 	<import resource="../../context/core-context.xml" />
 	<import resource="../../context/elasticjob-context.xml" />
