@@ -24,8 +24,10 @@ dependencies {
     
 
 	 //elasticjob  
-    compile "com.dangdang:elastic-job-lite-core:2.0.0-SNAPSHOT"  
-    compile "com.dangdang:elastic-job-lite-spring:2.0.0-SNAPSHOT"  
+  //  compile "com.dangdang:elastic-job-lite-core:2.0.0-SNAPSHOT"  
+  //  compile "com.dangdang:elastic-job-lite-spring:2.0.0-SNAPSHOT"  
+   compile "com.dangdang:elastic-job-lite-core:2.0.0"  
+    compile "com.dangdang:elastic-job-lite-spring:2.0.0"  
 
 	//jsch
 	compile group: 'com.jcraft', name: 'jsch', version: '0.1.42'
