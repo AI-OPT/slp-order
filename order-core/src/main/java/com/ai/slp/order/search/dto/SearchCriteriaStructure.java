@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
@@ -111,6 +110,17 @@ public class SearchCriteriaStructure {
 			option.setSearchType(SearchOption.SearchType.term);
 			searchCriteria.setFieldValue(request.getStateList());
 			searchCriteria.setField(SearchFieldConfConstants.ORD_EXTENDES_STATE);
+			searchCriteria.setOption(option);
+			searchfieldVos.add(searchCriteria);
+		}
+		//订单业务标识 列表区分显示显示
+		if (!CollectionUtil.isEmpty(request.getFlagList())) {
+			SearchCriteria searchCriteria = new SearchCriteria();
+			SearchOption option = new SearchOption();
+			option.setSearchLogic(SearchOption.SearchLogic.must);
+			option.setSearchType(SearchOption.SearchType.term);
+			searchCriteria.setFieldValue(request.getFlagList());
+			searchCriteria.setField(SearchFieldConfConstants.FLAG);
 			searchCriteria.setOption(option);
 			searchfieldVos.add(searchCriteria);
 		}
