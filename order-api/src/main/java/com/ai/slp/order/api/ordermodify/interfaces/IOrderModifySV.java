@@ -21,7 +21,7 @@ public interface IOrderModifySV {
 	 * @throws BusinessException
 	 * @throws SystemException
 	 * @author zhanglh
-	 * @ApiCode ORDER_STATEMODIFY_001
+	 * @ApiCode ORDER_MODIFY_002
 	 * @RestRelativeURL order/stateModify
 	 */
 	 @POST
