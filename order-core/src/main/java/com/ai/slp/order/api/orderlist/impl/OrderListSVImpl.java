@@ -19,7 +19,6 @@ import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
-import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 
@@ -57,10 +56,7 @@ public class OrderListSVImpl implements IOrderListSV {
 	public BehindQueryOrderListResponse behindQueryOrderList(BehindQueryOrderListRequest orderListRequest)
 			throws BusinessException, SystemException {
 		/* 参数校验*/
-		if (orderListRequest == null) {
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
-		}
-		CommonCheckUtils.checkTenantId(orderListRequest.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
+		ValidateUtils.validateOrderQueryList(orderListRequest);
 		BehindQueryOrderListResponse response = ordOrderBusiSV.behindQueryOrderList(orderListRequest);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
