@@ -45,6 +45,10 @@ public class BehindQueryOrderListRequest extends BaseInfo{
     private List<Object> stateList;
     
     /**
+     * 订单业务标识 (区分订单处理列表和订单统计列表显示)
+     */
+    private List<Object> flagList;
+    /**
 	 * 商品名称(订单统计)
 	 */
 	private String prodName;
@@ -56,6 +60,7 @@ public class BehindQueryOrderListRequest extends BaseInfo{
 	 * 父订单状态(订单统计)
 	 */
 	private String parentOrderState;
+	
     
     /**
      * 订单生成时间开始
@@ -187,5 +192,13 @@ public class BehindQueryOrderListRequest extends BaseInfo{
 
 	public void setParentOrderState(String parentOrderState) {
 		this.parentOrderState = parentOrderState;
+	}
+
+	public List<Object> getFlagList() {
+		return flagList;
+	}
+
+	public void setFlagList(List<Object> flagList) {
+		this.flagList = flagList;
 	}
 }
