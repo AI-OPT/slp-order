@@ -5,11 +5,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.opt.sdk.util.UUIDUtil;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.PropertiesUtil;
 import com.ai.slp.order.vo.OrdOdProdVo;
 import com.alibaba.fastjson.JSON;
@@ -26,6 +30,9 @@ public class OrdOdProdThread extends Thread {
 	private static final Log LOG = LogFactory.getLog(OrdOdProdThread.class);
 
 	private IOfcBusiSV ofcSV;
+	
+	@Autowired
+	IOrderIndexBusiSV orderIndexBusiSV;
 
 	private BlockingQueue<String[]> ordOdProdQueue;
 
@@ -84,7 +91,14 @@ public class OrdOdProdThread extends Thread {
 					}
 					LOG.error("保存订单商品信息开始,时间:" + DateUtil.getSysDate());
 					LOG.error(JSON.toJSONString(ordOdProd));
-						ofcSV.insertOrdOdProdOfc(ordOdProd);
+					ofcSV.insertOrdOdProdOfc(ordOdProd);
+					/**
+					 * 刷新搜索引擎数据
+					 */
+			    	SesDataRequest sesReq=new SesDataRequest();
+			    	sesReq.setTenantId(OrdersConstants.TENANT_ID);
+			    	sesReq.setParentOrderId(ordOdProd.getOrderId());
+			    	orderIndexBusiSV.insertSesData(sesReq);
 					LOG.error("保存订单商品信息结束,时间" + DateUtil.getSysDate());
 				}
 			} catch (Exception e) {
