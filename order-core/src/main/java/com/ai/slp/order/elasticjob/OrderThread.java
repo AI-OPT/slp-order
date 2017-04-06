@@ -32,7 +32,7 @@ public class OrderThread extends Thread {
 	private IOfcBusiSV ofcSV;
 
 	private BlockingQueue<String[]> ordOrderQueue;
-
+	
 	public OrderThread(BlockingQueue<String[]> ordOrderQueue, IOfcBusiSV ofcSV) {
 		this.ordOrderQueue = ordOrderQueue;
 		this.ofcSV = ofcSV;
