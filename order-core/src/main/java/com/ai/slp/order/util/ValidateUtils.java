@@ -18,6 +18,7 @@ import com.ai.slp.order.api.invoiceprint.param.InvoiceModifyRequest;
 import com.ai.slp.order.api.invoiceprint.param.InvoiceNoticeRequest;
 import com.ai.slp.order.api.ofcactual.param.OfcOrderCreateRequest;
 import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
+import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.ordermodify.param.OrdRequest;
 import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
@@ -765,6 +766,21 @@ public class ValidateUtils {
 			}
 		}
 	}
+	
+	public static void validateOrderQueryList(BehindQueryOrderListRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		if(StringUtil.isBlank(condition.getTenantId())){
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"租户id不能为空");
+		}
+		if(condition.getPageNo()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码不能为空");
+		}
+		if(condition.getPageSize()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页数不能为空");
+		}
+	}  
 	
 	
 	
