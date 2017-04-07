@@ -167,7 +167,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     		this.updateProdCusServiceFlag(ordOrder);
         }
         
-    	/* 8.刷新搜索引擎数据*/
+    	/* 刷新搜索引擎数据*/
     	SesDataRequest sesReq=new SesDataRequest();
     	sesReq.setTenantId(request.getTenantId());
     	sesReq.setParentOrderId(ordOrder.getParentOrderId());
