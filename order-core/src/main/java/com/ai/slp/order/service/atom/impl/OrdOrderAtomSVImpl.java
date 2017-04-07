@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.dao.mapper.attach.OrdOrderAttachMapper;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper;
@@ -17,6 +18,8 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 	
 	@Autowired
 	private OrdOrderMapper ordOrderMapper;
+	@Autowired
+	private OrdOrderAttachMapper ordOrderAttachMapper;
 
     @Override
     public List<OrdOrder> selectByExample(OrdOrderCriteria example) {
@@ -161,6 +164,24 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 		criteria.andOrigOrderIdEqualTo(origOrderId);
 		criteria.andOrderIdNotEqualTo(orderId);
 		return ordOrderMapper.selectByExample(example);
+	}
+
+	@Override
+	public int updateOrder(OrdOrder record) {
+		// TODO Auto-generated method stub
+		return ordOrderAttachMapper.updateOrdOrder(record);
+	}
+	
+	@Override
+	public int updateOFCOrder(OrdOrder record) {
+		// TODO Auto-generated method stub
+		return ordOrderAttachMapper.updateOFCOrder(record);
+	}
+
+	@Override
+	public int updateOrderState(OrdOrder record) {
+		// TODO Auto-generated method stub
+		return ordOrderAttachMapper.updateOrderState(record);
 	}
 	
 }

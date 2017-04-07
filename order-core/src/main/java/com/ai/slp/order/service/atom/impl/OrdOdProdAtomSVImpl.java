@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.slp.order.dao.mapper.attach.OrdOrderAttachMapper;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdProdMapper;
@@ -15,6 +16,8 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 public class OrdOdProdAtomSVImpl implements IOrdOdProdAtomSV {
 	@Autowired
 	private OrdOdProdMapper ordOdProdMapper;
+	@Autowired
+	private OrdOrderAttachMapper ordOrderAttachMapper;
 
     @Override
     public int insertSelective(OrdOdProd record) {
@@ -88,6 +91,12 @@ public class OrdOdProdAtomSVImpl implements IOrdOdProdAtomSV {
 		criteria.andOrderIdEqualTo(orderId);
 		criteria.andCusServiceFlagEqualTo(cusServiceFlag);
 		return ordOdProdMapper.selectByExample(example);
+	}
+
+	@Override
+	public int updateCusServiceFlag(OrdOdProd ordOdProd) {
+		// TODO Auto-generated method stub
+		return ordOrderAttachMapper.updateCusServiceFlag(ordOdProd);
 	}
 
 }

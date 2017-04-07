@@ -68,4 +68,10 @@ public class OrdOdInvoiceAtomSVImpl implements IOrdOdInvoiceAtomSV{
 		criteria.andTenantIdEqualTo(tenantId);
 		return ordOdInvoiceMapper.selectByExample(example);
 	}
+
+	@Override
+	public int updateOrdOdInvoice(OrdOdInvoice record) {
+		// TODO Auto-generated method stub
+		return ordOdInvoiceAttachMapper.updateOrdOdInvoice(record);
+	}
 }
