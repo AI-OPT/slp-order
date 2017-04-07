@@ -46,7 +46,7 @@ public interface OrdOrderAttachMapper {
      * @ApiCode 
      * @RestRelativeURL
      */
-    @Update("update ord_order set STATE=#{state} where ORDER_ID = #{orderId} ")
+    @Update("update ord_order set STATE=#{state},STATE_CHG_TIME = #{stateChgTime} where ORDER_ID = #{orderId} ")
 	public int updateOrderState(OrdOrder record);
     
     /**
