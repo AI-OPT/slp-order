@@ -17,6 +17,7 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
+import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -27,6 +28,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderRefundBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 
 @Service
 @Transactional
@@ -36,15 +38,14 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
-	
 	@Autowired
 	private IOrderFrameCoreSV orderFrameCoreSV;
-	
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
-	
 	@Autowired
 	private IOrdOdFeeTotalAtomSV  ordOdFeeTotalAtomSV;
+	@Autowired
+	private IOrderIndexBusiSV orderIndexBusiSV;
 	
 	//同意退款
 	public void partRefund(OrderRefundRequest request) throws BusinessException, SystemException {
@@ -165,6 +166,13 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
         	/* 退款业务类型时  拒绝  改变原始订单的商品售后标识状态*/
     		this.updateProdCusServiceFlag(ordOrder);
         }
+        
+    	/* 8.刷新搜索引擎数据*/
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(request.getTenantId());
+    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
+    	this.orderIndexBusiSV.insertSesData(sesReq);
+    	
         // 写入订单状态变化轨迹表
         this.updateOrderState(ordOrder, orgState, newState, chgDesc, request.getOperId());
 	}
