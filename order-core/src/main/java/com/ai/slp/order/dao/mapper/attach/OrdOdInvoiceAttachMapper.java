@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.Update;
 
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 
@@ -35,5 +36,10 @@ public interface OrdOdInvoiceAttachMapper {
 			@Param("pageSize") Integer pageSize, 
 			@Param("orderId") Long orderId, @Param("tenantId") String tenantId,
 			@Param("invoiceTitle") String invoiceTitle, @Param("invoiceStatus") String invoiceStatus);
+	
+	
+	@Update("update ord_od_invoice set  INVOICE_ID = #{invoiceId},INVOICE_STATUS = #{invoiceStatus},"
+			+ "INVOICE_TIME = #{invoiceTime},INVOICE_NUM = #{invoiceNum} where ORDER_ID = #{orderId}")
+	public int updateOrdOdInvoice(OrdOdInvoice invoice);
 
 }

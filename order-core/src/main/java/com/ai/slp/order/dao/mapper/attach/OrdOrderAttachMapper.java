@@ -1,46 +1,63 @@
 package com.ai.slp.order.dao.mapper.attach;
 
-import java.util.List;
+import org.apache.ibatis.annotations.Update;
 
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.SelectProvider;
+import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
+import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 
 /**
- * 多表查询订单信息 Date: 2016年6月29日
+ * 查询订单信息 Date: 2016年6月29日
  * 
  * @author caofz
  * 
  */
 public interface OrdOrderAttachMapper {
-	
-	//运营后台查询订单信息个数
-    @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindCount")
-	public int getBehindCount(@Param("states") String states,@Param("orderId") Long orderId,
-			@Param("chlId") String chlId,@Param("routeId") String routeId,
-			@Param("userName") String userName, @Param("contactTel") String contactTel,
-			@Param("tenantId") String tenantId,@Param("deliveryFlag") String deliveryFlag,
-			@Param("orderTimeBegin") String orderTimeBegin,@Param("orderTimeEnd") String orderTimeEnd);
+	  
+    /**
+     * 用户消费积分状态通知服务
+     * @param OrdOrder
+     * @return
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    @Update("update ord_order set DOWNSTREAM_ORDER_ID = #{downstreamOrderId} where ORDER_ID = #{orderId} ")
+	public int updateOrdOrder(OrdOrder OrdOrder);
     
-    //运营后台查询订单信息
-    @Results({ @Result(id = true, property = "orderId", column = "order_id"),
-        @Result(property = "chlId", column = "chl_id"),
-        @Result(property = "deliveryFlag", column = "delivery_flag"),
-        @Result(property = "contactTel", column = "contact_tel"),
-        @Result(property = "userId", column = "user_id"),
-        @Result(property = "userName", column = "user_name"),
-        @Result(property = "userTel", column = "user_tel"),
-        @Result(property = "discountFee", column = "discount_fee"),
-        @Result(property = "adjustFee", column = "adjust_fee"),
-        @Result(property = "tenantId", column = "tenant_id")})
-    @SelectProvider(type = OrdOrderSqlProvider.class, method = "behindQueryOrdOrder")
-	public List<BehindOrdOrderAttach> getBehindOrdOrder(@Param("pageCount") Integer pageCount, 
-			@Param("pageSize") Integer pageSize,@Param("states") String states,@Param("orderId") Long orderId,
-			@Param("chlId") String chlId,@Param("routeId") String routeId,
-			@Param("userName") String userName, @Param("contactTel") String contactTel,
-			@Param("tenantId") String tenantId,@Param("deliveryFlag") String deliveryFlag,
-			@Param("orderTimeBegin") String orderTimeBegin,@Param("orderTimeEnd") String orderTimeEnd);
+    /**
+     * OFC售后订单状态通知
+     * @param OrdOrder
+     * @return
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    @Update("update ord_order set REMARK=#{remark},STATE=#{state} where ORDER_ID = #{orderId} ")
+    public int updateOFCOrder(OrdOrder OrdOrder);
     
-	
+    /**
+     * 修改订单状态
+     * @param record
+     * @return
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    @Update("update ord_order set STATE=#{state} where ORDER_ID = #{orderId} ")
+	public int updateOrderState(OrdOrder record);
+    
+    /**
+     * 修改订单商品售后标识
+     * @param ordOdProd
+     * @return
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    @Update("update ord_od_prod set CUS_SERVICE_FLAG = #{cusServiceFlag} where ORDER_ID = #{orderId} ")
+	public int updateCusServiceFlag(OrdOdProd ordOdProd);
 }
