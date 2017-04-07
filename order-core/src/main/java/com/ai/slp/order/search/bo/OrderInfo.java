@@ -9,6 +9,7 @@ public class OrderInfo {
 	private long porderid;
 	private String username;
 	private String usertel;
+	private String flag;
 	private String deliveryflag;
 	private String deliveryflagname;
 	private long discountfee;
@@ -41,6 +42,12 @@ public class OrderInfo {
 	}
 	public long getPorderid() {
 		return porderid;
+	}
+	public String getFlag() {
+		return flag;
+	}
+	public void setFlag(String flag) {
+		this.flag = flag;
 	}
 	public void setPorderid(long porderid) {
 		this.porderid = porderid;
