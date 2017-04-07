@@ -19,6 +19,8 @@ public interface IOrdOdInvoiceAtomSV {
 	
 	int updateByPrimaryKey(OrdOdInvoice record);
 	
+	int updateOrdOdInvoice(OrdOdInvoice record);
+	
 	List<OrdOdInvoice> selectByCondition(String subFlag,Integer pageNo,Integer pageSize,Long orderId,
             String tenantId, String invoiceTitle, String invoiceStatus);
 	

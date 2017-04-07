@@ -44,5 +44,11 @@ public interface IOrdOrderAtomSV {
     
     int updateByPrimaryKeySelective(OrdOrder record);
     
+    int updateOrder(OrdOrder record);
+    
+    int updateOrderState(OrdOrder record);
+    
+    int updateOFCOrder(OrdOrder record);
+    
     List<OrdOrder> selectSubSaleOrder(long origOrderId,long orderId);
 }
