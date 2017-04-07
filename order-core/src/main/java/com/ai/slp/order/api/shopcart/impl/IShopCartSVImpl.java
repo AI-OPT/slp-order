@@ -55,23 +55,23 @@ public class IShopCartSVImpl implements IShopCartSV {
     	//非消息模式下，同步调用服务
     	if(!ccsMqFlag){
     		 try {
-				 	//若购买数量为空,或小于0,则设置默认为1
-			        if (cartProd.getBuyNum() == null
-			                || cartProd.getBuyNum()<=0)
-			            cartProd.setBuyNum(1l);
-			        String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
-			        
-			        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
-			        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
-		            optRes = shopCartBusiSV.addCartProd(cartProd,iCacheClient,cartUserId);
-		            ResponseHeader responseHeader = new ResponseHeader(true,
-		                    ExceptCodeConstants.Special.SUCCESS, "成功");
-		            optRes.setResponseHeader(responseHeader);
-    	        }catch (BusinessException|SystemException e){
-    	            optRes = new CartProdOptRes();
-    	            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
-    	        }
-    	        return optRes;
+			 	//若购买数量为空,或小于0,则设置默认为1
+		        if (cartProd.getBuyNum() == null
+		                || cartProd.getBuyNum()<=0)
+		            cartProd.setBuyNum(1l);
+		        String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
+		        
+		        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+		        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
+	            optRes = shopCartBusiSV.addCartProd(cartProd,iCacheClient,cartUserId);
+	            ResponseHeader responseHeader = new ResponseHeader(true,
+	                    ExceptCodeConstants.Special.SUCCESS, "成功");
+	            optRes.setResponseHeader(responseHeader);
+	        }catch (BusinessException|SystemException e){
+	            optRes = new CartProdOptRes();
+	            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
+	        }
+	        return optRes;
     	}else {
     		//消息模式下
     		optRes=new CartProdOptRes();
