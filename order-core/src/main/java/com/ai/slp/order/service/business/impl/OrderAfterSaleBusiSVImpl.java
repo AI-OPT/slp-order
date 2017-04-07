@@ -287,7 +287,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     	}
     	/* 5.更新商品为售后标识*/
     	ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
-		ordOdProdAtomSV.updateById(ordOdProd); 
+		ordOdProdAtomSV.updateCusServiceFlag(ordOdProd);
 		return afterTotalFee;
     }
     
@@ -323,6 +323,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
   		ordOrder.setState(request.getState());
   		ordOrder.setRemark(request.getReasonDesc());
   		//更新数据
-  		ordOrderAtomSV.updateByPrimaryKeySelective(ordOrder);
+  		ordOrderAtomSV.updateOFCOrder(ordOrder);
   	}
 }

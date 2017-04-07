@@ -35,7 +35,8 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 	public void updateWaitSellRecieveSureState(OrdOrder ordOrder,
 			OrdOdLogistics ordOdLogistics) {
 		//
-		this.ordOrderAtomSV.updateById(ordOrder);
+		//this.ordOrderAtomSV.updateById(ordOrder);
+		this.ordOrderAtomSV.updateOrderState(ordOrder);
 		//
 		this.ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		//刷新搜索引擎数据

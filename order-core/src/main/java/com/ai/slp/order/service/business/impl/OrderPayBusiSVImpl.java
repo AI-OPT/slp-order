@@ -601,6 +601,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
 	@Override
 	public void returnOid(OrderOidRequest request,OrdOrder order) throws BusinessException, SystemException {
-		ordOrderAtomSV.updateByPrimaryKeySelective(order);
+		ordOrderAtomSV.updateOrder(order);
 	}
 }

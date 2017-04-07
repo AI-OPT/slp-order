@@ -74,7 +74,7 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	@Override
 	public void updateInvoiceStatus(InvoiceNoticeRequest request,OrdOdInvoice ordOdInvoice) 
 			throws BusinessException, SystemException {	
-		ordOdInvoiceAtomSV.updateByPrimaryKey(ordOdInvoice);
+		ordOdInvoiceAtomSV.updateOrdOdInvoice(ordOdInvoice);
 	}
 	
 	//发票报送(打印)
