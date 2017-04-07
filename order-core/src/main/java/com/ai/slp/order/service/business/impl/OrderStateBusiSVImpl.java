@@ -104,7 +104,7 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		// 刷新搜索引擎数据
     	SesDataRequest sesReq=new SesDataRequest();
     	sesReq.setTenantId(request.getTenantId());
-    	sesReq.setParentOrderId(orderId);
+    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
     	this.orderIndexBusiSV.insertSesData(sesReq);
 		
 		return response;
