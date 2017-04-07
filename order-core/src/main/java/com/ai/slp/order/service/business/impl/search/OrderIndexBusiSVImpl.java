@@ -70,6 +70,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				ordInfo.setUsername(ord.getUserName());
 				ordInfo.setUsertel(ord.getUserTel());
 				ordInfo.setDeliveryflag(ord.getDeliveryFlag());
+				ordInfo.setFlag(ord.getFlag());
 				//翻译是否需要物流
 				SysParam sysParamDf = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER",
 						"ORD_DELIVERY_FLAG", ord.getDeliveryFlag(), iCacheSV);
