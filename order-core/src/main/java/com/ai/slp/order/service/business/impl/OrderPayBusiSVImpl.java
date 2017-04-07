@@ -100,7 +100,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	/* 4.虚拟商品改变父订单状态*/
         	if(OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(ordOrder.getOrderType())) {
         		ordOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-        		ordOrderAtomSV.updateById(ordOrder);
+        		ordOrder.setStateChgTime(DateUtil.getSysDate());
+        		ordOrderAtomSV.updateOrderState(ordOrder);
         	}
         	/* 5.导入数据到搜索引擎*/
         	SesDataRequest sesReq=new SesDataRequest();
@@ -265,7 +266,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		ordOdProd.setAdjustFee(adjustFee<0?0:adjustFee); //应收费用
     		ordOdProdAtomSV.updateById(ordOdProd);
     		/* 5.生成子订单*/
-    		this.createEntitySubOrder(ordOrder,ordOdProd,map,request,sysdate);
+    		this.createEntitySubOrder(ordOrder,ordOdProd,map,sysdate);
     	}
     }
     
@@ -279,9 +280,9 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @author caofz
      */
     private void createEntitySubOrder(OrdOrder parentOrdOrder,
-    		OrdOdProd parentOrdOdProd,Map<String, Long> map,OrderPayRequest request,Timestamp sysdate) {
+    		OrdOdProd parentOrdOdProd,Map<String, Long> map,Timestamp sysdate) {
     	/* 1.根据商品信息获取routeId*/
-    	String tenantId = request.getTenantId();
+    	String tenantId = parentOrdOrder.getTenantId();
     	/* 获取仓库组id(路由组id)*/
     	String routeGroupId = this.getRouteGroupId(tenantId, parentOrdOdProd.getProdId(),
     			parentOrdOdProd.getSupplierId());
@@ -355,7 +356,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             String newState = OrdersConstants.OrdOrder.State.FINISH_PAID;
             ordOrder.setState(newState);
             ordOrder.setStateChgTime(sysdate);
-            ordOrderAtomSV.updateById(ordOrder);
+            ordOrderAtomSV.updateOrderState(ordOrder);
             /* 2.2 封装订单轨迹信息 */
             OrderStateChgVo stateChgVo= OrderStateChgUtil.getOrderStateChg(ordOrder.getOrderId(), 
             		tenantId, oldState, newState,
