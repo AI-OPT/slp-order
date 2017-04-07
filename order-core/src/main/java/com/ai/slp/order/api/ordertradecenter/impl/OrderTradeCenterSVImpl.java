@@ -16,7 +16,9 @@ import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.ai.slp.order.util.ValidateUtils;
+import com.alibaba.dubbo.config.annotation.Service;
 
+@Service
 @Component
 public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
 
