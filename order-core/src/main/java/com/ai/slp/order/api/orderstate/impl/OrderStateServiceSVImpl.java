@@ -10,6 +10,7 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.orderstate.interfaces.IOrderStateServiceSV;
 import com.ai.slp.order.api.orderstate.param.WaitRebateRequest;
@@ -55,6 +56,7 @@ public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
 				//
 				OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
 				ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
+				ordOrder.setStateChgTime(DateUtil.getSysDate());
 				//
 				OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 				ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
