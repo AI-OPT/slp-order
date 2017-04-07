@@ -100,6 +100,13 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 			ordOrderAtomSV.updateById(ordOrder);
 			//this.ordOrderAtomSV.updateStateByOrderId(tenantId, orderId, OrdersConstants.OrdOrder.State.WAIT_REPAY);
 		}
+		
+		// 刷新搜索引擎数据
+    	SesDataRequest sesReq=new SesDataRequest();
+    	sesReq.setTenantId(request.getTenantId());
+    	sesReq.setParentOrderId(orderId);
+    	this.orderIndexBusiSV.insertSesData(sesReq);
+		
 		return response;
 	}
 	
