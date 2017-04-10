@@ -129,7 +129,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
 						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
 				prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
-				prodExtend.setBusicode(ordOrder.getBusiCode());//父订单
+				prodExtend.setBusicode(ordOrder.getBusiCode());
 				prodExtend.setParentorderid(parentOrderId);
 				prodExtend.setOrderid(ordOrder.getOrderId());
 				prodExtend.setRouteid(ordOrder.getRouteId());
