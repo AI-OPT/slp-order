@@ -10,8 +10,10 @@ import com.ai.slp.order.vo.OrderStateChgVo;
  * @author caofz
  */
 public class OrderStateChgUtil {
-	 public static OrderStateChgVo getOrderStateChg(Long orderId, String tenantId, String orgState, String newState,
-	            String chgDesc, String orgId, String operId, String operName, Timestamp timestamp){
+	
+	 public static OrderStateChgVo getOrderStateChg(Long orderId, String tenantId, 
+			 String orgState, String newState,String chgDesc, String orgId, 
+			 String operId, String operName, Timestamp timestamp){
 		   OrderStateChgVo stateChgVo=new OrderStateChgVo();
            stateChgVo.setOrderId(orderId);
            stateChgVo.setTenantId(tenantId);
