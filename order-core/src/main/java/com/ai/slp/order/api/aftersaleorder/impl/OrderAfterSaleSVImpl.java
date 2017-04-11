@@ -45,11 +45,11 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	public BaseResponse back(OrderReturnRequest request) throws BusinessException, SystemException {
 		/* 1. 参数校验*/
 		ValidateUtils.validateOrderReturnRequest(request);
-		BaseResponse response =new BaseResponse();
 		/* 2. 订单商品数量校验*/
 		OrdOdProd ordOdProd = this.prodNumCheck(request);
 		//
 		OrdOrder order =this.queryOrderInfo(request);
+		BaseResponse response =new BaseResponse();
 		/* 3.售后处理*/
 		orderAfterSaleBusiSV.back(request,order,ordOdProd);
 		ResponseHeader responseHeader = new ResponseHeader(true,
@@ -62,11 +62,11 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	public BaseResponse exchange(OrderReturnRequest request) throws BusinessException, SystemException {
 		/* 1.参数校验*/
 		ValidateUtils.validateOrderReturnRequest(request);
-		BaseResponse response =new BaseResponse();
 		/* 2. 订单商品数量校验*/
 		OrdOdProd ordOdProd = this.prodNumCheck(request);
 		//
 		OrdOrder order =this.queryOrderInfo(request);
+		BaseResponse response =new BaseResponse();
 		/* 3.售后处理*/
 		orderAfterSaleBusiSV.exchange(request,order,ordOdProd);
 		ResponseHeader responseHeader = new ResponseHeader(true,
@@ -79,11 +79,11 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	public BaseResponse refund(OrderReturnRequest request) throws BusinessException, SystemException {
 		/* 1.参数校验*/
 		ValidateUtils.validateOrderReturnRequest(request);
-		BaseResponse response =new BaseResponse();
 		/* 2. 订单商品数量校验*/
 		OrdOdProd ordOdProd = this.prodNumCheck(request);
 		//
 		OrdOrder order =this.queryOrderInfo(request);
+		BaseResponse response =new BaseResponse();
 		/* 3.售后处理*/
 		orderAfterSaleBusiSV.refund(request,order,ordOdProd);
         ResponseHeader responseHeader = new ResponseHeader(true,
@@ -145,9 +145,13 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	private OrdOdProd prodNumCheck(OrderReturnRequest request) {
 		OrdOdProd ordOdProd = ordOdProdAtomSV.selectByPrimaryKey(request.getProdDetalId());
 		if(ordOdProd==null) {
-			logger.error("订单商品明细不存在[订单id:"+request.getProdDetalId()+"]");
+			logger.error("订单商品明细不存在[商品明细id:"+request.getProdDetalId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"订单商品明细不存在[订单id:"+request.getProdDetalId()+"]");
+					"订单商品明细不存在[商品明细id:"+request.getProdDetalId()+"]");
+		}
+		if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+					"该订单商品已经为售后状态,不能再进行售后...");
 		}
 		long prodSum = request.getProdSum();
 		if(prodSum>ordOdProd.getBuySum()) {
