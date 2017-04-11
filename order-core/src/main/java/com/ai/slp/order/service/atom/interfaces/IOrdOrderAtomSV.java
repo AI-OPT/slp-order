@@ -50,5 +50,7 @@ public interface IOrdOrderAtomSV {
     
     int updateOFCOrder(OrdOrder record);
     
+    int updateOrderStateAndBatchNo(OrdOrder record);
+    
     List<OrdOrder> selectSubSaleOrder(long origOrderId,long orderId);
 }
