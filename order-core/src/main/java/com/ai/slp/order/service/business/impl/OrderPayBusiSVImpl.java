@@ -3,7 +3,6 @@ package com.ai.slp.order.service.business.impl;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
-import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
@@ -21,7 +20,6 @@ import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
-import com.ai.slp.order.vo.OrderStateChgVo;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductInfoQuery;
 import com.ai.slp.product.api.product.param.ProductRoute;
@@ -30,7 +28,6 @@ import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
 import com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV;
 import com.ai.slp.route.api.routemanage.param.RouteQueryByGroupIdAndAreaRequest;
 import com.ai.slp.route.api.routemanage.param.RouteQueryByGroupIdAndAreaResponse;
-import com.alibaba.fastjson.JSON;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -330,12 +327,11 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     	}
         /* 3.1 封装订单轨迹信息 */
     	String chgDesc=OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DISTRIBUTION;
-        OrderStateChgVo stateChgVo= OrderStateChgUtil.getOrderStateChg(subOrderId, tenantId, 
+    	
+    	/* 3.2 异步  写入订单状态变化轨迹表*/
+        OrderStateChgUtil.trailProcess(subOrderId, tenantId, 
         		parentOrdOrder.getState(),OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION,
         		chgDesc, null, null, null, DateUtil.getSysDate());
-        /* 3.2 发送消息,记入订单轨迹信息*/
-		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
-				send(JSON.toJSONString(stateChgVo), 0);
     }
     
     /**
@@ -357,13 +353,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             ordOrder.setState(newState);
             ordOrder.setStateChgTime(sysdate);
             ordOrderAtomSV.updateOrderState(ordOrder);
-            /* 2.2 封装订单轨迹信息 */
-            OrderStateChgVo stateChgVo= OrderStateChgUtil.getOrderStateChg(ordOrder.getOrderId(), 
+            /* 2.2 异步 发送消息,记入订单轨迹信息*/
+            OrderStateChgUtil.trailProcess(ordOrder.getOrderId(), 
             		tenantId, oldState, newState,
                     OrdOdStateChg.ChgDesc.ORDER_PAID, null, null, null, sysdate);
-            /* 2.3 发送消息,记入订单轨迹信息*/
-    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
-    				send(JSON.toJSONString(stateChgVo), 0);
         }
         /* 3.增加商品销量 */
         List<OrdOdProd> ordOdProds =ordOdProdAtomSV.selectByOrd(tenantId, ordOrder.getOrderId());
