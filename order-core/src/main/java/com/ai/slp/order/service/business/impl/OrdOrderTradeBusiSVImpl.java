@@ -59,7 +59,6 @@ import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
-import com.ai.slp.order.vo.OrderStateChgVo;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumRes;
 import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
@@ -450,13 +449,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setState(newState);
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.insertSelective(ordOrder);
-        // 写入订单状态变化轨迹表
-        OrderStateChgVo stateChgVo= OrderStateChgUtil.getOrderStateChg(ordOrder.getOrderId(),
+        //异步  写入订单状态变化轨迹表
+        OrderStateChgUtil.trailProcess(ordOrder.getOrderId(),
         		ordOrder.getTenantId(), orgState, newState,
                 OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null, null, null, sysDate);
-        /* 3.2 发送消息,记入订单轨迹信息*/
-		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
-				send(JSON.toJSONString(stateChgVo), 0);
     }
 
     /**
