@@ -134,7 +134,6 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 
 	@Override
 	public List<OrdOrder> selectNotPayOrdersByTime(Timestamp time) {
-		// TODO Auto-generated method stub
 		OrdOrderCriteria example = new OrdOrderCriteria();
         OrdOrderCriteria.Criteria criteria = example.createCriteria();
         criteria.andOrderTimeLessThan(time);
@@ -147,7 +146,6 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 
 	@Override
 	public List<OrdOrder> selectNotAuditFailureOrd(String tenantId, long orderId, String state) {
-		// TODO Auto-generated method stub
 	    OrdOrderCriteria example=new OrdOrderCriteria();
 	    OrdOrderCriteria.Criteria criteria = example.createCriteria();
 	    criteria.andOrigOrderIdEqualTo(orderId);
@@ -158,7 +156,6 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 
 	@Override
 	public List<OrdOrder> selectSubSaleOrder(long origOrderId, long orderId) {
-		// TODO Auto-generated method stub
 		OrdOrderCriteria example=new OrdOrderCriteria();
 		OrdOrderCriteria.Criteria criteria = example.createCriteria();
 		criteria.andOrigOrderIdEqualTo(origOrderId);
@@ -168,20 +165,22 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 
 	@Override
 	public int updateOrder(OrdOrder record) {
-		// TODO Auto-generated method stub
 		return ordOrderAttachMapper.updateOrdOrder(record);
 	}
 	
 	@Override
 	public int updateOFCOrder(OrdOrder record) {
-		// TODO Auto-generated method stub
 		return ordOrderAttachMapper.updateOFCOrder(record);
 	}
 
 	@Override
 	public int updateOrderState(OrdOrder record) {
-		// TODO Auto-generated method stub
 		return ordOrderAttachMapper.updateOrderState(record);
+	}
+
+	@Override
+	public int updateOrderStateAndBatchNo(OrdOrder record) {
+		return ordOrderAttachMapper.updateOrderStateAndBatchNo(record);
 	}
 	
 }
