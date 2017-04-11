@@ -14,31 +14,43 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
+import com.ai.opt.sdk.components.ses.SESClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.BeanUtils;
+import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.search.vo.Result;
+import com.ai.paas.ipaas.search.vo.SearchCriteria;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
+import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.search.bo.OrdProdExtend;
+import com.ai.slp.order.search.bo.OrderInfo;
+import com.ai.slp.order.search.bo.ProdInfo;
+import com.ai.slp.order.search.dto.SearchCriteriaStructure;
 import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
-import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.vo.OFCAfterSaleOrderCreateRequest;
@@ -61,8 +73,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	private IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
 	@Autowired
 	private IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
-    @Autowired
-    private IOrderIndexBusiSV orderIndexBusiSV;
 	
 	/**
 	 * 订单退货申请
@@ -94,11 +104,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				throw new SystemException("", "OFC同步出现异常");
 			}
 		}
-		/* 3.刷新搜索引擎数据*/
-    	SesDataRequest sesReq=new SesDataRequest();
-    	sesReq.setTenantId(request.getTenantId());
-    	sesReq.setParentOrderId(order.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);
 	}
 
 	//订单换货申请
@@ -111,11 +116,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		this.createAfterOrderInfo(order, request,
 				OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER, 
 				ordOdProd, OrdersConstants.OrdOdProd.State.EXCHANGE,exchangeOrderId,sysDate);
-		/* 2.刷新搜索引擎数据*/
-    	SesDataRequest sesReq=new SesDataRequest();
-    	sesReq.setTenantId(request.getTenantId());
-    	sesReq.setParentOrderId(order.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);
 	}
 
 	//订单退款申请
@@ -145,12 +145,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 				throw new SystemException("", "OFC同步出现异常");
 			}
 		}
-		
-		/* 3.刷新搜索引擎数据*/
-    	SesDataRequest sesReq=new SesDataRequest();
-    	sesReq.setTenantId(request.getTenantId());
-    	sesReq.setParentOrderId(order.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);
 	}
 	
 	
@@ -288,6 +282,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     	/* 5.更新商品为售后标识*/
     	ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
 		ordOdProdAtomSV.updateCusServiceFlag(ordOdProd);
+		/* 6.刷新搜索引擎数据*/
+		this.refreshAfterData(afterOrder,afterOrdOdProd); 
 		return afterTotalFee;
     }
     
@@ -324,5 +320,46 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
   		ordOrder.setRemark(request.getReasonDesc());
   		//更新数据
   		ordOrderAtomSV.updateOFCOrder(ordOrder);
+  	}
+  	
+  	//刷新售后搜索数据
+  	private void  refreshAfterData(OrdOrder afterOrder,OrdOdProd afterOrdOdProd) {
+  		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+  		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+				commonConditionsByOrderId(afterOrder.getParentOrderId());
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+		List<OrderInfo> ordList = result.getContents();
+		if(CollectionUtil.isEmpty(ordList)) {
+			logger.info("搜索引擎无数据! 父订单id为:"+afterOrder.getParentOrderId());
+			throw new BusinessException("搜索引擎无数据! 父订单id为:"+afterOrder.getParentOrderId());
+		}
+		OrderInfo orderInfo = ordList.get(0);
+		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+		OrdProdExtend prodExtend=new OrdProdExtend();
+		List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
+		prodExtend.setState(afterOrder.getState());
+		//订单状态翻译
+		SysParam sysParamState = InfoTranslateUtil.translateInfo(afterOrder.getTenantId(),
+				"ORD_ORDER", "STATE",afterOrder.getState(), iCacheSV);
+		prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+		prodExtend.setBusicode(afterOrder.getBusiCode());
+		prodExtend.setParentorderid(afterOrder.getParentOrderId());
+		prodExtend.setOrderid(afterOrder.getOrderId());
+		prodExtend.setRouteid(afterOrder.getRouteId());
+		
+		ProdInfo prodInfo=new ProdInfo();
+		prodInfo.setBuysum(afterOrdOdProd.getBuySum());
+		prodInfo.setProdname(afterOrdOdProd.getProdName());
+		prodInfos.add(prodInfo);
+		
+		prodExtend.setProdsize(prodInfos.size());
+		prodExtend.setProdinfos(prodInfos);
+		ordextendes.add(prodExtend);
+		
+		orderInfo.setTotalprodsize(orderInfo.getTotalprodsize()+prodInfos.size());
+		orderInfo.setOrdextendes(ordextendes);
+		ordList.add(orderInfo);
+		SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
   	}
 }
