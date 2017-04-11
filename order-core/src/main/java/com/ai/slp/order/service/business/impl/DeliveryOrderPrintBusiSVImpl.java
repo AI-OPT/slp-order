@@ -25,7 +25,6 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryProdPrintVo;
 import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
-import com.ai.slp.order.dao.mapper.attach.OrdOrderAttachMapper;
 import com.ai.slp.order.dao.mapper.attach.OrdOrderProdAttach;
 import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
@@ -61,8 +60,6 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	private IOrdRuleAtomSV ordRuleAtomSV;
 	@Autowired
 	private IOrderIndexBusiSV orderIndexBusiSV;
-	@Autowired
-	private OrdOrderAttachMapper ordOrderAttachMapper;
 	
 	//提货单查看
 	@Override
@@ -299,8 +296,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		ordOrder.setState(newState);
 		ordOrder.setStateChgTime(sysDate);
 		ordOrder.setBatchNo(batchNo);
-	//	ordOrderAtomSV.updateByPrimaryKeySelective(ordOrder);
-		ordOrderAttachMapper.updateOrderStateAndBatchNo(ordOrder);
+		ordOrderAtomSV.updateOrderStateAndBatchNo(ordOrder);
 		//写入搜索引擎
 		orderIndexBusiSV.refreshStateData(ordOrder);
     	
