@@ -29,6 +29,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliverGoodsBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.util.OrderStateChgUtil;
 
 @Service
 @Transactional
@@ -135,8 +136,17 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
         ordOrder.setState(newState);
         Timestamp sysDate=DateUtil.getSysDate();
         ordOrder.setStateChgTime(sysDate);
-        ordOrderAtomSV.updateById(ordOrder);
-    	//刷新搜索引擎数据
+        
+        
+       // ordOrderAtomSV.updateById(ordOrder);
+        ordOrderAtomSV.updateOrderState(ordOrder);
+        
+    	//写入搜索引擎
+		orderIndexBusiSV.refreshStateData(ordOrder);
+		//异步 写入订单状态变化轨迹表
+		OrderStateChgUtil.trailProcess(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, newState,
+                OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_LOGISTICS_DELIVERY, null, operId, null, sysDate);
+/*    	//刷新搜索引擎数据
     	SesDataRequest sesReq=new SesDataRequest();
     	sesReq.setTenantId(ordOrder.getTenantId());
     	sesReq.setParentOrderId(ordOrder.getParentOrderId());
@@ -144,7 +154,7 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
         // 写入订单状态变化轨迹表
         orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, newState,
                 OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_LOGISTICS_DELIVERY, null, operId, null, sysDate);
-    }
+*/    }
     
     /**
 	  * 获取订单下的商品信息
