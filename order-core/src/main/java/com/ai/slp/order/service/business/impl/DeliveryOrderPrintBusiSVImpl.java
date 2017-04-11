@@ -22,10 +22,10 @@ import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintRequest;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderPrintResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryOrderQueryResponse;
 import com.ai.slp.order.api.deliveryorderprint.param.DeliveryProdPrintVo;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
+import com.ai.slp.order.dao.mapper.attach.OrdOrderAttachMapper;
 import com.ai.slp.order.dao.mapper.attach.OrdOrderProdAttach;
 import com.ai.slp.order.dao.mapper.bo.DeliverInfoProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdDeliverInfo;
@@ -39,8 +39,8 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdRuleAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliveryOrderPrintBusiSV;
-import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.alibaba.fastjson.JSON;
 
@@ -60,9 +60,9 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 	@Autowired
 	private IOrdRuleAtomSV ordRuleAtomSV;
 	@Autowired
-	private IOrderFrameCoreSV orderFrameCoreSV;
-	@Autowired
 	private IOrderIndexBusiSV orderIndexBusiSV;
+	@Autowired
+	private OrdOrderAttachMapper ordOrderAttachMapper;
 	
 	//提货单查看
 	@Override
@@ -293,27 +293,23 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 					"未能查询到指定的订单信息[订单id:"+ mergeId+"]");
 		}
 		String orgState = ordOrder.getState();
-	/*	if(OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(orgState)) {
-			return;
-		}*/
 		String state1 = OrdersConstants.OrdOrder.State.LADING_BILL_FINISH_PRINT;
 		String state2 = OrdersConstants.OrdOrder.State.FINISH_DISTRIBUTION;
 		String newState = OrdersConstants.OrdOrder.State.WAIT_DELIVERY;
 		ordOrder.setState(newState);
 		ordOrder.setStateChgTime(sysDate);
 		ordOrder.setBatchNo(batchNo);
-		ordOrderAtomSV.updateByPrimaryKeySelective(ordOrder);
+	//	ordOrderAtomSV.updateByPrimaryKeySelective(ordOrder);
+		ordOrderAttachMapper.updateOrderStateAndBatchNo(ordOrder);
 		//写入搜索引擎
-		SesDataRequest sesReq=new SesDataRequest();
-    	sesReq.setTenantId(tenantId);
-    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);
-		// 写入订单状态变化轨迹表
-		orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, state1,
+		orderIndexBusiSV.refreshStateData(ordOrder);
+    	
+		//异步 写入订单状态变化轨迹表
+		OrderStateChgUtil.trailProcess(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, state1,
 				OrdOdStateChg.ChgDesc.ORDER_TO_PRINT, null, null, null, sysDate);
-		orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state1, state2,
+		OrderStateChgUtil.trailProcess(ordOrder.getOrderId(), ordOrder.getTenantId(), state1, state2,
 				OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_DISTRIBUTION, null, null, null, sysDate);
-		orderFrameCoreSV.ordOdStateChg(ordOrder.getOrderId(), ordOrder.getTenantId(), state2, newState,
+		OrderStateChgUtil.trailProcess(ordOrder.getOrderId(), ordOrder.getTenantId(), state2, newState,
 				OrdOdStateChg.ChgDesc.ORDER_TO_WAIT_DELIVERY, null, null, null, sysDate);
 	}
 	  
