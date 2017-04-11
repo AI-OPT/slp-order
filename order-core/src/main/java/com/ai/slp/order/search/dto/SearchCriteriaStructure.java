@@ -126,4 +126,14 @@ public class SearchCriteriaStructure {
 		}
 		return searchfieldVos;
 	}
+	
+	
+	// 根据父订单id查询搜索引擎数据
+	public static List<SearchCriteria> commonConditionsByOrderId(long orderId) {
+		List<SearchCriteria> searchfieldVos = new ArrayList<SearchCriteria>();
+		// 添加订单id查询条件
+		searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.PORDER_ID,String.valueOf(orderId),
+				new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+		return searchfieldVos;
+	}
 }
