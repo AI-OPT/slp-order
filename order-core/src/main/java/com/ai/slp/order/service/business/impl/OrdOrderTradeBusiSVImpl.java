@@ -233,6 +233,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
                     ordProductInfo.getSkuId(), ordProductInfo.getBuySum());
             boolean isSuccess = storageNumRes.getResponseHeader().getIsSuccess();
             if(!isSuccess){
+            	LOG.error(storageNumRes.getResponseHeader().getResultMessage());
             	throw new BusinessException(storageNumRes.getResponseHeader().getResultCode(), 
         			storageNumRes.getResponseHeader().getResultMessage());
         	}
