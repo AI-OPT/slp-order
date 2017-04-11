@@ -2,16 +2,19 @@ package com.ai.slp.order.util;
 
 import java.sql.Timestamp;
 
+import com.ai.opt.sdk.components.mds.MDSClientFactory;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.vo.OrderStateChgVo;
+import com.alibaba.fastjson.JSON;
 
 /**
- * 订单轨迹参数封装
+ * 订单轨迹处理
  * @date 2017年3月22日 
  * @author caofz
  */
 public class OrderStateChgUtil {
 	
-	 public static OrderStateChgVo getOrderStateChg(Long orderId, String tenantId, 
+	 public static void trailProcess(Long orderId, String tenantId, 
 			 String orgState, String newState,String chgDesc, String orgId, 
 			 String operId, String operName, Timestamp timestamp){
 		   OrderStateChgVo stateChgVo=new OrderStateChgVo();
@@ -24,7 +27,12 @@ public class OrderStateChgUtil {
            stateChgVo.setOperId(operId);
            stateChgVo.setOperName(operName);
            stateChgVo.setTimestamp(timestamp);
-	       return stateChgVo;
+           MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
+   						send(JSON.toJSONString(stateChgVo), 0);
 	    }
+	 
+	
+	 
+	 
 
 }
