@@ -149,10 +149,10 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"订单商品明细不存在[商品明细id:"+request.getProdDetalId()+"]");
 		}
-		if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+	/*	if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"该订单商品已经为售后状态,不能再进行售后...");
-		}
+		}*/
 		long prodSum = request.getProdSum();
 		if(prodSum>ordOdProd.getBuySum()) {
 			throw new BusinessException("","退货数量不能大于实际商品数量");
