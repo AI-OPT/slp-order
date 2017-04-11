@@ -49,6 +49,19 @@ public interface OrdOrderAttachMapper {
     @Update("update ord_order set STATE=#{state},STATE_CHG_TIME = #{stateChgTime} where ORDER_ID = #{orderId} ")
 	public int updateOrderState(OrdOrder record);
     
+    
+    /**
+     * 修改订单状态及批次号
+     * @param record
+     * @return
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    @Update("update ord_order set STATE=#{state},STATE_CHG_TIME = #{stateChgTime}, BATCH_NO = #{batchNo}  where ORDER_ID = #{orderId} ")
+	public int updateOrderStateAndBatchNo(OrdOrder record);
+    
     /**
      * 修改订单商品售后标识
      * @param ordOdProd
