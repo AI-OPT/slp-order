@@ -17,7 +17,6 @@ import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
@@ -27,7 +26,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IDeliverGoodsBusiSV;
-import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.util.OrderStateChgUtil;
 
@@ -41,8 +39,6 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
 	@Autowired
 	private IOrdOrderAtomSV ordOrderAtomSV;
-	@Autowired
-	private IOrderFrameCoreSV orderFrameCoreSV;
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	@Autowired
@@ -139,7 +135,7 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
         
         ordOrderAtomSV.updateOrderState(ordOrder);
     	//写入搜索引擎
-		orderIndexBusiSV.refreshStateData(ordOrder);
+		orderIndexBusiSV.refreshStateData(ordOrder,null);
 		//异步 写入订单状态变化轨迹表
 		OrderStateChgUtil.trailProcess(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, newState,
                 OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_LOGISTICS_DELIVERY, null, operId, null, sysDate);

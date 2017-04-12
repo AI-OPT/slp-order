@@ -39,7 +39,7 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		//
 		this.ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		//刷新搜索引擎数据
-		this.orderIndexBusiSV.refreshStateData(ordOrder);
+		this.orderIndexBusiSV.refreshStateData(ordOrder,null);
 	}
 	
 	

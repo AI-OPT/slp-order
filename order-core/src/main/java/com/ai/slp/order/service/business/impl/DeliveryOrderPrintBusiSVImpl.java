@@ -298,7 +298,7 @@ public class DeliveryOrderPrintBusiSVImpl implements IDeliveryOrderPrintBusiSV{
 		ordOrder.setBatchNo(batchNo);
 		ordOrderAtomSV.updateOrderStateAndBatchNo(ordOrder);
 		//写入搜索引擎
-		orderIndexBusiSV.refreshStateData(ordOrder);
+		orderIndexBusiSV.refreshStateData(ordOrder,null);
     	
 		//异步 写入订单状态变化轨迹表
 		OrderStateChgUtil.trailProcess(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, state1,

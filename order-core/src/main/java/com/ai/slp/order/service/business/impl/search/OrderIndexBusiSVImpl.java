@@ -192,7 +192,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 	 * 刷新搜索引擎状态数据
 	 */
 	@Override
-	public void refreshStateData(OrdOrder ordOrder) throws BusinessException, SystemException {
+	public void refreshStateData(OrdOrder ordOrder,OrdOrder pOrder) throws BusinessException, SystemException {
 		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
   		IOrderSearch orderSearch = new OrderSearchImpl();
 		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
@@ -203,6 +203,10 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			throw new BusinessException("搜索引擎无数据! 父订单id为:"+ordOrder.getParentOrderId());
 		}
 		OrderInfo orderInfo = ordList.get(0);
+		//更新父订单状态
+		if(pOrder!=null) {
+			orderInfo.setParentorderstate(pOrder.getState());
+		}
 		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
 		for (OrdProdExtend ordProdExtend : ordextendes) {
 			if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
