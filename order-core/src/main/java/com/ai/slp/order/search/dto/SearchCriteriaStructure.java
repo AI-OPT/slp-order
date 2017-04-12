@@ -45,7 +45,7 @@ public class SearchCriteriaStructure {
 		}
 		// 如果仓库id不为空
 		if (!StringUtil.isBlank(request.getRouteId())) {
-			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.ROUTE_ID, request.getRouteId(),
+			searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.ORD_EXTENDES_ROUTE_ID, request.getRouteId(),
 					new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
 		}
 		// 如果收货人联系电话不为空
