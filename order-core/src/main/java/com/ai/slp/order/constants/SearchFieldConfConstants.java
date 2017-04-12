@@ -9,7 +9,7 @@ public class SearchFieldConfConstants {
     public static final String FLAG = "flag";
     public static final String CHL_ID = "chlid";
     public static final String DELIVERY_FLAG = "deliveryflag";
-    public static final String ROUTE_ID = "routeid";
+    public static final String ORD_EXTENDES_ROUTE_ID = "ordextendes.routeid";
     public static final String CONTACT_TEL = "contacttel";
     public static final String SUPPLIER_ID = "supplierid";
     public static final String PARENT_ORDER_STATE = "parentorderstate";
