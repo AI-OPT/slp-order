@@ -6,6 +6,7 @@ import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 购物车业务操作类型
@@ -50,5 +51,5 @@ public interface IShopCartBusiSV {
      * @param userId
      * @return
      */
-    public List<CartProdInfo> queryCartProdOfUser(String tenantId, String userId);
+    public List<CartProdInfo> queryCartProdOfUser(String tenantId, String userId, Map<String,String> cartProdMap);
 }
