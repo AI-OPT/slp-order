@@ -16,7 +16,6 @@ import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.service.business.interfaces.IShopCartBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.IPassMcsUtils;
-import com.ai.slp.order.util.MQConfigUtil;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 
@@ -25,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jackieliu on 16/5/16.
@@ -48,39 +48,25 @@ public class IShopCartSVImpl implements IShopCartSV {
     public CartProdOptRes addProd(CartProd cartProd) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(cartProd.getTenantId(),"");
         CartProdOptRes optRes = null;
-    	boolean ccsMqFlag=false;
-    	//从配置中心获取ccsMqFlag
-    	//ccsMqFlag=MQConfigUtil.getCCSMqFlag();
-    	
-    	//非消息模式下，同步调用服务
-    	if(!ccsMqFlag){
-    		 try {
-			 	//若购买数量为空,或小于0,则设置默认为1
-		        if (cartProd.getBuyNum() == null
-		                || cartProd.getBuyNum()<=0)
-		            cartProd.setBuyNum(1l);
-		        String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
-		        
-		        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
-		        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
-	            optRes = shopCartBusiSV.addCartProd(cartProd,iCacheClient,cartUserId);
-	            ResponseHeader responseHeader = new ResponseHeader(true,
-	                    ExceptCodeConstants.Special.SUCCESS, "成功");
-	            optRes.setResponseHeader(responseHeader);
-	        }catch (BusinessException|SystemException e){
-	            optRes = new CartProdOptRes();
-	            optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
-	        }
-	        return optRes;
-    	}else {
-    		//消息模式下
-    		optRes=new CartProdOptRes();
-            MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_SHOPCART_ADD_TOPIC).send(JSON.toJSONString(cartProd), 0);
-            ResponseHeader responseHeader = new ResponseHeader(true,
-                    ExceptCodeConstants.Special.SUCCESS, "成功");
-            optRes.setResponseHeader(responseHeader);
-    	    return optRes;
-    	}
+		try {
+		 	//若购买数量为空,或小于0,则设置默认为1
+	        if (cartProd.getBuyNum() == null
+	                || cartProd.getBuyNum()<=0)
+	            cartProd.setBuyNum(1l);
+	        String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
+	        
+	        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+	        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
+	        
+	        optRes = shopCartBusiSV.addCartProd(cartProd,iCacheClient,cartUserId);
+	        ResponseHeader responseHeader = new ResponseHeader(true,
+	                   ExceptCodeConstants.Special.SUCCESS, "成功");
+	        optRes.setResponseHeader(responseHeader);
+	      }catch (BusinessException|SystemException e){
+	         optRes = new CartProdOptRes();
+	         optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
+	      }
+	      return optRes;
     }
 
     /**
@@ -98,7 +84,15 @@ public class IShopCartSVImpl implements IShopCartSV {
         CommonCheckUtils.checkTenantId(userInfo.getTenantId(),"");
         CartProdList prodList = new CartProdList();
         try {
-            List<CartProdInfo> prodInfos = shopCartBusiSV.queryCartProdOfUser(userInfo.getTenantId(),userInfo.getUserId());
+        	ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+            String cartUserId = IPassMcsUtils.genShopCartUserId(userInfo.getTenantId(),userInfo.getUserId());
+            //查询出缓存中购物车所有商品信息
+            Map<String,String> cartProdMap = iCacheClient.hgetAll(cartUserId);
+            //删除概览信息
+            cartProdMap.remove(ShopCartConstants.McsParams.CART_POINTS);
+            
+            List<CartProdInfo> prodInfos = shopCartBusiSV.queryCartProdOfUser(userInfo.getTenantId(),
+            		userInfo.getUserId(),cartProdMap);
             prodList.setProdInfoList(prodInfos);
             prodList.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
         }catch (BusinessException|SystemException e){
