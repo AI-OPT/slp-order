@@ -2,10 +2,12 @@ package com.ai.slp.order.service.atom.impl;
 
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProdCriteria;
-import com.ai.slp.order.dao.mapper.factory.MapperFactory;
+import com.ai.slp.order.dao.mapper.interfaces.OrdOdCartProdMapper;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
 import com.ai.slp.order.util.DateUtils;
 import com.ai.slp.order.util.SequenceUtil;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,6 +18,10 @@ import java.util.List;
  */
 @Component
 public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
+	
+	
+	@Autowired
+	private OrdOdCartProdMapper ordOdCartProdMapper;
 
     /**
      * 查询用户的购物车商品明细信息
@@ -29,7 +35,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
         OrdOdCartProdCriteria example = new OrdOdCartProdCriteria();
         example.createCriteria().andTenantIdEqualTo(tenantId)
                 .andUserIdEqualTo(userId);
-        return MapperFactory.getOrdOdCartProdMapper().selectByExample(example);
+        return ordOdCartProdMapper.selectByExample(example);
     }
 
     /**
@@ -42,7 +48,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
     public int installCartProd(OrdOdCartProd cartProd) {
         cartProd.setProdDetalId(SequenceUtil.genCartProdId());
         cartProd.setInsertTime(DateUtils.currTimeStamp());
-        return MapperFactory.getOrdOdCartProdMapper().insert(cartProd);
+        return ordOdCartProdMapper.insert(cartProd);
     }
 
     /**
@@ -56,7 +62,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
         if (cartProd==null || cartProd.getProdDetalId()==null)
             return 0;
 
-        return MapperFactory.getOrdOdCartProdMapper().updateByPrimaryKeySelective(cartProd);
+        return ordOdCartProdMapper.updateByPrimaryKeySelective(cartProd);
     }
 
     /**
@@ -68,7 +74,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
      */
     @Override
     public OrdOdCartProd queryByCartProdId(String tenantId, Long cartProdId) {
-        OrdOdCartProd ordOdCartProd = MapperFactory.getOrdOdCartProdMapper().selectByPrimaryKey(cartProdId);
+        OrdOdCartProd ordOdCartProd = ordOdCartProdMapper.selectByPrimaryKey(cartProdId);
         if (ordOdCartProd!=null && ordOdCartProd.getTenantId().equals(tenantId))
             return ordOdCartProd;
         return null;
@@ -88,7 +94,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
         example.createCriteria().andTenantIdEqualTo(tenantId)
                 .andUserIdEqualTo(userId)
                 .andSkuIdEqualTo(skuId);
-        return MapperFactory.getOrdOdCartProdMapper().deleteByExample(example);
+        return ordOdCartProdMapper.deleteByExample(example);
     }
 
     /**
@@ -108,7 +114,7 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
         example.createCriteria().andTenantIdEqualTo(tenantId)
                 .andUserIdEqualTo(userId)
                 .andSkuIdEqualTo(skuId);
-        List<OrdOdCartProd> cartProdList = MapperFactory.getOrdOdCartProdMapper().selectByExample(example);
+        List<OrdOdCartProd> cartProdList = ordOdCartProdMapper.selectByExample(example);
         return (cartProdList==null || cartProdList.isEmpty())?null:cartProdList.get(0);
     }
 }
