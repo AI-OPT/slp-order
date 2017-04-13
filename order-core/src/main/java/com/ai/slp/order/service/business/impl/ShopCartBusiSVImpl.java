@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
@@ -43,7 +44,7 @@ import com.alibaba.fastjson.JSON;
 @Service
 @Transactional
 public class ShopCartBusiSVImpl implements IShopCartBusiSV {
-    private static Logger logger = LoggerFactory.getLogger(ShopCartBusiSVImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(ShopCartBusiSVImpl.class);
     @Autowired
     IOrdOdCartProdAtomSV cartProdAtomSV;
 
@@ -241,18 +242,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * @return
      */
     @Override
-    public List<CartProdInfo> queryCartProdOfUser(String tenantId, String userId) {
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
-        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
-        /*//若不存在购物车信息缓存,则建立缓存
-        if (!iCacheClient.exists(cartUserId)){
-            //从数据库中查询,建立缓存
-            addShopCartCache(tenantId,userId,iCacheClient);
-        }*/
-        //查询出缓存中购物车所有商品信息
-        Map<String,String> cartProdMap = iCacheClient.hgetAll(cartUserId);
-        //删除概览信息
-        cartProdMap.remove(ShopCartConstants.McsParams.CART_POINTS);
+    public List<CartProdInfo> queryCartProdOfUser(String tenantId, String userId, Map<String,String> cartProdMap ) {
         List<CartProdInfo> cartProdInfoList = new ArrayList<>();
         Iterator<String> skuIdIterator = cartProdMap.keySet().iterator();
         while (skuIdIterator.hasNext()){
@@ -260,28 +250,8 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             String cartProdStr = cartProdMap.get(skuId);
             OrdOdCartProd cartProd = JSON.parseObject(cartProdStr,OrdOdCartProd.class);
             try {
-                ProductSkuInfo skuInfo = querySkuInfo(tenantId, skuId);
-                if(skuInfo==null) {
-                	throw new BusinessException("", "sku单品信息不存在");
-                }
-                if(skuInfo!=null&&skuInfo.getUsableNum()==null) {
-                	skuInfo.setUsableNum(0l);
-                }
-                if(skuInfo!=null&&skuInfo.getSalePrice()==null) {
-                	skuInfo.setSalePrice(0l);
-                }
-                CartProdInfo prodInfo = new CartProdInfo();
-                BeanUtils.copyProperties(prodInfo,skuInfo);
-                prodInfo.setProductId(skuInfo.getProdId());
-                prodInfo.setProductName(skuInfo.getProdName());
-                prodInfo.setInsertTime(cartProd.getInsertTime());
-                prodInfo.setBuyNum(cartProd.getBuySum().longValue());
-                prodInfo.setSupplierId(cartProd.getSupplierId());
-                //若库存量大于0,且小于购物车添加数量,则使用库存量
-                if (skuInfo.getUsableNum()>0 && skuInfo.getUsableNum()<prodInfo.getBuyNum()){
-                    prodInfo.setBuyNum(skuInfo.getUsableNum());
-                }
-                cartProdInfoList.add(prodInfo);
+            	cartProdInfoList = this.queryCartProdInfoList(cartProdInfoList, skuId, 
+            			tenantId, cartProd);
             }catch (BusinessException e){
                 //若SKU不存在或无效
                 //若销售商品不存在
@@ -294,7 +264,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                     throw new BusinessException(e);
                 }
             }
-
         }
         //查询SKU信息
         return cartProdInfoList;
@@ -353,10 +322,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      */
     private void checkSkuInfoTotal(String tenantId,String skuId,long buyNum){
         ProductSkuInfo skuInfo = querySkuInfo(tenantId,skuId);
-        //测试模拟返回结果
-//        ProductSkuInfo skuInfo = new ProductSkuInfo();
-//        skuInfo.setUsableNum(5);
-
         checkSkuInfoTotal(skuInfo,buyNum);
     }
 
@@ -388,7 +353,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         skuInfoQuery.setSkuId(skuId);
         IProductServerSV productServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
         return productServerSV.queryProductSkuById4ShopCart(skuInfoQuery);
-      // return productServerSV.queryProductSkuById(skuInfoQuery);
     }
 
     /**
@@ -411,5 +375,34 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             e.printStackTrace();
         }
         return Integer.parseInt(limitNum);
+    }
+    
+    
+    @Transactional(propagation=Propagation.NOT_SUPPORTED)
+    public List<CartProdInfo> queryCartProdInfoList( List<CartProdInfo> cartProdInfoList,
+    		String skuId,String tenantId,OrdOdCartProd cartProd) {
+    	ProductSkuInfo skuInfo = querySkuInfo(tenantId, skuId);
+        if(skuInfo==null) {
+        	throw new BusinessException("", "sku单品信息不存在");
+        }
+        if(skuInfo!=null&&skuInfo.getUsableNum()==null) {
+        	skuInfo.setUsableNum(0l);
+        }
+        if(skuInfo!=null&&skuInfo.getSalePrice()==null) {
+        	skuInfo.setSalePrice(0l);
+        }
+        CartProdInfo prodInfo = new CartProdInfo();
+        BeanUtils.copyProperties(prodInfo,skuInfo);
+        prodInfo.setProductId(skuInfo.getProdId());
+        prodInfo.setProductName(skuInfo.getProdName());
+        prodInfo.setInsertTime(cartProd.getInsertTime());
+        prodInfo.setBuyNum(cartProd.getBuySum().longValue());
+        prodInfo.setSupplierId(cartProd.getSupplierId());
+        //若库存量大于0,且小于购物车添加数量,则使用库存量
+        if (skuInfo.getUsableNum()>0 && skuInfo.getUsableNum()<prodInfo.getBuyNum()){
+            prodInfo.setBuyNum(skuInfo.getUsableNum());
+        }
+        cartProdInfoList.add(prodInfo);
+		return cartProdInfoList;
     }
 }
