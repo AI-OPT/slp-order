@@ -331,6 +331,18 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		}
 		OrderInfo orderInfo = ordList.get(0);
 		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+		//TODO 便于性能测试
+		for (OrdProdExtend ordProdExtend : ordextendes) {
+			if(!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(ordProdExtend.getBusicode())) {
+				ProdInfo prodInfo = ordProdExtend.getProdinfos().get(0);
+				//搜索引擎中存在该商品,并且该商品为待审核状态则不刷新数据
+				if(afterOrdOdProd.getProdName().equals(prodInfo.getProdname())) {
+					if(OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT.equals(ordProdExtend.getState())) {
+						return;
+					}
+				}
+			}
+		}
 		OrdProdExtend prodExtend=new OrdProdExtend();
 		List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
 		prodExtend.setState(afterOrder.getState());
