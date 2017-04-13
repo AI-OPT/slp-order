@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
-import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
@@ -22,11 +21,9 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
-import com.ai.slp.order.util.MQConfigUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.alibaba.fastjson.JSON;
 @Service
 @Component
 public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
@@ -43,50 +40,36 @@ public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
 		ResponseHeader responseHeader = new ResponseHeader();
 		//参数校验
 		ValidateUtils.validateUpdateWaitSellState(request);
-		boolean ccsMqFlag=false;
-		//从配置中心获取消息启动标识ccsMqFlag
-		//ccsMqFlag = MQConfigUtil.getCCSMqFlag();
-		//非消息模式 同步调用服务
-		if(!ccsMqFlag) {
-			try{
-				String tenantId = request.getTenantId();
-				Long orderId = request.getOrderId();
-				String expressId = request.getExpressId();
-				String expressOddNumber = request.getExpressOddNumber();
-				//
-				OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
-				ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
-				ordOrder.setStateChgTime(DateUtil.getSysDate());
-				//
-				OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
-				ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
-				ordOdLogistics.setTenantId(tenantId);
-				ordOdLogistics.setOrderId(orderId);
-				ordOdLogistics.setExpressId(expressId);
-				ordOdLogistics.setExpressOddNumber(expressOddNumber);
-				ordOdLogistics.setLogisticsType("0");
-				this.orderStateBusiSV.updateWaitSellRecieveSureState(ordOrder,ordOdLogistics);
-				responseHeader.setIsSuccess(true);
-				responseHeader.setResultCode("000000");
-				responseHeader.setResultMessage("修改状态成功");
-				//
-				response.setResponseHeader(responseHeader);
-			}catch(Exception e){
-				responseHeader.setResultCode("999999");
-				responseHeader.setResultMessage("修改状态失败");			
-				response.setResponseHeader(responseHeader);
-				LOG.error("修改状态失败:"+e.getMessage(),e);
-			}
-			return response;
-		}else {
-			//消息模式 异步调用服务
-			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).send(JSON.toJSONString(request), 0);
+		try{
+			String tenantId = request.getTenantId();
+			Long orderId = request.getOrderId();
+			String expressId = request.getExpressId();
+			String expressOddNumber = request.getExpressOddNumber();
+			//
+			OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+			ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
+			ordOrder.setStateChgTime(DateUtil.getSysDate());
+			//
+			OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
+			ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
+			ordOdLogistics.setTenantId(tenantId);
+			ordOdLogistics.setOrderId(orderId);
+			ordOdLogistics.setExpressId(expressId);
+			ordOdLogistics.setExpressOddNumber(expressOddNumber);
+			ordOdLogistics.setLogisticsType("0");
+			this.orderStateBusiSV.updateWaitSellRecieveSureState(ordOrder,ordOdLogistics);
 			responseHeader.setIsSuccess(true);
 			responseHeader.setResultCode("000000");
 			responseHeader.setResultMessage("修改状态成功");
+			//
 			response.setResponseHeader(responseHeader);
-			return response;
+		}catch(Exception e){
+			responseHeader.setResultCode("999999");
+			responseHeader.setResultMessage("修改状态失败");			
+			response.setResponseHeader(responseHeader);
+			LOG.error("修改状态失败:"+e.getMessage(),e);
 		}
+		return response;
 	}
 
 	@Override
