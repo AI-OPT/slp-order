@@ -1,5 +1,7 @@
 package com.ai.slp.order.api.sesdata.param;
 
+import java.util.List;
+
 import com.ai.opt.base.vo.BaseResponse;
 
 public class SesDataResponse extends BaseResponse{
@@ -12,6 +14,9 @@ public class SesDataResponse extends BaseResponse{
 	private int failCount;
 	//共用父订单数量
 	private int shareParentCount;
+	//失败订单集合
+	private List<Long> failOrders;
+	
 	public int getQueryCount() {
 		return queryCount;
 	}
@@ -30,5 +35,10 @@ public class SesDataResponse extends BaseResponse{
 	public void setShareParentCount(int shareParentCount) {
 		this.shareParentCount = shareParentCount;
 	}
-	
+	public List<Long> getFailOrders() {
+		return failOrders;
+	}
+	public void setFailOrders(List<Long> failOrders) {
+		this.failOrders = failOrders;
+	}
 }
