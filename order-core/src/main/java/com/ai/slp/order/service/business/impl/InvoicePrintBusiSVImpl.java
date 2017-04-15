@@ -80,9 +80,6 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 	//发票报送(打印)
 	@Override
 	public InvoiceSumbitResponse invoiceSubmit(InvoiceSubmitRequest request) throws BusinessException, SystemException {
-		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
-		InvoiceSumbitResponse response=new InvoiceSumbitResponse();
-		List<InvoiceSumbitVo> invoiceList=new ArrayList<InvoiceSumbitVo>();
 		if (request == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
 		}
@@ -90,6 +87,9 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "订单id不能为空");
 		}
 		CommonCheckUtils.checkTenantId(request.getTenantId(), ExceptCodeConstants.Special.PARAM_IS_NULL);
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+		InvoiceSumbitResponse response=new InvoiceSumbitResponse();
+		List<InvoiceSumbitVo> invoiceList=new ArrayList<InvoiceSumbitVo>();
 		String tenantId = request.getTenantId();
 		Long orderId = request.getOrderId();
 		OrdOrder order = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
