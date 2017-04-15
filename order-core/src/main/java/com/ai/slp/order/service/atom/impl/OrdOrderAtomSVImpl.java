@@ -1,6 +1,7 @@
 package com.ai.slp.order.service.atom.impl;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,6 +182,31 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 	@Override
 	public int updateOrderStateAndBatchNo(OrdOrder record) {
 		return ordOrderAttachMapper.updateOrderStateAndBatchNo(record);
+	}
+
+	@Override
+	public List<OrdOrder> selectSesData(int startSize, int size) {
+		// TODO Auto-generated method stub
+		OrdOrderCriteria example=new OrdOrderCriteria();
+	 	OrdOrderCriteria.Criteria criteria = example.createCriteria();
+	 	List<String> stateList=new ArrayList<String>();
+	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION);
+	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
+	 	criteria.andStateIn(stateList);
+	 	example.setLimitStart(startSize);
+	 	example.setLimitEnd(size);
+		return ordOrderMapper.selectByExample(example);
+	}
+
+	@Override
+	public int countForSes() {
+		OrdOrderCriteria example=new OrdOrderCriteria();
+	 	OrdOrderCriteria.Criteria criteria = example.createCriteria();
+	 	List<String> stateList=new ArrayList<String>();
+	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION);
+	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
+	 	criteria.andStateIn(stateList);
+		return ordOrderMapper.countByExample(example);
 	}
 	
 }
