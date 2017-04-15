@@ -34,6 +34,7 @@ import com.ai.slp.order.api.ordertradecenter.param.OrdLogisticsInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductDetailInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrdProductInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
+import com.ai.slp.order.api.sesdata.param.SesDataByPageRequest;
 import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 import com.ai.slp.order.api.synchronize.params.OrdOdProdVo;
 import com.ai.slp.order.api.synchronize.params.OrderSynchronizeVo;
@@ -767,6 +768,9 @@ public class ValidateUtils {
 		}
 	}
 	
+	/**
+	 * 订单列表参数校验
+	 */
 	public static void validateOrderQueryList(BehindQueryOrderListRequest condition) {
 		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
@@ -780,9 +784,25 @@ public class ValidateUtils {
 		if(condition.getPageSize()==null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页数不能为空");
 		}
-	}  
+	} 
 	
-	
+	/**
+	 * 搜索引擎刷新数据参数校验
+	 */
+	public static void validateSesDataRequest(SesDataByPageRequest condition) {
+		if (condition == null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
+		}
+		if(StringUtil.isBlank(condition.getTenantId())){
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"租户id不能为空");
+		}
+		if(condition.getPageNo()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页码不能为空");
+		}
+		if(condition.getPageSize()==null) {
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "页数不能为空");
+		}
+	}
 	
 	 /**
 	  * 判断时间是否符合格式要求
