@@ -247,6 +247,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 	 	//性能数据
 	 	int queryCount = ordOrderAtomSV.countForSes();
 	 	int failCount=0;
+	 	List<Long> failOrders=new ArrayList<Long>();
 	 	int shareParentCount=0;
 	 	List<OrdOrder> ordOrderDatas = ordOrderAtomSV.selectSesData(startSize,maxSize);
 		List<OrderInfo> orderList = new ArrayList<OrderInfo>();
@@ -255,6 +256,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			OrdOrder ord = ordOrderAtomSV.selectByOrderId(tenantId, order.getParentOrderId());
 			if(ord==null) {
 				failCount++;
+				failOrders.add(order.getParentOrderId());
 				logger.error(">>>>>>>>>>不存在订单主表信息! 父订单id:"+ order.getParentOrderId());
 				continue;
 			}
@@ -286,6 +288,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, orderId);
 			if(ordOdLogistics==null) {
 				failCount++;
+				failOrders.add(orderId);
 				logger.error(">>>>>>>>>>不存在订单运费信息! 父订单id:"+ orderId);
 				continue;
 			}
@@ -294,6 +297,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByOrderId(orderId);
 			if(CollectionUtil.isEmpty(orderFeeProdList)) {
 				failCount++;
+				failOrders.add(orderId);
 				logger.error(">>>>>>>>>>不存在订单费用明细信息! 父订单id:"+ orderId);
 				continue;
 			}
@@ -310,6 +314,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(tenantId, orderId);
 			if (ordOdFeeTotal == null) {
 				failCount++;
+				failOrders.add(orderId);
 				logger.error(">>>>>>>>>>不存在订单费用主表信息! 父订单id:"+ orderId);
 				continue;
 			}
@@ -330,6 +335,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 		response.setFailCount(failCount);
 		response.setQueryCount(queryCount);
 		response.setShareParentCount(shareParentCount);
+		response.setFailOrders(failOrders);
 		return response;
 	}
 }
