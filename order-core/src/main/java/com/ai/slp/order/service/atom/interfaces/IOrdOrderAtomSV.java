@@ -13,7 +13,7 @@ public interface IOrdOrderAtomSV {
     int countByExample(OrdOrderCriteria example);
 
     List<OrdOrder> selectByExample(OrdOrderCriteria example);
-    
+  
     List<OrdOrder> selectNotPayOrders(String tenantId,long orderId);
     
     List<OrdOrder> selectNotPayOrdersByTime(Timestamp time);
@@ -53,4 +53,8 @@ public interface IOrdOrderAtomSV {
     int updateOrderStateAndBatchNo(OrdOrder record);
     
     List<OrdOrder> selectSubSaleOrder(long origOrderId,long orderId);
+    
+    List<OrdOrder> selectSesData(int startSize,int size);
+    
+    int countForSes();
 }
