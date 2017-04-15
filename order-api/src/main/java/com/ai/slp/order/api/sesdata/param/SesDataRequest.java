@@ -4,9 +4,6 @@ import com.ai.opt.base.vo.BaseInfo;
 
 public class SesDataRequest extends BaseInfo{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	//父订单id
 	private Long parentOrderId;
