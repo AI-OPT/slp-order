@@ -6,13 +6,13 @@ import com.ai.opt.base.vo.PageInfo;
 public class OrderWarmResponse extends BaseResponse {
 
 	private static final long serialVersionUID = 1L;
-	private PageInfo<OrderWarmVo> pageInfo;
+	private PageInfo<OrderWarmListVo> pageInfo;
 
-	public PageInfo<OrderWarmVo> getPageInfo() {
+	public PageInfo<OrderWarmListVo> getPageInfo() {
 		return pageInfo;
 	}
 
-	public void setPageInfo(PageInfo<OrderWarmVo> pageInfo) {
+	public void setPageInfo(PageInfo<OrderWarmListVo> pageInfo) {
 		this.pageInfo = pageInfo;
 	}
 
