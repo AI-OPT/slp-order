@@ -5,21 +5,24 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.components.mcs.MCSClientFactory;
-import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.shopcart.interfaces.IShopCartSV;
 import com.ai.slp.order.api.shopcart.param.*;
-import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.service.business.interfaces.IShopCartBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.IPassMcsUtils;
+import com.ai.slp.product.api.product.interfaces.IProductServerSV;
+import com.ai.slp.product.api.product.param.ProductSkuInfo;
+import com.ai.slp.product.api.product.param.SkuInfoQuery;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.alibaba.fastjson.JSON;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +35,8 @@ import java.util.Map;
 @Service(validation = "true")
 @Component
 public class IShopCartSVImpl implements IShopCartSV {
+	
+	private static Logger logger = LoggerFactory.getLogger(IShopCartSVImpl.class);
     @Autowired
     IShopCartBusiSV shopCartBusiSV;
     /**
@@ -116,38 +121,29 @@ public class IShopCartSVImpl implements IShopCartSV {
     public CartProdOptRes updateProdNum(CartProd cartProd) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(cartProd.getTenantId(),"");
         CartProdOptRes optRes = null;
-        boolean ccsMqFlag=false;
-    	//从配置中心获取ccsMqFlag
-    	//ccsMqFlag=MQConfigUtil.getCCSMqFlag();
-    	//非消息模式下，同步调用服务
-    	if(!ccsMqFlag){
-    		try {
-    			//若购买数量为空,或小于0,则设置默认为1
-    	        if (cartProd.getBuyNum() == null
-    	                || cartProd.getBuyNum()<=0)
-    	            cartProd.setBuyNum(1l);
-    	        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
-    	        String cartUserId = IPassMcsUtils.genShopCartUserId(cartProd.getTenantId(),cartProd.getUserId());
-    	        //购物车单个商品数量限制
-    	        int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
-    	        //达到购物车单个商品数量上线
-    	        if (skuNumLimit>0 && cartProd.getBuyNum()>skuNumLimit){
-    	            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
-    	        }
-    			optRes = shopCartBusiSV.updateCartProd(cartProd,iCacheClient,cartUserId);
-    			optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
-    		}catch (BusinessException|SystemException e){
-    			optRes = new CartProdOptRes();
-    			optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
-    		}
-    		return optRes;
-    	}else {
-    		//消息模式下
-    		optRes=new CartProdOptRes();
-    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_SHOPCART_UPDATE_TOPIC).send(JSON.toJSONString(cartProd), 0);
-    		optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
-    		return optRes;
-    	}
+		try {
+			//若购买数量为空,或小于0,则设置默认为1
+	        if (cartProd.getBuyNum() == null
+	                || cartProd.getBuyNum()<=0)
+	            cartProd.setBuyNum(1l);
+	        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+	        String cartUserId = IPassMcsUtils.genShopCartUserId(cartProd.getTenantId(),cartProd.getUserId());
+	        //购物车单个商品数量限制
+	        int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
+	        //达到购物车单个商品数量上线
+	        if (skuNumLimit>0 && cartProd.getBuyNum()>skuNumLimit){
+	            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
+	        }
+	        //检查sku单品库存
+	        checkSkuInfoTotal(cartProd.getTenantId(),cartProd.getSkuId(),cartProd.getBuyNum());
+	        
+			optRes = shopCartBusiSV.updateCartProd(cartProd,iCacheClient,cartUserId);
+			optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
+		}catch (BusinessException|SystemException e){
+			optRes = new CartProdOptRes();
+			optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
+		}
+		return optRes;
     }
 
     /**
@@ -164,26 +160,14 @@ public class IShopCartSVImpl implements IShopCartSV {
     public CartProdOptRes deleteMultiProd(MultiCartProd multiCartProd) throws BusinessException,SystemException {
         CommonCheckUtils.checkTenantId(multiCartProd.getTenantId(),"");
         CartProdOptRes optRes = null;
-        boolean ccsMqFlag=false;
-    	//从配置中心获取ccsMqFlag
-    	//ccsMqFlag=MQConfigUtil.getCCSMqFlag();
-    	//非消息模式下，同步调用服务
-    	if(!ccsMqFlag){
-    		try {
-    			optRes = shopCartBusiSV.deleteCartProd(multiCartProd.getTenantId(),multiCartProd.getUserId(),multiCartProd.getSkuIdList());
-    			optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
-    		}catch (BusinessException|SystemException e){
-    			optRes = new CartProdOptRes();
-    			optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
-    		}
-    		return optRes;
-    	}else {
-    		//消息模式下
-    		optRes=new CartProdOptRes();
-    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_SHOPCART_DELETE_TOPIC).send(JSON.toJSONString(multiCartProd), 0);
-    		optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
-    		return optRes;
-    	}
+		try {
+			optRes = shopCartBusiSV.deleteCartProd(multiCartProd.getTenantId(),multiCartProd.getUserId(),multiCartProd.getSkuIdList());
+			optRes.setResponseHeader(new ResponseHeader(true,ExceptCodeConstants.Special.SUCCESS,"成功"));
+		}catch (BusinessException|SystemException e){
+			optRes = new CartProdOptRes();
+			optRes.setResponseHeader(new ResponseHeader(false,e.getErrorCode(),e.getMessage()));
+		}
+		return optRes;
     }
 
     /**
@@ -229,5 +213,33 @@ public class IShopCartSVImpl implements IShopCartSV {
             e.printStackTrace();
         }
         return Integer.parseInt(limitNum);
+    }
+    
+    
+    /**
+     * 检查SKU单品库存
+     * @param tenantId
+     * @param skuId
+     * @param buyNum
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    private void checkSkuInfoTotal(String tenantId,String skuId,long buyNum){
+        SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
+        skuInfoQuery.setTenantId(tenantId);
+        skuInfoQuery.setSkuId(skuId);
+        IProductServerSV productServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
+        ProductSkuInfo skuInfo = productServerSV.queryProductSkuById4ShopCart(skuInfoQuery);
+        
+        if (skuInfo==null || skuInfo.getUsableNum()<=0){
+            throw new BusinessException("","商品已售罄或下架");
+        }
+        if ( buyNum>skuInfo.getUsableNum()){
+            logger.warn("单品库存{},检查库存{}",skuInfo.getUsableNum(),buyNum);
+            throw new BusinessException("","商品库存不足["+buyNum+"]");
+        }
+
     }
 }
