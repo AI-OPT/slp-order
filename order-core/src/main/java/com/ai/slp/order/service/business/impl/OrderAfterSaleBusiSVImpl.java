@@ -29,7 +29,6 @@ import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
-import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
@@ -309,12 +308,13 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     
     //ofc售后订单状态回传
   	@Override
-  	public void backStateOFC(OrderOFCBackRequest request,OrdOrder ordOrder) 
+  	public void backStateOFC(OrdOrder ordOrder) 
   			throws BusinessException, SystemException {
-  		ordOrder.setState(request.getState());
-  		ordOrder.setRemark(request.getReasonDesc());
-  		//更新数据
-  		ordOrderAtomSV.updateOFCOrder(ordOrder);
+  		//更新订单数据
+  		int updateFlag = ordOrderAtomSV.updateOFCOrder(ordOrder);
+  		if(updateFlag==0) {
+  			throw new BusinessException("OFC售后订单更新失败! 售后订单id:"+ordOrder.getExternalOrderId());
+  		}
   	}
   	
   	//刷新售后搜索数据
