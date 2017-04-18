@@ -165,8 +165,8 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 	}
 
 	@Override
-	public int updateOrder(OrdOrder record) {
-		return ordOrderAttachMapper.updateOrdOrder(record);
+	public int updateOrder(OrdOrder order) {
+		return ordOrderAttachMapper.updateOrdOrder(order);
 	}
 	
 	@Override
@@ -207,6 +207,17 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
 	 	criteria.andStateIn(stateList);
 		return ordOrderMapper.countByExample(example);
+	}
+
+	@Override
+	public OrdOrder selectByPrimaryKey(long orderId) {
+		return ordOrderMapper.selectByPrimaryKey(orderId);
+	}
+
+	@Override
+	public OrdOrder selectPartInfo(Long orderId) {
+		// TODO Auto-generated method stub
+		return ordOrderAttachMapper.selectPartInfo(orderId);
 	}
 	
 }

@@ -1,5 +1,8 @@
 package com.ai.slp.order.dao.mapper.attach;
 
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
@@ -24,7 +27,7 @@ public interface OrdOrderAttachMapper {
      * @RestRelativeURL
      */
     @Update("update ord_order set DOWNSTREAM_ORDER_ID = #{downstreamOrderId} where ORDER_ID = #{orderId} ")
-	public int updateOrdOrder(OrdOrder OrdOrder);
+	public int updateOrdOrder(OrdOrder order);
     
     /**
      * OFC售后订单状态通知
@@ -86,4 +89,12 @@ public interface OrdOrderAttachMapper {
      */
     @Update("update ord_od_cart_prod set BUY_SUM = #{buySum} where PROD_DETAL_ID = #{prodDetalId}")
 	public void updateCartProdSum(OrdOdCartProd cartProd0);
+    
+    
+    @Select("select ORDER_ID,TENANT_ID,PARENT_ORDER_ID from ord_order where ORDER_ID = #{orderId}")
+    @Results(value = {  
+            @Result(id = true, property = "orderId", column = "ORDER_ID"),  
+            @Result(property = "tenantId", column = "TENANT_ID"),  
+    		@Result(property = "parentOrderId", column = "PARENT_ORDER_ID") })  
+	public OrdOrder selectPartInfo(Long orderId);
 }

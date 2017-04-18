@@ -21,6 +21,8 @@ public interface IOrdOrderAtomSV {
     List<OrdOrder> selectOtherOrders(OrdOrder ordOrder);
     
     public OrdOrder selectByOrderId(String tenantId,long orderId);
+    
+    OrdOrder selectByPrimaryKey(long orderId);
 
     int insertSelective(OrdOrder record);
 
@@ -44,7 +46,7 @@ public interface IOrdOrderAtomSV {
     
     int updateByPrimaryKeySelective(OrdOrder record);
     
-    int updateOrder(OrdOrder record);
+    int updateOrder(OrdOrder order);
     
     int updateOrderState(OrdOrder record);
     
@@ -57,4 +59,6 @@ public interface IOrdOrderAtomSV {
     List<OrdOrder> selectSesData(int startSize,int size);
     
     int countForSes();
+
+	OrdOrder selectPartInfo(Long orderId);
 }
