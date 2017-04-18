@@ -27,18 +27,11 @@
 	<!-- 商品销售相关服务 -->
 	<dubbo:reference id="iStorageNumSV" loadbalance="roundrobin"
 		interface="com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV" />
-	<!-- 仓库 -->
-	<dubbo:reference id="iRouteCoreService" loadbalance="roundrobin"
-		interface="com.ai.slp.route.api.core.interfaces.IRouteCoreService" />
-
 	<dubbo:reference id="iSupplyProductServiceSV" loadbalance="roundrobin"
 		interface="com.ai.slp.route.api.supplyproduct.interfaces.ISupplyProductServiceSV" />
 	<!-- 商品 -->
 	<dubbo:reference id="iProductServerSV" loadbalance="roundrobin"
 		interface="com.ai.slp.product.api.product.interfaces.IProductServerSV" />
-	<!-- 仓库 -->
-	<dubbo:reference id="iRouteServer" loadbalance="roundrobin"
-		interface="com.ai.slp.route.api.server.interfaces.IRouteServer" />
 	<!-- 缓存 -->
 	<dubbo:reference id="iCacheSV" loadbalance="roundrobin"
 		interface="com.ai.platform.common.api.cache.interfaces.ICacheSV" />
@@ -46,21 +39,11 @@
 	<dubbo:reference id="iOrderCancelSV" loadbalance="roundrobin"
 		interface="com.ai.slp.order.api.ordercancel.interfaces.IOrderCancelSV" />
 
-	<dubbo:reference id="iAccountQuerySV" loadbalance="roundrobin"
-		interface="com.ai.slp.balance.api.accountquery.interfaces.IAccountQuerySV" />
-		
-	<dubbo:reference id="iDepositSV" loadbalance="roundrobin"
-		interface="com.ai.slp.balance.api.deposit.interfaces.IDepositSV" />
 		
 	<!-- 仓库 -->	
 	<dubbo:reference id="iRouteManageSV" loadbalance="roundrobin"
 		interface="com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV" />
 	<!-- 订单查询 -->
-	<dubbo:reference id="iOrderListSV" loadbalance="roundrobin"
-		interface="com.ai.slp.order.api.orderlist.interfaces.IOrderListSV" />
-	<!-- ofc -->
-	<dubbo:reference id="iOfcSV" loadbalance="roundrobin"
-		interface="com.ai.slp.order.api.ofc.interfaces.IOfcSV" />
-	
-	
+	<!-- <dubbo:reference id="iOrderListSV" loadbalance="roundrobin"
+		interface="com.ai.slp.order.api.orderlist.interfaces.IOrderListSV" /> -->
 </beans>
