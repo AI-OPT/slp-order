@@ -16,7 +16,10 @@ public class ProductListInfo implements Serializable {
     private String statename;
     //商品SIZE
     private long prodsize;
+   //业务类型
     private String busicode;
+    //仓库id
+    private String routeid;
     private List<OrdProductVo> prodinfos;
 
 	public Long getOrderid() {
@@ -74,4 +77,13 @@ public class ProductListInfo implements Serializable {
 	public void setBusicode(String busicode) {
 		this.busicode = busicode;
 	}
+
+	public String getRouteid() {
+		return routeid;
+	}
+
+	public void setRouteid(String routeid) {
+		this.routeid = routeid;
+	}
+	
 }
