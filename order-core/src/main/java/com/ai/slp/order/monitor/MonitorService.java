@@ -17,11 +17,10 @@ import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdRule;
 import com.ai.slp.order.service.atom.interfaces.IOrdRuleAtomSV;
 import com.ai.slp.order.util.DateCycleUtil;
+import com.alibaba.fastjson.JSON;
 @Service
 public class MonitorService {
 	private static final Logger log = LoggerFactory.getLogger(MonitorService.class);
-	@Autowired
-	private IOrdRuleAtomSV ordRuleAtomSV;
 	/**
 	 * 下单前缓存预警服务
 	 * 
@@ -32,25 +31,34 @@ public class MonitorService {
 	public OrderMonitorBeforResponse beforSubmitOrder(String ipAddress,String userId){
 		//
 		OrderMonitorBeforResponse response = new OrderMonitorBeforResponse();
+		//
+		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
+		
+		String ordRuleUserStr = cacheClient.get(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);
+		String ordRuleIpStr = cacheClient.get(OrdRuleConstants.BUY_IP_MONITOR_ID);
+		String ordRuleAllStr = cacheClient.get(OrdRuleConstants.TIME_MONITOR_ID);
+		OrdRule ordRuleUser = JSON.parseObject(ordRuleUserStr,OrdRule.class);
+		OrdRule ordRuleIp = JSON.parseObject(ordRuleIpStr,OrdRule.class);
+		OrdRule ordRuleAll = JSON.parseObject(ordRuleAllStr,OrdRule.class);
 		
 		//查询用户规则信息
-		OrdRule ordRuleUser = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);
+	//	OrdRule ordRuleUser = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);
 		//查询购买Ip规则信息
-		OrdRule ordRuleIp = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.BUY_IP_MONITOR_ID);
+	//	OrdRule ordRuleIp = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.BUY_IP_MONITOR_ID);
 		//订单总量规则信息
-		OrdRule ordRuleAll = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.TIME_MONITOR_ID);
+	//	OrdRule ordRuleAll = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.TIME_MONITOR_ID);
 		
 		//
 		Map<String,Object> userCycleDate = DateCycleUtil.getCycleDate(ordRuleUser.getTimeType(), -ordRuleUser.getMonitorTime());
 		Map<String,Object> ipCycleDate = DateCycleUtil.getCycleDate(ordRuleIp.getTimeType(), -ordRuleIp.getMonitorTime());
 		Map<String,Object> allCycleDate = DateCycleUtil.getCycleDate(ordRuleAll.getTimeType(), -ordRuleAll.getMonitorTime());
 		
-		//
-		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
+	
 		//
 		Long userSize = cacheClient.zcount(userId,userCycleDate.get("endTime").toString(),userCycleDate.get("startTime").toString());
 		Long ipSize = cacheClient.zcount(ipAddress, ipCycleDate.get("endTime").toString(), ipCycleDate.get("startTime").toString());
 		Long orderAllSize = cacheClient.zcount("order_all", allCycleDate.get("endTime").toString(), allCycleDate.get("startTime").toString());
+		
 		//用户预警提示
 		if(userSize >= ordRuleUser.getOrderSum() ){
 			//throw new BusinessException("999999","当前用户["+userId+"]下,"+ordRuleUser.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleUser.getTimeType())+"内,已达到"+ordRuleUser.getOrderSum()+"单预警");
@@ -114,13 +122,21 @@ public class MonitorService {
 		//3、添加订单总量集合预警信息
 		cacheClient.zadd("order_all", time, "order_all_"+millisTime);//订单总量
 		
+		String ordRuleUserStr = cacheClient.get(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);
+		String ordRuleIpStr = cacheClient.get(OrdRuleConstants.BUY_IP_MONITOR_ID);
+		String ordRuleAllStr = cacheClient.get(OrdRuleConstants.TIME_MONITOR_ID);
+		OrdRule ordRuleUser = JSON.parseObject(ordRuleUserStr,OrdRule.class);
+		OrdRule ordRuleIp = JSON.parseObject(ordRuleIpStr,OrdRule.class);
+		OrdRule ordRuleAll = JSON.parseObject(ordRuleAllStr,OrdRule.class);
+		
+		/*
 		//查询用户规则信息
 		OrdRule ordRuleUser = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);
 		//查询购买Ip规则信息
 		OrdRule ordRuleIp = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.BUY_IP_MONITOR_ID);
 		//订单总量规则信息
 		OrdRule ordRuleAll = this.ordRuleAtomSV.getOrdRule(OrdRuleConstants.TIME_MONITOR_ID);
-				
+		*/
 		//
 		Map<String,Object> userCycleDate = DateCycleUtil.getCycleDate(ordRuleUser.getTimeType(), -ordRuleUser.getMonitorTime());
 		Map<String,Object> ipCycleDate = DateCycleUtil.getCycleDate(ordRuleIp.getTimeType(), -ordRuleIp.getMonitorTime());
