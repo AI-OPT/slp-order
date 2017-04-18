@@ -145,7 +145,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     @Override
     public CartProdOptRes updateCartProd(CartProd cartProd, ICacheClient iCacheClient, String cartUserId) {
         String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
-        checkSkuInfoTotal(tenantId,cartProd.getSkuId(),cartProd.getBuyNum());
         //若不存在,则直接进行添加操作
         if (!iCacheClient.hexists(cartUserId,cartProd.getSkuId())){
             return addCartProd(cartProd,iCacheClient,cartUserId);
@@ -174,7 +173,8 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 cartProdAtomSV.installCartProd(odCartProd);
             }else {
                 cartProd0.setBuySum(odCartProd.getBuySum());
-                cartProdAtomSV.updateCartProdById(cartProd0);
+             //   cartProdAtomSV.updateCartProdById(cartProd0);
+                cartProdAtomSV.updateCartProdSum(cartProd0);
             }
         }
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
@@ -313,17 +313,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(cartProdPoints));
     }
 
-    /**
-     * 检查SKU单品库存
-     * @param tenantId
-     * @param skuId
-     * @param buyNum
-     * @return
-     */
-    private void checkSkuInfoTotal(String tenantId,String skuId,long buyNum){
-        ProductSkuInfo skuInfo = querySkuInfo(tenantId,skuId);
-        checkSkuInfoTotal(skuInfo,buyNum);
-    }
 
     /**
      * 检查SKU单品库存
