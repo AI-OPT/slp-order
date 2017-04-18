@@ -95,11 +95,8 @@ public class InvoicePrintSVImpl implements IInvoicePrintSV {
 			throw new BusinessException("", "发票总额和商品获取的额度不一致,实际发票金额:"+
 					invoiceAmount+",传入的金额:"+request.getInvoiceTotalFee());
 		}
-		OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
-		if(ordOdInvoice==null) {
-			logger.error("发票信息不存在[订单id:"+orderId+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, "发票信息不存在[订单id:"+orderId+"]");
-		}
+		OrdOdInvoice ordOdInvoice=new OrdOdInvoice();
+		ordOdInvoice.setOrderId(orderId);
 		ordOdInvoice.setInvoiceId(request.getInvoiceId());
 		ordOdInvoice.setInvoiceNum(request.getInvoiceNum());
 		String invoiceTime = request.getInvoiceTime();
