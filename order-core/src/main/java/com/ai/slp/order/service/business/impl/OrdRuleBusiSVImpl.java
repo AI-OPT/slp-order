@@ -8,15 +8,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.vo.ResponseHeader;
+import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.orderrule.param.OrderRuleDetailResponse;
 import com.ai.slp.order.api.orderrule.param.OrderRuleDetailVo;
 import com.ai.slp.order.api.orderrule.param.OrderRuleRequest;
 import com.ai.slp.order.api.orderrule.param.OrderRuleResponse;
+import com.ai.slp.order.constants.MonitorCoonstants;
 import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdRule;
 import com.ai.slp.order.service.atom.interfaces.IOrdRuleAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdRuleBusiSV;
+import com.alibaba.fastjson.JSON;
 @Service
 public class OrdRuleBusiSVImpl implements IOrdRuleBusiSV {
 	@Autowired
@@ -27,6 +31,7 @@ public class OrdRuleBusiSVImpl implements IOrdRuleBusiSV {
 	@Override
 	@Transactional
 	public OrderRuleResponse saveOrderRuleSetting(OrderRuleRequest request){
+		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
 		List<OrdRule> ordRuleList = new ArrayList<OrdRule>();
 		//时间监控
 		OrdRule timeMonitorOrdRule = new OrdRule();
@@ -74,7 +79,7 @@ public class OrdRuleBusiSVImpl implements IOrdRuleBusiSV {
 			}else{
 				this.ordRuleAtomSV.updateOrderRuleSel(ordRule);
 			}
-			
+			cacheClient.set(ordRule.getOrderRuleId(), JSON.toJSONString(ordRule));
 		}
 		//System.out.println(1/0);
 		//

@@ -16,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.components.ses.SESClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
+import com.ai.slp.order.api.orderrule.interfaces.IOrderMonitorSV;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrdBaseInfo;
@@ -83,6 +83,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
     @Autowired
     private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
+    @Autowired
+    private IOrderMonitorSV orderMonitorSV;
     
     //订单提交
     @Override
@@ -110,15 +112,15 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	OrdOdLogistics logistics = this.createOrderLogistics(request, sysDate, orderId);
         	/* 6. 记录一条订单创建轨迹记录,并处理订单信息 */
         	this.writeOrderCreateStateChg(sysDate, ordOrder);
-        	
         	/* 7.刷新elasticsearch数据 */
         	this.insertSesData(ordOrder, feeInfo, logistics,mapProduct);
-        	
         	/* 8.订单提交成功后监控服务  */
-        	//orderMonitorSV.afterSubmitOrder(monitorRequest);
-        	//异步处理 发送消息
+        	orderMonitorSV.afterSubmitOrder(monitorRequest);
+        	
+        	/*异步处理 发送消息
     		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).
-    				send(JSON.toJSONString(monitorRequest), 0);
+    				send(JSON.toJSONString(monitorRequest), 0);*/
+        	
         	/* 9.封装返回参数*/
         	orderResInfo.setOrderId(orderId);
         	orderResInfo.setOrdProductResList((List<OrdProductResInfo>) mapProduct.get("ordProductResList"));
