@@ -10,6 +10,8 @@ import com.ai.opt.sdk.util.StringUtil;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.search.vo.SearchOption;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
+import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
+import com.ai.slp.order.constants.MonitorCoonstants;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.SearchFieldConfConstants;
 
@@ -134,6 +136,43 @@ public class SearchCriteriaStructure {
 		// 添加订单id查询条件
 		searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.PORDER_ID,String.valueOf(orderId),
 				new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+		return searchfieldVos;
+	}
+	
+	
+	// 根据下单时间查询搜索引擎数据
+	public static List<SearchCriteria> commonConditionsByOrderTime(OrderWarmRequest request) {
+		List<SearchCriteria> searchfieldVos = new ArrayList<SearchCriteria>();
+		// 如果父订单状态不为空
+		searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.PARENT_ORDER_STATE, OrdersConstants.OrdOrder.State.WAIT_PAY,
+				new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+		searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.IF_WARNING, MonitorCoonstants.WARNING_YES,
+				new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.term)));
+		// 下单开始时间不为空
+		if(request.getOrderTimeStart()!=null && request.getOrderTimeEnd()==null) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
+			String start = sdf.format(request.getOrderTimeStart());
+			String end = sdf.format(new Date());
+			SearchCriteria searchCriteria = new SearchCriteria();
+			searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
+			searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
+			searchCriteria.addFieldValue(start);
+			searchCriteria.addFieldValue(end);
+			searchfieldVos.add(searchCriteria);
+		}
+		// 下单结束时间不为空
+		if(request.getOrderTimeStart()==null && request.getOrderTimeEnd()!=null){
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
+			String end = sdf.format(request.getOrderTimeEnd());
+			Timestamp sTime = Timestamp.valueOf(OrdersConstants.START_TIME);
+			String start = sdf.format(sTime);
+			SearchCriteria searchCriteria = new SearchCriteria();
+			searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
+			searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
+			searchCriteria.addFieldValue(start);
+			searchCriteria.addFieldValue(end);
+			searchfieldVos.add(searchCriteria);
+		}
 		return searchfieldVos;
 	}
 }

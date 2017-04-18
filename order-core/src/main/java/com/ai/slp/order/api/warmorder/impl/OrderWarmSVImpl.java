@@ -11,6 +11,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.warmorder.interfaces.IOrderWarmSV;
 import com.ai.slp.order.api.warmorder.param.OrderWarmDetailRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmDetailResponse;
+import com.ai.slp.order.api.warmorder.param.OrderWarmListVo;
 import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmResponse;
 import com.ai.slp.order.api.warmorder.param.OrderWarmVo;
@@ -29,7 +30,7 @@ public class OrderWarmSVImpl implements IOrderWarmSV {
 		// 有效性校验
 		ValidateUtils.validateWarmOrdQuery(request);
 		OrderWarmResponse response = new OrderWarmResponse();
-		PageInfo<OrderWarmVo> pageInfo = iOrdWarmBusiSV.selectWarmOrdPage(request);
+		PageInfo<OrderWarmListVo> pageInfo = iOrdWarmBusiSV.selectWarmOrdPage(request);
 		ResponseHeader responseHeader = new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "成功");
 		response.setResponseHeader(responseHeader);
 		response.setPageInfo(pageInfo);

@@ -510,6 +510,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setParentorderstate( ordOrder.getState());
 		ordInfo.setSupplierid( ordOrder.getSupplierId());
 		ordInfo.setContacttel(logistics.getContactTel());
+		ordInfo.setIfwarning(ordOrder.getIfWarning());
+		ordInfo.setWarningtype(ordOrder.getWarningType());
 		
 		ordInfo.setPoints(totalJfFee);
 		ordInfo.setAdjustfee(feeInfo.getAdjustFee());

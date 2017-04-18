@@ -13,6 +13,7 @@ public class SearchFieldConfConstants {
     public static final String CONTACT_TEL = "contacttel";
     public static final String SUPPLIER_ID = "supplierid";
     public static final String PARENT_ORDER_STATE = "parentorderstate";
+    public static final String IF_WARNING = "ifwarning";
     public static final String STATE = "state";
     public static final String ORD_EXTENDES_STATE = "ordextendes.state";
     public static final String ORD_EXTENDES_STATE_NAME = "ordextendes.statename";

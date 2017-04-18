@@ -20,6 +20,8 @@ public class OrderInfo {
 	private Date ordertime;
 	private String parentorderstate;
 	private String supplierid;
+	private String ifwarning;
+	private String warningtype;
 	private List<OrdProdExtend> ordextendes;
 	
 	public String getTenantid() {
@@ -123,6 +125,18 @@ public class OrderInfo {
 	}
 	public void setSupplierid(String supplierid) {
 		this.supplierid = supplierid;
+	}
+	public String getIfwarning() {
+		return ifwarning;
+	}
+	public void setIfwarning(String ifwarning) {
+		this.ifwarning = ifwarning;
+	}
+	public String getWarningtype() {
+		return warningtype;
+	}
+	public void setWarningtype(String warningtype) {
+		this.warningtype = warningtype;
 	}
 	public List<OrdProdExtend> getOrdextendes() {
 		return ordextendes;
