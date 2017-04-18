@@ -13,13 +13,10 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.opt.base.vo.ResponseHeader;
-import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
-import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.slp.order.api.aftersaleorder.interfaces.IOrderAfterSaleSV;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
-import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
@@ -27,7 +24,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.ai.slp.order.util.ValidateUtils;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.alibaba.fastjson.JSON;
 
 @Service(validation = "true")
 @Component
@@ -96,33 +92,26 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	public BaseResponse backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException {
 		/*参数校验*/
 		ValidateUtils.validateOFCBackRequest(request);
-		boolean ccsMqFlag=false;
-		//ccsMqFlag = MQConfigUtil.getCCSMqFlag();
-		//非消息模式
-		if(!ccsMqFlag) {
-			BaseResponse response =new BaseResponse();
-			//查询
-	  		List<OrdOrder> orderList =ordOrderAtomSV.selectOrderByOrigOrderId(
-	  				Long.parseLong(request.getExternalOrderId()), Long.parseLong(request.getOrderId()));
-	  		if(CollectionUtil.isEmpty(orderList)) {
-	  			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-	  					"订单信息不存在[订单id:"+request.getOrderId()+"]");
-	  		}
-	  		OrdOrder ordOrder = orderList.get(0);
-			orderAfterSaleBusiSV.backStateOFC(request,ordOrder);
-			ResponseHeader responseHeader = new ResponseHeader(true,
-					ExceptCodeConstants.Special.SUCCESS, "成功");
-			response.setResponseHeader(responseHeader);
-			return response;
-		}else {
-			//消息模式
-			BaseResponse response =new BaseResponse();
-			MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_OFCORDER_BACK_TOPIC).send(JSON.toJSONString(request), 0);
-			ResponseHeader responseHeader = new ResponseHeader(true,
-					ExceptCodeConstants.Special.SUCCESS, "成功");
-			response.setResponseHeader(responseHeader);
-			return response;
-		}
+		BaseResponse response =new BaseResponse();
+		//查询
+	  /*List<OrdOrder> orderList =ordOrderAtomSV.selectOrderByOrigOrderId(
+  				Long.parseLong(request.getExternalOrderId()), Long.parseLong(request.getOrderId()));
+  		if(CollectionUtil.isEmpty(orderList)) {
+  			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
+  					"订单信息不存在[订单id:"+request.getOrderId()+"]");
+  		}
+  		OrdOrder ordOrder = orderList.get(0);*/
+		
+		OrdOrder ordOrder =new OrdOrder();
+		ordOrder.setOrderId(Long.parseLong(request.getExternalOrderId()));
+		ordOrder.setState(request.getState());
+  		ordOrder.setRemark(request.getReasonDesc());
+  		
+		orderAfterSaleBusiSV.backStateOFC(ordOrder);
+		ResponseHeader responseHeader = new ResponseHeader(true,
+				ExceptCodeConstants.Special.SUCCESS, "成功");
+		response.setResponseHeader(responseHeader);
+		return response;
 	}
 	
 	
