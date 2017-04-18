@@ -47,11 +47,7 @@ public class OrderWarmListVo extends BaseInfo {
 	 */
 	private String deliveryflag;
 	 //是否需要物流展示名称
-    private String deliveryflagname;
-	/**
-	 * 商品信息
-	 */
-	private List<ProductListInfo> ordextendes;
+	private String deliveryflagname;
 	/**
 	 * 订单状态
 	 */
@@ -68,6 +64,11 @@ public class OrderWarmListVo extends BaseInfo {
 	 * 下单时间
 	 */
 	private Date ordertime;
+  
+	/**
+	 * 商品信息
+	 */
+	private List<ProductListInfo> ordextendes;
 	public String getChlid() {
 		return chlid;
 	}
