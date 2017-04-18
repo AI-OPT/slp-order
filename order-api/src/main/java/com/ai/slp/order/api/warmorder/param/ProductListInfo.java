@@ -16,7 +16,7 @@ public class ProductListInfo implements Serializable {
     private String statename;
     //商品SIZE
     private long prodsize;
-    
+    private String busicode;
     private List<OrdProductVo> prodinfos;
 
 	public Long getOrderid() {
@@ -65,5 +65,13 @@ public class ProductListInfo implements Serializable {
 
 	public void setProdinfos(List<OrdProductVo> prodinfos) {
 		this.prodinfos = prodinfos;
+	}
+
+	public String getBusicode() {
+		return busicode;
+	}
+
+	public void setBusicode(String busicode) {
+		this.busicode = busicode;
 	}
 }
