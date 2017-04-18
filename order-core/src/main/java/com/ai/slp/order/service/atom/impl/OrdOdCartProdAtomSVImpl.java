@@ -1,5 +1,6 @@
 package com.ai.slp.order.service.atom.impl;
 
+import com.ai.slp.order.dao.mapper.attach.OrdOrderAttachMapper;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProdCriteria;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOdCartProdMapper;
@@ -22,6 +23,8 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
 	
 	@Autowired
 	private OrdOdCartProdMapper ordOdCartProdMapper;
+	@Autowired
+	private OrdOrderAttachMapper ordOrderAttachMapper;
 
     /**
      * 查询用户的购物车商品明细信息
@@ -117,4 +120,10 @@ public class OrdOdCartProdAtomSVImpl implements IOrdOdCartProdAtomSV {
         List<OrdOdCartProd> cartProdList = ordOdCartProdMapper.selectByExample(example);
         return (cartProdList==null || cartProdList.isEmpty())?null:cartProdList.get(0);
     }
+
+	@Override
+	public void updateCartProdSum(OrdOdCartProd cartProd0) {
+		// TODO Auto-generated method stub
+		ordOrderAttachMapper.updateCartProdSum(cartProd0);
+	}
 }
