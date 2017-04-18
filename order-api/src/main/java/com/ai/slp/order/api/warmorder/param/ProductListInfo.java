@@ -66,8 +66,4 @@ public class ProductListInfo implements Serializable {
 	public void setProdinfos(List<OrdProductVo> prodinfos) {
 		this.prodinfos = prodinfos;
 	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
 }
