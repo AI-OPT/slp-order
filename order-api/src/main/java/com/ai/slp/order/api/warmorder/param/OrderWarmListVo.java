@@ -36,11 +36,11 @@ public class OrderWarmListVo extends BaseInfo {
 	/**
 	 * 是否预警订单
 	 */
-	private String ifWarning;
+	private String ifwarning;
 	/**
 	 * 预警类型
 	 */
-	private String warningType;
+	private String warningtype;
 	/**
 	 * 是否需要物流
 	 */
@@ -104,17 +104,17 @@ public class OrderWarmListVo extends BaseInfo {
 	public void setContacttel(String contacttel) {
 		this.contacttel = contacttel;
 	}
-	public String getIfWarning() {
-		return ifWarning;
+	public String getIfwarning() {
+		return ifwarning;
 	}
-	public void setIfWarning(String ifWarning) {
-		this.ifWarning = ifWarning;
+	public void setIfwarning(String ifwarning) {
+		this.ifwarning = ifwarning;
 	}
-	public String getWarningType() {
-		return warningType;
+	public String getWarningtype() {
+		return warningtype;
 	}
-	public void setWarningType(String warningType) {
-		this.warningType = warningType;
+	public void setWarningtype(String warningtype) {
+		this.warningtype = warningtype;
 	}
 	public String getDeliveryflag() {
 		return deliveryflag;
