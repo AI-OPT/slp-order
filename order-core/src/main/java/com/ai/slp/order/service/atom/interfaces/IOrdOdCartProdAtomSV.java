@@ -58,4 +58,14 @@ public interface IOrdOdCartProdAtomSV {
      * @return
      */
     public OrdOdCartProd queryByProdOfCart(String tenantId,String userId,String skuId);
+    
+    /**
+     * 更新购物车数量
+     * @param cartProd0
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+	public void updateCartProdSum(OrdOdCartProd cartProd0);
 }
