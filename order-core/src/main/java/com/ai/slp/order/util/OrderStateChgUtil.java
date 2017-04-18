@@ -3,6 +3,8 @@ package com.ai.slp.order.util;
 import java.sql.Timestamp;
 
 import com.ai.opt.sdk.components.mds.MDSClientFactory;
+import com.ai.slp.order.aync.AyncExector;
+import com.ai.slp.order.aync.AyncTask;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.vo.OrderStateChgVo;
 import com.alibaba.fastjson.JSON;
@@ -17,7 +19,7 @@ public class OrderStateChgUtil {
 	 public static void trailProcess(Long orderId, String tenantId, 
 			 String orgState, String newState,String chgDesc, String orgId, 
 			 String operId, String operName, Timestamp timestamp){
-		   OrderStateChgVo stateChgVo=new OrderStateChgVo();
+		   final OrderStateChgVo stateChgVo=new OrderStateChgVo();
            stateChgVo.setOrderId(orderId);
            stateChgVo.setTenantId(tenantId);
            stateChgVo.setOrgState(orgState);
@@ -27,8 +29,15 @@ public class OrderStateChgUtil {
            stateChgVo.setOperId(operId);
            stateChgVo.setOperName(operName);
            stateChgVo.setTimestamp(timestamp);
-           MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
-   						send(JSON.toJSONString(stateChgVo), 0);
+           
+           AyncExector.submit(new AyncTask(){
+				@Override
+				public void run() {
+					MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
+					send(JSON.toJSONString(stateChgVo), 0);
+				}
+				
+			});
 	    }
 	 
 	
