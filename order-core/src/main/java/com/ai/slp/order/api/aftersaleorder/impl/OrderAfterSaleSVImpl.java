@@ -130,7 +130,7 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	 * 查询订单主表信息
 	 */
 	private OrdOrder queryOrderInfo(OrderReturnRequest request) {
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+		OrdOrder order = ordOrderAtomSV.selectByPrimaryKey(request.getOrderId());
 		if(order==null) {
 			logger.error("订单信息不存在[订单id:"+request.getOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 

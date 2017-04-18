@@ -45,8 +45,10 @@ public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
 			Long orderId = request.getOrderId();
 			String expressId = request.getExpressId();
 			String expressOddNumber = request.getExpressOddNumber();
-			//
-			OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+			
+			OrdOrder ordOrder =ordOrderAtomSV.selectPartInfo(orderId);
+			
+			//OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
 			ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
 			ordOrder.setStateChgTime(DateUtil.getSysDate());
 			//

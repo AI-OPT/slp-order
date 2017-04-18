@@ -64,13 +64,13 @@ public class OrderPaySVImpl implements IOrderPaySV {
 		//非消息模式 同步调用服务
 		if(!ccsMqFlag) {
 			BaseResponse response = new BaseResponse();
-			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+			OrdOrder order = ordOrderAtomSV.selectByPrimaryKey(request.getOrderId());
 			if(order==null) {
 				throw new BusinessException("", "订单信息不存在[订单id:"+request.getOrderId()+
 						",租户id:"+request.getTenantId()+"]");
 			}
 			order.setDownstreamOrderId(request.getOid());
-	        orderPayBusiSV.returnOid(request,order);
+	        orderPayBusiSV.returnOid(order);
 	        ResponseHeader responseHeader = new ResponseHeader(true,
 	                ExceptCodeConstants.Special.SUCCESS, "成功");
 	        response.setResponseHeader(responseHeader);
