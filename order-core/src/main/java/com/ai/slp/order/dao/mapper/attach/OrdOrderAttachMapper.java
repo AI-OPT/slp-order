@@ -2,6 +2,7 @@ package com.ai.slp.order.dao.mapper.attach;
 
 import org.apache.ibatis.annotations.Update;
 
+import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 
@@ -73,4 +74,16 @@ public interface OrdOrderAttachMapper {
      */
     @Update("update ord_od_prod set CUS_SERVICE_FLAG = #{cusServiceFlag} where ORDER_ID = #{orderId} ")
 	public int updateCusServiceFlag(OrdOdProd ordOdProd);
+    
+    
+    /**
+     * 更新购物车数量
+     * @param cartProd0
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    @Update("update ord_od_cart_prod set BUY_SUM = #{buySum} where PROD_DETAL_ID = #{prodDetalId}")
+	public void updateCartProdSum(OrdOdCartProd cartProd0);
 }
