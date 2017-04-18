@@ -9,7 +9,6 @@ import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.util.StringUtil;
-import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
@@ -594,7 +593,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * 用户消费积分返回oid
      */
 	@Override
-	public void returnOid(OrderOidRequest request,OrdOrder order) throws BusinessException, SystemException {
+	public void returnOid(OrdOrder order) throws BusinessException, SystemException {
 		ordOrderAtomSV.updateOrder(order);
 	}
 }
