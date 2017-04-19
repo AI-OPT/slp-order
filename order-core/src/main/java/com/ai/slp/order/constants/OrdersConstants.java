@@ -159,26 +159,6 @@ public final class OrdersConstants {
 			public static final String FINISH_PAID = "111";
 
 			/**
-			 * 12 待充值
-			 */
-			public static final String WAIT_CHARGE = "12";
-
-			/**
-			 * 121 已充值
-			 */
-			public static final String FINISH_CHARGE = "121";
-
-			/**
-			 * 122 充值失败
-			 */
-			public static final String CHARGE_FAILED = "122";
-
-			/**
-			 * 123 充值未知
-			 */
-			public static final String CHARGE_UNKNOWN = "123";
-
-			/**
 			 * 13 待配货
 			 */
 			public static final String WAIT_DISTRIBUTION = "13";
@@ -227,31 +207,6 @@ public final class OrdersConstants {
 			 * 161 已确认
 			 */
 			public static final String FINISH_CONFIRMED = "161";
-
-			/**
-			 * 17 待写卡
-			 */
-			public static final String WAIT_WRITE_CARD = "17";
-
-			/**
-			 * 171 已写卡
-			 */
-			public static final String FINISH_WRITE_CARD = "171";
-
-			/**
-			 * 18 待激活
-			 */
-			public static final String WAIT_ACTIVATE = "18";
-
-			/**
-			 * 181 已激活
-			 */
-			public static final String ACTIVATED = "已激活";
-
-			/**
-			 * 182 未激活销户
-			 */
-			public static final String INACTIVED_CANCEL = "182";
 
 			/**
 			 * 90 完成
@@ -342,11 +297,6 @@ public final class OrdersConstants {
 			 * 312处理中
 			 */
 			public static final String IN_PROCESS = "312";
-
-			/**
-			 * 撤销完成
-			 */
-			public static final String FINSH_REVOKE = "25";
 
 			/**
 			 * 110 支付失败
@@ -464,26 +414,6 @@ public final class OrdersConstants {
 			public static final String ORDER_PAID = "您提交的订单已经支付完成";
 
 			/**
-			 * 订单待充值
-			 */
-			public static final String ORDER_TO_CHARGE = "您提交的订单进入待充值状态";
-
-			/**
-			 * 订单充值完成
-			 */
-			public static final String ORDER_CHARGED = "您提交的订单已经充值完成";
-
-			/**
-			 * 订单充值失败
-			 */
-			public static final String ORDER_CHARGE_FAILED = "您提交的订单充值失败";
-
-			/**
-			 * 订单充值未知
-			 */
-			public static final String ORDER_CHARGE_UNKNOWN = "您提交的订单充值未知";
-
-			/**
 			 * 订单进入待审核环节
 			 */
 			public static final String ORDER_TO_AUDIT = "您提交的订单进入待审核处理";
@@ -514,21 +444,6 @@ public final class OrdersConstants {
 			public static final String ORDER_TO_FINISH_DISTRIBUTION = "您提交的订单配货完成，请耐心等待";
 
 			/**
-			 * 订单资料已经同步计费
-			 */
-			public static final String ORDER_TO_BILLING = "您提交的订单资料已经同步计费";
-
-			/**
-			 * 订单资料已经实例化
-			 */
-			public static final String ORDER_TO_SUBS = "您提交的订单资料已经处理完成";
-
-			/**
-			 * 订单业务已经开通
-			 */
-			public static final String ORDER_SERVICE_START = "您提交的订单已经开通所有服务";
-
-			/**
 			 * 发货单已经打印
 			 */
 			public static final String INVOICE_ORDER_TO_PRINT = "您提交的订单发货单已经打印";
@@ -542,11 +457,6 @@ public final class OrdersConstants {
 			 * 订单进入待出库状态
 			 */
 			public static final String ORDER_TO_WAIT_DELIVERY = "您提交的订单等待出库，请耐心等待";
-
-			/**
-			 * 订单用户自提出库完成
-			 */
-			public static final String ORDER_TO_FINISH_SELF_DELIVERY = "您提交的订单已经完成自提出库，可以去营业厅自提";
 
 			/**
 			 * 订单物流出库完成
@@ -602,11 +512,6 @@ public final class OrdersConstants {
 			 * 订单 - 退费
 			 */
 			public static final String ORDER_REVOKE_FINISH_PAY = "您的订单退费完成";
-
-			/**
-			 * 订单-撤销完成
-			 */
-			public static final String ORDER_REVOKE_FINISH = "您的订单撤销完成";
 
 			/**
 			 * 订单 - 退货完成
