@@ -145,6 +145,13 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 			List<Long> allOrderIds = invoicePrintVo.getHorOrderId();
 		  	allOrderIds.add(request.getOrderId());
 		  	for (Long mergeId : allOrderIds) { 
+		  		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), mergeId);
+				if(ordOrder==null) {
+					throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
+							"未能查询到指定的订单信息[订单id:"+ mergeId+"]");
+				}else if(OrdersConstants.OrdOrder.State.COMPLETED.equals(ordOrder.getState())) {
+					continue;
+				}
 		  		List<Long> temp = new ArrayList<Long>();
 				temp.addAll(allOrderIds);
 				temp.remove(mergeId);
@@ -161,20 +168,14 @@ public class DeliverGoodsPrintBusiSVImpl implements IDeliverGoodsPrintBusiSV {
 				deliverInfoProd.setDeliverInfoId(invoiceInfoId);
 				deliveryOrderPrintAtomSV.insertSelective(deliverInfoProd);
 				/* 更新合并订单状态并写入订单状态变化轨迹*/
-				this.updateOrderState(mergeId, request.getTenantId());
+				this.updateOrderState(ordOrder,mergeId, request.getTenantId());
 				temp.clear();
 			}
 		}
 	}
 	
-	 private void updateOrderState(Long mergeId,String tenantId) {
+	 private void updateOrderState(OrdOrder ordOrder,Long mergeId,String tenantId) {
 		Timestamp sysDate = DateUtil.getSysDate();
-		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, mergeId);
-		if(ordOrder==null) {
-			logger.warn("未能查询到指定的订单信息[订单id:"+ mergeId+"]");
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, 
-					"未能查询到指定的订单信息[订单id:"+ mergeId+"]");
-		}
 		String orgState = ordOrder.getState();
 		if(OrdersConstants.OrdOrder.State.WAIT_SEND.equals(orgState)) {
 			return;
