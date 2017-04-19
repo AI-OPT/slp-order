@@ -63,7 +63,8 @@ public class OrderWarmListVo extends BaseInfo {
 	 * 下单时间
 	 */
 	private Date ordertime;
-  
+	  //父订单对应的子订单下的所有商品数量
+    private long totalprodsize;
 	/**
 	 * 商品信息
 	 */
@@ -158,4 +159,11 @@ public class OrderWarmListVo extends BaseInfo {
 	public void setOrdextendes(List<ProductListInfo> ordextendes) {
 		this.ordextendes = ordextendes;
 	}
+	public long getTotalprodsize() {
+		return totalprodsize;
+	}
+	public void setTotalprodsize(long totalprodsize) {
+		this.totalprodsize = totalprodsize;
+	}
+	
 }
