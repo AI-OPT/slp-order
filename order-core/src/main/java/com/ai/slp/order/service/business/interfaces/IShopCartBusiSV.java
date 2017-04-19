@@ -4,6 +4,8 @@ import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.shopcart.param.CartProd;
 import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
+import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
+import com.ai.slp.order.vo.ShopCartCachePointsVo;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,7 @@ public interface IShopCartBusiSV {
      * @param cartProd
      * @return
      */
-    public CartProdOptRes addCartProd(CartProd cartProd, ICacheClient iCacheClient, String cartUserId);
+    public CartProdOptRes addCartProd(OrdOdCartProd odCartProd, ShopCartCachePointsVo pointsVo);
 
     /**
      * 更新购物车中商品数量

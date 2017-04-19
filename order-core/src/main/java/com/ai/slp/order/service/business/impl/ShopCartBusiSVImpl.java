@@ -71,52 +71,8 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * @return
      */
     @Override
-    public CartProdOptRes addCartProd(CartProd cartProd,ICacheClient iCacheClient, String cartUserId) {
+    public CartProdOptRes addCartProd(OrdOdCartProd odCartProd, ShopCartCachePointsVo pointsVo) {
     	CartProdOptRes cartProdOptRes = null;
-    	String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
-        //查询用户购物车概览
-        ShopCartCachePointsVo pointsVo = queryCartPoints(iCacheClient,tenantId,userId);
-        String cartProdStr = iCacheClient.hget(cartUserId,cartProd.getSkuId());
-        OrdOdCartProd odCartProd;
-        //若已经存在
-        if (StringUtils.isNotBlank(cartProdStr)){
-            odCartProd = JSON.parseObject(cartProdStr,OrdOdCartProd.class);
-            //更新购买数量
-            odCartProd.setBuySum(odCartProd.getBuySum()+cartProd.getBuyNum());
-        }else {
-            odCartProd = new OrdOdCartProd();
-            odCartProd.setInsertTime(DateUtils.currTimeStamp());
-            odCartProd.setBuySum(cartProd.getBuyNum());
-            odCartProd.setSkuId(cartProd.getSkuId());
-            odCartProd.setTenantId(tenantId);
-            odCartProd.setUserId(userId);
-            //若是新商品,则需要将概览中加1
-            pointsVo.setProdNum(pointsVo.getProdNum()+1);
-        }
-        //购物车商品类型数量限制
-        int prodNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.PROD_NUM_LIMIT);
-        //购物车单个商品数量限制
-        int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
-        //到达商品种类上限
-        if (prodNumLimit>0 && prodNumLimit<pointsVo.getProdNum()){
-            throw new BusinessException("","购物车商品数量已经达到上限,无法添加");
-        }
-        //达到购物车单个商品数量上线
-        else if (skuNumLimit>0 && odCartProd.getBuySum()>skuNumLimit){
-            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
-        }
-        //TODO 查询商品信息需要优化
-        ProductSkuInfo skuInfo = querySkuInfo(tenantId,cartProd.getSkuId());
-        checkSkuInfoTotal(skuInfo,odCartProd.getBuySum());
-        if (StringUtils.isBlank(cartProdStr))
-            odCartProd.setSupplierId(skuInfo.getSupplierId());
-        //添加/更新商品信息
-        iCacheClient.hset(cartUserId,odCartProd.getSkuId(),JSON.toJSONString(odCartProd));
-        //更新购物车上商品总数量
-        pointsVo.setProdTotal(pointsVo.getProdTotal()+cartProd.getBuyNum());
-        
-        //更新概览
-        iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
         //若商品数量为空或零,删除购物车中商品
         if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
             cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
@@ -130,7 +86,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 cartProdAtomSV.updateCartProdById(cartProd0);
             }
         }
-
         cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
@@ -393,5 +348,84 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         }
         cartProdInfoList.add(prodInfo);
 		return cartProdInfoList;
+    }
+    
+    
+    
+    
+    /**
+     * 添加商品(更新操作时若不存在,则直接进行添加操作)
+     * @param cartProd
+     * @param iCacheClient
+     * @param cartUserId
+     * @return
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    private CartProdOptRes addCartProd(CartProd cartProd,ICacheClient iCacheClient, String cartUserId) {
+    	CartProdOptRes cartProdOptRes = null;
+    	String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
+        //查询用户购物车概览
+        ShopCartCachePointsVo pointsVo = queryCartPoints(iCacheClient,tenantId,userId);
+        String cartProdStr = iCacheClient.hget(cartUserId,cartProd.getSkuId());
+        OrdOdCartProd odCartProd;
+        //若已经存在
+        if (StringUtils.isNotBlank(cartProdStr)){
+            odCartProd = JSON.parseObject(cartProdStr,OrdOdCartProd.class);
+            //更新购买数量
+            odCartProd.setBuySum(odCartProd.getBuySum()+cartProd.getBuyNum());
+        }else {
+            odCartProd = new OrdOdCartProd();
+            odCartProd.setInsertTime(DateUtils.currTimeStamp());
+            odCartProd.setBuySum(cartProd.getBuyNum());
+            odCartProd.setSkuId(cartProd.getSkuId());
+            odCartProd.setTenantId(tenantId);
+            odCartProd.setUserId(userId);
+            //若是新商品,则需要将概览中加1
+            pointsVo.setProdNum(pointsVo.getProdNum()+1);
+        }
+        //购物车商品类型数量限制
+        int prodNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.PROD_NUM_LIMIT);
+        //购物车单个商品数量限制
+        int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
+        //到达商品种类上限
+        if (prodNumLimit>0 && prodNumLimit<pointsVo.getProdNum()){
+            throw new BusinessException("","购物车商品数量已经达到上限,无法添加");
+        }
+        //达到购物车单个商品数量上线
+        else if (skuNumLimit>0 && odCartProd.getBuySum()>skuNumLimit){
+            throw new BusinessException("","此商品数量达到购物车允许最大数量,无法添加.");
+        }
+        //TODO 查询商品信息需要优化
+        ProductSkuInfo skuInfo = querySkuInfo(tenantId,cartProd.getSkuId());
+        checkSkuInfoTotal(skuInfo,odCartProd.getBuySum());
+        if (StringUtils.isBlank(cartProdStr))
+            odCartProd.setSupplierId(skuInfo.getSupplierId());
+        //添加/更新商品信息
+        iCacheClient.hset(cartUserId,odCartProd.getSkuId(),JSON.toJSONString(odCartProd));
+        //更新购物车上商品总数量
+        pointsVo.setProdTotal(pointsVo.getProdTotal()+cartProd.getBuyNum());
+        
+        //更新概览
+        iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
+        //若商品数量为空或零,删除购物车中商品
+        if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
+            cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
+        }else {
+            OrdOdCartProd cartProd0 = cartProdAtomSV.queryByProdOfCart(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
+            //若没有添加商品,则直接添加
+            if (cartProd0 ==null){
+                cartProdAtomSV.installCartProd(odCartProd);
+            }else {
+                cartProd0.setBuySum(odCartProd.getBuySum());
+                cartProdAtomSV.updateCartProdById(cartProd0);
+            }
+        }
+
+        cartProdOptRes = new CartProdOptRes();
+        BeanUtils.copyProperties(cartProdOptRes,pointsVo);
+        return cartProdOptRes;
     }
 }
