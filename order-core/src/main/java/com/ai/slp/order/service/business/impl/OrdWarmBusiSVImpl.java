@@ -3,8 +3,6 @@ package com.ai.slp.order.service.business.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,14 +15,13 @@ import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.search.vo.Sort;
 import com.ai.paas.ipaas.search.vo.Sort.SortOrder;
-import com.ai.slp.order.api.orderlist.param.BehindParentOrdOrderVo;
-import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.warmorder.param.OrderWarmListVo;
 import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.api.warmorder.param.OrderWarmVo;
 import com.ai.slp.order.api.warmorder.param.ProductImage;
 import com.ai.slp.order.api.warmorder.param.ProductInfo;
-import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
@@ -40,14 +37,13 @@ import com.ai.slp.order.service.atom.interfaces.IOrdWarmAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrdWarmBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
 @Service
 @Transactional
 public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(OrdWarmBusiSVImpl.class);
 	
 	@Autowired
     private IOrdWarmAtomSV iOrdWarmAtomSV;
@@ -90,7 +86,16 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 		for (OrderInfo orderInfo : ordList) {
 			OrderWarmListVo vo=new OrderWarmListVo();
 			BeanUtils.copyProperties(vo, orderInfo);
-			vo.setTenantId(OrdersConstants.TENANT_ID);
+			ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+			//翻译是否预警订单
+			SysParam sysParamIfwarning = InfoTranslateUtil.translateInfo(request.getTenantId(),
+					"ORD_ORDER", "ORD_IF_WARNING", vo.getIfwarning(), iCacheSV);
+			vo.setIfwarning(sysParamIfwarning == null ? "" : sysParamIfwarning.getColumnDesc());
+			//翻译预警订单类型
+			SysParam sysParamWarningtype = InfoTranslateUtil.translateInfo(request.getTenantId(),
+					"ORD_ORDER", "ORD_WARNING_TYPE", vo.getWarningtype(), iCacheSV);
+			vo.setWarningtype(sysParamWarningtype == null ? "" : sysParamWarningtype.getColumnDesc());
+			vo.setTenantId(request.getTenantId());
 			results.add(vo);
 		}
 		pageInfo.setPageNo(pageNo);
@@ -100,53 +105,6 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 		return pageInfo;
 		
 		
-		
-	/*	
-		long start=System.currentTimeMillis();
-		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage，当前时间戳："+start);
-		PageInfo<OrderWarmVo> pageResult=new PageInfo<OrderWarmVo>();
-		long dubboStart=System.currentTimeMillis();
-		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage,获取预警订单列表信息，当前时间戳："+dubboStart);
-        PageInfo<OrdOrder> pageInfo = iOrdWarmAtomSV.selectWarmOrdPage(request);
-        long dubboEnd=System.currentTimeMillis();
-		LOG.info("开始执行dubbo后场预警订单列表查询selectWarmOrdPage，获取预警订单列表信息,"
-				+ "当前时间戳："+dubboEnd+",用时:"+(dubboEnd-dubboStart)+"毫秒");
-        pageResult.setCount(pageInfo.getCount());
-		pageResult.setPageSize(pageInfo.getPageSize());
-		pageResult.setPageNo(pageInfo.getPageNo());
-		List<OrderWarmVo> orderVoList=new ArrayList<OrderWarmVo>();
-		if(pageInfo.getResult()!=null&&!CollectionUtil.isEmpty(pageInfo.getResult())){
-			for(OrdOrder ord:pageInfo.getResult()){
-				OrderWarmVo orderVo = new OrderWarmVo();
-				List<ProductInfo> prodinfoList = new ArrayList<ProductInfo>();
-				BeanUtils.copyProperties(orderVo, ord);
-				//获取商品信息
-				if(orderVo.getOrderId()!=null){
-					List<OrdOdProd>  proList = iOrdOdProdAtomSV.selectByOrd(ord.getTenantId(), ord.getOrderId());
-					if(!CollectionUtil.isEmpty(proList)){
-						for(OrdOdProd prod:proList){
-							ProductInfo prodVo = new ProductInfo();
-							BeanUtils.copyProperties(prodVo, prod);
-							prodinfoList.add(prodVo);
-						}
-					}
-					//获取收货人信息
-					OrdOdLogistics logistics = iOrdOdLogisticsAtomSV.selectByOrd(orderVo.getTenantId(), orderVo.getOrderId());
-					if(logistics!=null){
-						orderVo.setContactTel(logistics.getContactTel());
-						orderVo.setAddress(logistics.getAddress());
-						orderVo.setLogisticsType(logistics.getLogisticsType());
-						orderVo.setContactName(logistics.getContactName());
-					}
-				}
-				if(!CollectionUtil.isEmpty(prodinfoList)){
-					orderVo.setProdInfo(prodinfoList);
-				}
-				orderVoList.add(orderVo);
-			}
-			pageResult.setResult(orderVoList);
-		}
-		return pageResult;*/
 	}
 	
 	//预警订单详情查看
@@ -186,7 +144,6 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 				orderWarmVo.setProdInfo(prodinfoList);
 			}
 		}
-		
 		return orderWarmVo;
 	}
 	
