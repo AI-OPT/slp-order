@@ -192,6 +192,8 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 	 	List<String> stateList=new ArrayList<String>();
 	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION);
 	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
+	 	stateList.add(OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT);
+	 	stateList.add(OrdersConstants.OrdOrder.State.REVOKE_WAIT_CONFIRM);
 	 	criteria.andStateIn(stateList);
 	 	example.setLimitStart(startSize);
 	 	example.setLimitEnd(size);
@@ -205,6 +207,8 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 	 	List<String> stateList=new ArrayList<String>();
 	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION);
 	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
+	 	stateList.add(OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT);
+	 	stateList.add(OrdersConstants.OrdOrder.State.REVOKE_WAIT_CONFIRM);
 	 	criteria.andStateIn(stateList);
 		return ordOrderMapper.countByExample(example);
 	}
