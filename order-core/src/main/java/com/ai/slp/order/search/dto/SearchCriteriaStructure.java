@@ -148,6 +148,18 @@ public class SearchCriteriaStructure {
 				new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
 		searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.IF_WARNING, MonitorCoonstants.WARNING_YES,
 				new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.term)));
+		// 下单开始结束时间都不为空
+		if(request.getOrderTimeStart()!=null && request.getOrderTimeEnd()!=null) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
+			String start = sdf.format(request.getOrderTimeStart());
+			String end = sdf.format(request.getOrderTimeEnd());
+			SearchCriteria searchCriteria = new SearchCriteria();
+			searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
+			searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
+			searchCriteria.addFieldValue(start);
+			searchCriteria.addFieldValue(end);
+			searchfieldVos.add(searchCriteria);
+		}
 		// 下单开始时间不为空
 		if(request.getOrderTimeStart()!=null && request.getOrderTimeEnd()==null) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
