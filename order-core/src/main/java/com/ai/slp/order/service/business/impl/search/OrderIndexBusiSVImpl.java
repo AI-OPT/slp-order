@@ -252,14 +252,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 	 	List<OrdOrder> ordOrderDatas = ordOrderAtomSV.selectSesData(startSize,maxSize);
 		List<OrderInfo> orderList = new ArrayList<OrderInfo>();
 		if(!CollectionUtil.isEmpty(ordOrderDatas)){
-		for (OrdOrder order: ordOrderDatas) {
-			OrdOrder ord = ordOrderAtomSV.selectByOrderId(tenantId, order.getParentOrderId());
-			if(ord==null) {
-				failCount++;
-				failOrders.add(order.getParentOrderId());
-				logger.error(">>>>>>>>>>不存在订单主表信息! 父订单id:"+ order.getParentOrderId());
-				continue;
-			}
+		for (OrdOrder ord: ordOrderDatas) {
 			//父订单
 			if(orderId==ord.getOrderId()) {
 				shareParentCount++;
