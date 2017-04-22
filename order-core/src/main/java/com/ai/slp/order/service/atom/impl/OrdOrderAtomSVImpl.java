@@ -189,12 +189,13 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 		// TODO Auto-generated method stub
 		OrdOrderCriteria example=new OrdOrderCriteria();
 	 	OrdOrderCriteria.Criteria criteria = example.createCriteria();
-	 	List<String> stateList=new ArrayList<String>();
+	 	criteria.andSubFlagEqualTo(OrdersConstants.OrdOrder.SubFlag.NO);
+	 	/*List<String> stateList=new ArrayList<String>();
 	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION);
 	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
 	 	stateList.add(OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT);
 	 	stateList.add(OrdersConstants.OrdOrder.State.REVOKE_WAIT_CONFIRM);
-	 	criteria.andStateIn(stateList);
+	 	criteria.andStateIn(stateList);*/
 	 	example.setLimitStart(startSize);
 	 	example.setLimitEnd(size);
 		return ordOrderMapper.selectByExample(example);
@@ -204,12 +205,13 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 	public int countForSes() {
 		OrdOrderCriteria example=new OrdOrderCriteria();
 	 	OrdOrderCriteria.Criteria criteria = example.createCriteria();
-	 	List<String> stateList=new ArrayList<String>();
+	 	criteria.andSubFlagEqualTo(OrdersConstants.OrdOrder.SubFlag.NO);
+	 	/*List<String> stateList=new ArrayList<String>();
 	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION);
 	 	stateList.add(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
 	 	stateList.add(OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT);
 	 	stateList.add(OrdersConstants.OrdOrder.State.REVOKE_WAIT_CONFIRM);
-	 	criteria.andStateIn(stateList);
+	 	criteria.andStateIn(stateList);*/
 		return ordOrderMapper.countByExample(example);
 	}
 
