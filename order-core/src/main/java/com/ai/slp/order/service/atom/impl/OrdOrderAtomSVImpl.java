@@ -1,7 +1,6 @@
 package com.ai.slp.order.service.atom.impl;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
