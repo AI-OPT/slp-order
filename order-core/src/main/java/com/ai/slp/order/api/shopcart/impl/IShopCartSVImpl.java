@@ -1,18 +1,32 @@
 package com.ai.slp.order.api.shopcart.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
-import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.shopcart.interfaces.IShopCartSV;
-import com.ai.slp.order.api.shopcart.param.*;
+import com.ai.slp.order.api.shopcart.param.CartProd;
+import com.ai.slp.order.api.shopcart.param.CartProdInfo;
+import com.ai.slp.order.api.shopcart.param.CartProdList;
+import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
+import com.ai.slp.order.api.shopcart.param.MultiCartProd;
+import com.ai.slp.order.api.shopcart.param.UserInfo;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
+import com.ai.slp.order.manager.CacheClientManager;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
 import com.ai.slp.order.service.business.interfaces.IShopCartBusiSV;
 import com.ai.slp.order.util.CommonCheckUtils;
@@ -24,15 +38,6 @@ import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by jackieliu on 16/5/16.
@@ -67,7 +72,7 @@ public class IShopCartSVImpl implements IShopCartSV {
 	                || cartProd.getBuyNum()<=0)
 	            cartProd.setBuyNum(1l);
 	        String tenantId = cartProd.getTenantId(),userId = cartProd.getUserId();
-	        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+	        ICacheClient iCacheClient = CacheClientManager.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
 	        String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
 			
 	        //查询用户购物车概览
@@ -138,7 +143,7 @@ public class IShopCartSVImpl implements IShopCartSV {
         CommonCheckUtils.checkTenantId(userInfo.getTenantId(),"");
         CartProdList prodList = new CartProdList();
         try {
-        	ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+        	ICacheClient iCacheClient = CacheClientManager.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
             String cartUserId = IPassMcsUtils.genShopCartUserId(userInfo.getTenantId(),userInfo.getUserId());
             //查询出缓存中购物车所有商品信息
             Map<String,String> cartProdMap = iCacheClient.hgetAll(cartUserId);
@@ -175,7 +180,7 @@ public class IShopCartSVImpl implements IShopCartSV {
 	        if (cartProd.getBuyNum() == null
 	                || cartProd.getBuyNum()<=0)
 	            cartProd.setBuyNum(1l);
-	        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+	        ICacheClient iCacheClient = CacheClientManager.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
 	        String cartUserId = IPassMcsUtils.genShopCartUserId(cartProd.getTenantId(),cartProd.getUserId());
 	        //购物车单个商品数量限制
 	        int skuNumLimit = getShopCartLimitNum(ShopCartConstants.CcsParams.ShopCart.SKU_NUM_LIMIT);
