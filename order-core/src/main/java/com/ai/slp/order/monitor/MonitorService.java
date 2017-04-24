@@ -5,17 +5,15 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
 import com.ai.slp.order.constants.MonitorCoonstants;
 import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdRule;
-import com.ai.slp.order.service.atom.interfaces.IOrdRuleAtomSV;
+import com.ai.slp.order.manager.CacheClientManager;
 import com.ai.slp.order.util.DateCycleUtil;
 import com.alibaba.fastjson.JSON;
 @Service
@@ -32,7 +30,7 @@ public class MonitorService {
 		//
 		OrderMonitorBeforResponse response = new OrderMonitorBeforResponse();
 		//
-		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
+		ICacheClient cacheClient = CacheClientManager.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
 		
 		String ordRuleUserStr = cacheClient.get(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);
 		String ordRuleIpStr = cacheClient.get(OrdRuleConstants.BUY_IP_MONITOR_ID);
@@ -110,7 +108,7 @@ public class MonitorService {
 		
 		String timeStr = "20000101000000";
 		//
-		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
+		ICacheClient cacheClient = CacheClientManager.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
 		//
 		long millisTime = DateUtil.getSysDate().getTime();//毫秒
 		long time = millisTime/1000;//秒
