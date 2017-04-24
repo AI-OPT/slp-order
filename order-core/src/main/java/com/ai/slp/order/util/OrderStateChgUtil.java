@@ -2,10 +2,10 @@ package com.ai.slp.order.util;
 
 import java.sql.Timestamp;
 
-import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.slp.order.aync.AyncExector;
 import com.ai.slp.order.aync.AyncTask;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.manager.MDSClientManager;
 import com.ai.slp.order.vo.OrderStateChgVo;
 import com.alibaba.fastjson.JSON;
 
@@ -33,7 +33,7 @@ public class OrderStateChgUtil {
            AyncExector.submit(new AyncTask(){
 				@Override
 				public void run() {
-					MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
+					MDSClientManager.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC).
 					send(JSON.toJSONString(stateChgVo), 0);
 				}
 				
