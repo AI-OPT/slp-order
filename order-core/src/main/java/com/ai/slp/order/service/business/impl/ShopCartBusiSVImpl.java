@@ -28,6 +28,7 @@ import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 import com.ai.slp.order.constants.ErrorCodeConstants;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
+import com.ai.slp.order.manager.CacheClientManager;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
 import com.ai.slp.order.service.business.interfaces.IShopCartBusiSV;
 import com.ai.slp.order.util.DateUtils;
@@ -57,7 +58,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      */
     @Override
     public CartProdOptRes queryCartOptions(String tenantId, String userId) {
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+        ICacheClient iCacheClient = CacheClientManager.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         ShopCartCachePointsVo pointsVo = queryCartPoints(iCacheClient,tenantId,userId);
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
@@ -73,7 +74,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     @Override
     public CartProdOptRes addCartProd(OrdOdCartProd odCartProd, ShopCartCachePointsVo pointsVo) {
     	CartProdOptRes cartProdOptRes = null;
-        //若商品数量为空或零,删除购物车中商品
+     /*   //若商品数量为空或零,删除购物车中商品
         if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
             cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
         }else {
@@ -85,7 +86,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 cartProd0.setBuySum(odCartProd.getBuySum());
                 cartProdAtomSV.updateCartProdById(cartProd0);
             }
-        }
+        }*/
         cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
@@ -118,7 +119,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         pointsVo.setProdTotal(pointsVo.getProdTotal()+addNum);//更新商品总数量
         //更新概览
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
-        //若商品数量为空或零,删除购物车中商品
+     /*   //若商品数量为空或零,删除购物车中商品
         if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
             cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
         }else {
@@ -131,7 +132,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
              //   cartProdAtomSV.updateCartProdById(cartProd0);
                 cartProdAtomSV.updateCartProdSum(cartProd0);
             }
-        }
+        }*/
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
@@ -147,7 +148,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      */
     @Override
     public CartProdOptRes deleteCartProd(String tenantId, String userId, List<String> skuIdList) {
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+        ICacheClient iCacheClient = CacheClientManager.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cartUserId = IPassMcsUtils.genShopCartUserId(tenantId,userId);
        /* //若不存在购物车信息缓存,则建立缓存
         if (!iCacheClient.exists(cartUserId)){
@@ -174,11 +175,11 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
             delSuccessNum++;
 
-            prod.setBuySum(0l);//商品数为零,表示删除
+         /*   prod.setBuySum(0l);//商品数为零,表示删除
             //若商品数量为空或零,删除购物车中商品
             if (prod.getBuySum()==null || new Long(0l).equals(prod.getBuySum())){
                 cartProdAtomSV.deleteByProdId(prod.getTenantId(),prod.getUserId(),prod.getSkuId());
-            }
+            }*/
 
         }
         CartProdOptRes optRes = new CartProdOptRes();

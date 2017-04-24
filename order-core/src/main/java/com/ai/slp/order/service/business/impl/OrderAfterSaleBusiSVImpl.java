@@ -1,11 +1,8 @@
 package com.ai.slp.order.service.business.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,10 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.sdk.components.ses.SESClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
-import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
@@ -37,6 +32,7 @@ import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
 import com.ai.slp.order.search.bo.OrdProdExtend;
 import com.ai.slp.order.search.bo.OrderInfo;
 import com.ai.slp.order.search.bo.ProdInfo;
@@ -51,10 +47,7 @@ import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
-import com.ai.slp.order.vo.OFCAfterSaleOrderCreateRequest;
-import com.ai.slp.order.vo.OrderAfterSaleApplyItemsVo;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 @Service
 @Transactional
@@ -77,71 +70,30 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 	@Override
 	public void back(OrderReturnRequest request,OrdOrder order,
 			OrdOdProd ordOdProd) throws BusinessException, SystemException {
-		long backOrderId=SequenceUtil.createOrderId();
-		Timestamp sysDate=DateUtil.getSysDate();
-		long backTotalFee = 0;
-		/* 1.创建订单售后信息*/
-		backTotalFee = this.createAfterOrderInfo(order, request,
+		/* 1.创建退货订单信息*/
+		this.createAfterOrderInfo(order, request,
 				OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER, 
-				ordOdProd, OrdersConstants.OrdOdProd.State.RETURN,backOrderId,sysDate);
-		//TODO
-		/* 2.组装退货申请单(OFC)*/
-		if(OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(order.getFlag())) {
-			String params = getOFCAfterSaleOrderCreateParam(order,backOrderId,ordOdProd, sysDate, 
-					backTotalFee, request.getProdSum(), OrdersConstants.OFCApplyType.BACK);
-			Map<String, String> header=new HashMap<String, String>(); 
-			header.put("appkey", OrdersConstants.OFC_APPKEY);
-			//发送Post请求,并返回信息
-			try {
-				String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
-				JSONObject object = JSON.parseObject(strData);
-				boolean val = object.getBooleanValue("IsValid");
-			} catch (IOException | URISyntaxException e) {
-				logger.error(e.getMessage());
-				throw new SystemException("", "OFC同步出现异常");
-			}
-		}
+				ordOdProd, OrdersConstants.OrdOdProd.State.RETURN);
 	}
 
 	//订单换货申请
 	@Override
 	public void exchange(OrderReturnRequest request,OrdOrder order,
 			OrdOdProd ordOdProd) throws BusinessException, SystemException {
-		long exchangeOrderId=SequenceUtil.createOrderId();
-		Timestamp sysDate=DateUtil.getSysDate();
-		/* 1.创建订单售后信息*/
+		/* 1.创建换货订单信息*/
 		this.createAfterOrderInfo(order, request,
 				OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER, 
-				ordOdProd, OrdersConstants.OrdOdProd.State.EXCHANGE,exchangeOrderId,sysDate);
+				ordOdProd, OrdersConstants.OrdOdProd.State.EXCHANGE);
 	}
 
 	//订单退款申请
 	@Override
 	public void refund(OrderReturnRequest request,OrdOrder order,
 			OrdOdProd ordOdProd) throws BusinessException, SystemException {
-		long refundOrderId=SequenceUtil.createOrderId();
-		Timestamp sysDate=DateUtil.getSysDate();
-		/* 1.创建订单售后信息*/
-		long refundTotalFee = this.createAfterOrderInfo(order, request,
+		/* 1.创建退款订单信息*/
+		this.createAfterOrderInfo(order, request,
 				OrdersConstants.OrdOrder.BusiCode.CANCEL_ORDER, 
-				ordOdProd, OrdersConstants.OrdOdProd.State.RETURN,refundOrderId,sysDate);
-		//TODO
-		/* 2.组装退款申请单(OFC)*/ 
-		if(OrdersConstants.OrdOrder.Flag.OFC_ACTUAL_TIME.equals(order.getFlag())) {
-			String params = getOFCAfterSaleOrderCreateParam(order,refundOrderId, ordOdProd, sysDate, 
-					refundTotalFee, ordOdProd.getBuySum(), OrdersConstants.OFCApplyType.REFUND);
-			Map<String, String> header=new HashMap<String, String>(); 
-			header.put("appkey", OrdersConstants.OFC_APPKEY);
-			//发送Post请求,并返回信息
-			try {
-				String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_RETURN_CREATE_URL, params, header);
-				JSONObject object = JSON.parseObject(strData);
-				boolean val = object.getBooleanValue("IsValid");
-			} catch (IOException | URISyntaxException e) {
-				logger.error(e.getMessage());
-				throw new SystemException("", "OFC同步出现异常");
-			}
-		}
+				ordOdProd, OrdersConstants.OrdOdProd.State.RETURN);
 	}
 	
 	
@@ -171,10 +123,11 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     /**
      * 创建售后订单信息
      */
-    public long createAfterOrderInfo(OrdOrder order,OrderReturnRequest request,
-    		String busiCode,OrdOdProd ordOdProd,String prodState,
-    		long afterOrderId,Timestamp sysDate) {
+    public void createAfterOrderInfo(OrdOrder order,OrderReturnRequest request,
+    		String busiCode,OrdOdProd ordOdProd,String prodState) {
     	/* 1.创建售后订单*/
+    	long afterOrderId=SequenceUtil.createOrderId();
+    	Timestamp sysDate=DateUtil.getSysDate();
 		OrdOrder afterOrder=new OrdOrder();
 		BeanUtils.copyProperties(afterOrder, order);
 		afterOrder.setBusiCode(busiCode); 
@@ -278,32 +231,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		ordOdProdAtomSV.updateCusServiceFlag(ordOdProd);
 		/* 6.刷新搜索引擎数据*/
 		this.refreshAfterData(afterOrder,afterOrdOdProd); 
-		return afterTotalFee;
     }
     
-    /**
-     * 组装退换货申请单创建参数(OFC)
-     */
-    private String getOFCAfterSaleOrderCreateParam(OrdOrder order,long subOrderId,OrdOdProd ordOdProd,
-    		Timestamp sysDate,long backTotalFee,long prodSum,int type) {
-		OFCAfterSaleOrderCreateRequest orderCreateRequest=new OFCAfterSaleOrderCreateRequest();
-		orderCreateRequest.setOrderNo(String.valueOf(order.getOrderId())); //之前的子订单 
-		orderCreateRequest.setExternalApplyNo(String.valueOf(subOrderId)); //售后订单
-		orderCreateRequest.setApplyType(type);
-		orderCreateRequest.setReasonType(16); //其它
-		orderCreateRequest.setDescription("其它"); 
-		orderCreateRequest.setRefundAmount(backTotalFee/10); //分为单位
-		orderCreateRequest.setApplyTime(sysDate.toString());
-		orderCreateRequest.setRemark(""); 
-		List<OrderAfterSaleApplyItemsVo> applyItemsVoList=new ArrayList<OrderAfterSaleApplyItemsVo>();
-		OrderAfterSaleApplyItemsVo applyItemsVo=new OrderAfterSaleApplyItemsVo();
-		applyItemsVo.setProductName(ordOdProd.getProdName());
-		applyItemsVo.setProductCode(ordOdProd.getProdCode()); //产品编码
-		applyItemsVo.setApplyQuanlity(prodSum);
-		applyItemsVoList.add(applyItemsVo);
-		orderCreateRequest.setItems(applyItemsVoList);
-    	return JSON.toJSONString(orderCreateRequest);
-    }
     
     
     //ofc售后订单状态回传
@@ -367,6 +296,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		orderInfo.setTotalprodsize(orderInfo.getTotalprodsize()+prodInfos.size());
 		orderInfo.setOrdextendes(ordextendes);
 		ordList.add(orderInfo);
-		SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
   	}
 }

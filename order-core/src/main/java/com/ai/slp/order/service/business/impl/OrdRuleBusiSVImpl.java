@@ -18,6 +18,7 @@ import com.ai.slp.order.api.orderrule.param.OrderRuleResponse;
 import com.ai.slp.order.constants.MonitorCoonstants;
 import com.ai.slp.order.constants.OrdRuleConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdRule;
+import com.ai.slp.order.manager.CacheClientManager;
 import com.ai.slp.order.service.atom.interfaces.IOrdRuleAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdRuleBusiSV;
 import com.alibaba.fastjson.JSON;
@@ -31,7 +32,7 @@ public class OrdRuleBusiSVImpl implements IOrdRuleBusiSV {
 	@Override
 	@Transactional
 	public OrderRuleResponse saveOrderRuleSetting(OrderRuleRequest request){
-		ICacheClient cacheClient = MCSClientFactory.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
+		ICacheClient cacheClient = CacheClientManager.getCacheClient(MonitorCoonstants.MONITOR_CACHE_NAMESPACE);
 		List<OrdRule> ordRuleList = new ArrayList<OrdRule>();
 		//时间监控
 		OrdRule timeMonitorOrdRule = new OrdRule();

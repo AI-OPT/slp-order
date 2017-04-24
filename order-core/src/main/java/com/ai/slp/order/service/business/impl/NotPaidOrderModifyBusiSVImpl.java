@@ -15,6 +15,7 @@ import com.ai.slp.order.api.orderpricemodify.param.OrderModifyRequest;
 import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
+import com.ai.slp.order.manager.ESClientManager;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.business.interfaces.INotPaidOrderModifyBusiSV;
 
@@ -55,7 +56,7 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 		ordOdFeeTotalAtomSV.updateByOrderId(odFeeTotal);
 		/* 3.导入数据到搜索引擎*/
 		try {
-			SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).
+			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).
 				upsert(String.valueOf(request.getOrderId()), 
 						new JsonBuilder().startObject().field(SearchFieldConfConstants.DISCOUNT_FEE, 
 								odFeeTotal.getDiscountFee()).

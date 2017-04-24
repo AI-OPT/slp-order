@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
-import com.ai.opt.sdk.components.ses.SESClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.DateUtil;
@@ -38,14 +37,15 @@ import com.ai.slp.order.api.ordertradecenter.param.OrderResInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.ai.slp.order.constants.OrdersConstants;
-import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
+import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
 import com.ai.slp.order.search.bo.OrdProdExtend;
 import com.ai.slp.order.search.bo.OrderInfo;
 import com.ai.slp.order.search.bo.ProdInfo;
@@ -118,7 +118,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	orderMonitorSV.afterSubmitOrder(monitorRequest);
         	
         	/*异步处理 发送消息
-    		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).
+    		MDSClientManager.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).
     				send(JSON.toJSONString(monitorRequest), 0);*/
         	
         	/* 9.封装返回参数*/
@@ -543,7 +543,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setOrdextendes(prodExtends);
 		orderList.add(ordInfo);
 		try {
-			SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
+			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
 		} catch (Exception e) {
 			 throw new SystemException("","订单信息加入搜索引擎失败,订单ID:"+ordOrder.getOrderId());
 		}

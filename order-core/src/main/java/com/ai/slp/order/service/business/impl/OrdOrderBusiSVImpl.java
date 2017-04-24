@@ -113,10 +113,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			ordOrderVo.setStateName(sysParamState == null ? "" : sysParamState.getColumnDesc());
 			ordOrderVo.setChlId(order.getChlId()); 
 			ordOrderVo.setRouteId(order.getRouteId());
-			// 查询仓库名称
-			IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
-			RouteIdParamRequest routeRequest = new RouteIdParamRequest();
 			if (order.getRouteId() != null) {
+				// 查询仓库名称
+				IRouteManageSV iRouteManageSV = DubboConsumerFactory.getService(IRouteManageSV.class);
+				RouteIdParamRequest routeRequest = new RouteIdParamRequest();
 				routeRequest.setRouteId(order.getRouteId());
 				RouteResponse routeInfo = iRouteManageSV.findRouteInfo(routeRequest);
 				ordOrderVo.setRouteName(routeInfo.getRouteName()); 

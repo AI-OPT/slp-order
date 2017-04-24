@@ -28,6 +28,7 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
 import com.ai.slp.order.search.bo.OrdProdExtend;
 import com.ai.slp.order.search.bo.OrderInfo;
 import com.ai.slp.order.search.bo.ProdInfo;
@@ -118,7 +119,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				ordInfo = this.queryOrdProdExtends(ordInfo, ord, 
 						 iCacheSV, parentOrderId);
 				orderList.add(ordInfo);
-				SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
+				ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
 			}
 		 }catch(Exception e){
 			 throw new SystemException("","订单信息加入搜索引擎失败,订单ID:"+request.getParentOrderId());
@@ -223,7 +224,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 			}
 		}
-		SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
 	}
 
 	
@@ -320,7 +321,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			orderList.add(ordInfo);
 		}
 		try{
-			SESClientFactory.getSearchClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
+			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
 		}catch(Exception e){
 			throw new SystemException("","订单信息加入搜索引擎失败,订单ID:"+orderId);
 		}
