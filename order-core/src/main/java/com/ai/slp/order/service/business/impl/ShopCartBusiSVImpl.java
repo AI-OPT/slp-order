@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
-import com.ai.opt.sdk.components.mcs.MCSClientFactory;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.paas.ipaas.ccs.constants.ConfigException;
@@ -411,8 +410,9 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         
         //更新概览
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
+        
         //若商品数量为空或零,删除购物车中商品
-        if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
+      /*  if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
             cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
         }else {
             OrdOdCartProd cartProd0 = cartProdAtomSV.queryByProdOfCart(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
@@ -423,7 +423,7 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
                 cartProd0.setBuySum(odCartProd.getBuySum());
                 cartProdAtomSV.updateCartProdById(cartProd0);
             }
-        }
+        }*/
 
         cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
