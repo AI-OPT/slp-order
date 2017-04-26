@@ -14,23 +14,23 @@ public class OrdProductVo extends BaseInfo{
 	/**
 	 *商品明细id 
 	 */
-	private Long prodDetalId;
+	private Long proddetalid;//--
 	
 	
 	/**
      * 业务订单ID
      */
-    private Long orderId;
+    private Long orderid;
 
     /**
      * 单品ID
      */
-    private String skuId;
+    private String skuid;
     
     /**
      * 商品名称
      */
-    private String prodName;
+    private String prodname;
     
     /**
      * 商品状态
@@ -40,237 +40,195 @@ public class OrdProductVo extends BaseInfo{
     /**
      * 购买数量
      */
-    private Long buySum;
+    private Long buysum;
     
     /**
      * 销售单价
      */
-    private Long salePrice;
+    private Long saleprice;
     
     /**
      * 总费用
      */
-    private Long totalFee;
+    private Long totalfee;//--
     
     /**
      * 优惠费用 
      */
-    private Long discountFee;
+    private Long discountfee;//--
     
     /**
      * 减免费用
      */
-    private Long operDiscountFee;
+    private Long operdiscountfee;//--
     
     /**
      * 应收费用
      */
-    private Long adjustFee;
+    private Long adjustfee;//--
     
     /**
      * 商品图片
      */
-    private ProductImage productImage;
+    private ProductImage productimage;//--
     
     /**
      * 图片地址
      */
-    private String imageUrl;
+    private String imageurl;//--
     
     /**
      * 拓展信息值
      */
-    private String prodExtendInfo;
+    private String prodextendinfo;//--
     
     /**
      * 优惠扣减费用
      */
-    private long couponFee;
+    private long couponfee;
     
     /**
      * 积分扣减费用
      */
-    private long jfFee;
+    private long jffee;
     
     /**
      * 商品是否售后标识
      */
-    private String cusServiceFlag;
+    private String cusserviceflag; //--
     
     /**
      * 商品赠送积分
      */
-    private long giveJF;
+    private long givejf;
     
     /**
      * 商品编码
      */
-    private String prodCode;
+    private String prodcode;//--
     /**
      * 库存ID
      */
-    private String skuStorageId;
-
-	public Long getOrderId() {
-		return orderId;
+    private String skustorageid;//--
+	public Long getProddetalid() {
+		return proddetalid;
 	}
-
-	public void setOrderId(Long orderId) {
-		this.orderId = orderId;
+	public void setProddetalid(Long proddetalid) {
+		this.proddetalid = proddetalid;
 	}
-
-	public String getSkuId() {
-		return skuId;
+	public Long getOrderid() {
+		return orderid;
 	}
-
-	public void setSkuId(String skuId) {
-		this.skuId = skuId;
+	public void setOrderid(Long orderid) {
+		this.orderid = orderid;
 	}
-
-	public Long getBuySum() {
-		return buySum;
+	public String getSkuid() {
+		return skuid;
 	}
-
-	public void setBuySum(Long buySum) {
-		this.buySum = buySum;
+	public void setSkuid(String skuid) {
+		this.skuid = skuid;
 	}
-
-	public Long getSalePrice() {
-		return salePrice;
+	public String getProdname() {
+		return prodname;
 	}
-
-	public void setSalePrice(Long salePrice) {
-		this.salePrice = salePrice;
+	public void setProdname(String prodname) {
+		this.prodname = prodname;
 	}
-
-	public Long getTotalFee() {
-		return totalFee;
-	}
-
-	public void setTotalFee(Long totalFee) {
-		this.totalFee = totalFee;
-	}
-
-	public Long getDiscountFee() {
-		return discountFee;
-	}
-
-	public void setDiscountFee(Long discountFee) {
-		this.discountFee = discountFee;
-	}
-
-	public Long getAdjustFee() {
-		return adjustFee;
-	}
-
-	public void setAdjustFee(Long adjustFee) {
-		this.adjustFee = adjustFee;
-	}
-
-	public ProductImage getProductImage() {
-		return productImage;
-	}
-
-	public void setProductImage(ProductImage productImage) {
-		this.productImage = productImage;
-	}
-
-	public String getProdName() {
-		return prodName;
-	}
-
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
-	}
-
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-
-	public Long getOperDiscountFee() {
-		return operDiscountFee;
-	}
-
-	public void setOperDiscountFee(Long operDiscountFee) {
-		this.operDiscountFee = operDiscountFee;
-	}
-
-	public String getProdExtendInfo() {
-		return prodExtendInfo;
-	}
-
-	public void setProdExtendInfo(String prodExtendInfo) {
-		this.prodExtendInfo = prodExtendInfo;
-	}
-
 	public String getState() {
 		return state;
 	}
-
 	public void setState(String state) {
 		this.state = state;
 	}
-	
-	public long getCouponFee() {
-		return couponFee;
+	public Long getBuysum() {
+		return buysum;
 	}
-
-	public void setCouponFee(long couponFee) {
-		this.couponFee = couponFee;
+	public void setBuysum(Long buysum) {
+		this.buysum = buysum;
 	}
-
-	public long getJfFee() {
-		return jfFee;
+	public Long getSaleprice() {
+		return saleprice;
 	}
-
-	public void setJfFee(long jfFee) {
-		this.jfFee = jfFee;
+	public void setSaleprice(Long saleprice) {
+		this.saleprice = saleprice;
 	}
-
-	public Long getProdDetalId() {
-		return prodDetalId;
+	public Long getTotalfee() {
+		return totalfee;
 	}
-
-	public void setProdDetalId(Long prodDetalId) {
-		this.prodDetalId = prodDetalId;
+	public void setTotalfee(Long totalfee) {
+		this.totalfee = totalfee;
 	}
-
-	public String getCusServiceFlag() {
-		return cusServiceFlag;
+	public Long getDiscountfee() {
+		return discountfee;
 	}
-
-	public void setCusServiceFlag(String cusServiceFlag) {
-		this.cusServiceFlag = cusServiceFlag;
+	public void setDiscountfee(Long discountfee) {
+		this.discountfee = discountfee;
 	}
-
-	public long getGiveJF() {
-		return giveJF;
+	public Long getOperdiscountfee() {
+		return operdiscountfee;
 	}
-
-	public void setGiveJF(long giveJF) {
-		this.giveJF = giveJF;
+	public void setOperdiscountfee(Long operdiscountfee) {
+		this.operdiscountfee = operdiscountfee;
 	}
-
-	public String getProdCode() {
-		return prodCode;
+	public Long getAdjustfee() {
+		return adjustfee;
 	}
-
-	public void setProdCode(String prodCode) {
-		this.prodCode = prodCode;
+	public void setAdjustfee(Long adjustfee) {
+		this.adjustfee = adjustfee;
 	}
-
-	public String getSkuStorageId() {
-		return skuStorageId;
+	public ProductImage getProductimage() {
+		return productimage;
 	}
-
-	public void setSkuStorageId(String skuStorageId) {
-		this.skuStorageId = skuStorageId;
+	public void setProductimage(ProductImage productimage) {
+		this.productimage = productimage;
 	}
-
-	
+	public String getImageurl() {
+		return imageurl;
+	}
+	public void setImageurl(String imageurl) {
+		this.imageurl = imageurl;
+	}
+	public String getProdextendinfo() {
+		return prodextendinfo;
+	}
+	public void setProdextendinfo(String prodextendinfo) {
+		this.prodextendinfo = prodextendinfo;
+	}
+	public long getCouponfee() {
+		return couponfee;
+	}
+	public void setCouponfee(long couponfee) {
+		this.couponfee = couponfee;
+	}
+	public long getJffee() {
+		return jffee;
+	}
+	public void setJffee(long jffee) {
+		this.jffee = jffee;
+	}
+	public String getCusserviceflag() {
+		return cusserviceflag;
+	}
+	public void setCusserviceflag(String cusserviceflag) {
+		this.cusserviceflag = cusserviceflag;
+	}
+	public long getGivejf() {
+		return givejf;
+	}
+	public void setGivejf(long givejf) {
+		this.givejf = givejf;
+	}
+	public String getProdcode() {
+		return prodcode;
+	}
+	public void setProdcode(String prodcode) {
+		this.prodcode = prodcode;
+	}
+	public String getSkustorageid() {
+		return skustorageid;
+	}
+	public void setSkustorageid(String skustorageid) {
+		this.skustorageid = skustorageid;
+	}
 	
 }
