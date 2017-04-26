@@ -18,7 +18,9 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 订单来源 受理渠道
 	 */
-	//private String chlid;//--
+	private String chlid;
+	
+	private String chlidname;
 
 	/**
 	 * 仓库ID
@@ -611,5 +613,11 @@ public class OrdOrderVo extends BaseInfo {
 	}
 	public void setProductList(List<OrdProductVo> productList) {
 		this.productList = productList;
+	}
+	public String getChlidname() {
+		return chlidname;
+	}
+	public void setChlidname(String chlidname) {
+		this.chlidname = chlidname;
 	}
 }
