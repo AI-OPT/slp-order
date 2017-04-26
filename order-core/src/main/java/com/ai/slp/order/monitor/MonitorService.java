@@ -59,7 +59,6 @@ public class MonitorService {
 		
 		//用户预警提示
 		if(userSize >= ordRuleUser.getOrderSum() ){
-			//throw new BusinessException("999999","当前用户["+userId+"]下,"+ordRuleUser.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleUser.getTimeType())+"内,已达到"+ordRuleUser.getOrderSum()+"单预警");
 			response.setIfWarning(MonitorCoonstants.WARNING_YES);
 			response.setWarningType(MonitorCoonstants.WARNING_TYPE_USER_ID);
 			response.setWarningDesc("当前用户["+userId+"]下,"+ordRuleUser.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleUser.getTimeType())+"内,已达到"+ordRuleUser.getOrderSum()+"单预警");
@@ -68,7 +67,6 @@ public class MonitorService {
 		}
 		//ip预警提示
 		if(ipSize >= ordRuleIp.getOrderSum() ){
-			//throw new BusinessException("999999","当前ip["+ipAddress+"]下,"+ordRuleIp.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleIp.getTimeType())+"内,已达到"+ordRuleIp.getOrderSum()+"单预警");
 			response.setIfWarning(MonitorCoonstants.WARNING_YES);
 			response.setWarningType(MonitorCoonstants.WARNING_TYPE_IP);
 			response.setWarningDesc("当前ip["+ipAddress+"]下,"+ordRuleIp.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleIp.getTimeType())+"内,已达到"+ordRuleIp.getOrderSum()+"单预警");
@@ -77,7 +75,6 @@ public class MonitorService {
 		}
 		//订单总量预警提示
 		if(orderAllSize >= ordRuleAll.getOrderSum() ){
-			//throw new BusinessException("999999","订单总量,"+ordRuleAll.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleAll.getTimeType())+"内,已达到"+ordRuleAll.getOrderSum()+"单预警");
 			response.setIfWarning(MonitorCoonstants.WARNING_YES);
 			response.setWarningType(MonitorCoonstants.WARNING_TYPE_ORDER_SUM);
 			response.setWarningDesc("订单总量,"+ordRuleAll.getMonitorTime()+DateCycleUtil.dateTypeMap.get(ordRuleAll.getTimeType())+"内,已达到"+ordRuleAll.getOrderSum()+"单预警");
