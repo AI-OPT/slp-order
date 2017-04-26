@@ -18,7 +18,7 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 订单来源 受理渠道
 	 */
-	private String chlid;//--
+	//private String chlid;//--
 
 	/**
 	 * 仓库ID
@@ -276,12 +276,6 @@ public class OrdOrderVo extends BaseInfo {
 	 * 商品集合
 	 */
 	private List<OrdProductVo> productList;
-	public String getChlid() {
-		return chlid;
-	}
-	public void setChlid(String chlid) {
-		this.chlid = chlid;
-	}
 	public String getRouteid() {
 		return routeid;
 	}
