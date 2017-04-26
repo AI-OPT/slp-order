@@ -145,8 +145,8 @@ public class SearchCriteriaStructure {
 	public static List<SearchCriteria> queryOrderInfosByOrderId(long orderId) {
 		List<SearchCriteria> searchfieldVos = new ArrayList<SearchCriteria>();
 		// 添加订单id查询条件
-		searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.PORDER_ID,String.valueOf(orderId),
-				new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.querystring)));
+		searchfieldVos.add(new SearchCriteria(SearchFieldConfConstants.ORD_EXTENDES_ORDERID,String.valueOf(orderId),
+				new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.term)));
 		return searchfieldVos;
 	}
 	

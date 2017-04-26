@@ -145,15 +145,13 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					prodVo.setDiscountfee(prodInfo.getDiscountfee());
 					
 					//
-				//	ProductImage productimage=new ProductImage();
-				//	productimage.setVfsId(prodInfo.getVfsid());
-				//	productimage.setPicType(prodInfo.getPictype());
-				//	prodVo.setProductimage(productimage);
+					ProductImage productImage = getProductImage(tenantId, prodInfo.getSkuid());
+					prodVo.setProductimage(productImage);
 					prodVo.setCouponfee(prodInfo.getCouponfee());
 					prodVo.setJffee(prodInfo.getJffee());
 					prodVo.setCusserviceflag(prodInfo.getCusserviceflag());
 					prodVo.setGivejf(prodInfo.getGivejf());
-				//	prodVo.setProdcode(prodInfo.getProdcode());
+					prodVo.setProdcode(prodInfo.getProdcode());
 					prodVo.setSkustorageid(prodInfo.getSkustorageid());
 				
 					
