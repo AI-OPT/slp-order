@@ -18,15 +18,15 @@ public class OrdProdExtend {
 	
 
 	private long origorderid;
-	private String busicodename;
+//	private String busicodename;
 	private long totalfee; //TODO
 	private long discountfee;
 	private long adjustfee;
 	private long paidfee; //TODO
 	private long payfee;
 	private long freight;
-	private long operdiscountfee;//TODO 没赋值
-	private String operdiscountdesc;//TODO
+//	private long operdiscountfee;//TODO 没赋值
+//	private String operdiscountdesc;//TODO
 	private String aftercontactTel;
 	private String aftercontactinfo;
 	
@@ -137,23 +137,5 @@ public class OrdProdExtend {
 	}
 	public void setAftercontactinfo(String aftercontactinfo) {
 		this.aftercontactinfo = aftercontactinfo;
-	}
-	public String getBusicodename() {
-		return busicodename;
-	}
-	public void setBusicodename(String busicodename) {
-		this.busicodename = busicodename;
-	}
-	public long getOperdiscountfee() {
-		return operdiscountfee;
-	}
-	public void setOperdiscountfee(long operdiscountfee) {
-		this.operdiscountfee = operdiscountfee;
-	}
-	public String getOperdiscountdesc() {
-		return operdiscountdesc;
-	}
-	public void setOperdiscountdesc(String operdiscountdesc) {
-		this.operdiscountdesc = operdiscountdesc;
 	}
 }

@@ -21,7 +21,7 @@ public class ProdInfo {
 	private long totalfee; 
 	private long discountfee;
 	private long adjustfee;
-	private long operdiscountfee;
+//	private long operdiscountfee;
     
 	public String getProdname() {
 		return prodname;
@@ -136,12 +136,6 @@ public class ProdInfo {
 	}
 	public void setAdjustfee(long adjustfee) {
 		this.adjustfee = adjustfee;
-	}
-	public long getOperdiscountfee() {
-		return operdiscountfee;
-	}
-	public void setOperdiscountfee(long operdiscountfee) {
-		this.operdiscountfee = operdiscountfee;
 	}
 	public String getProdextendinfo() {
 		return prodextendinfo;

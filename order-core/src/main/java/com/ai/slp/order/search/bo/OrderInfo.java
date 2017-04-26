@@ -16,7 +16,6 @@ public class OrderInfo {
 	private long points;
 	private long totalprodsize;
 	private Date ordertime;
-	private Date paytime;
 	private String parentorderstate;
 	private String supplierid;
 	private String ifwarning;
@@ -26,12 +25,11 @@ public class OrderInfo {
 	
 	private String chlid;
 	private String accountid;
-//	private String userid;
+	private String userid;
 //	private long acctid;
 	private String token;
 	private String downstreamorderid;      //TODO
 	private String ordertype;  
-	private String ordertypename;
 	private String paystyle; 
 	private String invoicetype; 
 	private String invoicetitle;
@@ -48,7 +46,7 @@ public class OrderInfo {
 	private String areacode;
 	private String address;
 	private String expressId; //TODO
-//	private String operid; 
+	private String operid; 
 	private String buyertaxpayernumber;
 	private String buyerbankname;
 	private String buyerbankaccount;
@@ -183,12 +181,6 @@ public class OrderInfo {
 	public void setOrdertype(String ordertype) {
 		this.ordertype = ordertype;
 	}
-	public String getOrdertypename() {
-		return ordertypename;
-	}
-	public void setOrdertypename(String ordertypename) {
-		this.ordertypename = ordertypename;
-	}
 	public String getInvoicetitle() {
 		return invoicetitle;
 	}
@@ -309,12 +301,6 @@ public class OrderInfo {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	public Date getPaytime() {
-		return paytime;
-	}
-	public void setPaytime(Date paytime) {
-		this.paytime = paytime;
-	}
 	public String getChlid() {
 		return chlid;
 	}
@@ -332,5 +318,17 @@ public class OrderInfo {
 	}
 	public void setInvoicetype(String invoicetype) {
 		this.invoicetype = invoicetype;
+	}
+	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+	public String getOperid() {
+		return operid;
+	}
+	public void setOperid(String operid) {
+		this.operid = operid;
 	}
 }
