@@ -620,4 +620,10 @@ public class OrdOrderVo extends BaseInfo {
 	public void setChlidname(String chlidname) {
 		this.chlidname = chlidname;
 	}
+	public String getChlid() {
+		return chlid;
+	}
+	public void setChlid(String chlid) {
+		this.chlid = chlid;
+	}
 }
