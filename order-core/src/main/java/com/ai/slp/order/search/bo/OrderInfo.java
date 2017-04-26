@@ -4,8 +4,6 @@ import java.util.List;
 
 public class OrderInfo {
 //	private String tenantid;
-//	private String chlid;
-	private String chlidname;
 	private long porderid;
 	private String username;
 	private String usertel;
@@ -26,18 +24,16 @@ public class OrderInfo {
 	private List<OrdProdExtend> ordextendes;
 	
 	
-	
+	private String chlid;
 	private String accountid;
 //	private String userid;
 //	private long acctid;
 	private String token;
 	private String downstreamorderid;      //TODO
-	private String ordertype;  //TODO 去掉
+	private String ordertype;  
 	private String ordertypename;
-//	private String paystyle; //TODO 去掉
-	private String paystylename;
-//	private String invoicetype;  //TODO 去掉
-	private String invoicetypename;
+	private String paystyle; 
+	private String invoicetype; 
 	private String invoicetitle;
 	private String invoicecontent;
 	private String invoicestatus; //TODO
@@ -61,24 +57,6 @@ public class OrderInfo {
 	private String remark;
 
 	
-/*	public String getTenantid() {
-		return tenantid;
-	}
-	public void setTenantid(String tenantid) {
-		this.tenantid = tenantid;
-	}
-	public String getChlid() {
-		return chlid;
-	}
-	public void setChlid(String chlid) {
-		this.chlid = chlid;
-	}*/
-	public String getChlidname() {
-		return chlidname;
-	}
-	public void setChlidname(String chlidname) {
-		this.chlidname = chlidname;
-	}
 	public long getPorderid() {
 		return porderid;
 	}
@@ -211,30 +189,6 @@ public class OrderInfo {
 	public void setOrdertypename(String ordertypename) {
 		this.ordertypename = ordertypename;
 	}
-/*	public String getPaystyle() {
-		return paystyle;
-	}
-	public void setPaystyle(String paystyle) {
-		this.paystyle = paystyle;
-	}*/
-	public String getPaystylename() {
-		return paystylename;
-	}
-	public void setPaystylename(String paystylename) {
-		this.paystylename = paystylename;
-	}
-/*	public String getInvoicetype() {
-		return invoicetype;
-	}
-	public void setInvoicetype(String invoicetype) {
-		this.invoicetype = invoicetype;
-	}*/
-	public String getInvoicetypename() {
-		return invoicetypename;
-	}
-	public void setInvoicetypename(String invoicetypename) {
-		this.invoicetypename = invoicetypename;
-	}
 	public String getInvoicetitle() {
 		return invoicetitle;
 	}
@@ -361,22 +315,22 @@ public class OrderInfo {
 	public void setPaytime(Date paytime) {
 		this.paytime = paytime;
 	}
-/*	public String getUserid() {
-		return userid;
+	public String getChlid() {
+		return chlid;
 	}
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public void setChlid(String chlid) {
+		this.chlid = chlid;
 	}
-	public long getAcctid() {
-		return acctid;
+	public String getPaystyle() {
+		return paystyle;
 	}
-	public void setAcctid(long acctid) {
-		this.acctid = acctid;
-	}*/
-/*	public String getOperid() {
-		return operid;
+	public void setPaystyle(String paystyle) {
+		this.paystyle = paystyle;
 	}
-	public void setOperid(String operid) {
-		this.operid = operid;
-	}*/
+	public String getInvoicetype() {
+		return invoicetype;
+	}
+	public void setInvoicetype(String invoicetype) {
+		this.invoicetype = invoicetype;
+	}
 }
