@@ -107,13 +107,13 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	/* 3.费用信息 */
         	OrdOdFeeTotal feeInfo = this.createFeeInfo(request,ordProductDetailInfo, sysDate, orderId,mapProduct);
         	/* 4.创建发票信息 */
-        	this.createOrderFeeInvoice(request,ordProductDetailInfo, sysDate, orderId);
+        	OrdInvoiceInfo invoiceInfo = this.createOrderFeeInvoice(request,ordProductDetailInfo, sysDate, orderId);
         	/* 5. 处理配送信息，存在则写入 */
         	OrdOdLogistics logistics = this.createOrderLogistics(request, sysDate, orderId);
         	/* 6. 记录一条订单创建轨迹记录,并处理订单信息 */
         	this.writeOrderCreateStateChg(sysDate, ordOrder);
         	/* 7.刷新elasticsearch数据 */
-        	this.insertSesData(ordOrder, feeInfo, logistics,mapProduct);
+        	this.insertSesData(ordOrder, feeInfo, logistics,mapProduct,invoiceInfo);
         	/* 8.订单提交成功后监控服务  */
         	orderMonitorSV.afterSubmitOrder(monitorRequest);
         	
@@ -164,9 +164,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setAccountId(ordProductDetailInfo.getAccountId());
         //积分令牌id
         ordOrder.setTokenId(ordProductDetailInfo.getTokenId());
-        ordOrder.setProvinceCode(ordBaseInfo.getProvinceCode());
-        ordOrder.setCityCode(ordBaseInfo.getCityCode());
-        ordOrder.setChlId(ordBaseInfo.getChlId()); 
+        ordOrder.setChlId(ordBaseInfo.getChlId());
         ordOrder.setState(OrdersConstants.OrdOrder.State.NEW);
         ordOrder.setStateChgTime(sysDate);
         ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
@@ -376,7 +374,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @author zhangxw
      * @ApiDocMethod
      */
-    private void createOrderFeeInvoice(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
+    private OrdInvoiceInfo createOrderFeeInvoice(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
     		Timestamp sysDate,long orderId) {
     	LOG.debug("开始处理订单发票[" + orderId + "]信息..");
 		/* 1.判断商品是否允许发票*/
@@ -397,6 +395,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 			ordInvoice.setBuyerBankAccount(ordInvoiceInfo.getBuyerBankAccount());
 			ordOdInvoiceAtomSV.insertSelective(ordInvoice);
 		}
+		return ordInvoiceInfo;
     }
 
     /**
@@ -482,7 +481,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @RestRelativeURL
      */
     private void insertSesData(OrdOrder ordOrder,OrdOdFeeTotal feeInfo,
-    		OrdOdLogistics logistics,Map<String, Object> mapProduct) {
+    		OrdOdLogistics logistics,Map<String, Object> mapProduct,OrdInvoiceInfo invoiceInfo) {
     	ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
     	List<OrderInfo> orderList = new ArrayList<OrderInfo>();
     	OrderInfo ordInfo = new OrderInfo();
@@ -491,8 +490,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	List<OrdOdProd> ordOdProds =  (List<OrdOdProd>) mapProduct.get("ordOdProds");
     	long totalJfFee = (long) mapProduct.get("totalJfFee");
 		
-    	ordInfo.setTenantid(tenantId);
-		ordInfo.setChlid(ordOrder.getChlId());
+    	//ordInfo.setTenantid(tenantId);
+		//ordInfo.setChlid(ordOrder.getChlId());
 		//翻译渠道来源
 		SysParam sysParamChlId = InfoTranslateUtil.translateInfo(tenantId,
 				"ORD_ORDER", "CHL_ID",  ordOrder.getChlId(), iCacheSV);
@@ -500,7 +499,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setPorderid( ordOrder.getOrderId());
 		ordInfo.setUsername( ordOrder.getUserName());
 		ordInfo.setUsertel( ordOrder.getUserTel());
-		ordInfo.setDeliveryflag( ordOrder.getDeliveryFlag());
+		//ordInfo.setDeliveryflag( ordOrder.getDeliveryFlag());
 		ordInfo.setFlag( ordOrder.getFlag());
 		//翻译是否需要物流
 		SysParam sysParamDf = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER",
@@ -517,6 +516,39 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setAdjustfee(feeInfo.getAdjustFee());
 		ordInfo.setDiscountfee(feeInfo.getDiscountFee());
 		
+		
+		//订单详情
+		ordInfo.setAccountid(ordOrder.getAccountId());
+		//ordInfo.setUserid(ordOrder.getUserId());
+		//ordInfo.setAcctid(ordOrder.getAcctId());
+		ordInfo.setToken(ordOrder.getTokenId());
+		SysParam sysParamOrderType = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER", "ORDER_TYPE",
+				ordOrder.getOrderType(), iCacheSV);
+		ordInfo.setOrdertypename(sysParamOrderType == null ? "" : sysParamOrderType.getColumnDesc());
+		SysParam sysParam = InfoTranslateUtil.translateInfo(tenantId, "ORD_OD_FEE_TOTAL",
+				"PAY_STYLE", feeInfo.getPayStyle(), iCacheSV);
+		ordInfo.setPaystylename(sysParam == null ? "" : sysParam.getColumnDesc());
+		//发票类型展示名称
+		SysParam sysParamInvoice = InfoTranslateUtil.translateInfo(tenantId, "ORD_OD_INVOICE",
+				"INVOICE_TYPE", invoiceInfo.getInvoiceType(), iCacheSV);
+		ordInfo.setInvoicetypename(sysParamInvoice == null ? "" : sysParamInvoice.getColumnDesc());
+		ordInfo.setInvoicetitle(invoiceInfo.getInvoiceTitle());
+		ordInfo.setInvoicecontent(invoiceInfo.getInvoiceContent());
+		ordInfo.setBuyertaxpayernumber(invoiceInfo.getBuyerTaxpayerNumber());
+		ordInfo.setBuyerbankname(invoiceInfo.getBuyerBankName());
+		ordInfo.setBuyerbankaccount(invoiceInfo.getBuyerBankAccount());
+		ordInfo.setExpressoddnumber(logistics.getExpressOddNumber());
+		ordInfo.setContactcompany(logistics.getContactCompany());
+		ordInfo.setContactname(logistics.getContactName());
+		ordInfo.setLogisticstype(logistics.getLogisticsType());
+		ordInfo.setProvincecode(logistics.getProvinceCode());
+		ordInfo.setCitycode(logistics.getCityCode());
+		ordInfo.setCountycode(logistics.getCountyCode());
+		ordInfo.setPostcode(logistics.getPostcode());
+		ordInfo.setAreacode(logistics.getAreaCode());
+		ordInfo.setAddress(logistics.getAddress());
+		ordInfo.setRemark(ordOrder.getRemark());
+		
 		//不存在子订单
 		List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
 		OrdProdExtend prodExtend=new OrdProdExtend();
@@ -526,12 +558,46 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 				"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
 		prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 		prodExtend.setBusicode(ordOrder.getBusiCode());//父订单
-		prodExtend.setParentorderid(ordOrder.getOrderId());
+		prodExtend.setOrderid(ordOrder.getOrderId());
+		
+		//订单详情
+		// 翻译业务类型
+		SysParam sysParamBusiCode = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER", "BUSI_CODE",
+				ordOrder.getBusiCode(), iCacheSV);
+		prodExtend.setBusicodename(sysParamBusiCode == null ? "" : sysParamBusiCode.getColumnDesc());
+		prodExtend.setTotalfee(feeInfo.getTotalFee());
+		prodExtend.setDiscountfee(feeInfo.getDiscountFee());
+		prodExtend.setAdjustfee(feeInfo.getAdjustFee());
+		prodExtend.setFreight(feeInfo.getFreight());
+		
+		
+		
+		
+		
 		// 查询商品信息
 		for (OrdOdProd ordOdProd : ordOdProds) {
 			ProdInfo prodInfo=new ProdInfo();
 			prodInfo.setBuysum(ordOdProd.getBuySum());
 			prodInfo.setProdname(ordOdProd.getProdName());
+			
+			//订单详情
+			prodInfo.setSaleprice(ordOdProd.getSalePrice());
+			prodInfo.setCouponfee(ordOdProd.getCouponFee());
+			prodInfo.setJffee(ordOdProd.getJfFee());
+			prodInfo.setGivejf(ordOdProd.getJf());
+			prodInfo.setCusserviceflag(ordOdProd.getCusServiceFlag());
+			prodInfo.setState(ordOdProd.getState());
+			prodInfo.setProdcode(ordOdProd.getProdCode());
+			prodInfo.setSkuid(ordOdProd.getSkuId());
+			prodInfo.setTotalfee(ordOdProd.getTotalFee());
+			prodInfo.setDiscountfee(ordOdProd.getDiscountFee());
+			prodInfo.setAdjustfee(ordOdProd.getAdjustFee());
+			prodInfo.setOperdiscountfee(ordOdProd.getOperDiscountFee());
+			
+			prodInfo.setProddetalid(ordOdProd.getProdDetalId());
+			prodInfo.setSkustorageid(ordOdProd.getSkuStorageId());
+			prodInfo.setProdcode(ordOdProd.getProdCode());
+			
 			prodInfos.add(prodInfo);
 		}
 		prodExtend.setProdsize(prodInfos.size());

@@ -74,8 +74,8 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			List<OrderInfo> orderList = new ArrayList<OrderInfo>();
 			if(ord!=null){
 				OrderInfo ordInfo = new OrderInfo();
-				ordInfo.setTenantid(tenantId);
-				ordInfo.setChlid(ord.getChlId());
+			//	ordInfo.setTenantid(tenantId);
+			//	ordInfo.setChlid(ord.getChlId());
 				//翻译渠道来源
 				SysParam sysParamChlId = InfoTranslateUtil.translateInfo(tenantId,
 						"ORD_ORDER", "CHL_ID", ord.getChlId(), iCacheSV);
@@ -260,8 +260,8 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			}
 			orderId = ord.getOrderId();
 			OrderInfo ordInfo = new OrderInfo();
-			ordInfo.setTenantid(tenantId);
-			ordInfo.setChlid(ord.getChlId());
+		//	ordInfo.setTenantid(tenantId);
+		//	ordInfo.setChlid(ord.getChlId());
 			//翻译渠道来源
 			SysParam sysParamChlId = InfoTranslateUtil.translateInfo(tenantId,
 					"ORD_ORDER", "CHL_ID", ord.getChlId(), iCacheSV);
