@@ -517,6 +517,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setAccountid(ordOrder.getAccountId());
 		ordInfo.setUserid(ordOrder.getUserId());
 		//ordInfo.setAcctid(ordOrder.getAcctId());
+		ordInfo.setOrdertype(ordOrder.getOrderType());
 		ordInfo.setToken(ordOrder.getTokenId());
 		ordInfo.setPaystyle(feeInfo.getPayStyle());
 		ordInfo.setInvoicetype(invoiceInfo.getInvoiceType());
