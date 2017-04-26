@@ -491,11 +491,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	long totalJfFee = (long) mapProduct.get("totalJfFee");
 		
     	//ordInfo.setTenantid(tenantId);
-		//ordInfo.setChlid(ordOrder.getChlId());
-		//翻译渠道来源
-		SysParam sysParamChlId = InfoTranslateUtil.translateInfo(tenantId,
-				"ORD_ORDER", "CHL_ID",  ordOrder.getChlId(), iCacheSV);
-		ordInfo.setChlidname(sysParamChlId == null ? "" : sysParamChlId.getColumnDesc());
+		ordInfo.setChlid(ordOrder.getChlId());
 		ordInfo.setPorderid( ordOrder.getOrderId());
 		ordInfo.setUsername( ordOrder.getUserName());
 		ordInfo.setUsertel( ordOrder.getUserTel());
@@ -525,13 +521,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		SysParam sysParamOrderType = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER", "ORDER_TYPE",
 				ordOrder.getOrderType(), iCacheSV);
 		ordInfo.setOrdertypename(sysParamOrderType == null ? "" : sysParamOrderType.getColumnDesc());
-		SysParam sysParam = InfoTranslateUtil.translateInfo(tenantId, "ORD_OD_FEE_TOTAL",
-				"PAY_STYLE", feeInfo.getPayStyle(), iCacheSV);
-		ordInfo.setPaystylename(sysParam == null ? "" : sysParam.getColumnDesc());
-		//发票类型展示名称
-		SysParam sysParamInvoice = InfoTranslateUtil.translateInfo(tenantId, "ORD_OD_INVOICE",
-				"INVOICE_TYPE", invoiceInfo.getInvoiceType(), iCacheSV);
-		ordInfo.setInvoicetypename(sysParamInvoice == null ? "" : sysParamInvoice.getColumnDesc());
+		ordInfo.setPaystyle(feeInfo.getPayStyle());
+		ordInfo.setInvoicetype(invoiceInfo.getInvoiceType());
 		ordInfo.setInvoicetitle(invoiceInfo.getInvoiceTitle());
 		ordInfo.setInvoicecontent(invoiceInfo.getInvoiceContent());
 		ordInfo.setBuyertaxpayernumber(invoiceInfo.getBuyerTaxpayerNumber());
