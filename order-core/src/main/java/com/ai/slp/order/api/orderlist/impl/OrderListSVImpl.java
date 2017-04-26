@@ -39,13 +39,13 @@ public class OrderListSVImpl implements IOrderListSV {
     	/* 参数校验 */
 		ValidateUtils.validateQueryOrder(orderRequest);
 		/* 订单主表信息查询*/
-		OrdOrder order = ordOrderAtomSV.selectByOrderId(orderRequest.getTenantId(),
+	/*	OrdOrder order = ordOrderAtomSV.selectByOrderId(orderRequest.getTenantId(),
 				orderRequest.getOrderId());
-		/* 订单费用查询*/
+		 订单费用查询
 		OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
 				order.getOrderId());
-		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
-        QueryOrderResponse response = ordOrderBusiSV.queryOrder(ordOdFeeTotal,order,iCacheSV);
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);*/
+        QueryOrderResponse response = ordOrderBusiSV.queryOrder(orderRequest);
         ResponseHeader responseHeader = new ResponseHeader(true,
                 ExceptCodeConstants.Special.SUCCESS, "成功");
         response.setResponseHeader(responseHeader);
