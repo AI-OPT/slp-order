@@ -79,7 +79,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				//翻译渠道来源
 				SysParam sysParamChlId = InfoTranslateUtil.translateInfo(tenantId,
 						"ORD_ORDER", "CHL_ID", ord.getChlId(), iCacheSV);
-				ordInfo.setChlidname(sysParamChlId == null ? "" : sysParamChlId.getColumnDesc());
+			//	ordInfo.setChlidname(sysParamChlId == null ? "" : sysParamChlId.getColumnDesc());
 				ordInfo.setPorderid(ord.getOrderId());
 				ordInfo.setUsername(ord.getUserName());
 				ordInfo.setUsertel(ord.getUserTel());
@@ -265,7 +265,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			//翻译渠道来源
 			SysParam sysParamChlId = InfoTranslateUtil.translateInfo(tenantId,
 					"ORD_ORDER", "CHL_ID", ord.getChlId(), iCacheSV);
-			ordInfo.setChlidname(sysParamChlId == null ? "" : sysParamChlId.getColumnDesc());
+			//ordInfo.setChlidname(sysParamChlId == null ? "" : sysParamChlId.getColumnDesc());
 			ordInfo.setPorderid(orderId);
 			ordInfo.setUsername(ord.getUserName());
 			ordInfo.setUsertel(ord.getUserTel());
