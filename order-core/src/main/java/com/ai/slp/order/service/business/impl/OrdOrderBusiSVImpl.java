@@ -27,6 +27,8 @@ import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.search.vo.Sort;
 import com.ai.paas.ipaas.search.vo.Sort.SortOrder;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.slp.order.api.orderlist.param.BehindOrdOrderVo;
+import com.ai.slp.order.api.orderlist.param.BehindOrdProductVo;
 import com.ai.slp.order.api.orderlist.param.BehindParentOrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListResponse;
@@ -103,6 +105,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				//TODO 路由id  是否翻译
 				ordOrderVo.setRouteid(ordProdExtend.getRouteid());
 				
+				
 				ordOrderVo.setParentorderid(ordProdExtend.getParentorderid());
 				ordOrderVo.setAdjustfee(ordProdExtend.getAdjustfee());
 				ordOrderVo.setDiscountfee(ordProdExtend.getDiscountfee());
@@ -111,7 +114,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				ordOrderVo.setPaidfee(ordProdExtend.getPaidfee());
 				ordOrderVo.setPayfee(ordProdExtend.getPayfee());
 				ordOrderVo.setTotalfee(ordProdExtend.getTotalfee());
-				ordOrderVo.setFreight(ordProdExtend.getFreight()); 
+				ordOrderVo.setFreight(ordProdExtend.getFreight()); // 运费 
 				// 4.订单配送信息查询 
 				if (!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(ordProdExtend.getBusicode())) {
 					// 售后单获取子订单配送信息
@@ -153,17 +156,18 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					prodVo.setJffee(prodInfo.getJffee());
 					prodVo.setCusserviceflag(prodInfo.getCusserviceflag());
 					prodVo.setGivejf(prodInfo.getGivejf());
-					prodVo.setProdcode(prodInfo.getProdcode());
+				//	prodVo.setProdcode(prodInfo.getProdcode());
 					prodVo.setSkustorageid(prodInfo.getSkustorageid());
 				
 					
-				//  private String imageurl;
-				//  private String prodextendinfo;
+				//    private String imageurl;
+				//    private String prodextendinfo;
 					productList.add(prodVo);
 				}
 			}
 		}
 		ordOrderVo.setProductList(productList);
+	
 		response.setOrdOrderVo(ordOrderVo);
 		return response;
 	}
@@ -198,7 +202,25 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		List<OrderInfo> ordList = result.getContents();
 		for (OrderInfo orderInfo : ordList) {
 			BehindParentOrdOrderVo vo=new BehindParentOrdOrderVo();
-			BeanUtils.copyProperties(vo, orderInfo);
+			BeanUtils.copyVO(vo, orderInfo);
+			
+			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+			List<BehindOrdOrderVo> destOrdextendes=new ArrayList<BehindOrdOrderVo>();
+			for (OrdProdExtend ordProdExtend : ordextendes) {
+				BehindOrdOrderVo destOrdOrderVo=new BehindOrdOrderVo();
+				BeanUtils.copyProperties(destOrdOrderVo, ordProdExtend);
+				
+				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
+				List<BehindOrdProductVo> destOrdProductVos=new ArrayList<BehindOrdProductVo>();
+				for (ProdInfo prodInfo : prodinfos) {
+					BehindOrdProductVo destProdVo=new BehindOrdProductVo();
+					BeanUtils.copyProperties(destProdVo, prodInfo);
+					destOrdProductVos.add(destProdVo);
+				}
+				destOrdOrderVo.setProdinfos(destOrdProductVos);
+				destOrdextendes.add(destOrdOrderVo);
+			}
+			vo.setOrdextendes(destOrdextendes);
 			vo.setTenantId(OrdersConstants.TENANT_ID);
 			results.add(vo);
 		}
@@ -221,6 +243,15 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	 */
 	private List<OrdProductVo> getOrdProductList(String tenantId, long orderId) {
 		List<OrdProductVo> productList = new ArrayList<OrdProductVo>();
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		/*	List<OrdOdProd> ordOdProdList=ordOdProdAtomSV.selectByOrd(tenantId, orderId);
 		if (!CollectionUtil.isEmpty(ordOdProdList)) {
 			for (OrdOdProd ordOdProd : ordOdProdList) {
