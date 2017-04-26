@@ -31,15 +31,6 @@ public class OrderMonitorSVImpl implements IOrderMonitorSV {
 		OrderMonitorBeforResponse response = new OrderMonitorBeforResponse();
 		//
 		ResponseHeader responseHeader = new ResponseHeader();
-		if(null == request){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"请求参数不能为空");
-		}
-		if(StringUtil.isBlank(request.getUserId())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"用户id不能为空");
-		}
-		if(StringUtil.isBlank(request.getIpAddress())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"ip地址不能为空");
-		}
 		//
 		try{
 			response = this.orderMonitorService.beforSubmitOrder(request.getIpAddress(), request.getUserId());
