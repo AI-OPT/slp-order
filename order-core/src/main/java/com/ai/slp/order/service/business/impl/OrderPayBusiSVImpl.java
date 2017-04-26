@@ -1,5 +1,20 @@
 package com.ai.slp.order.service.business.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.BaseResponse;
@@ -8,15 +23,39 @@ import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.search.vo.Result;
+import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
-import com.ai.slp.order.dao.mapper.bo.*;
-import com.ai.slp.order.service.atom.interfaces.*;
+import com.ai.slp.order.constants.SearchConstants;
+import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
+import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
+import com.ai.slp.order.dao.mapper.bo.OrdOdInvoice;
+import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
+import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
+import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
+import com.ai.slp.order.search.bo.OrdProdExtend;
+import com.ai.slp.order.search.bo.OrderInfo;
+import com.ai.slp.order.search.bo.ProdInfo;
+import com.ai.slp.order.search.dto.SearchCriteriaStructure;
+import com.ai.slp.order.service.atom.interfaces.IOrdBalacneIfAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
@@ -27,20 +66,6 @@ import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
 import com.ai.slp.route.api.routemanage.interfaces.IRouteManageSV;
 import com.ai.slp.route.api.routemanage.param.RouteQueryByGroupIdAndAreaRequest;
 import com.ai.slp.route.api.routemanage.param.RouteQueryByGroupIdAndAreaResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 订单收费 Date: 2016年5月24日 <br>
@@ -81,8 +106,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     @Override
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
         Timestamp sysdate = DateUtil.getSysDate();
+        ICacheSV iCacheSV=DubboConsumerFactory.getService(ICacheSV.class);
         /* 1.订单收费处理*/
         this.orderCharge(request, sysdate);
+        List<OrderInfo> orderList=new ArrayList<OrderInfo>();
         for (Long orderId : request.getOrderIds()) {
         	OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), orderId);
             if (ordOrder == null) {
@@ -92,7 +119,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
             /* 2.订单支付完成后，对订单进行处理 */
             List<OrdOdProd> ordOdProds = this.execOrders(ordOrder, sysdate);
         	/* 3.拆分子订单 */
-        	this.resoleOrders(ordOrder,ordOdProds,request,sysdate);
+        	Map<String, Long> ordersMap = this.resoleOrders(ordOrder,ordOdProds,request,sysdate);
         	/* 4.虚拟商品改变父订单状态*/
         	if(OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(ordOrder.getOrderType())) {
         		ordOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
@@ -100,11 +127,70 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         		ordOrderAtomSV.updateOrderState(ordOrder);
         	}
         	/* 5.导入数据到搜索引擎*/
-        	SesDataRequest sesReq=new SesDataRequest();
+        /*	SesDataRequest sesReq=new SesDataRequest();
         	sesReq.setTenantId(request.getTenantId());
         	sesReq.setParentOrderId(orderId);
-        	this.orderIndexBusiSV.insertSesData(sesReq);
+        	this.orderIndexBusiSV.insertSesData(sesReq);*/
+        	
+        	IOrderSearch orderSearch = new OrderSearchImpl();
+        	List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.commonConditionsByOrderId(orderId);
+        	Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+        	List<OrderInfo> ordList = result.getContents();
+        	if(CollectionUtil.isEmpty(ordList)) {
+        		throw new BusinessException("搜索引擎无数据,父订单id:"+orderId);
+        	}
+			OrderInfo orderInfo = ordList.get(0);
+			orderInfo.setParentorderstate(OrdersConstants.OrdOrder.State.FINISH_PAID);
+			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+			Iterator it = ordersMap.values().iterator(); 
+			while (it.hasNext()) {  
+				//子订单
+				long orderVal = (long)it.next();
+				//查询搜索引擎数据
+				for (OrdProdExtend ordProdExtend : ordextendes) {
+					ordProdExtend.setOrderid(orderVal);
+					ordProdExtend.setParentorderid(orderId);
+					String state=OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION;
+					ordProdExtend.setState(state);
+					SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+						"ORD_ORDER", "STATE",state, iCacheSV);
+					ordProdExtend.setStatename(sysParamState==null?"":sysParamState.getColumnDesc());
+					OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(ordOrder.getTenantId(), orderVal);
+					ordProdExtend.setTotalfee(odFeeTotal.getTotalFee());
+					ordProdExtend.setDiscountfee(odFeeTotal.getDiscountFee());
+					ordProdExtend.setAdjustfee(odFeeTotal.getAdjustFee());
+					ordProdExtend.setPaidfee(odFeeTotal.getPaidFee());
+					ordProdExtend.setPayfee(odFeeTotal.getPayFee());;
+				//	ordProdExtend.setOperdiscountfee(odFeeTotal.getOperDiscountFee());
+					
+					List<ProdInfo> prodinfos = new ArrayList<ProdInfo>();
+					List<OrdOdProd> prods = ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), orderVal);
+					for (OrdOdProd ordOdProd : prods) {
+						ProdInfo prodInfo=new ProdInfo();
+						prodInfo.setProdname(ordOdProd.getProdName());
+						prodInfo.setBuysum(ordOdProd.getBuySum());
+						prodInfo.setSaleprice(ordOdProd.getSalePrice());
+						prodInfo.setCouponfee(ordOdProd.getCouponFee());
+						prodInfo.setJffee(ordOdProd.getJfFee()); //TODO jf
+						prodInfo.setGivejf(ordOdProd.getJf());//
+						prodInfo.setCusserviceflag(ordOdProd.getCusServiceFlag());
+						prodInfo.setState(ordOdProd.getState());//翻译
+						prodInfo.setProdcode(ordOdProd.getProdCode());
+						prodInfo.setSkuid(ordOdProd.getSkuId());
+						prodInfo.setProddetalid(ordOdProd.getProdDetalId());
+						prodInfo.setSkustorageid(ordOdProd.getSkuStorageId());
+						prodInfo.setTotalfee(ordOdProd.getTotalFee());
+						prodInfo.setDiscountfee(ordOdProd.getDiscountFee());
+						prodInfo.setAdjustfee(ordOdProd.getAdjustFee());
+					//	prodInfo.setOperdiscountfee(ordOdProd.getOperDiscountFee());
+						prodinfos.add(prodInfo);
+					}
+					ordProdExtend.setProdinfos(prodinfos);
+				}
+			}
+			orderList.add(orderInfo);
         }
+        ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
     }
 
     /**
@@ -235,7 +321,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      * @throws IllegalAccessException
      * @ApiDocMethod
      */
-    private void resoleOrders(OrdOrder ordOrder,List<OrdOdProd> ordOdProds,
+    private Map<String, Long> resoleOrders(OrdOrder ordOrder,List<OrdOdProd> ordOdProds,
     		OrderPayRequest request,Timestamp sysdate) {
         logger.debug("开始对订单[" + ordOrder.getOrderId() + "]进行拆分..");
         String tenantId = ordOrder.getTenantId();
@@ -264,6 +350,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     		/* 5.生成子订单*/
     		this.createEntitySubOrder(ordOrder,ordOdProd,map,sysdate);
     	}
+    	return map;
     }
     
     

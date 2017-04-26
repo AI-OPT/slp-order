@@ -515,12 +515,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		
 		//订单详情
 		ordInfo.setAccountid(ordOrder.getAccountId());
-		//ordInfo.setUserid(ordOrder.getUserId());
+		ordInfo.setUserid(ordOrder.getUserId());
 		//ordInfo.setAcctid(ordOrder.getAcctId());
 		ordInfo.setToken(ordOrder.getTokenId());
-		SysParam sysParamOrderType = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER", "ORDER_TYPE",
-				ordOrder.getOrderType(), iCacheSV);
-		ordInfo.setOrdertypename(sysParamOrderType == null ? "" : sysParamOrderType.getColumnDesc());
 		ordInfo.setPaystyle(feeInfo.getPayStyle());
 		ordInfo.setInvoicetype(invoiceInfo.getInvoiceType());
 		ordInfo.setInvoicetitle(invoiceInfo.getInvoiceTitle());
@@ -553,9 +550,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		
 		//订单详情
 		// 翻译业务类型
-		SysParam sysParamBusiCode = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER", "BUSI_CODE",
-				ordOrder.getBusiCode(), iCacheSV);
-		prodExtend.setBusicodename(sysParamBusiCode == null ? "" : sysParamBusiCode.getColumnDesc());
 		prodExtend.setTotalfee(feeInfo.getTotalFee());
 		prodExtend.setDiscountfee(feeInfo.getDiscountFee());
 		prodExtend.setAdjustfee(feeInfo.getAdjustFee());
@@ -580,10 +574,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 			prodInfo.setState(ordOdProd.getState());
 			prodInfo.setProdcode(ordOdProd.getProdCode());
 			prodInfo.setSkuid(ordOdProd.getSkuId());
-			prodInfo.setTotalfee(ordOdProd.getTotalFee());
+		/*	prodInfo.setTotalfee(ordOdProd.getTotalFee());
 			prodInfo.setDiscountfee(ordOdProd.getDiscountFee());
 			prodInfo.setAdjustfee(ordOdProd.getAdjustFee());
-			prodInfo.setOperdiscountfee(ordOdProd.getOperDiscountFee());
+			prodInfo.setOperdiscountfee(ordOdProd.getOperDiscountFee());*/
 			
 			prodInfo.setProddetalid(ordOdProd.getProdDetalId());
 			prodInfo.setSkustorageid(ordOdProd.getSkuStorageId());

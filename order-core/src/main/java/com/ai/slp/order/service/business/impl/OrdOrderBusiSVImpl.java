@@ -82,6 +82,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		
 		IOrderSearch orderSearch = new OrderSearchImpl();
 		Long orderId = orderRequest.getOrderId();
+		String tenantId = orderRequest.getTenantId();
 		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
 				queryOrderInfosByOrderId(orderId);
 		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
@@ -93,28 +94,25 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		OrderInfo orderInfo = ordList.get(0);
 		OrdOrderVo ordOrderVo=new OrdOrderVo();
 		BeanUtils.copyProperties(ordOrderVo, orderInfo);
+		
 		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
 		List<OrdProductVo> productList = new ArrayList<OrdProductVo>();
 		for (OrdProdExtend ordProdExtend : ordextendes) {
 			if(orderId.equals(ordProdExtend.getOrderid())) {
 				ordOrderVo.setOrderid(orderId);
 				ordOrderVo.setOrigorderid(ordProdExtend.getOrigorderid());
-				ordOrderVo.setBusicodename(ordProdExtend.getBusicodename());
 				ordOrderVo.setState(ordProdExtend.getState());
 				ordOrderVo.setStatename(ordProdExtend.getStatename());
 				//TODO 路由id  是否翻译
 				ordOrderVo.setRouteid(ordProdExtend.getRouteid());
 				
-				
 				ordOrderVo.setParentorderid(ordProdExtend.getParentorderid());
 				ordOrderVo.setAdjustfee(ordProdExtend.getAdjustfee());
 				ordOrderVo.setDiscountfee(ordProdExtend.getDiscountfee());
-				ordOrderVo.setOperdiscountfee(ordProdExtend.getOperdiscountfee());
-				ordOrderVo.setOperdiscountdesc(ordProdExtend.getOperdiscountdesc());
 				ordOrderVo.setPaidfee(ordProdExtend.getPaidfee());
 				ordOrderVo.setPayfee(ordProdExtend.getPayfee());
 				ordOrderVo.setTotalfee(ordProdExtend.getTotalfee());
-				ordOrderVo.setFreight(ordProdExtend.getFreight()); // 运费 
+				ordOrderVo.setFreight(ordProdExtend.getFreight()); 
 				// 4.订单配送信息查询 
 				if (!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(ordProdExtend.getBusicode())) {
 					// 售后单获取子订单配送信息
@@ -144,7 +142,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					prodVo.setSaleprice(prodInfo.getSaleprice());
 					prodVo.setTotalfee(prodInfo.getTotalfee());
 					prodVo.setAdjustfee(prodInfo.getAdjustfee());
-					prodVo.setOperdiscountfee(prodInfo.getOperdiscountfee());
 					prodVo.setDiscountfee(prodInfo.getDiscountfee());
 					
 					//
