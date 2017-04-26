@@ -202,7 +202,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		List<OrderInfo> ordList = result.getContents();
 		for (OrderInfo orderInfo : ordList) {
 			BehindParentOrdOrderVo vo=new BehindParentOrdOrderVo();
-			BeanUtils.copyVO(vo, orderInfo);
+			BeanUtils.copyProperties(vo, orderInfo);
 			
 			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
 			List<BehindOrdOrderVo> destOrdextendes=new ArrayList<BehindOrdOrderVo>();
