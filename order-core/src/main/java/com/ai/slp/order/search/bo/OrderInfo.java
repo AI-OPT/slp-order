@@ -3,8 +3,8 @@ import java.util.Date;
 import java.util.List;
 
 public class OrderInfo {
-	private String tenantid;
-	private String chlid;
+//	private String tenantid;
+//	private String chlid;
 	private String chlidname;
 	private long porderid;
 	private String username;
@@ -18,13 +18,50 @@ public class OrderInfo {
 	private long points;
 	private long totalprodsize;
 	private Date ordertime;
+	private Date paytime;
 	private String parentorderstate;
 	private String supplierid;
 	private String ifwarning;
 	private String warningtype;
 	private List<OrdProdExtend> ordextendes;
 	
-	public String getTenantid() {
+	
+	
+	private String accountid;
+//	private String userid;
+//	private long acctid;
+	private String token;
+	private String downstreamorderid;      //TODO
+	private String ordertype;  //TODO 去掉
+	private String ordertypename;
+//	private String paystyle; //TODO 去掉
+	private String paystylename;
+//	private String invoicetype;  //TODO 去掉
+	private String invoicetypename;
+	private String invoicetitle;
+	private String invoicecontent;
+	private String invoicestatus; //TODO
+	private String expressoddnumber;
+	private String contactcompany;
+	private String contactname;
+	private String logisticstype;
+	private String provincecode;
+	private String citycode;
+	private String countycode;
+	private String postcode;
+	private String areacode;
+	private String address;
+	private String expressId; //TODO
+//	private String operid; 
+	private String buyertaxpayernumber;
+	private String buyerbankname;
+	private String buyerbankaccount;
+	private long balacneifid; //TODO
+	private String externalid; //TODO
+	private String remark;
+
+	
+/*	public String getTenantid() {
 		return tenantid;
 	}
 	public void setTenantid(String tenantid) {
@@ -35,7 +72,7 @@ public class OrderInfo {
 	}
 	public void setChlid(String chlid) {
 		this.chlid = chlid;
-	}
+	}*/
 	public String getChlidname() {
 		return chlidname;
 	}
@@ -144,4 +181,202 @@ public class OrderInfo {
 	public void setOrdextendes(List<OrdProdExtend> ordextendes) {
 		this.ordextendes = ordextendes;
 	}
+	public String getAccountid() {
+		return accountid;
+	}
+	public void setAccountid(String accountid) {
+		this.accountid = accountid;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	public String getDownstreamorderid() {
+		return downstreamorderid;
+	}
+	public void setDownstreamorderid(String downstreamorderid) {
+		this.downstreamorderid = downstreamorderid;
+	}
+	public String getOrdertype() {
+		return ordertype;
+	}
+	public void setOrdertype(String ordertype) {
+		this.ordertype = ordertype;
+	}
+	public String getOrdertypename() {
+		return ordertypename;
+	}
+	public void setOrdertypename(String ordertypename) {
+		this.ordertypename = ordertypename;
+	}
+/*	public String getPaystyle() {
+		return paystyle;
+	}
+	public void setPaystyle(String paystyle) {
+		this.paystyle = paystyle;
+	}*/
+	public String getPaystylename() {
+		return paystylename;
+	}
+	public void setPaystylename(String paystylename) {
+		this.paystylename = paystylename;
+	}
+/*	public String getInvoicetype() {
+		return invoicetype;
+	}
+	public void setInvoicetype(String invoicetype) {
+		this.invoicetype = invoicetype;
+	}*/
+	public String getInvoicetypename() {
+		return invoicetypename;
+	}
+	public void setInvoicetypename(String invoicetypename) {
+		this.invoicetypename = invoicetypename;
+	}
+	public String getInvoicetitle() {
+		return invoicetitle;
+	}
+	public void setInvoicetitle(String invoicetitle) {
+		this.invoicetitle = invoicetitle;
+	}
+	public String getInvoicecontent() {
+		return invoicecontent;
+	}
+	public void setInvoicecontent(String invoicecontent) {
+		this.invoicecontent = invoicecontent;
+	}
+	public String getInvoicestatus() {
+		return invoicestatus;
+	}
+	public void setInvoicestatus(String invoicestatus) {
+		this.invoicestatus = invoicestatus;
+	}
+	public String getExpressoddnumber() {
+		return expressoddnumber;
+	}
+	public void setExpressoddnumber(String expressoddnumber) {
+		this.expressoddnumber = expressoddnumber;
+	}
+	public String getContactcompany() {
+		return contactcompany;
+	}
+	public void setContactcompany(String contactcompany) {
+		this.contactcompany = contactcompany;
+	}
+	public String getContactname() {
+		return contactname;
+	}
+	public void setContactname(String contactname) {
+		this.contactname = contactname;
+	}
+	public String getLogisticstype() {
+		return logisticstype;
+	}
+	public void setLogisticstype(String logisticstype) {
+		this.logisticstype = logisticstype;
+	}
+	public String getProvincecode() {
+		return provincecode;
+	}
+	public void setProvincecode(String provincecode) {
+		this.provincecode = provincecode;
+	}
+	public String getCitycode() {
+		return citycode;
+	}
+	public void setCitycode(String citycode) {
+		this.citycode = citycode;
+	}
+	public String getCountycode() {
+		return countycode;
+	}
+	public void setCountycode(String countycode) {
+		this.countycode = countycode;
+	}
+	public String getPostcode() {
+		return postcode;
+	}
+	public void setPostcode(String postcode) {
+		this.postcode = postcode;
+	}
+	public String getAreacode() {
+		return areacode;
+	}
+	public void setAreacode(String areacode) {
+		this.areacode = areacode;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getExpressId() {
+		return expressId;
+	}
+	public void setExpressId(String expressId) {
+		this.expressId = expressId;
+	}
+	public String getBuyertaxpayernumber() {
+		return buyertaxpayernumber;
+	}
+	public void setBuyertaxpayernumber(String buyertaxpayernumber) {
+		this.buyertaxpayernumber = buyertaxpayernumber;
+	}
+	public String getBuyerbankname() {
+		return buyerbankname;
+	}
+	public void setBuyerbankname(String buyerbankname) {
+		this.buyerbankname = buyerbankname;
+	}
+	public String getBuyerbankaccount() {
+		return buyerbankaccount;
+	}
+	public void setBuyerbankaccount(String buyerbankaccount) {
+		this.buyerbankaccount = buyerbankaccount;
+	}
+	public long getBalacneifid() {
+		return balacneifid;
+	}
+	public void setBalacneifid(long balacneifid) {
+		this.balacneifid = balacneifid;
+	}
+	public String getExternalid() {
+		return externalid;
+	}
+	public void setExternalid(String externalid) {
+		this.externalid = externalid;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Date getPaytime() {
+		return paytime;
+	}
+	public void setPaytime(Date paytime) {
+		this.paytime = paytime;
+	}
+/*	public String getUserid() {
+		return userid;
+	}
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+	public long getAcctid() {
+		return acctid;
+	}
+	public void setAcctid(long acctid) {
+		this.acctid = acctid;
+	}*/
+/*	public String getOperid() {
+		return operid;
+	}
+	public void setOperid(String operid) {
+		this.operid = operid;
+	}*/
 }
