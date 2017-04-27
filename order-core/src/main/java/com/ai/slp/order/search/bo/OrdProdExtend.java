@@ -10,6 +10,7 @@ public class OrdProdExtend {
 	private String  busicode;
 	private long  prodsize;
 	private String routeid; 
+	private String operid; 
 	private List<ProdInfo> prodinfos;
 	
 	
@@ -18,21 +19,22 @@ public class OrdProdExtend {
 	
 
 	private long origorderid;
-//	private String busicodename;
 	private long totalfee; //TODO
 	private long discountfee;
 	private long adjustfee;
 	private long paidfee; //TODO
 	private long payfee;
 	private long freight;
-//	private long operdiscountfee;//TODO 没赋值
-//	private String operdiscountdesc;//TODO
 	private String aftercontactTel;
 	private String aftercontactinfo;
+	private String remark;  //子订单为留言信息,售后订单为退换货,退款理由
 	
-	
-	
-	
+	public String getOperid() {
+		return operid;
+	}
+	public void setOperid(String operid) {
+		this.operid = operid;
+	}
 	public long getOrderid() {
 		return orderid;
 	}
@@ -137,5 +139,11 @@ public class OrdProdExtend {
 	}
 	public void setAftercontactinfo(String aftercontactinfo) {
 		this.aftercontactinfo = aftercontactinfo;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 }

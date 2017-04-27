@@ -46,14 +46,11 @@ public class OrderInfo {
 	private String areacode;
 	private String address;
 	private String expressid; //TODO
-	private String operid; 
 	private String buyertaxpayernumber;
 	private String buyerbankname;
 	private String buyerbankaccount;
 	private long balacneifid; //TODO
 	private String externalid; //TODO
-	private String remark;
-
 	
 	public long getPorderid() {
 		return porderid;
@@ -295,12 +292,6 @@ public class OrderInfo {
 	public void setExternalid(String externalid) {
 		this.externalid = externalid;
 	}
-	public String getRemark() {
-		return remark;
-	}
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
 	public String getChlid() {
 		return chlid;
 	}
@@ -324,11 +315,5 @@ public class OrderInfo {
 	}
 	public void setUserid(String userid) {
 		this.userid = userid;
-	}
-	public String getOperid() {
-		return operid;
-	}
-	public void setOperid(String operid) {
-		this.operid = operid;
 	}
 }
