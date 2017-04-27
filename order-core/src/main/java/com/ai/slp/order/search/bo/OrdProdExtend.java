@@ -25,8 +25,8 @@ public class OrdProdExtend {
 	private long paidfee; //TODO
 	private long payfee;
 	private long freight;
-	private String aftercontactTel;
-	private String aftercontactinfo;
+	private String afterexpressoddnumber;
+	private String afterexpressid;
 	private String remark;  //子订单为留言信息,售后订单为退换货,退款理由
 	
 	public String getOperid() {
@@ -127,18 +127,17 @@ public class OrdProdExtend {
 	public void setFreight(long freight) {
 		this.freight = freight;
 	}
-	
-	public String getAftercontactTel() {
-		return aftercontactTel;
+	public String getAfterexpressoddnumber() {
+		return afterexpressoddnumber;
 	}
-	public void setAftercontactTel(String aftercontactTel) {
-		this.aftercontactTel = aftercontactTel;
+	public void setAfterexpressoddnumber(String afterexpressoddnumber) {
+		this.afterexpressoddnumber = afterexpressoddnumber;
 	}
-	public String getAftercontactinfo() {
-		return aftercontactinfo;
+	public String getAfterexpressid() {
+		return afterexpressid;
 	}
-	public void setAftercontactinfo(String aftercontactinfo) {
-		this.aftercontactinfo = aftercontactinfo;
+	public void setAfterexpressid(String afterexpressid) {
+		this.afterexpressid = afterexpressid;
 	}
 	public String getRemark() {
 		return remark;

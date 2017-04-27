@@ -97,4 +97,16 @@ public interface OrdOrderAttachMapper {
             @Result(property = "tenantId", column = "TENANT_ID"),  
     		@Result(property = "parentOrderId", column = "PARENT_ORDER_ID") })  
 	public OrdOrder selectPartInfo(Long orderId);
+    
+    /**
+     * 同意退款金额修改涉及到订单信息的更改
+     * @param ordOrder
+     * @return
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    @Update("update ord_order set OPER_ID = #{operId},REASON_DESC=#{reasonDesc} where ORDER_ID = #{orderId}")
+	public int updateInfoByRefund(OrdOrder ordOrder);
 }

@@ -61,4 +61,6 @@ public interface IOrdOrderAtomSV {
     int countForSes();
 
 	OrdOrder selectPartInfo(Long orderId);
+
+	int updateInfoByRefund(OrdOrder ordOrder);
 }

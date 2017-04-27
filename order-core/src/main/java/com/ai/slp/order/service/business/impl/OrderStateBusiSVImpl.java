@@ -167,17 +167,9 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
 						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
 				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
-				//更新买家退换货信息
-				StringBuffer sbf = new StringBuffer();
-				sbf.append(afterLogistics.getProvinceCode() == null ? ""
-						: iCacheSV.getAreaName(afterLogistics.getProvinceCode()));
-				sbf.append(afterLogistics.getCityCode() == null ? ""
-						: iCacheSV.getAreaName(afterLogistics.getCityCode()));
-				sbf.append(afterLogistics.getCountyCode() == null ? ""
-						: iCacheSV.getAreaName(afterLogistics.getCountyCode()));
-				sbf.append(afterLogistics.getAddress());
-				ordProdExtend.setAftercontactTel(afterLogistics.getContactTel());
-				ordProdExtend.setAftercontactinfo(sbf.toString());
+				//更新买家退换货信息物流信息
+				ordProdExtend.setAfterexpressid(afterLogistics.getExpressId());
+				ordProdExtend.setAfterexpressoddnumber(afterLogistics.getExpressOddNumber());
 			}
 		}
 		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);

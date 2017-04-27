@@ -39,7 +39,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderRefundBusiSV;
-import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
 
@@ -57,8 +56,6 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
 	@Autowired
 	private IOrdOdFeeTotalAtomSV  ordOdFeeTotalAtomSV;
-	@Autowired
-	private IOrderIndexBusiSV orderIndexBusiSV;
 	
 	//同意退款
 	public void partRefund(OrderRefundRequest request) throws BusinessException, SystemException {
@@ -74,7 +71,8 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		/*判断输入费用是否大于之前存在的费用*/
 		//实际费用
 		long adjustFee = ordOdFeeTotal.getAdjustFee();
-	    BigDecimal balance = BigDecimal.valueOf(adjustFee).divide(new BigDecimal(1000L),2,BigDecimal.ROUND_HALF_UP);
+	    BigDecimal balance = BigDecimal.valueOf(adjustFee).divide(new BigDecimal(1000L),
+	    		2,BigDecimal.ROUND_HALF_UP);
         BigDecimal balance1 = balance.multiply(new BigDecimal(1000L));
 		if(updateMoney>balance1.longValue()) {
 			logger.error("输入的费用不能大于实际应收的费用,实际应收费用为:"+ordOdFeeTotal.getAdjustFee());
@@ -86,7 +84,11 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		ordOdFeeTotalAtomSV.updateByOrderId(ordOdFeeTotal);
 		ordOrder.setReasonDesc(request.getUpdateReason());
 		ordOrder.setOperId(request.getOperId());
-		ordOrderAtomSV.updateById(ordOrder);
+		//ordOrderAtomSV.updateById(ordOrder);
+		//优化 更新部分
+		ordOrderAtomSV.updateInfoByRefund(ordOrder);
+		//刷新es引擎数据
+		this.refreshFeeData(ordOrder,ordOdFeeTotal);
 	}
 	
 	//拒绝退款
@@ -298,4 +300,28 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		}
 		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
 	}
-}
+    
+    
+    private void refreshFeeData(OrdOrder ordOrder,OrdOdFeeTotal ordOdFeeTotal) 
+    		throws BusinessException, SystemException {
+  		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+				commonConditionsByOrderId(ordOrder.getParentOrderId());
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+		List<OrderInfo> ordList = result.getContents();
+		if(CollectionUtil.isEmpty(ordList)) {
+			throw new BusinessException("搜索引擎无数据! 父订单id为:"+ordOrder.getParentOrderId());
+		}
+		OrderInfo orderInfo = ordList.get(0);
+		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+		for (OrdProdExtend ordProdExtend : ordextendes) {
+			//售后订单
+			if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
+				//修改之后的退款金额
+				ordProdExtend.setPaidfee(ordOdFeeTotal.getPaidFee());
+			}
+		}
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+    }
+ }   
+    

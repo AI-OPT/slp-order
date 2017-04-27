@@ -224,5 +224,10 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
 		// TODO Auto-generated method stub
 		return ordOrderAttachMapper.selectPartInfo(orderId);
 	}
+
+	@Override
+	public int updateInfoByRefund(OrdOrder ordOrder) {
+		return ordOrderAttachMapper.updateInfoByRefund(ordOrder);
+	}
 	
 }

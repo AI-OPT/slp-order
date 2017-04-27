@@ -20,6 +20,8 @@ import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.search.vo.Sort;
 import com.ai.paas.ipaas.search.vo.Sort.SortOrder;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.orderlist.param.BehindOrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.BehindOrdProductVo;
 import com.ai.slp.order.api.orderlist.param.BehindParentOrdOrderVo;
@@ -30,11 +32,12 @@ import com.ai.slp.order.api.orderlist.param.OrdProductVo;
 import com.ai.slp.order.api.orderlist.param.ProductImage;
 import com.ai.slp.order.api.orderlist.param.QueryOrderRequest;
 import com.ai.slp.order.api.orderlist.param.QueryOrderResponse;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
 import com.ai.slp.order.search.bo.OrdProdExtend;
 import com.ai.slp.order.search.bo.OrderInfo;
 import com.ai.slp.order.search.bo.ProdInfo;
@@ -43,8 +46,8 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderBusiSV;
-import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
@@ -58,8 +61,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	private IOrdOrderAtomSV ordOrderAtomSV;
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
-	@Autowired
-	private IOrderIndexBusiSV orderIndexBusiSV;
 
 	
 	//订单详情查询
@@ -208,6 +209,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	public int updateOrder(OrdOrder request) throws BusinessException, SystemException {
 		/* 获取售后订单 */
 		OrdOrder afterOrdOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+		OrdOrder order =null;
+		OrdOrder parentOrder = null;
 		if (afterOrdOrder == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
 					"订单信息不存在[订单id:" + request.getOrderId() + "]");
@@ -223,7 +226,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				}
 			}
 			/* 获取子订单信息及子订单下的商品明细信息 */
-			OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), afterOrdOrder.getOrigOrderId());
+			order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), afterOrdOrder.getOrigOrderId());
 			List<OrdOdProd> prodList = ordOdProdAtomSV.selectByOrd(request.getTenantId(),
 					afterOrdOrder.getOrigOrderId());
 			boolean cusFlag = false;
@@ -237,7 +240,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			}
 			/* 获取子订单下的所有售后订单 */
 			List<OrdOrder> orderList =ordOrderAtomSV.selectSubSaleOrder(afterOrdOrder.getOrigOrderId(),request.getOrderId());
-			OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), order.getParentOrderId()); // 父订单
+			parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), order.getParentOrderId()); // 父订单
 			if (cusFlag) {
 				if (CollectionUtil.isEmpty(orderList)) {
 					// 一个商品时.没有售后订单,商品售后标识Y
@@ -324,14 +327,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				}
 			}
 		}
-		int updateById = ordOrderAtomSV.updateById(afterOrdOrder);
-		
+	//	int updateById = ordOrderAtomSV.updateById(afterOrdOrder);
+		int updateById = ordOrderAtomSV.updateOrderState(afterOrdOrder);
 		// 刷新搜索引擎数据
-    	SesDataRequest sesReq=new SesDataRequest();
-    	sesReq.setTenantId(request.getTenantId());
-    	sesReq.setParentOrderId(afterOrdOrder.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);
-		
+    	refreshData(afterOrdOrder, parentOrder, order);
 		return updateById;
 	}
 	
@@ -380,12 +379,63 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		ordOrderVo.setRemark(ordProdExtend.getRemark());
 		//操作人
 		ordOrderVo.setOperid(ordProdExtend.getOperid());
-		// 4.订单配送信息查询 
+		// 4.订单配送物流信息查询 
 		if (!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(ordProdExtend.getBusicode())) {
-			// 售后单获取子订单配送信息
-			ordOrderVo.setAftercontacttel(ordProdExtend.getAftercontactTel());
-			ordOrderVo.setAftercontactinfo(ordProdExtend.getAftercontactinfo());
+			// 售后单
+			ordOrderVo.setExpressid(ordProdExtend.getAfterexpressid());
+			ordOrderVo.setExpressoddnumber(ordProdExtend.getAfterexpressoddnumber());
 		}
 		return ordOrderVo;
 	}
+	
+	
+	/**
+	 * es引擎状态修改
+	 * @param ordOrder
+	 * @param pOrder
+	 * @param subOrder
+	 * @throws BusinessException
+	 * @throws SystemException
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode 
+	 * @RestRelativeURL
+	 */
+	 private void refreshData(OrdOrder ordOrder,OrdOrder pOrder,OrdOrder subOrder) 
+	    		throws BusinessException, SystemException {
+			ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+	  		IOrderSearch orderSearch = new OrderSearchImpl();
+			List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+					commonConditionsByOrderId(ordOrder.getParentOrderId());
+			Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+			List<OrderInfo> ordList = result.getContents();
+			if(CollectionUtil.isEmpty(ordList)) {
+				throw new BusinessException("搜索引擎无数据! 父订单id为:"+ordOrder.getParentOrderId());
+			}
+			OrderInfo orderInfo = ordList.get(0);
+			//更新父订单状态
+			if(pOrder!=null) {
+				orderInfo.setParentorderstate(pOrder.getState());
+			}
+			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+			for (OrdProdExtend ordProdExtend : ordextendes) {
+				//售后订单
+				if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
+					ordProdExtend.setState(ordOrder.getState());
+					//订单状态翻译
+					SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+							"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
+					ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+				} 
+				//子订单信息修改
+				//退费时候
+				if(subOrder!=null && ordOrder.getOrigOrderId()==ordProdExtend.getOrderid()){
+					ordProdExtend.setState(subOrder.getState());
+					SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+							"ORD_ORDER", "STATE",subOrder.getState(), iCacheSV);
+					ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+				}
+			}
+			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		}
 }

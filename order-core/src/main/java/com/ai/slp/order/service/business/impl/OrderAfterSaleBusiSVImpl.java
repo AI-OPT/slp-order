@@ -326,6 +326,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		prodExtend.setPaidfee(rdOrdOdFeeTotal.getPaidFee());
 		prodExtend.setPayfee(rdOrdOdFeeTotal.getPayFee());;
 		prodExtend.setOrigorderid(afterOrder.getOrigOrderId());
+		prodExtend.setRemark(afterOrder.getRemark());
 		//
 		ProdInfo afterProdInfo=new ProdInfo();
 		afterProdInfo.setBuysum(afterOrdOdProd.getBuySum());
