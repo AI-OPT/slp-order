@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ai.ch.order.web.controller.constant.Constants;
 import com.ai.opt.base.vo.PageInfo;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
@@ -100,6 +101,10 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 			SysParam sysParamWarningtype = InfoTranslateUtil.translateInfo(request.getTenantId(),
 					"ORD_ORDER", "ORD_WARNING_TYPE", vo.getWarningtype(), iCacheSV);
 			vo.setWarningtype(sysParamWarningtype == null ? "" : sysParamWarningtype.getColumnDesc());
+			//翻译订单来源
+			SysParam chldParam = InfoTranslateUtil.translateInfo(request.getTenantId(), 
+					"ORD_ORDER","CHL_ID",vo.getChlid(), iCacheSV);
+			vo.setChlidname(chldParam == null ? "" : chldParam.getColumnDesc());
 			//组装信息
 			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
 			List<ProductListInfo> destOrdextendes=new ArrayList<ProductListInfo>();
