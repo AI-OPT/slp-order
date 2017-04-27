@@ -146,17 +146,9 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
         ordOrder.setState(newState);
         Timestamp sysDate=DateUtil.getSysDate();
         ordOrder.setStateChgTime(sysDate);
-        
         ordOrderAtomSV.updateOrderState(ordOrder);
-    	//写入搜索引擎
-		//orderIndexBusiSV.refreshStateData(ordOrder,null);
-		
         //刷新搜索引擎数据
 		this.refreshLogisticsData(ordOrder,ordOdLogistics);
-		
-		
-		
-		
 		
 		//异步 写入订单状态变化轨迹表
 		OrderStateChgUtil.trailProcess(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, newState,

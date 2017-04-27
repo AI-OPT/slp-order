@@ -39,7 +39,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderCheckBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
-import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
@@ -59,23 +58,23 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 	private IOrderFrameCoreSV orderFrameCoreSV;
 	@Autowired
 	private IOrdOdProdAtomSV ordOdProdAtomSV;
-	@Autowired
-	private IOrderIndexBusiSV orderIndexBusiSV;
 	
 	//订单审核
 	@Override
 	public void check(OrderCheckRequest request) throws BusinessException, SystemException {
-		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), request.getOrderId());
+		OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
+				request.getOrderId());
 		if(ordOrder==null) {
-			logger.error("未能查询到相对应的订单信息[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
+			logger.error("未能查询到相对应的订单信息[订单id:"+request.getOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"未能查询到相对应的订单信息[订单id:"+request.getOrderId()+"租户id:"+request.getTenantId()+"]");
+					"未能查询到相对应的订单信息[订单id:"+request.getOrderId()+"]");
 		}
-		OrdOrder subOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), ordOrder.getOrigOrderId());
+		OrdOrder subOrdOrder = ordOrderAtomSV.selectByOrderId(ordOrder.getTenantId(), 
+				ordOrder.getOrigOrderId());
 		if(subOrdOrder==null) {
-			logger.error("未能查询到相对应的子订单信息[订单id:"+ordOrder.getOrigOrderId()+"租户id:"+ordOrder.getTenantId()+"]");
+			logger.error("未能查询到相对应的子订单信息[订单id:"+ordOrder.getOrigOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-					"未能查询到相对应的子订单信息[订单id:"+ordOrder.getOrigOrderId()+"租户id:"+ordOrder.getTenantId()+"]");
+					"未能查询到相对应的子订单信息[订单id:"+ordOrder.getOrigOrderId()+"]");
 		}
 		/* 审核结果STATE检验*/
 		String state = request.getState();
@@ -159,12 +158,6 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 			this.updateOrderState(ordOrder, orgState,newState, chgDesc, request);
 		}
 		// 刷新搜索引擎数据
-    /*	SesDataRequest sesReq=new SesDataRequest();
-    	sesReq.setTenantId(request.getTenantId());
-    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);*/
-    	
-    	
     	this.refreshData(ordOrder,subProd,state);
 	}
 	
@@ -231,7 +224,6 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
 						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
 				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
-				
 			//子订单更新售后标识
 			}else if(!OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED.equals(state) &&
 					ordOrder.getOrigOrderId()==ordProdExtend.getOrderid()) {

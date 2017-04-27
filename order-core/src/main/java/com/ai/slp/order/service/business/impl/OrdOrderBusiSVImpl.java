@@ -70,6 +70,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			throws BusinessException, SystemException {
 		logger.debug("开始订单详情查询..");
 		QueryOrderResponse response = new QueryOrderResponse();
+		//查询elasticSearch数据
 		IOrderSearch orderSearch = new OrderSearchImpl();
 		Long orderId = orderRequest.getOrderId();
 		String tenantId = orderRequest.getTenantId();
@@ -89,7 +90,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		for (OrdProdExtend ordProdExtend : ordextendes) {
 			if(orderId.equals(ordProdExtend.getOrderid())) {
 				//组装需要的信息
-				ordOrderVo = packAgeInfo(ordProdExtend, ordOrderVo);
+				ordOrderVo = this.packAgeInfo(ordProdExtend, ordOrderVo);
 				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
 				for (ProdInfo prodInfo : prodinfos) {
 					OrdProductVo prodVo=new OrdProductVo(); 
@@ -154,7 +155,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		for (OrderInfo orderInfo : ordList) {
 			BehindParentOrdOrderVo vo=new BehindParentOrdOrderVo();
 			BeanUtils.copyProperties(vo, orderInfo);
-			
+			//
 			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
 			List<BehindOrdOrderVo> destOrdextendes=new ArrayList<BehindOrdOrderVo>();
 			for (OrdProdExtend ordProdExtend : ordextendes) {
@@ -365,7 +366,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		ordOrderVo.setOrigorderid(ordProdExtend.getOrigorderid());
 		ordOrderVo.setState(ordProdExtend.getState());
 		ordOrderVo.setStatename(ordProdExtend.getStatename());
-		//前层翻译
+		//controller层翻译
 		ordOrderVo.setRouteid(ordProdExtend.getRouteid());
 		ordOrderVo.setBusicode(ordProdExtend.getBusicode());
 		ordOrderVo.setParentorderid(ordProdExtend.getParentorderid());

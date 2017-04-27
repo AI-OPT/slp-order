@@ -84,7 +84,6 @@ public class OrderConfirmBusiSVImpl implements IOrderConfirmBusiSV {
 	        OrderStateChgUtil.trailProcess(pOrder.getOrderId(), ordOrder.getTenantId(), pOldstate, newState2,
 	    			OrdOdStateChg.ChgDesc.ORDER_TO_COMPLETED, null, null, null, sysDate);
 	    } 
-	    
 	  //写入搜索引擎
 	  orderIndexBusiSV.refreshStateData(ordOrder,pOrder);
     }

@@ -37,7 +37,6 @@ import com.ai.slp.order.api.ordertradecenter.param.OrderResInfo;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterRequest;
 import com.ai.slp.order.api.ordertradecenter.param.OrderTradeCenterResponse;
 import com.ai.slp.order.constants.OrdersConstants;
-import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -57,7 +56,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrdOrderTradeBusiSV;
 import com.ai.slp.order.util.InfoTranslateUtil;
-import com.ai.slp.order.util.OrderStateChgUtil;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumRes;
@@ -445,15 +443,15 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private void writeOrderCreateStateChg(Timestamp sysDate,OrdOrder ordOrder) {
-        String orgState = ordOrder.getState();
+      //  String orgState = ordOrder.getState();
         String newState = OrdersConstants.OrdOrder.State.WAIT_PAY;
         ordOrder.setState(newState);
         ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.insertSelective(ordOrder);
         //异步  写入订单状态变化轨迹表
-        OrderStateChgUtil.trailProcess(ordOrder.getOrderId(),
+      /*  OrderStateChgUtil.trailProcess(ordOrder.getOrderId(),
         		ordOrder.getTenantId(), orgState, newState,
-                OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null, null, null, sysDate);
+                OrdOdStateChg.ChgDesc.ORDER_TO_PAY, null, null, null, sysDate);*/
     }
 
     /**
@@ -548,7 +546,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     		OrdOdFeeTotal feeInfo,OrdOdLogistics logistics,
     		OrdInvoiceInfo invoiceInfo,long totalJfFee,ICacheSV iCacheSV) {
     	OrderInfo ordInfo = new OrderInfo();
-    	//ordInfo.setTenantid(tenantId);
     	ordInfo.setChlid(ordOrder.getChlId());
 		ordInfo.setPorderid( ordOrder.getOrderId());
 		ordInfo.setUsername( ordOrder.getUserName());
@@ -571,7 +568,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		//订单详情
 		ordInfo.setAccountid(ordOrder.getAccountId());
 		ordInfo.setUserid(ordOrder.getUserId());
-		//ordInfo.setAcctid(ordOrder.getAcctId());
 		ordInfo.setOrdertype(ordOrder.getOrderType());
 		ordInfo.setToken(ordOrder.getTokenId());
 		ordInfo.setPaystyle(feeInfo.getPayStyle());

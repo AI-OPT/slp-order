@@ -183,17 +183,11 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
         }else {
         	/* 退款业务类型时  拒绝  改变原始订单的商品售后标识状态*/
     		OrdOdProd subProd = this.updateProdCusServiceFlag(ordOrder);
-    		//刷新订单 售后订单-售后标识改变
+    		
+    		//刷新数据 售后订单-售后标识改变
     		this.refreshData(ordOrder, null,subProd);
     		
         }
-        
-    	/* 刷新搜索引擎数据*/
-    /*	SesDataRequest sesReq=new SesDataRequest();
-    	sesReq.setTenantId(request.getTenantId());
-    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);*/
-    	
         // 写入订单状态变化轨迹表
         this.updateOrderState(ordOrder, orgState, newState, chgDesc, request.getOperId());
 	}

@@ -633,7 +633,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 		IOrderSearch orderSearch = new OrderSearchImpl();
 		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
 				commonConditionsByOrderId(order.getOrderId());
-		//查询es中符合的数据
+		//查询elasticSearch中符合的数据
 		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
 		List<OrderInfo> ordList = result.getContents();
 		if(CollectionUtil.isEmpty(ordList)) {
