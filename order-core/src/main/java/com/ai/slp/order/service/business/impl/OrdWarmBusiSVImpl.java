@@ -15,6 +15,8 @@ import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.search.vo.Sort;
 import com.ai.paas.ipaas.search.vo.Sort.SortOrder;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.warmorder.param.OrdProductVo;
 import com.ai.slp.order.api.warmorder.param.OrderWarmListVo;
 import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
@@ -40,6 +42,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdWarmAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrdWarmBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
@@ -62,6 +65,7 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 	@Override
 	public PageInfo<OrderWarmListVo> selectWarmOrdPage(OrderWarmRequest request) {
 		
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 		// 调用搜索引擎进行查询
 		int startSize = 1;
 		int maxSize = 1;
@@ -88,13 +92,20 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 		for (OrderInfo orderInfo : ordList) {
 			OrderWarmListVo vo=new OrderWarmListVo();
 			BeanUtils.copyProperties(vo, orderInfo);
-			
+			//翻译是否预警订单
+			SysParam sysParamIfwarning = InfoTranslateUtil.translateInfo(request.getTenantId(),
+					"ORD_ORDER", "ORD_IF_WARNING", vo.getIfwarning(), iCacheSV);
+			vo.setIfwarning(sysParamIfwarning == null ? "" : sysParamIfwarning.getColumnDesc());
+			//翻译预警订单类型
+			SysParam sysParamWarningtype = InfoTranslateUtil.translateInfo(request.getTenantId(),
+					"ORD_ORDER", "ORD_WARNING_TYPE", vo.getWarningtype(), iCacheSV);
+			vo.setWarningtype(sysParamWarningtype == null ? "" : sysParamWarningtype.getColumnDesc());
+			//组装信息
 			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
 			List<ProductListInfo> destOrdextendes=new ArrayList<ProductListInfo>();
 			for (OrdProdExtend ordProdExtend : ordextendes) {
 				ProductListInfo destOrdOrderVo=new ProductListInfo();
 				BeanUtils.copyProperties(destOrdOrderVo, ordProdExtend);
-				
 				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
 				List<OrdProductVo> destOrdProductVos=new ArrayList<OrdProductVo>();
 				for (ProdInfo prodInfo : prodinfos) {
@@ -114,8 +125,6 @@ public class OrdWarmBusiSVImpl implements IOrdWarmBusiSV {
 		pageInfo.setResult(results);
 		pageInfo.setCount(Long.valueOf(result.getCount()).intValue());
 		return pageInfo;
-		
-		
 	}
 	
 	//预警订单详情查看
