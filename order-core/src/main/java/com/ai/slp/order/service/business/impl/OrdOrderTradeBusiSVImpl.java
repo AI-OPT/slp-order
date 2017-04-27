@@ -583,11 +583,15 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setContactcompany(logistics.getContactCompany());
 		ordInfo.setContactname(logistics.getContactName());
 		ordInfo.setLogisticstype(logistics.getLogisticsType());
-		ordInfo.setProvincecode(logistics.getProvinceCode());
-		ordInfo.setCitycode(logistics.getCityCode());
-		ordInfo.setCountycode(logistics.getCountyCode());
+		ordInfo.setProvincecode(logistics.getProvinceCode() == null ? ""
+				: iCacheSV.getAreaName(logistics.getProvinceCode()));
+		ordInfo.setCitycode(logistics.getCityCode() == null ? ""
+				: iCacheSV.getAreaName(logistics.getCityCode()));
+		ordInfo.setCountycode(logistics.getCountyCode() == null ? ""
+				: iCacheSV.getAreaName(logistics.getCountyCode()));
 		ordInfo.setPostcode(logistics.getPostcode());
-		ordInfo.setAreacode(logistics.getAreaCode());
+		ordInfo.setAreacode(logistics.getAreaCode() == null ? ""
+				: iCacheSV.getAreaName(logistics.getAreaCode()));
 		ordInfo.setAddress(logistics.getAddress());
 		ordInfo.setRemark(ordOrder.getRemark());
 		return ordInfo;

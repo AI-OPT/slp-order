@@ -1,11 +1,7 @@
 package com.ai.slp.order.service.business.impl;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +14,8 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.PageInfo;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
-import com.ai.opt.sdk.dubbo.util.HttpClientUtil;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
-import com.ai.opt.sdk.util.ParseO2pDataUtil;
 import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.search.vo.Sort;
@@ -55,8 +49,6 @@ import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.ai.slp.product.api.product.param.SkuInfoQuery;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 
 @Service
 @Transactional
@@ -76,7 +68,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	@Transactional(readOnly=true)
 	public QueryOrderResponse queryOrder(QueryOrderRequest orderRequest ) 
 			throws BusinessException, SystemException {
-		ICacheSV iCacheSV=DubboConsumerFactory.getService(ICacheSV.class);
 		logger.debug("开始订单详情查询..");
 		QueryOrderResponse response = new QueryOrderResponse();
 		
@@ -99,37 +90,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		List<OrdProductVo> productList = new ArrayList<OrdProductVo>();
 		for (OrdProdExtend ordProdExtend : ordextendes) {
 			if(orderId.equals(ordProdExtend.getOrderid())) {
-				ordOrderVo.setOrderid(orderId);
-				ordOrderVo.setOrigorderid(ordProdExtend.getOrigorderid());
-				ordOrderVo.setState(ordProdExtend.getState());
-				ordOrderVo.setStatename(ordProdExtend.getStatename());
-				//前层翻译
-				ordOrderVo.setRouteid(ordProdExtend.getRouteid());
-				ordOrderVo.setBusicode(ordProdExtend.getBusicode());
-				ordOrderVo.setParentorderid(ordProdExtend.getParentorderid());
-				ordOrderVo.setAdjustfee(ordProdExtend.getAdjustfee());
-				ordOrderVo.setDiscountfee(ordProdExtend.getDiscountfee());
-				ordOrderVo.setPaidfee(ordProdExtend.getPaidfee());
-				ordOrderVo.setPayfee(ordProdExtend.getPayfee());
-				ordOrderVo.setTotalfee(ordProdExtend.getTotalfee());
-				ordOrderVo.setFreight(ordProdExtend.getFreight()); 
-				// 4.订单配送信息查询 
-				if (!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(ordProdExtend.getBusicode())) {
-					// 售后单获取子订单配送信息
-					ordOrderVo.setAftercontacttel(ordProdExtend.getAftercontactTel());
-					ordOrderVo.setAftercontactinfo(ordProdExtend.getAftercontactinfo());
-				}
-				ordOrderVo.setProvincecode(ordOrderVo.getProvincecode() == null ? ""
-						: iCacheSV.getAreaName(ordOrderVo.getProvincecode()));
-				ordOrderVo.setCitycode(ordOrderVo.getCitycode() == null ? ""
-						: iCacheSV.getAreaName(ordOrderVo.getCitycode()));
-				ordOrderVo.setCountycode(ordOrderVo.getCountycode() == null ? ""
-						: iCacheSV.getAreaName(ordOrderVo.getCountycode()));
-				ordOrderVo.setPostcode(ordOrderVo.getPostcode());
-				ordOrderVo.setAreacode(ordOrderVo.getAreacode() == null ? ""
-						: iCacheSV.getAreaName(ordOrderVo.getAreacode()));
-			
-				//
+				//组装需要的信息
+				ordOrderVo = packAgeInfo(ordProdExtend, ordOrderVo);
 				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
 				for (ProdInfo prodInfo : prodinfos) {
 					OrdProductVo prodVo=new OrdProductVo(); 
@@ -143,7 +105,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					prodVo.setTotalfee(prodInfo.getTotalfee());
 					prodVo.setAdjustfee(prodInfo.getAdjustfee());
 					prodVo.setDiscountfee(prodInfo.getDiscountfee());
-					
 					//
 					ProductImage productImage = getProductImage(tenantId, prodInfo.getSkuid());
 					prodVo.setProductimage(productImage);
@@ -153,7 +114,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					prodVo.setGivejf(prodInfo.getGivejf());
 					prodVo.setProdcode(prodInfo.getProdcode());
 					prodVo.setSkustorageid(prodInfo.getSkustorageid());
-				
 					
 				//    private String imageurl;
 				//    private String prodextendinfo;
@@ -162,11 +122,10 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			}
 		}
 		ordOrderVo.setProductList(productList);
-	
 		response.setOrdOrderVo(ordOrderVo);
 		return response;
 	}
-
+	
 	//订单列表查询
 	@Override
 	@Transactional(readOnly=true)
@@ -397,35 +356,36 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	    }
 	    return true;
     }
-
+	
 	/**
-	 * OFC订单查询
+	 * 组装需要的信息
+	 * @param ordProdExtend
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode 
+	 * @RestRelativeURL
 	 */
-	public static JSONObject queryOFC(OrdOrder ordOrder) throws BusinessException, SystemException {
-		List<String> orderNoList = new ArrayList<String>();
-		orderNoList.add(String.valueOf(ordOrder.getOrderId()));
-		Map<String, Object> mapField = new HashMap<String, Object>();
-		mapField.put("OrderNoList", orderNoList);
-		// mapField.put("ShopName", "长虹官方旗舰店");
-		mapField.put("PageIndex", "1");
-		mapField.put("PageSize", "1");
-		String params = JSON.toJSONString(mapField);
-		Map<String, String> header = new HashMap<String, String>();
-		header.put("appkey", OrdersConstants.OFC_APPKEY);
-		JSONObject object = null;
-		// 发送Post请求,并返回信息
-		try {
-			String strData = HttpClientUtil.sendPost(OrdersConstants.OFC_QUERY_URL, params, header);
-			object = ParseO2pDataUtil.getData(strData);
-			// TODO 是否判断
-			boolean val = object.getBooleanValue("IsValid");// 操作是否成功
-			if (!val) {
-				throw new BusinessException("", "OFC订单查询失败");
-			}
-		} catch (IOException | URISyntaxException e) {
-			logger.error(e.getMessage());
-			throw new SystemException("", "OFC订单查询出现异常");
+	private OrdOrderVo packAgeInfo(OrdProdExtend ordProdExtend,OrdOrderVo ordOrderVo) {
+		ordOrderVo.setOrderid(ordProdExtend.getOrderid());
+		ordOrderVo.setOrigorderid(ordProdExtend.getOrigorderid());
+		ordOrderVo.setState(ordProdExtend.getState());
+		ordOrderVo.setStatename(ordProdExtend.getStatename());
+		//前层翻译
+		ordOrderVo.setRouteid(ordProdExtend.getRouteid());
+		ordOrderVo.setBusicode(ordProdExtend.getBusicode());
+		ordOrderVo.setParentorderid(ordProdExtend.getParentorderid());
+		ordOrderVo.setAdjustfee(ordProdExtend.getAdjustfee());
+		ordOrderVo.setDiscountfee(ordProdExtend.getDiscountfee());
+		ordOrderVo.setPaidfee(ordProdExtend.getPaidfee());
+		ordOrderVo.setPayfee(ordProdExtend.getPayfee());
+		ordOrderVo.setTotalfee(ordProdExtend.getTotalfee());
+		ordOrderVo.setFreight(ordProdExtend.getFreight()); 
+		// 4.订单配送信息查询 
+		if (!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(ordProdExtend.getBusicode())) {
+			// 售后单获取子订单配送信息
+			ordOrderVo.setAftercontacttel(ordProdExtend.getAftercontactTel());
+			ordOrderVo.setAftercontactinfo(ordProdExtend.getAftercontactinfo());
 		}
-		return object;
+		return ordOrderVo;
 	}
 }
