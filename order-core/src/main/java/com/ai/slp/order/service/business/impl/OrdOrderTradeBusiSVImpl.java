@@ -484,21 +484,77 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     		OrdOdLogistics logistics,Map<String, Object> mapProduct,OrdInvoiceInfo invoiceInfo) {
     	ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
     	List<OrderInfo> orderList = new ArrayList<OrderInfo>();
-    	OrderInfo ordInfo = new OrderInfo();
     	List<OrdProdExtend> prodExtends=new ArrayList<OrdProdExtend>();
     	String tenantId = ordOrder.getTenantId();
     	List<OrdOdProd> ordOdProds =  (List<OrdOdProd>) mapProduct.get("ordOdProds");
     	long totalJfFee = (long) mapProduct.get("totalJfFee");
-		
+    	//组装共有数据
+    	OrderInfo ordInfo = packageCommonData(ordOrder, feeInfo, logistics, 
+    			invoiceInfo, totalJfFee, iCacheSV);
+    	//
+		List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
+		OrdProdExtend prodExtend=new OrdProdExtend();
+		prodExtend.setState(ordOrder.getState());
+		//订单状态翻译
+		SysParam sysParamState = InfoTranslateUtil.translateInfo(tenantId,
+				"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
+		prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+		prodExtend.setBusicode(ordOrder.getBusiCode());
+		prodExtend.setOrderid(ordOrder.getOrderId());
+		//订单费用信息
+		prodExtend.setTotalfee(feeInfo.getTotalFee());
+		prodExtend.setDiscountfee(feeInfo.getDiscountFee());
+		prodExtend.setAdjustfee(feeInfo.getAdjustFee());
+		prodExtend.setFreight(feeInfo.getFreight());
+		// 查询商品信息
+		for (OrdOdProd ordOdProd : ordOdProds) {
+			ProdInfo prodInfo=new ProdInfo();
+			prodInfo.setBuysum(ordOdProd.getBuySum());
+			prodInfo.setProdname(ordOdProd.getProdName());
+			prodInfo.setSaleprice(ordOdProd.getSalePrice());
+			prodInfo.setCouponfee(ordOdProd.getCouponFee());
+			prodInfo.setJffee(ordOdProd.getJfFee());
+			prodInfo.setGivejf(ordOdProd.getJf());
+			prodInfo.setCusserviceflag(ordOdProd.getCusServiceFlag());
+			prodInfo.setState(ordOdProd.getState());
+			prodInfo.setProdcode(ordOdProd.getProdCode());
+			prodInfo.setSkuid(ordOdProd.getSkuId());
+			prodInfo.setProddetalid(ordOdProd.getProdDetalId());
+			prodInfo.setSkustorageid(ordOdProd.getSkuStorageId());
+			prodInfo.setProdcode(ordOdProd.getProdCode());
+			prodInfos.add(prodInfo);
+		}
+		prodExtend.setProdsize(prodInfos.size());
+		int totalprodsize=prodInfos.size();
+		prodExtend.setProdinfos(prodInfos);
+		prodExtends.add(prodExtend);
+		ordInfo.setTotalprodsize(totalprodsize);
+		ordInfo.setOrdextendes(prodExtends);
+		orderList.add(ordInfo);
+		try {
+			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
+		} catch (Exception e) {
+			 throw new SystemException("","订单信息加入搜索引擎失败,订单ID:"+ordOrder.getOrderId());
+		}
+    }
+    
+    
+    /**
+     * 组装es中共有数据
+     */
+    private OrderInfo packageCommonData(OrdOrder ordOrder,
+    		OrdOdFeeTotal feeInfo,OrdOdLogistics logistics,
+    		OrdInvoiceInfo invoiceInfo,long totalJfFee,ICacheSV iCacheSV) {
+    	OrderInfo ordInfo = new OrderInfo();
     	//ordInfo.setTenantid(tenantId);
-		ordInfo.setChlid(ordOrder.getChlId());
+    	ordInfo.setChlid(ordOrder.getChlId());
 		ordInfo.setPorderid( ordOrder.getOrderId());
 		ordInfo.setUsername( ordOrder.getUserName());
 		ordInfo.setUsertel( ordOrder.getUserTel());
 		//ordInfo.setDeliveryflag( ordOrder.getDeliveryFlag());
 		ordInfo.setFlag( ordOrder.getFlag());
 		//翻译是否需要物流
-		SysParam sysParamDf = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER",
+		SysParam sysParamDf = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(), "ORD_ORDER",
 				"ORD_DELIVERY_FLAG",  ordOrder.getDeliveryFlag(), iCacheSV);
 		ordInfo.setDeliveryflagname(sysParamDf == null ? "" : sysParamDf.getColumnDesc());
 		ordInfo.setOrdertime( ordOrder.getOrderTime());
@@ -507,12 +563,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setContacttel(logistics.getContactTel());
 		ordInfo.setIfwarning(ordOrder.getIfWarning());
 		ordInfo.setWarningtype(ordOrder.getWarningType());
-		
 		ordInfo.setPoints(totalJfFee);
 		ordInfo.setAdjustfee(feeInfo.getAdjustFee());
 		ordInfo.setDiscountfee(feeInfo.getDiscountFee());
-		
-		
 		//订单详情
 		ordInfo.setAccountid(ordOrder.getAccountId());
 		ordInfo.setUserid(ordOrder.getUserId());
@@ -537,67 +590,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setAreacode(logistics.getAreaCode());
 		ordInfo.setAddress(logistics.getAddress());
 		ordInfo.setRemark(ordOrder.getRemark());
-		
-		//不存在子订单
-		List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
-		OrdProdExtend prodExtend=new OrdProdExtend();
-		prodExtend.setState(ordOrder.getState());
-		//订单状态翻译
-		SysParam sysParamState = InfoTranslateUtil.translateInfo(tenantId,
-				"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
-		prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
-		prodExtend.setBusicode(ordOrder.getBusiCode());//父订单
-		prodExtend.setOrderid(ordOrder.getOrderId());
-		
-		//订单详情
-		// 翻译业务类型
-		prodExtend.setTotalfee(feeInfo.getTotalFee());
-		prodExtend.setDiscountfee(feeInfo.getDiscountFee());
-		prodExtend.setAdjustfee(feeInfo.getAdjustFee());
-		prodExtend.setFreight(feeInfo.getFreight());
-		
-		
-		
-		
-		
-		// 查询商品信息
-		for (OrdOdProd ordOdProd : ordOdProds) {
-			ProdInfo prodInfo=new ProdInfo();
-			prodInfo.setBuysum(ordOdProd.getBuySum());
-			prodInfo.setProdname(ordOdProd.getProdName());
-			
-			//订单详情
-			prodInfo.setSaleprice(ordOdProd.getSalePrice());
-			prodInfo.setCouponfee(ordOdProd.getCouponFee());
-			prodInfo.setJffee(ordOdProd.getJfFee());
-			prodInfo.setGivejf(ordOdProd.getJf());
-			prodInfo.setCusserviceflag(ordOdProd.getCusServiceFlag());
-			prodInfo.setState(ordOdProd.getState());
-			prodInfo.setProdcode(ordOdProd.getProdCode());
-			prodInfo.setSkuid(ordOdProd.getSkuId());
-		/*	prodInfo.setTotalfee(ordOdProd.getTotalFee());
-			prodInfo.setDiscountfee(ordOdProd.getDiscountFee());
-			prodInfo.setAdjustfee(ordOdProd.getAdjustFee());
-			prodInfo.setOperdiscountfee(ordOdProd.getOperDiscountFee());*/
-			
-			prodInfo.setProddetalid(ordOdProd.getProdDetalId());
-			prodInfo.setSkustorageid(ordOdProd.getSkuStorageId());
-			prodInfo.setProdcode(ordOdProd.getProdCode());
-			
-			prodInfos.add(prodInfo);
-		}
-		prodExtend.setProdsize(prodInfos.size());
-		int totalprodsize=prodInfos.size();
-		prodExtend.setProdinfos(prodInfos);
-		prodExtends.add(prodExtend);
-		
-		ordInfo.setTotalprodsize(totalprodsize);
-		ordInfo.setOrdextendes(prodExtends);
-		orderList.add(ordInfo);
-		try {
-			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
-		} catch (Exception e) {
-			 throw new SystemException("","订单信息加入搜索引擎失败,订单ID:"+ordOrder.getOrderId());
-		}
+		return ordInfo;
     }
 }

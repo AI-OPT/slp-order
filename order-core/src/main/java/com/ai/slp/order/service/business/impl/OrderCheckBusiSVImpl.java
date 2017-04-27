@@ -17,19 +17,31 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.search.vo.Result;
+import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.util.StringUtil;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.aftersaleorder.impl.OrderAfterSaleSVImpl;
 import com.ai.slp.order.api.ordercheck.param.OrderCheckRequest;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
+import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
+import com.ai.slp.order.search.bo.OrdProdExtend;
+import com.ai.slp.order.search.bo.OrderInfo;
+import com.ai.slp.order.search.bo.ProdInfo;
+import com.ai.slp.order.search.dto.SearchCriteriaStructure;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderCheckBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
 import com.ai.slp.product.api.storageserver.param.StorageNumUserReq;
@@ -67,6 +79,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 		}
 		/* 审核结果STATE检验*/
 		String state = request.getState();
+		OrdOdProd subProd =null;
 		String subState = subOrdOrder.getState();//子订单状态
 		if(!OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED.equals(state)
 				&&!OrdersConstants.OrdOrder.State.AUDIT_FAILURE.equals(state)) {
@@ -135,7 +148,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 				throw new BusinessException("", "审核理由不能超过200字");
 			}
 			//改变原始订单的商品售后标识状态
-			this.updateProdCusServiceFlag(ordOrder);
+			subProd = this.updateProdCusServiceFlag(ordOrder);
 			String newState=OrdersConstants.OrdOrder.State.AUDIT_FAILURE;
 			String chgDesc=OrdOdStateChg.ChgDesc.ORDER_AUDIT_NOT_PASS;
 			ordOrder.setState(newState);
@@ -146,10 +159,13 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 			this.updateOrderState(ordOrder, orgState,newState, chgDesc, request);
 		}
 		// 刷新搜索引擎数据
-    	SesDataRequest sesReq=new SesDataRequest();
+    /*	SesDataRequest sesReq=new SesDataRequest();
     	sesReq.setTenantId(request.getTenantId());
     	sesReq.setParentOrderId(ordOrder.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);
+    	this.orderIndexBusiSV.insertSesData(sesReq);*/
+    	
+    	
+    	this.refreshData(ordOrder,subProd);
 	}
 	
 	/**
@@ -165,7 +181,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
      * 审核拒绝  改变原始订单的商品售后标识状态
      * 
      */
-    private void updateProdCusServiceFlag(OrdOrder ordOrder) {
+    private OrdOdProd updateProdCusServiceFlag(OrdOrder ordOrder) {
 		List<OrdOdProd> prodList = ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
 		if(CollectionUtil.isEmpty(prodList)) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
@@ -181,5 +197,58 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 		OrdOdProd prod = origProdList.get(0);  //单个订单对应单个商品(售后)
 		prod.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
 		ordOdProdAtomSV.updateById(prod);
+		return prod;
     }
+    
+    
+    /**
+     * 刷新es数据
+     * @param ordOrder
+     * @throws BusinessException
+     * @throws SystemException
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    private void refreshData(OrdOrder ordOrder,OrdOdProd subProd ) 
+    		throws BusinessException, SystemException {
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+  		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+				commonConditionsByOrderId(ordOrder.getParentOrderId());
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+		List<OrderInfo> ordList = result.getContents();
+		if(CollectionUtil.isEmpty(ordList)) {
+			throw new BusinessException("搜索引擎无数据! 父订单id为:"+ordOrder.getParentOrderId());
+		}
+		OrderInfo orderInfo = ordList.get(0);
+		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+		for (OrdProdExtend ordProdExtend : ordextendes) {
+			if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
+				ordProdExtend.setState(ordOrder.getState());
+				//订单状态翻译
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
+				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+				
+			//子订单更新售后标识
+			}else if(OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED.equals(ordOrder.getState()) &&
+					ordOrder.getOrigOrderId()==ordProdExtend.getOrderid()) {
+				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
+				if(!CollectionUtil.isEmpty(prodinfos)) {
+					for (ProdInfo prodInfo : prodinfos) {
+						if(prodInfo.getSkuid().equals(subProd.getSkuId()) ) {
+							//售后对应单个商品
+							prodInfo.setCusserviceflag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
+						}
+					}
+				}
+			}
+		}
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+	}
+    
+    
+    
 }

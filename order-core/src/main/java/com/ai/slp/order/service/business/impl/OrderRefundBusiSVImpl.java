@@ -13,22 +13,35 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
+import com.ai.paas.ipaas.search.vo.Result;
+import com.ai.paas.ipaas.search.vo.SearchCriteria;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.orderrefund.param.OrderRefundRequest;
 import com.ai.slp.order.api.orderrefund.param.OrderRefuseRefundRequest;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
+import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
+import com.ai.slp.order.search.bo.OrdProdExtend;
+import com.ai.slp.order.search.bo.OrderInfo;
+import com.ai.slp.order.search.bo.ProdInfo;
+import com.ai.slp.order.search.dto.SearchCriteriaStructure;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
 import com.ai.slp.order.service.business.interfaces.IOrderRefundBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 
 @Service
 @Transactional
@@ -134,7 +147,6 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     				 OrdersConstants.OrdOrder.State.WAIT_DELIVERY.equals(order.getState())||
     				 OrdersConstants.OrdOrder.State.WAIT_SEND.equals(order.getState())) {
     			 if(!CollectionUtil.isEmpty(orderList)) { //有售后订单 
-    				 //TODO
     				if(flag&&cusFlag) {
     					order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
     					ordOrderAtomSV.updateById(order);
@@ -162,16 +174,23 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     				 }
     			}
     		 }
+    		
+    		//刷新数据 售后订单-子订单-父订单状态改变
+    		this.refreshData(ordOrder, parentOrder,null);
+    		
         }else {
         	/* 退款业务类型时  拒绝  改变原始订单的商品售后标识状态*/
-    		this.updateProdCusServiceFlag(ordOrder);
+    		OrdOdProd subProd = this.updateProdCusServiceFlag(ordOrder);
+    		//刷新订单 售后订单-售后标识改变
+    		this.refreshData(ordOrder, null,subProd);
+    		
         }
         
     	/* 刷新搜索引擎数据*/
-    	SesDataRequest sesReq=new SesDataRequest();
+    /*	SesDataRequest sesReq=new SesDataRequest();
     	sesReq.setTenantId(request.getTenantId());
     	sesReq.setParentOrderId(ordOrder.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);
+    	this.orderIndexBusiSV.insertSesData(sesReq);*/
     	
         // 写入订单状态变化轨迹表
         this.updateOrderState(ordOrder, orgState, newState, chgDesc, request.getOperId());
@@ -190,7 +209,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
      * 审核拒绝  改变原始订单的商品售后标识状态
      * 
      */
-    private void updateProdCusServiceFlag(OrdOrder ordOrder) {
+    private OrdOdProd updateProdCusServiceFlag(OrdOrder ordOrder) {
 		List<OrdOdProd> prodList = ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
 		if(CollectionUtil.isEmpty(prodList)) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
@@ -206,6 +225,7 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		OrdOdProd prod = origProdList.get(0);  //单个订单对应单个商品(售后)
 		prod.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
 		ordOdProdAtomSV.updateById(prod);
+		return prod;
     }
     
     /**
@@ -224,4 +244,54 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	    }
 	    return true;
     }
+    
+    
+    
+    public void refreshData(OrdOrder ordOrder,OrdOrder pOrder,OrdOdProd subProd) 
+    		throws BusinessException, SystemException {
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+  		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+				commonConditionsByOrderId(ordOrder.getParentOrderId());
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+		List<OrderInfo> ordList = result.getContents();
+		if(CollectionUtil.isEmpty(ordList)) {
+			throw new BusinessException("搜索引擎无数据! 父订单id为:"+ordOrder.getParentOrderId());
+		}
+		OrderInfo orderInfo = ordList.get(0);
+		//更新父订单状态
+		if(pOrder!=null) {
+			orderInfo.setParentorderstate(pOrder.getState());
+		}
+		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+		for (OrdProdExtend ordProdExtend : ordextendes) {
+			if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
+				ordProdExtend.setState(ordOrder.getState());
+				//订单状态翻译
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
+				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+			//子订单信息修改
+			}else if(!OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode()) && 
+					ordOrder.getOrigOrderId()==ordProdExtend.getOrderid()) {
+				//子订单订单状态修改
+				ordProdExtend.setState(ordOrder.getState());
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
+				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+				//子订单商品售后标识
+				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
+				if(!CollectionUtil.isEmpty(prodinfos)) {
+					for (ProdInfo prodInfo : prodinfos) {
+						if(prodInfo.getSkuid().equals(subProd.getSkuId()) ) {
+							//售后对应单个商品
+							prodInfo.setCusserviceflag(OrdersConstants.OrdOrder.cusServiceFlag.NO);
+						}
+					}
+				}
+				
+			}
+		}
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+	}
 }

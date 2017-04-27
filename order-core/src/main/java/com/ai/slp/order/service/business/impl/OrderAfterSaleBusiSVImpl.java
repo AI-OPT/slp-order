@@ -230,12 +230,14 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     	ordOdProd.setCusServiceFlag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
 		ordOdProdAtomSV.updateCusServiceFlag(ordOdProd);
 		/* 6.刷新搜索引擎数据*/
-		this.refreshAfterData(afterOrder,afterOrdOdProd); 
+		this.refreshAfterData(afterOrder,afterOrdOdProd,rdOrdOdFeeTotal); 
     }
     
     
     
-    //ofc售后订单状态回传
+    /**
+     * ofc售后订单状态回传
+     */
   	@Override
   	public void backStateOFC(OrdOrder ordOrder) 
   			throws BusinessException, SystemException {
@@ -247,11 +249,13 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
   	}
   	
   	//刷新售后搜索数据
-  	private void  refreshAfterData(OrdOrder afterOrder,OrdOdProd afterOrdOdProd) {
+  	private void  refreshAfterData(OrdOrder afterOrder,OrdOdProd afterOrdOdProd,
+  			OrdOdFeeTotal rdOrdOdFeeTotal) {
   		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
   		IOrderSearch orderSearch = new OrderSearchImpl();
 		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
 				commonConditionsByOrderId(afterOrder.getParentOrderId());
+		//查询es中符合的数据
 		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
 		List<OrderInfo> ordList = result.getContents();
 		if(CollectionUtil.isEmpty(ordList)) {
@@ -260,20 +264,51 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		}
 		OrderInfo orderInfo = ordList.get(0);
 		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
-		//TODO 便于性能测试
-		for (OrdProdExtend ordProdExtend : ordextendes) {
-			if(!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(ordProdExtend.getBusicode())) {
-				ProdInfo prodInfo = ordProdExtend.getProdinfos().get(0);
-				//搜索引擎中存在该商品,并且该商品为待审核状态则不刷新数据
-				if(afterOrdOdProd.getProdName().equals(prodInfo.getProdname())) {
-					if(OrdersConstants.OrdOrder.State.REVOKE_WAIT_AUDIT.equals(ordProdExtend.getState())) {
-						return;
+		front:for (OrdProdExtend ordProdExtend : ordextendes) {
+			if(afterOrder.getOrigOrderId()==ordProdExtend.getOrderid()) {
+				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
+				for (ProdInfo prodInfo : prodinfos) {
+					if(afterOrdOdProd.getProdName().equals(prodInfo.getProdname())) {
+						//子订单下的商品售后中,不能再进行售后
+						if( OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(prodInfo.getCusserviceflag())) {
+							return;	
+						}else {
+							//更新原始订单(子订单)的售后订单标识
+							prodInfo.setCusserviceflag(OrdersConstants.OrdOrder.cusServiceFlag.YES);
+							//跳出双重循环
+							break front;
+						}
 					}
 				}
 			}
 		}
-		OrdProdExtend prodExtend=new OrdProdExtend();
+		orderInfo = this.assembleData(afterOrder, afterOrdOdProd,rdOrdOdFeeTotal, 
+				iCacheSV, ordextendes, orderInfo);
+		ordList.add(orderInfo);
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+  	}
+  	
+  	
+  	/**
+  	 * 组装售后es引擎数据
+  	 * @param afterOrder
+  	 * @param afterOrdOdProd
+  	 * @param rdOrdOdFeeTotal
+  	 * @param iCacheSV
+  	 * @param ordextendes
+  	 * @param orderInfo
+  	 * @return
+  	 * @author caofz
+  	 * @ApiDocMethod
+  	 * @ApiCode 
+  	 * @RestRelativeURL
+  	 */
+  	private OrderInfo assembleData(OrdOrder afterOrder,OrdOdProd afterOrdOdProd,
+  			OrdOdFeeTotal rdOrdOdFeeTotal,ICacheSV iCacheSV,
+  			List<OrdProdExtend> ordextendes,OrderInfo orderInfo) {
+  		//组装售后订单信息
 		List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
+		OrdProdExtend prodExtend=new OrdProdExtend();
 		prodExtend.setState(afterOrder.getState());
 		//订单状态翻译
 		SysParam sysParamState = InfoTranslateUtil.translateInfo(afterOrder.getTenantId(),
@@ -283,19 +318,38 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		prodExtend.setParentorderid(afterOrder.getParentOrderId());
 		prodExtend.setOrderid(afterOrder.getOrderId());
 		prodExtend.setRouteid(afterOrder.getRouteId());
+		prodExtend.setTotalfee(rdOrdOdFeeTotal.getTotalFee());
+		prodExtend.setDiscountfee(rdOrdOdFeeTotal.getDiscountFee());
+		prodExtend.setAdjustfee(rdOrdOdFeeTotal.getAdjustFee());
+		prodExtend.setPaidfee(rdOrdOdFeeTotal.getPaidFee());
+		prodExtend.setPayfee(rdOrdOdFeeTotal.getPayFee());;
+		prodExtend.setOrigorderid(afterOrder.getOrigOrderId());
+		//
+		ProdInfo afterProdInfo=new ProdInfo();
+		afterProdInfo.setBuysum(afterOrdOdProd.getBuySum());
+		afterProdInfo.setProdname(afterOrdOdProd.getProdName());
+		afterProdInfo.setSaleprice(afterOrdOdProd.getSalePrice());
+		afterProdInfo.setCouponfee(afterOrdOdProd.getCouponFee());
+		afterProdInfo.setJffee(afterOrdOdProd.getJfFee()); //TODO jf
+		afterProdInfo.setGivejf(afterOrdOdProd.getJf());//
+		afterProdInfo.setCusserviceflag(afterOrdOdProd.getCusServiceFlag());
+		afterProdInfo.setState(afterOrdOdProd.getState());//翻译
+		afterProdInfo.setProdcode(afterOrdOdProd.getProdCode());
+		afterProdInfo.setSkuid(afterOrdOdProd.getSkuId());
+		afterProdInfo.setProddetalid(afterOrdOdProd.getProdDetalId());
+		afterProdInfo.setSkustorageid(afterOrdOdProd.getSkuStorageId());
 		
-		ProdInfo prodInfo=new ProdInfo();
-		prodInfo.setBuysum(afterOrdOdProd.getBuySum());
-		prodInfo.setProdname(afterOrdOdProd.getProdName());
-		prodInfos.add(prodInfo);
+		//
+		afterProdInfo.setImageurl(afterOrdOdProd.getProdDesc());
+		afterProdInfo.setProdextendinfo(afterOrdOdProd.getProdSn());
 		
+		prodInfos.add(afterProdInfo);
 		prodExtend.setProdsize(prodInfos.size());
 		prodExtend.setProdinfos(prodInfos);
 		ordextendes.add(prodExtend);
-		
+		//订单总数(页面排版显示)
 		orderInfo.setTotalprodsize(orderInfo.getTotalprodsize()+prodInfos.size());
 		orderInfo.setOrdextendes(ordextendes);
-		ordList.add(orderInfo);
-		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		return orderInfo;
   	}
 }

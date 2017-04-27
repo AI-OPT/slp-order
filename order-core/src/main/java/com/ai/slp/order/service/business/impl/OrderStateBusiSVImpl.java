@@ -7,18 +7,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
+import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
+import com.ai.paas.ipaas.search.vo.Result;
+import com.ai.paas.ipaas.search.vo.SearchCriteria;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.orderstate.param.WaitRebateRequest;
 import com.ai.slp.order.api.orderstate.param.WaitRebateResponse;
 import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
+import com.ai.slp.order.search.bo.OrdProdExtend;
+import com.ai.slp.order.search.bo.OrderInfo;
+import com.ai.slp.order.search.dto.SearchCriteriaStructure;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 @Service
 public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 
@@ -39,7 +53,9 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		//
 		this.ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		//刷新搜索引擎数据
-		this.orderIndexBusiSV.refreshStateData(ordOrder,null);
+		//this.orderIndexBusiSV.refreshStateData(ordOrder,null);
+		
+		this.refreshData(ordOrder, ordOdLogistics);
 	}
 	
 	
@@ -125,4 +141,51 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 	    }
 	    return true;
     }
+    
+    /**
+     * 买家退换货刷新es引擎数据
+     * @param ordOrder
+     * @param afterLogistics
+     * @throws BusinessException
+     * @throws SystemException
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    public void refreshData(OrdOrder ordOrder,OrdOdLogistics afterLogistics) 
+    		throws BusinessException, SystemException {
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+  		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+				commonConditionsByOrderId(ordOrder.getParentOrderId());
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+		List<OrderInfo> ordList = result.getContents();
+		if(CollectionUtil.isEmpty(ordList)) {
+			throw new BusinessException("搜索引擎无数据! 父订单id为:"+ordOrder.getParentOrderId());
+		}
+		OrderInfo orderInfo = ordList.get(0);
+		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+		for (OrdProdExtend ordProdExtend : ordextendes) {
+			if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
+				ordProdExtend.setState(ordOrder.getState());
+				//订单状态翻译
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
+				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+				//更新买家退换货信息
+				StringBuffer sbf = new StringBuffer();
+				sbf.append(afterLogistics.getProvinceCode() == null ? ""
+						: iCacheSV.getAreaName(afterLogistics.getProvinceCode()));
+				sbf.append(afterLogistics.getCityCode() == null ? ""
+						: iCacheSV.getAreaName(afterLogistics.getCityCode()));
+				sbf.append(afterLogistics.getCountyCode() == null ? ""
+						: iCacheSV.getAreaName(afterLogistics.getCountyCode()));
+				sbf.append(afterLogistics.getAddress());
+				ordProdExtend.setAftercontactTel(afterLogistics.getContactTel());
+				ordProdExtend.setAftercontactinfo(sbf.toString());
+			}
+		}
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+	}
 }

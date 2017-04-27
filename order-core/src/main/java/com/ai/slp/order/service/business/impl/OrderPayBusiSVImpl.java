@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
-import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.OrderStateChgUtil;
@@ -76,17 +75,14 @@ import com.ai.slp.route.api.routemanage.param.RouteQueryByGroupIdAndAreaResponse
 @Service
 @Transactional
 public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
+	
     private static Logger logger = LoggerFactory.getLogger(OrderPayBusiSVImpl.class);
-
     @Autowired
     IOrdOdFeeTotalAtomSV ordOdFeeTotalAtomSV;
-
     @Autowired
     IOrdOdProdAtomSV ordOdProdAtomSV;
-
     @Autowired
     IOrdBalacneIfAtomSV ordBalacneIfAtomSV;
-
     @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
     @Autowired
@@ -95,14 +91,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
     private IOrdOdInvoiceAtomSV ordOdInvoiceAtomSV;
     @Autowired
     private IOrdOdFeeProdAtomSV ordOdFeeProdAtomSV;
-    @Autowired
-    private IOrderIndexBusiSV orderIndexBusiSV;
     
-    /**
-     * 订单收费
-     * 
-     * @throws Exception
-     */
+   /**
+    * 订单支付回调及拆单
+    */
     @Override
     public void orderPay(OrderPayRequest request) throws BusinessException, SystemException {
         Timestamp sysdate = DateUtil.getSysDate();
@@ -126,68 +118,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         		ordOrder.setStateChgTime(DateUtil.getSysDate());
         		ordOrderAtomSV.updateOrderState(ordOrder);
         	}
-        	/* 5.导入数据到搜索引擎*/
-        /*	SesDataRequest sesReq=new SesDataRequest();
-        	sesReq.setTenantId(request.getTenantId());
-        	sesReq.setParentOrderId(orderId);
-        	this.orderIndexBusiSV.insertSesData(sesReq);*/
-        	
-        	IOrderSearch orderSearch = new OrderSearchImpl();
-        	List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.commonConditionsByOrderId(orderId);
-        	Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
-        	List<OrderInfo> ordList = result.getContents();
-        	if(CollectionUtil.isEmpty(ordList)) {
-        		throw new BusinessException("搜索引擎无数据,父订单id:"+orderId);
-        	}
-			OrderInfo orderInfo = ordList.get(0);
-			orderInfo.setParentorderstate(OrdersConstants.OrdOrder.State.FINISH_PAID);
-			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
-			Iterator it = ordersMap.values().iterator(); 
-			while (it.hasNext()) {  
-				//子订单
-				long orderVal = (long)it.next();
-				//查询搜索引擎数据
-				for (OrdProdExtend ordProdExtend : ordextendes) {
-					ordProdExtend.setOrderid(orderVal);
-					ordProdExtend.setParentorderid(orderId);
-					String state=OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION;
-					ordProdExtend.setState(state);
-					SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
-						"ORD_ORDER", "STATE",state, iCacheSV);
-					ordProdExtend.setStatename(sysParamState==null?"":sysParamState.getColumnDesc());
-					OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(ordOrder.getTenantId(), orderVal);
-					ordProdExtend.setTotalfee(odFeeTotal.getTotalFee());
-					ordProdExtend.setDiscountfee(odFeeTotal.getDiscountFee());
-					ordProdExtend.setAdjustfee(odFeeTotal.getAdjustFee());
-					ordProdExtend.setPaidfee(odFeeTotal.getPaidFee());
-					ordProdExtend.setPayfee(odFeeTotal.getPayFee());;
-				//	ordProdExtend.setOperdiscountfee(odFeeTotal.getOperDiscountFee());
-					
-					List<ProdInfo> prodinfos = new ArrayList<ProdInfo>();
-					List<OrdOdProd> prods = ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), orderVal);
-					for (OrdOdProd ordOdProd : prods) {
-						ProdInfo prodInfo=new ProdInfo();
-						prodInfo.setProdname(ordOdProd.getProdName());
-						prodInfo.setBuysum(ordOdProd.getBuySum());
-						prodInfo.setSaleprice(ordOdProd.getSalePrice());
-						prodInfo.setCouponfee(ordOdProd.getCouponFee());
-						prodInfo.setJffee(ordOdProd.getJfFee()); //TODO jf
-						prodInfo.setGivejf(ordOdProd.getJf());//
-						prodInfo.setCusserviceflag(ordOdProd.getCusServiceFlag());
-						prodInfo.setState(ordOdProd.getState());//翻译
-						prodInfo.setProdcode(ordOdProd.getProdCode());
-						prodInfo.setSkuid(ordOdProd.getSkuId());
-						prodInfo.setProddetalid(ordOdProd.getProdDetalId());
-						prodInfo.setSkustorageid(ordOdProd.getSkuStorageId());
-						prodInfo.setTotalfee(ordOdProd.getTotalFee());
-						prodInfo.setDiscountfee(ordOdProd.getDiscountFee());
-						prodInfo.setAdjustfee(ordOdProd.getAdjustFee());
-					//	prodInfo.setOperdiscountfee(ordOdProd.getOperDiscountFee());
-						prodinfos.add(prodInfo);
-					}
-					ordProdExtend.setProdinfos(prodinfos);
-				}
-			}
+        	/* 5.拆单后导入数据到搜索引擎*/
+        	OrderInfo orderInfo = refreshDataBySplitOrder(request,ordOrder,ordersMap,iCacheSV);
 			orderList.add(orderInfo);
         }
         ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
@@ -222,7 +154,6 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         for (OrdOdFeeTotal feeTotal : noPayList) {
             this.chargeAgainst(feeTotal, request, sysdate);
         }
-
     }
 
     /**
@@ -681,6 +612,127 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
      */
 	@Override
 	public void returnOid(OrdOrder order) throws BusinessException, SystemException {
-		ordOrderAtomSV.updateOrder(order);
+		//1.更新订单数据
+		int updateFlag = ordOrderAtomSV.updateOrder(order);
+		if(updateFlag==0) {
+  			throw new BusinessException("用户消费积分返回oid更新失败,订单id:"+order.getOrderId());
+  		}
+		//2.刷新搜索数据
+		this.refreshOidData(order);
+	}
+	
+	/**
+	 * 刷新搜索数据-(用户消费积分oid)
+	 * @param order
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode 
+	 * @RestRelativeURL
+	 */
+	private void  refreshOidData(OrdOrder order) {
+		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+				commonConditionsByOrderId(order.getOrderId());
+		//查询es中符合的数据
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+		List<OrderInfo> ordList = result.getContents();
+		if(CollectionUtil.isEmpty(ordList)) {
+			logger.info("搜索引擎无数据! 父订单id为:"+order.getOrderId());
+			throw new BusinessException("搜索引擎无数据! 父订单id为:"+order.getOrderId());
+		}
+		OrderInfo orderInfo = ordList.get(0);
+		orderInfo.setDownstreamorderid(order.getDownstreamOrderId());
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+	}
+	
+	/**
+	 * 拆单之后组装es引擎数据
+	 * @param request
+	 * @param orderId
+	 * @param ordersMap
+	 * @param iCacheSV
+	 * @return
+	 * @author caofz
+	 * @ApiDocMethod
+	 * @ApiCode 
+	 * @RestRelativeURL
+	 */
+	private OrderInfo refreshDataBySplitOrder(OrderPayRequest request,OrdOrder ordOrder,
+			Map<String, Long> ordersMap,ICacheSV iCacheSV) {
+		long orderId = ordOrder.getOrderId();
+		IOrderSearch orderSearch = new OrderSearchImpl();
+    	List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.commonConditionsByOrderId(orderId);
+    	Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+    	List<OrderInfo> ordList = result.getContents();
+    	if(CollectionUtil.isEmpty(ordList)) {
+    		throw new BusinessException("搜索引擎无数据,父订单id:"+orderId);
+    	}
+		OrderInfo orderInfo = ordList.get(0);
+		//订单类型--虚拟
+		if(OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(ordOrder.getOrderType())) {
+			orderInfo.setParentorderstate(OrdersConstants.OrdOrder.State.COMPLETED);
+		//订单类型--实物
+		}else {
+			orderInfo.setParentorderstate(OrdersConstants.OrdOrder.State.FINISH_PAID);
+		}
+		orderInfo.setPaystyle(request.getPayType());
+		orderInfo.setExternalid(request.getExternalId());
+		//
+		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+		List<OrdProdExtend> newOrdextendes=new ArrayList<OrdProdExtend>();
+		Set<String> keySet = ordersMap.keySet();
+		for (String strRouteId : keySet) {
+			//拆单之后子订单
+			long orderVal = ordersMap.get(strRouteId);
+			//查询搜索引擎数据
+			OrdProdExtend ordProdExtend = ordextendes.get(0);
+			OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(), orderVal);
+			OrdProdExtend newOrdProdExtend=new OrdProdExtend();
+			BeanUtils.copyProperties(newOrdProdExtend, ordProdExtend);
+			newOrdProdExtend.setOrderid(orderVal);
+			newOrdProdExtend.setParentorderid(orderId);
+			String state=null;
+			//订单类型--虚拟
+			if(OrdersConstants.OrdOrder.OrderType.VIRTUAL_PROD.equals(ordOrder.getOrderType())) {
+				state=OrdersConstants.OrdOrder.State.COMPLETED;
+			//订单类型--实物
+			}else {
+				state=OrdersConstants.OrdOrder.State.WAIT_DISTRIBUTION;
+			}
+			newOrdProdExtend.setState(state);
+			SysParam sysParamState = InfoTranslateUtil.translateInfo(request.getTenantId(),
+				"ORD_ORDER", "STATE",state, iCacheSV);
+			newOrdProdExtend.setStatename(sysParamState==null?"":sysParamState.getColumnDesc());
+			newOrdProdExtend.setTotalfee(odFeeTotal.getTotalFee());
+			newOrdProdExtend.setDiscountfee(odFeeTotal.getDiscountFee());
+			newOrdProdExtend.setAdjustfee(odFeeTotal.getAdjustFee());
+			newOrdProdExtend.setPaidfee(odFeeTotal.getPaidFee());
+			newOrdProdExtend.setPayfee(odFeeTotal.getPayFee());
+			newOrdProdExtend.setFreight(odFeeTotal.getFreight());
+			newOrdProdExtend.setRouteid(strRouteId);
+			List<ProdInfo> prodinfos = new ArrayList<ProdInfo>();
+			List<OrdOdProd> prods = ordOdProdAtomSV.selectByOrd(request.getTenantId(), orderVal);
+			for (OrdOdProd ordOdProd : prods) {
+				ProdInfo prodInfo=new ProdInfo();
+				prodInfo.setProdname(ordOdProd.getProdName());
+				prodInfo.setBuysum(ordOdProd.getBuySum());
+				prodInfo.setSaleprice(ordOdProd.getSalePrice());
+				prodInfo.setCouponfee(ordOdProd.getCouponFee());
+				prodInfo.setJffee(ordOdProd.getJfFee()); //TODO jf
+				prodInfo.setGivejf(ordOdProd.getJf());//
+				prodInfo.setCusserviceflag(ordOdProd.getCusServiceFlag());
+				prodInfo.setState(ordOdProd.getState());//翻译
+				prodInfo.setProdcode(ordOdProd.getProdCode());
+				prodInfo.setSkuid(ordOdProd.getSkuId());
+				prodInfo.setProddetalid(ordOdProd.getProdDetalId());
+				prodInfo.setSkustorageid(ordOdProd.getSkuStorageId());
+				prodinfos.add(prodInfo);
+			}
+			newOrdProdExtend.setProdsize(prodinfos.size());
+			newOrdProdExtend.setProdinfos(prodinfos);
+			newOrdextendes.add(newOrdProdExtend);
+		}
+		orderInfo.setOrdextendes(newOrdextendes);
+		return orderInfo;
 	}
 }
