@@ -165,7 +165,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
     	this.orderIndexBusiSV.insertSesData(sesReq);*/
     	
     	
-    	this.refreshData(ordOrder,subProd);
+    	this.refreshData(ordOrder,subProd,state);
 	}
 	
 	/**
@@ -211,7 +211,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
      * @ApiCode 
      * @RestRelativeURL
      */
-    private void refreshData(OrdOrder ordOrder,OrdOdProd subProd ) 
+    private void refreshData(OrdOrder ordOrder,OrdOdProd subProd ,String state) 
     		throws BusinessException, SystemException {
 		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
   		IOrderSearch orderSearch = new OrderSearchImpl();
@@ -233,7 +233,7 @@ public class OrderCheckBusiSVImpl implements IOrderCheckBusiSV {
 				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 				
 			//子订单更新售后标识
-			}else if(OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED.equals(ordOrder.getState()) &&
+			}else if(!OrdersConstants.OrdOrder.State.REVOKE_FINISH_AUDITED.equals(state) &&
 					ordOrder.getOrigOrderId()==ordProdExtend.getOrderid()) {
 				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
 				if(!CollectionUtil.isEmpty(prodinfos)) {

@@ -265,20 +265,18 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 		}
 		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
 		for (OrdProdExtend ordProdExtend : ordextendes) {
+			//售后订单
 			if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
 				ordProdExtend.setState(ordOrder.getState());
 				//订单状态翻译
 				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
 						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
 				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+			} 
 			//子订单信息修改
-			}else if(!OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode()) && 
+			//退费时候
+			if(!OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode()) &&
 					ordOrder.getOrigOrderId()==ordProdExtend.getOrderid()) {
-				//子订单订单状态修改
-				ordProdExtend.setState(ordOrder.getState());
-				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
-						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
-				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 				//子订单商品售后标识
 				List<ProdInfo> prodinfos = ordProdExtend.getProdinfos();
 				if(!CollectionUtil.isEmpty(prodinfos)) {
@@ -289,7 +287,13 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 						}
 					}
 				}
-				
+			//退货时候 	子订单订单状态修改
+			}else if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode()) &&
+					ordOrder.getOrigOrderId()==ordProdExtend.getOrderid()){
+				ordProdExtend.setState(pOrder.getState());
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+						"ORD_ORDER", "STATE",pOrder.getState(), iCacheSV);
+				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 			}
 		}
 		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);

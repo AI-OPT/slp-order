@@ -17,15 +17,25 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
+import com.ai.paas.ipaas.search.vo.Result;
+import com.ai.paas.ipaas.search.vo.SearchCriteria;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
+import com.ai.slp.order.search.bo.OrdProdExtend;
+import com.ai.slp.order.search.bo.OrderInfo;
+import com.ai.slp.order.search.dto.SearchCriteriaStructure;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderCancelBusiSV;
 import com.ai.slp.order.service.business.interfaces.IOrderFrameCoreSV;
-import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.product.api.storageserver.interfaces.IStorageNumSV;
 import com.ai.slp.product.api.storageserver.param.StorageNumBackReq;
 import com.alibaba.fastjson.JSON;
@@ -49,8 +59,6 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
     IOrdOdProdAtomSV ordOdProdAtomSV;
     @Autowired
     private IOrderFrameCoreSV orderFrameCoreSV;
-    @Autowired
-    private IOrderIndexBusiSV orderIndexBusiSV;
     
     //订单取消
     @Override
@@ -68,10 +76,7 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
                 newState, OrdersConstants.OrdOdStateChg.ChgDesc.ORDER_TO_CANCEL, null, null, null, sysDate);
        
         /* 3.刷新搜索引擎数据*/
-    	SesDataRequest sesReq=new SesDataRequest();
-    	sesReq.setTenantId(ordOrder.getTenantId());
-    	sesReq.setParentOrderId(ordOrder.getOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);
+    	this.refreshStateData(ordOrder);
     	
         /* 4.库存回退 */
         List<OrdOdProd> ordOdProds =  ordOdProdAtomSV.selectByOrd(ordOrder.getTenantId(), ordOrder.getOrderId());
@@ -107,5 +112,34 @@ public class OrderCancelBusiSVImpl implements IOrderCancelBusiSV {
             throw new BusinessException("", "调用回退库存异常:" + skuId + "错误信息如下:" + resultMessage + "]");
 
     }
+    
+    
+	/**
+	 * 刷新搜索引擎状态数据
+	 */
+	private void refreshStateData(OrdOrder ordOrder)  {
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+  		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+				commonConditionsByOrderId(ordOrder.getOrderId());
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+		List<OrderInfo> ordList = result.getContents();
+		if(CollectionUtil.isEmpty(ordList)) {
+			throw new BusinessException("搜索引擎无数据! 父订单id为:"+ordOrder.getParentOrderId());
+		}
+		OrderInfo orderInfo = ordList.get(0);
+		orderInfo.setParentorderstate(ordOrder.getState());
+		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+		for (OrdProdExtend ordProdExtend : ordextendes) {
+			if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
+				ordProdExtend.setState(ordOrder.getState());
+				//订单状态翻译
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
+				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+			}
+		}
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+	}
 
 }

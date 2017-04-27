@@ -17,7 +17,6 @@ import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.orderstate.param.WaitRebateRequest;
 import com.ai.slp.order.api.orderstate.param.WaitRebateResponse;
-import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
@@ -30,7 +29,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
-import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
 @Service
@@ -40,8 +38,6 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 	private IOrdOrderAtomSV ordOrderAtomSV;
 	@Autowired
 	private IOrdOdLogisticsAtomSV ordOdLogisticsAtomSV;
-	@Autowired
-	private IOrderIndexBusiSV orderIndexBusiSV;
 	
 	//待卖家收货确认状态修改 (买家发货快递填写)
 	@Override
@@ -53,8 +49,6 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		//
 		this.ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		//刷新搜索引擎数据
-		//this.orderIndexBusiSV.refreshStateData(ordOrder,null);
-		
 		this.refreshData(ordOrder, ordOdLogistics);
 	}
 	
@@ -73,9 +67,13 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 					"订单信息不存在");
 		}
 		if(OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER.equals(ordOrder.getBusiCode())) {
+			//子订单
+			OrdOrder subOrder =null;
+			//父订单
+			OrdOrder parentOrder=null;
+			//
 			ordOrder.setState( OrdersConstants.OrdOrder.State.REFUND_AUDIT);
 			ordOrderAtomSV.updateById(ordOrder);
-		//	this.ordOrderAtomSV.updateStateByOrderId(tenantId, orderId, OrdersConstants.OrdOrder.State.REFUND_AUDIT);
 			//换货完成之后判断子订单下的信息
 			/* 获取子订单下的所有售后订单*/
 			List<OrdOrder> orderList =ordOrderAtomSV.selectSubSaleOrder(ordOrder.getOrigOrderId(),request.getOrderId());
@@ -94,32 +92,28 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 				}
 			}
 			if(CollectionUtil.isEmpty(orderList)||flag) {
-				OrdOrder order = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
+				subOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
 						ordOrder.getOrigOrderId());
-				order.setState(OrdersConstants.OrdOrder.State.COMPLETED);
-				ordOrderAtomSV.updateById(order);
+				subOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
+				ordOrderAtomSV.updateById(subOrder);
 				//判断父订单下的其它子订单状态  
 				// 完成则为 父订单完成,否则父订单不变
-				boolean stateFlag = this.judgeState(order);
+				boolean stateFlag = this.judgeState(subOrder);
 				if(stateFlag) {
-					OrdOrder parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
-							order.getParentOrderId());
+					parentOrder = ordOrderAtomSV.selectByOrderId(request.getTenantId(), 
+							subOrder.getParentOrderId());
 					parentOrder.setState(OrdersConstants.OrdOrder.State.COMPLETED);
 					ordOrderAtomSV.updateById(parentOrder); 
 				}
 			}
+			//刷新搜索引擎数据
+			this.refreshData(ordOrder, parentOrder, subOrder);
 		}else {
 			ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_REPAY);
 			ordOrderAtomSV.updateById(ordOrder);
-			//this.ordOrderAtomSV.updateStateByOrderId(tenantId, orderId, OrdersConstants.OrdOrder.State.WAIT_REPAY);
+			//刷新搜索引擎数据
+			this.refreshData(ordOrder, null, null);
 		}
-		
-		// 刷新搜索引擎数据
-    	SesDataRequest sesReq=new SesDataRequest();
-    	sesReq.setTenantId(request.getTenantId());
-    	sesReq.setParentOrderId(ordOrder.getParentOrderId());
-    	this.orderIndexBusiSV.insertSesData(sesReq);
-		
 		return response;
 	}
 	
@@ -188,4 +182,59 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		}
 		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
 	}
+    
+    
+    
+    /**
+     * 
+     * @param ordOrder
+     * @param pOrder
+     * @param subProd
+     * @throws BusinessException
+     * @throws SystemException
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
+    public void refreshData(OrdOrder ordOrder,OrdOrder pOrder,OrdOrder subOrder) 
+    		throws BusinessException, SystemException {
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+  		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+				commonConditionsByOrderId(ordOrder.getParentOrderId());
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+		List<OrderInfo> ordList = result.getContents();
+		if(CollectionUtil.isEmpty(ordList)) {
+			throw new BusinessException("搜索引擎无数据! 父订单id为:"+ordOrder.getParentOrderId());
+		}
+		OrderInfo orderInfo = ordList.get(0);
+		//更新父订单状态
+		if(pOrder!=null) {
+			orderInfo.setParentorderstate(pOrder.getState());
+		}
+		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+		for (OrdProdExtend ordProdExtend : ordextendes) {
+			//售后订单
+			if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
+				ordProdExtend.setState(ordOrder.getState());
+				//订单状态翻译
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+						"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
+				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+			} 
+			//子订单信息修改
+			//退费时候
+			if(OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER.equals(ordOrder.getBusiCode()) &&
+					ordOrder.getOrigOrderId()==ordProdExtend.getOrderid()) {
+				ordProdExtend.setState(subOrder.getState());
+				//订单状态翻译
+				SysParam sysParamState = InfoTranslateUtil.translateInfo(subOrder.getTenantId(),
+						"ORD_ORDER", "STATE",subOrder.getState(), iCacheSV);
+				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+			}
+		}
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+	}
+    
 }
