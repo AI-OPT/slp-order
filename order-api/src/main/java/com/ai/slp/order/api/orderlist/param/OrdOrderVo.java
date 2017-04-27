@@ -25,11 +25,11 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 仓库ID
 	 */
-	private String routeid;//--
+	private String routeid;
 	/**
 	 * 仓库信息
 	 */
-	private String routename;//--
+	private String routename;
 	/**
 	 * 父订单id
 	 */
@@ -37,16 +37,16 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 支付流水号
 	 */
-	private Long balacneifid;//--
+	private Long balacneifid;
 	/**
 	 * 外部流水号
 	 */
-	private String externalid;//--
+	private String externalid;
 
 	/**
 	 * 买家帐号 userid
 	 */
-	private String userid;//--
+	private String userid;
 
 	/**
 	 * 用户姓名
@@ -56,7 +56,7 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 支付帐号
 	 */
-	private Long acctid;//--
+	private Long acctid;
 
 	/**
 	 * 买家留言 订单备注
@@ -86,12 +86,12 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 积分中心返回的id
 	 */
-	private String downstreamorderid;//--
+	private String downstreamorderid;
 
 	/**
 	 * 业务类型
 	 */
-	private String busicode;//--
+	private String busicode;
 
 	/**
 	 * 业务类型展示名称
@@ -101,7 +101,7 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 订单类型
 	 */
-	private String ordertype;//--
+	private String ordertype;
 
 	/**
 	 * 订单类型展示名称
@@ -118,15 +118,15 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 支付方式
 	 */
-	private String paystyle;//--
+	private String paystyle;
 	/**
 	 * 支付方式显示值
 	 */
-	private String paystylename;//--
+	private String paystylename;
 	/**
 	 * 支付时间
 	 */
-	private Date paytime;//--
+	private Date paytime;
 	/**
 	 * 下单时间
 	 */
@@ -142,11 +142,11 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 减免金额
 	 */
-	private long operdiscountfee;//--
+	private long operdiscountfee;
 	/**
 	 * 减免原因
 	 */
-	private String operdiscountdesc;//--
+	private String operdiscountdesc;
 	/**
 	 * 总应收费用
 	 */
@@ -168,7 +168,7 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 发票类型
 	 */
-	private String invoicetype;//--
+	private String invoicetype;
 
 	/**
 	 * 发票类型展示名称
@@ -188,11 +188,11 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 发票打印状态
 	 */
-	private String invoicestatus;//--
+	private String invoicestatus;
 	/**
 	 * 物流单号
 	 */
-	private String expressoddnumber;//--
+	private String expressoddnumber;
 	/**
 	 * 到件方公司
 	 */
@@ -204,11 +204,11 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 售后页面客户手机
 	 */
-	private String aftercontacttel;//--
+	private String aftercontacttel;
 	/**
 	 * 售后页面收货信息
 	 */
-	private String aftercontactinfo;//--
+	private String aftercontactinfo;
 
 	/**
 	 * 收件人电话
@@ -243,7 +243,7 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 收件人末级区域
 	 */
-	private String areacode;//--
+	private String areacode;
 
 	/**
 	 * 详细地址(自提地址)
@@ -253,12 +253,12 @@ public class OrdOrderVo extends BaseInfo {
 	/**
 	 * 物流公司ID
 	 */
-	private String expressid;//--
+	private String expressid;
 
 	/**
 	 * 受理工号
 	 */
-	private String operid;//--
+	private String operid;
 
 	/**
 	 * 纳税人识别号
