@@ -310,6 +310,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		List<ProdInfo> prodInfos=new ArrayList<ProdInfo>();
 		OrdProdExtend prodExtend=new OrdProdExtend();
 		prodExtend.setState(afterOrder.getState());
+		//售后操作人
+		prodExtend.setOperid(afterOrder.getOperId());
 		//订单状态翻译
 		SysParam sysParamState = InfoTranslateUtil.translateInfo(afterOrder.getTenantId(),
 				"ORD_ORDER", "STATE",afterOrder.getState(), iCacheSV);

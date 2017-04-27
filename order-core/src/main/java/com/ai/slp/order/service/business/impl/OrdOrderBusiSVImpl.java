@@ -20,7 +20,6 @@ import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.search.vo.Sort;
 import com.ai.paas.ipaas.search.vo.Sort.SortOrder;
-import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.slp.order.api.orderlist.param.BehindOrdOrderVo;
 import com.ai.slp.order.api.orderlist.param.BehindOrdProductVo;
 import com.ai.slp.order.api.orderlist.param.BehindParentOrdOrderVo;
@@ -70,7 +69,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 			throws BusinessException, SystemException {
 		logger.debug("开始订单详情查询..");
 		QueryOrderResponse response = new QueryOrderResponse();
-		
 		IOrderSearch orderSearch = new OrderSearchImpl();
 		Long orderId = orderRequest.getOrderId();
 		String tenantId = orderRequest.getTenantId();
@@ -85,7 +83,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		OrderInfo orderInfo = ordList.get(0);
 		OrdOrderVo ordOrderVo=new OrdOrderVo();
 		BeanUtils.copyProperties(ordOrderVo, orderInfo);
-		
 		List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
 		List<OrdProductVo> productList = new ArrayList<OrdProductVo>();
 		for (OrdProdExtend ordProdExtend : ordextendes) {
@@ -105,7 +102,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					prodVo.setTotalfee(prodInfo.getTotalfee());
 					prodVo.setAdjustfee(prodInfo.getAdjustfee());
 					prodVo.setDiscountfee(prodInfo.getDiscountfee());
-					//
+					//查询商品信息 TODO
 					ProductImage productImage = getProductImage(tenantId, prodInfo.getSkuid());
 					prodVo.setProductimage(productImage);
 					prodVo.setCouponfee(prodInfo.getCouponfee());
@@ -114,9 +111,8 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 					prodVo.setGivejf(prodInfo.getGivejf());
 					prodVo.setProdcode(prodInfo.getProdcode());
 					prodVo.setSkustorageid(prodInfo.getSkustorageid());
-					
-				//    private String imageurl;
-				//    private String prodextendinfo;
+					prodVo.setImageurl(prodInfo.getImageurl());
+					prodVo.setProdextendinfo(prodInfo.getProdextendinfo());
 					productList.add(prodVo);
 				}
 			}
@@ -379,7 +375,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		ordOrderVo.setPaidfee(ordProdExtend.getPaidfee());
 		ordOrderVo.setPayfee(ordProdExtend.getPayfee());
 		ordOrderVo.setTotalfee(ordProdExtend.getTotalfee());
-		ordOrderVo.setFreight(ordProdExtend.getFreight()); 
+		ordOrderVo.setFreight(ordProdExtend.getFreight());
+		//父子订单该字段表示留言信息; 售后订单表示退换货,退款理由
+		ordOrderVo.setRemark(ordProdExtend.getRemark());
+		//操作人
+		ordOrderVo.setOperid(ordProdExtend.getOperid());
 		// 4.订单配送信息查询 
 		if (!OrdersConstants.OrdOrder.BusiCode.NORMAL_ORDER.equals(ordProdExtend.getBusicode())) {
 			// 售后单获取子订单配送信息

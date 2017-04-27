@@ -501,6 +501,8 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		prodExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 		prodExtend.setBusicode(ordOrder.getBusiCode());
 		prodExtend.setOrderid(ordOrder.getOrderId());
+		//
+		prodExtend.setRemark(ordOrder.getRemark());
 		//订单费用信息
 		prodExtend.setTotalfee(feeInfo.getTotalFee());
 		prodExtend.setDiscountfee(feeInfo.getDiscountFee());
@@ -551,7 +553,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setPorderid( ordOrder.getOrderId());
 		ordInfo.setUsername( ordOrder.getUserName());
 		ordInfo.setUsertel( ordOrder.getUserTel());
-		//ordInfo.setDeliveryflag( ordOrder.getDeliveryFlag());
+		ordInfo.setDeliveryflag( ordOrder.getDeliveryFlag());
 		ordInfo.setFlag( ordOrder.getFlag());
 		//翻译是否需要物流
 		SysParam sysParamDf = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(), "ORD_ORDER",
@@ -593,7 +595,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 		ordInfo.setAreacode(logistics.getAreaCode() == null ? ""
 				: iCacheSV.getAreaName(logistics.getAreaCode()));
 		ordInfo.setAddress(logistics.getAddress());
-		ordInfo.setRemark(ordOrder.getRemark());
 		return ordInfo;
     }
 }
