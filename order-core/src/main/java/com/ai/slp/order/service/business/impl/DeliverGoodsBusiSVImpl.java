@@ -13,20 +13,33 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.paas.ipaas.search.vo.Result;
+import com.ai.paas.ipaas.search.vo.SearchCriteria;
+import com.ai.platform.common.api.cache.interfaces.ICacheSV;
+import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
 import com.ai.slp.order.constants.OrdersConstants;
+import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.manager.ESClientManager;
+import com.ai.slp.order.search.bo.OrdProdExtend;
+import com.ai.slp.order.search.bo.OrderInfo;
+import com.ai.slp.order.search.dto.SearchCriteriaStructure;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdLogisticsAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
+import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IDeliverGoodsBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
+import com.ai.slp.order.util.InfoTranslateUtil;
 import com.ai.slp.order.util.OrderStateChgUtil;
 
 @Service
@@ -118,7 +131,7 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 		ordOdLogistics.setExpressOddNumber(request.getExpressOddNumber());
 		ordOdLogisticsAtomSV.updateByPrimaryKey(ordOdLogistics);
 		/* 更新订单状态和订单轨迹信息*/
-		this.updateOrderState(ordOrder, ordOrder.getOperId());
+		this.updateOrderState(ordOrder, ordOrder.getOperId(),ordOdLogistics);
 	}
 	
 	
@@ -126,7 +139,8 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
      * 更新订单状态,并写入订单状态变化轨迹表
      * 
      */
-    private void updateOrderState(OrdOrder ordOrder,String operId) {
+    private void updateOrderState(OrdOrder ordOrder,String operId,
+    		OrdOdLogistics ordOdLogistics ) {
         String orgState = ordOrder.getState();
         String newState = OrdersConstants.OrdOrder.State.WAIT_CONFIRM;
         ordOrder.setState(newState);
@@ -135,13 +149,22 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
         
         ordOrderAtomSV.updateOrderState(ordOrder);
     	//写入搜索引擎
-		orderIndexBusiSV.refreshStateData(ordOrder,null);
+		//orderIndexBusiSV.refreshStateData(ordOrder,null);
+		
+        //刷新搜索引擎数据
+		this.refreshLogisticsData(ordOrder,ordOdLogistics);
+		
+		
+		
+		
+		
 		//异步 写入订单状态变化轨迹表
 		OrderStateChgUtil.trailProcess(ordOrder.getOrderId(), ordOrder.getTenantId(), orgState, newState,
                 OrdOdStateChg.ChgDesc.ORDER_TO_FINISH_LOGISTICS_DELIVERY, null, operId, null, sysDate);
    }
     
-    /**
+
+	/**
 	  * 获取订单下的商品信息
 	  */
 	private List<OrdOdProd> getOrdOdProds(String tenantId,long orderId) {
@@ -179,5 +202,42 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 				}
 			}
 		return orderList;
+	  }
+	  
+	  /**
+	   * 刷新es引擎物流相关数据
+	   * @param ordOrder
+	   * @param ordOdLogistics
+	   * @author caofz
+	   * @ApiDocMethod
+	   * @ApiCode 
+	   * @RestRelativeURL
+	   */
+	  private void refreshLogisticsData(OrdOrder ordOrder, OrdOdLogistics ordOdLogistics) {
+		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
+  		IOrderSearch orderSearch = new OrderSearchImpl();
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
+				commonConditionsByOrderId(ordOrder.getParentOrderId());
+		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
+		List<OrderInfo> ordList = result.getContents();
+		if(CollectionUtil.isEmpty(ordList)) {
+			throw new BusinessException("搜索引擎无数据! 父订单id为:"+ordOrder.getParentOrderId());
+		}
+		OrderInfo orderInfo = ordList.get(0);
+		if(orderInfo!=null) {
+			orderInfo.setExpressid(ordOdLogistics.getExpressId());
+			orderInfo.setExpressoddnumber(ordOdLogistics.getExpressOddNumber());
+			List<OrdProdExtend> ordextendes = orderInfo.getOrdextendes();
+			for (OrdProdExtend ordProdExtend : ordextendes) {
+				if(ordOrder.getOrderId()==ordProdExtend.getOrderid()) {
+					ordProdExtend.setState(ordOrder.getState());
+					//订单状态翻译
+					SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
+							"ORD_ORDER", "STATE",ordOrder.getState(), iCacheSV);
+					ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
+				}
+			}
+		}
+		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
 	  }
 }

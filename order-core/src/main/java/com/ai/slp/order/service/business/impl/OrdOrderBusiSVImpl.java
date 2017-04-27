@@ -103,9 +103,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 				ordOrderVo.setOrigorderid(ordProdExtend.getOrigorderid());
 				ordOrderVo.setState(ordProdExtend.getState());
 				ordOrderVo.setStatename(ordProdExtend.getStatename());
-				//TODO 路由id  是否翻译
+				//前层翻译
 				ordOrderVo.setRouteid(ordProdExtend.getRouteid());
-				
+				ordOrderVo.setBusicode(ordProdExtend.getBusicode());
 				ordOrderVo.setParentorderid(ordProdExtend.getParentorderid());
 				ordOrderVo.setAdjustfee(ordProdExtend.getAdjustfee());
 				ordOrderVo.setDiscountfee(ordProdExtend.getDiscountfee());
@@ -228,55 +228,6 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	}
 	
 	
-	/**
-	 * 订单下面的商品信息
-	 * @param orderId
-	 * @return
-	 * @author zhangxw
-	 * @param tenantId
-	 * @ApiDocMethod
-	 */
-	private List<OrdProductVo> getOrdProductList(String tenantId, long orderId) {
-		List<OrdProductVo> productList = new ArrayList<OrdProductVo>();
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		/*	List<OrdOdProd> ordOdProdList=ordOdProdAtomSV.selectByOrd(tenantId, orderId);
-		if (!CollectionUtil.isEmpty(ordOdProdList)) {
-			for (OrdOdProd ordOdProd : ordOdProdList) {
-				OrdProductVo ordProductVo = new OrdProductVo();
-				ordProductVo.setOrderId(orderId);
-				ordProductVo.setProdDetalId(ordOdProd.getProdDetalId());
-				ordProductVo.setSkuId(ordOdProd.getSkuId());
-				ordProductVo.setState(ordOdProd.getState());
-				ordProductVo.setProdName(ordOdProd.getProdName());
-				ordProductVo.setSalePrice(ordOdProd.getSalePrice());
-				ordProductVo.setBuySum(ordOdProd.getBuySum());
-				ordProductVo.setTotalFee(ordOdProd.getTotalFee());
-				ordProductVo.setDiscountFee(ordOdProd.getDiscountFee());
-				ordProductVo.setAdjustFee(ordOdProd.getAdjustFee());
-				ordProductVo.setOperDiscountFee(ordOdProd.getOperDiscountFee());
-				ordProductVo.setCouponFee(ordOdProd.getCouponFee()); // 优惠费用
-				ordProductVo.setCusServiceFlag(ordOdProd.getCusServiceFlag()); // 商品是否售后标识
-				ordProductVo.setJfFee(ordOdProd.getJfFee()); // 消费积分
-				ordProductVo.setGiveJF(ordOdProd.getJf()); // 赠送积分
-				ordProductVo.setProdCode(ordOdProd.getProdCode()); // 商品编码
-				ordProductVo.setSkuStorageId(ordOdProd.getSkuStorageId());
-				ProductImage productImage = this.getProductImage(tenantId, ordOdProd.getSkuId());
-				ordProductVo.setProductImage(productImage);
-				ordProductVo.setImageUrl(ordOdProd.getProdDesc()); // 图片id
-				ordProductVo.setProdExtendInfo(ordOdProd.getProdSn()); // 图片类型
-				productList.add(ordProductVo);
-			}
-		}*/
-		return productList;
-	}
 
 	/**
 	 * 获取图片信息
