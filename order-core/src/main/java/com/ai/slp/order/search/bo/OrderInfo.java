@@ -45,7 +45,7 @@ public class OrderInfo {
 	private String postcode;
 	private String areacode;
 	private String address;
-	private String expressId; //TODO
+	private String expressid; //TODO
 	private String operid; 
 	private String buyertaxpayernumber;
 	private String buyerbankname;
@@ -259,11 +259,11 @@ public class OrderInfo {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	public String getExpressId() {
-		return expressId;
+	public String getExpressid() {
+		return expressid;
 	}
-	public void setExpressId(String expressId) {
-		this.expressId = expressId;
+	public void setExpressid(String expressid) {
+		this.expressid = expressid;
 	}
 	public String getBuyertaxpayernumber() {
 		return buyertaxpayernumber;
