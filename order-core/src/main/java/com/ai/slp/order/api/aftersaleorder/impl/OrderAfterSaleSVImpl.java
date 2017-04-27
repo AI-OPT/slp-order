@@ -87,23 +87,15 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 
 	@Override
 	public BaseResponse backStateOFC(OrderOFCBackRequest request) throws BusinessException, SystemException {
-		/*参数校验*/
+		//参数校验
 		ValidateUtils.validateOFCBackRequest(request);
 		BaseResponse response =new BaseResponse();
-		//查询
-	  /*List<OrdOrder> orderList =ordOrderAtomSV.selectOrderByOrigOrderId(
-  				Long.parseLong(request.getExternalOrderId()), Long.parseLong(request.getOrderId()));
-  		if(CollectionUtil.isEmpty(orderList)) {
-  			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
-  					"订单信息不存在[订单id:"+request.getOrderId()+"]");
-  		}
-  		OrdOrder ordOrder = orderList.get(0);*/
-		
+		//
 		OrdOrder ordOrder =new OrdOrder();
 		ordOrder.setOrderId(Long.parseLong(request.getExternalOrderId()));
 		ordOrder.setState(request.getState());
   		ordOrder.setRemark(request.getReasonDesc());
-  		
+  		//状态修改
 		orderAfterSaleBusiSV.backStateOFC(ordOrder);
 		ResponseHeader responseHeader = new ResponseHeader(true,
 				ExceptCodeConstants.Special.SUCCESS, "成功");
