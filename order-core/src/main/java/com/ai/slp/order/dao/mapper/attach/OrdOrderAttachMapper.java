@@ -75,7 +75,7 @@ public interface OrdOrderAttachMapper {
      * @ApiCode 
      * @RestRelativeURL
      */
-    @Update("update ord_od_prod set CUS_SERVICE_FLAG = #{cusServiceFlag} where ORDER_ID = #{orderId} ")
+    @Update("update ord_od_prod set CUS_SERVICE_FLAG = #{cusServiceFlag} where PROD_DETAL_ID = #{prodDetalId} ")
 	public int updateCusServiceFlag(OrdOdProd ordOdProd);
     
     
