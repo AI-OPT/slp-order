@@ -178,14 +178,14 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     		 }
     		
     		//刷新数据 售后订单-子订单-父订单状态改变
-    		this.refreshData(ordOrder, parentOrder,null);
+    		this.refreshData(ordOrder, parentOrder,null,order);
     		
         }else {
         	/* 退款业务类型时  拒绝  改变原始订单的商品售后标识状态*/
     		OrdOdProd subProd = this.updateProdCusServiceFlag(ordOrder);
     		
     		//刷新数据 售后订单-售后标识改变
-    		this.refreshData(ordOrder, null,subProd);
+    		this.refreshData(ordOrder, null,subProd,null);
     		
         }
         // 写入订单状态变化轨迹表
@@ -243,7 +243,8 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     
     
     
-    public void refreshData(OrdOrder ordOrder,OrdOrder pOrder,OrdOdProd subProd) 
+    public void refreshData(OrdOrder ordOrder,OrdOrder pOrder,
+    		OrdOdProd subProd,OrdOrder subOrder) 
     		throws BusinessException, SystemException {
 		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
   		IOrderSearch orderSearch = new OrderSearchImpl();
@@ -286,9 +287,9 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 			//退货时候 	子订单订单状态修改
 			}else if(OrdersConstants.OrdOrder.BusiCode.UNSUBSCRIBE_ORDER.equals(ordOrder.getBusiCode()) &&
 					ordOrder.getOrigOrderId()==ordProdExtend.getOrderid()){
-				ordProdExtend.setState(pOrder.getState());
+				ordProdExtend.setState(subOrder.getState());
 				SysParam sysParamState = InfoTranslateUtil.translateInfo(ordOrder.getTenantId(),
-						"ORD_ORDER", "STATE",pOrder.getState(), iCacheSV);
+						"ORD_ORDER", "STATE",subOrder.getState(), iCacheSV);
 				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 			}
 		}
