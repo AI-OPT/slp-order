@@ -284,7 +284,6 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		}
 		orderInfo = this.assembleData(afterOrder, afterOrdOdProd,rdOrdOdFeeTotal, 
 				iCacheSV, ordextendes, orderInfo);
-		ordList.add(orderInfo);
 		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
   	}
   	
