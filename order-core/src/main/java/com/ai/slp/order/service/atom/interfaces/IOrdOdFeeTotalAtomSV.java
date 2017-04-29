@@ -20,4 +20,6 @@ public interface IOrdOdFeeTotalAtomSV {
 
 	int updateByExampleSelective(@Param("record") OrdOdFeeTotal record,
 			@Param("example") OrdOdFeeTotalCriteria example);
+	
+	OrdOdFeeTotal selectByPrimaryKey(long orderId);
 }

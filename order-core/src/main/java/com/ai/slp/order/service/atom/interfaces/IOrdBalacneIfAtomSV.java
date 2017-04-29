@@ -14,6 +14,6 @@ public interface IOrdBalacneIfAtomSV {
     List<OrdBalacneIf> selectBalacneIf(OrdOrder order);
 
 	OrdBalacneIf selectByOrderId(String tenantId, long orderId);
-	
-	 int updateByPrimaryKey(OrdBalacneIf record);;
+	OrdBalacneIf selectByOrderId(long orderId);
+	int updateByPrimaryKey(OrdBalacneIf record);;
 }
