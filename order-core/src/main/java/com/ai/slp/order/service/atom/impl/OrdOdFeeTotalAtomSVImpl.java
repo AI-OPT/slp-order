@@ -50,4 +50,9 @@ public class OrdOdFeeTotalAtomSVImpl implements IOrdOdFeeTotalAtomSV {
 		return ordOdFeeTotalMapper.countByExample(example);
 	}
 
+	@Override
+	public OrdOdFeeTotal selectByPrimaryKey(long orderId) {
+		return ordOdFeeTotalMapper.selectByPrimaryKey(orderId);
+	}
+
 }

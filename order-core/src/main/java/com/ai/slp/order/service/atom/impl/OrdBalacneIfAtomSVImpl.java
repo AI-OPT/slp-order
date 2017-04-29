@@ -49,4 +49,13 @@ public class OrdBalacneIfAtomSVImpl implements IOrdBalacneIfAtomSV {
 		criteriaBalance.andOrderIdEqualTo(order.getOrderId());
 		return ordBalacneIfMapper.selectByExample(exampleBalance);
 	}
+
+	@Override
+	public OrdBalacneIf selectByOrderId(long orderId) {
+		OrdBalacneIfCriteria example = new OrdBalacneIfCriteria();
+        example.createCriteria().andOrderIdEqualTo(orderId);
+        List<OrdBalacneIf> OrdBalacneIfs = ordBalacneIfMapper
+                .selectByExample(example);
+        return OrdBalacneIfs == null || OrdBalacneIfs.isEmpty() ? null : OrdBalacneIfs.get(0);
+	}
 }
