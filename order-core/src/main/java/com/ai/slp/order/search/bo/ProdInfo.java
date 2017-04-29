@@ -1,27 +1,27 @@
 package com.ai.slp.order.search.bo;
 
 public class ProdInfo {
-	private String prodname;
-	private long buysum;
-	
-    private long saleprice;
-    private long couponfee;
-    private long jffee;
-    private long givejf;
-    private String cusserviceflag;
-    private String state; //TODO 是否翻译
-    private String prodcode;
-    private String skuid;
-    private long proddetalid;
-    private String vfsid;
-    private String pictype;  
-    private String imageurl; 
-    private String prodextendinfo; 
-    private String skustorageid;
-	private long totalfee; 
-	private long discountfee;
-	private long adjustfee;
-//	private long operdiscountfee;
+	private String prodname; //商品名称
+	private long buysum; //商品数量
+    private long saleprice; //商品单价
+    private long couponfee;//优惠券
+    private long jffee;//积分
+    private long givejf;//赠送积分
+    private String cusserviceflag;//售后标识
+    private String state; //商品状态  1：销售;  2：退货;  3：换货; 4：预售
+    private String prodcode;//商品编码
+    private String skuid;//单品id
+    private long proddetalid; //订单商品明细id
+    private String vfsid; //图片id
+    private String pictype;  //图片类型
+    private String imageurl; //售后申请图片id
+    private String prodextendinfo; //售后申请图片类型
+    private String skustorageid; //库存ID
+    
+    //elasticSearch暂时没存入的信息
+	private long totalfee; //费用
+	private long discountfee;//优惠额
+	private long adjustfee;//实支付
     
 	public String getProdname() {
 		return prodname;
@@ -107,18 +107,6 @@ public class ProdInfo {
 	public void setImageurl(String imageurl) {
 		this.imageurl = imageurl;
 	}
-	/*public String getProdextendinfo() {
-		return prodextendinfo;
-	}
-	public void setProdextendinfo(String prodextendinfo) {
-		this.prodextendinfo = prodextendinfo;
-	}
-	public String getSkustorageid() {
-		return skustorageid;
-	}
-	public void setSkustorageid(String skustorageid) {
-		this.skustorageid = skustorageid;
-	}*/
 	public long getTotalfee() {
 		return totalfee;
 	}

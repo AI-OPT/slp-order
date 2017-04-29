@@ -4,53 +4,52 @@ import java.util.List;
 
 public class OrderInfo {
 //	private String tenantid;
-	private long porderid;
-	private String username;
-	private String usertel;
-	private String flag;
-	private String deliveryflag;
-	private String deliveryflagname;
-	private long discountfee;
-	private long adjustfee;
-	private String contacttel;
-	private long points;
-	private long totalprodsize;
-	private Date ordertime;
-	private String parentorderstate;
-	private String supplierid;
-	private String ifwarning;
-	private String warningtype;
-	private List<OrdProdExtend> ordextendes;
-	
-	
-	private String chlid;
-	private String accountid;
-	private String userid;
 //	private long acctid;
-	private String token;
-	private String downstreamorderid;      //TODO
-	private String ordertype;  
-	private String paystyle; 
-	private String invoicetype; 
-	private String invoicetitle;
-	private String invoicecontent;
-	private String invoicestatus; //TODO
-	private String expressoddnumber;
-	private String contactcompany;
-	private String contactname;
-	private String logisticstype;
-	private String provincecode;
-	private String citycode;
-	private String countycode;
-	private String postcode;
-	private String areacode;
-	private String address;
-	private String expressid; //TODO
-	private String buyertaxpayernumber;
-	private String buyerbankname;
-	private String buyerbankaccount;
-	private long balacneifid; //TODO
-	private String externalid; //TODO
+	private long porderid; //父订单
+	private String userid;//用户id
+	private String username; //用户名称
+	private String usertel; //用户手机号
+	private String flag;//业务标识
+	private String deliveryflag;//是否需要物流
+	private String deliveryflagname; //翻译是否需要物流
+	private long discountfee;//优惠额
+	private long adjustfee;//实支付
+	private String contacttel;//收货人联系手机号
+	private long points;//积分
+	private long totalprodsize; //商品总个数
+	private Date ordertime;//订单下单时间
+	private String parentorderstate;//父订单状态
+	private String supplierid;//供应商id
+	private String ifwarning;//是否预警
+	private String warningtype;//预警类型
+	private String chlid;//订单来源
+	private String accountid;//积分账户id
+	private String token;//积分令牌id
+	private String downstreamorderid; //用户消费积分oid
+	private String ordertype;  //订单类型
+	private String paystyle; //支付方式
+	private String invoicetype; //发票类型
+	private String invoicetitle;//发票抬头
+	private String invoicecontent;//发票登记打印内容
+	private String invoicestatus; //发票状态
+	private String expressoddnumber;//物流单号
+	private String contactcompany; //到件方公司
+	private String contactname;//收件人姓名
+	private String logisticstype;//配送方式
+	private String provincecode;//收件人省份
+	private String citycode;//地市
+	private String countycode;//区县
+	private String postcode;//邮编
+	private String areacode;//收件人末级区域
+	private String address;//详细地址
+	private String expressid; //物流公司id
+	private String buyertaxpayernumber;//纳税人识别号
+	private String buyerbankname;//购货方开户行名称
+	private String buyerbankaccount;//购货方开户行账号
+	private long balacneifid; //支付机构id
+	private String externalid; //外部流水号
+	
+	private List<OrdProdExtend> ordextendes;
 	
 	public long getPorderid() {
 		return porderid;

@@ -3,32 +3,26 @@ package com.ai.slp.order.search.bo;
 import java.util.List;
 
 public class OrdProdExtend {
-	private long  orderid;
-	private long  parentorderid;
-	private String  state;
-	private String  statename;
-	private String  busicode;
-	private long  prodsize;
-	private String routeid; 
-	private String operid; 
-	private List<ProdInfo> prodinfos;
-	
-	
-	
-	
-	
-
-	private long origorderid;
-	private long totalfee; //TODO
-	private long discountfee;
-	private long adjustfee;
-	private long paidfee; //TODO
-	private long payfee;
-	private long freight;
-	private String afterexpressoddnumber;
-	private String afterexpressid;
+	private long  orderid; //订单id
+	private long  parentorderid; //父订单id
+	private String  state;//状态
+	private String  statename;//状态名称
+	private String  busicode;//业务类型
+	private long  prodsize;//商品数量
+	private String routeid; //仓库id
+	private String operid; //操作员id
+	private long origorderid; //原始订单id
+	private long totalfee; //总费用
+	private long discountfee; //优惠额
+	private long adjustfee;//实支付
+	private long paidfee; //退款金额
+	private long payfee;//实支付
+	private long freight;//运费
+	private String afterexpressoddnumber;  //售后填写物流单号
+	private String afterexpressid; //售后物流公司id
 	private String remark;  //子订单为留言信息,售后订单为退换货,退款理由
 	
+	private List<ProdInfo> prodinfos;
 	public String getOperid() {
 		return operid;
 	}
