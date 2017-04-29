@@ -119,7 +119,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdBalacneIf" >
-    insert into ord_balacne_if
+    insert delayed into ord_balacne_if
     <trim prefix="(" suffix=")" suffixOverrides="," >
       BALACNE_IF_ID,
       <if test="tenantId != null" >
