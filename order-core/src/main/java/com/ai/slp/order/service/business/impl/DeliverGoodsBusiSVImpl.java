@@ -17,14 +17,15 @@ import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
+import com.ai.paas.ipaas.search.ISearchClient;
 import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
 import com.ai.slp.order.api.delivergoods.param.DeliverGoodsRequest;
 import com.ai.slp.order.constants.OrdersConstants;
-import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
+import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
@@ -230,6 +231,8 @@ public class DeliverGoodsBusiSVImpl implements IDeliverGoodsBusiSV {
 				}
 			}
 		}
-		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
+		client.bulkInsert(ordList);
+		client.refresh();
 	  }
 }
