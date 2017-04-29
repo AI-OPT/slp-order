@@ -190,8 +190,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		afterOrdOdProd.setUpdateOperId(request.getOperId());
 		ordOdProdAtomSV.insertSelective(afterOrdOdProd);
     	/* 3.生成售后订单费用总表*/
-		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
-    			order.getOrderId());
+		OrdOdFeeTotal odFeeTotal = ordOdFeeTotalAtomSV.selectByPrimaryKey(order.getOrderId());
 		OrdOdFeeTotal rdOrdOdFeeTotal=new OrdOdFeeTotal();
     	BeanUtils.copyProperties(rdOrdOdFeeTotal, odFeeTotal);
     	rdOrdOdFeeTotal.setTotalFee(afterTotalFee);
@@ -210,8 +209,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
     	//
     	if(!OrdersConstants.OrdOrder.BusiCode.EXCHANGE_ORDER.equals(busiCode)) {
     		/* 4.生成售后订单支付机构接口*/
-    		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(
-    				order.getTenantId(), order.getOrderId());
+    		OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(order.getOrderId());
     		if(ordBalacneIf==null) {
     			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT,
     					"订单支付机构信息不存在[订单id:"+order.getOrderId()+"]");
