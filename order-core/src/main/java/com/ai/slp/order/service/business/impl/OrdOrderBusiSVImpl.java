@@ -6,7 +6,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
@@ -193,7 +195,9 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	 * @author zhangxw
 	 * @ApiDocMethod
 	 */
-	private ProductImage getProductImage(String tenantId, String skuId) {
+	@Cacheable("orderProdImg")
+	@Transactional(propagation=Propagation.NOT_SUPPORTED)
+	public ProductImage getProductImage(String tenantId, String skuId) {
 		ProductImage productImage = new ProductImage();
 		SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
 		skuInfoQuery.setTenantId(tenantId);
