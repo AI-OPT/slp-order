@@ -110,7 +110,6 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	private OrdOrder queryOrderInfo(OrderReturnRequest request) {
 		OrdOrder order = ordOrderAtomSV.selectByPrimaryKey(request.getOrderId());
 		if(order==null) {
-			logger.error("订单信息不存在[订单id:"+request.getOrderId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"订单信息不存在[订单id:"+request.getOrderId()+"]");
 		}
@@ -123,7 +122,6 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 	private OrdOdProd prodNumCheck(OrderReturnRequest request) {
 		OrdOdProd ordOdProd = ordOdProdAtomSV.selectByPrimaryKey(request.getProdDetalId());
 		if(ordOdProd==null) {
-			logger.error("订单商品明细不存在[商品明细id:"+request.getProdDetalId()+"]");
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"订单商品明细不存在[商品明细id:"+request.getProdDetalId()+"]");
 		}
