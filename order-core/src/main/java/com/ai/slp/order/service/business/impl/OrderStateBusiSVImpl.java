@@ -230,10 +230,10 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 			}
 		}
-		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
-//		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
-//		client.bulkInsert(ordList);
-//		client.refresh();
+//		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
+		client.bulkInsert(ordList);
+		client.refresh();
 	}
     
 }

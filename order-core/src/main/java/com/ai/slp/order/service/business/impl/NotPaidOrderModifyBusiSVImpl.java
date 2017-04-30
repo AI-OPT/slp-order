@@ -101,9 +101,9 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 			ordProdExtend.setDiscountfee(odFeeTotal.getDiscountFee());
 			ordProdExtend.setAdjustfee(odFeeTotal.getAdjustFee());
 		}
-		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
-	//	ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
-	//	client.bulkInsert(ordList);
-	//	client.refresh();
+		//ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
+		client.bulkInsert(ordList);
+		client.refresh();
 	}
 }

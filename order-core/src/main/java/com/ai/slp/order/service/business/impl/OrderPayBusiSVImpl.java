@@ -643,10 +643,10 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 		}
 		OrderInfo orderInfo = ordList.get(0);
 		orderInfo.setDownstreamorderid(order.getDownstreamOrderId());
-		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
-//		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
-//		client.bulkInsert(ordList);
-//		client.refresh();
+//		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
+		client.bulkInsert(ordList);
+		client.refresh();
 	}
 	
 	/**
