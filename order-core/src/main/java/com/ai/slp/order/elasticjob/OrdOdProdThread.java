@@ -97,8 +97,8 @@ public class OrdOdProdThread extends Thread {
 					 */
 			    	SesDataRequest sesReq=new SesDataRequest();
 			    	sesReq.setTenantId(OrdersConstants.TENANT_ID);
-			    	sesReq.setParentOrderId(ordOdProd.getOrderId());
-			    	orderIndexBusiSV.insertSesData(sesReq);
+			 //   	sesReq.setParentOrderId(ordOdProd.getOrderId());
+			//    	orderIndexBusiSV.insertSesData(sesReq);
 					LOG.error("保存订单商品信息结束,时间" + DateUtil.getSysDate());
 				}
 			} catch (Exception e) {
