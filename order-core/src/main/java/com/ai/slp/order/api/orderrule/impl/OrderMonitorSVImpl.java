@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
-import com.ai.opt.sdk.constants.ExceptCodeConstants;
-import com.ai.paas.ipaas.util.StringUtil;
 import com.ai.slp.order.api.orderrule.interfaces.IOrderMonitorSV;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorBeforResponse;
 import com.ai.slp.order.api.orderrule.param.OrderMonitorRequest;
@@ -62,16 +60,6 @@ public class OrderMonitorSVImpl implements IOrderMonitorSV {
 		OrderMonitorResponse response = new OrderMonitorResponse();
 		//
 		ResponseHeader responseHeader = new ResponseHeader();
-		if(null == request){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"请求参数不能为空");
-		}
-		if(StringUtil.isBlank(request.getUserId())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"用户id不能为空");
-		}
-		if(StringUtil.isBlank(request.getIpAddress())){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"ip地址不能为空");
-		}
-		//
 		try{
 
 			this.orderMonitorService.afterSubmitOrder(request.getIpAddress(), request.getUserId());
