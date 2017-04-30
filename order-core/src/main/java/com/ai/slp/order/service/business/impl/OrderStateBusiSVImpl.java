@@ -11,6 +11,7 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
+import com.ai.paas.ipaas.search.ISearchClient;
 import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
@@ -172,7 +173,10 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 				ordProdExtend.setAfterexpressoddnumber(afterLogistics.getExpressOddNumber());
 			}
 		}
-		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		//ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
+		client.bulkInsert(ordList);
+		client.refresh();
 	}
     
     
@@ -226,7 +230,10 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 				ordProdExtend.setStatename(sysParamState == null ? "" : sysParamState.getColumnDesc());
 			}
 		}
-		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		//ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
+		client.bulkInsert(ordList);
+		client.refresh();
 	}
     
 }

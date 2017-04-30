@@ -12,6 +12,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.util.CollectionUtil;
+import com.ai.paas.ipaas.search.ISearchClient;
 import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.slp.order.api.orderpricemodify.param.OrderModifyRequest;
@@ -100,6 +101,9 @@ public class NotPaidOrderModifyBusiSVImpl implements INotPaidOrderModifyBusiSV {
 			ordProdExtend.setDiscountfee(odFeeTotal.getDiscountFee());
 			ordProdExtend.setAdjustfee(odFeeTotal.getAdjustFee());
 		}
-		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+	//	ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
+		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
+		client.bulkInsert(ordList);
+		client.refresh();
 	}
 }
