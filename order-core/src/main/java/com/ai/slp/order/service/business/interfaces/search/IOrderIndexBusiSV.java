@@ -8,8 +8,8 @@ import com.ai.slp.order.api.sesdata.param.SesDataResponse;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 
 public interface IOrderIndexBusiSV {
-	 //新增订单信息
-	 public boolean insertSesData(SesDataRequest request) throws BusinessException, SystemException; 
+	 //订单同步数据更新elasticSearch
+	 public void orderSynchDataToSes(SesDataRequest request) throws BusinessException, SystemException; 
 	 //刷新搜索引擎状态数据
 	 public void refreshStateData(OrdOrder ordOrder,OrdOrder pOrder) throws BusinessException, SystemException; 
 	 //分页刷新数据
