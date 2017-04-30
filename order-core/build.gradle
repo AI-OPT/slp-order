@@ -6,6 +6,9 @@ dependencies {
     compile 'mysql:mysql-connector-java:5.1.36'
     compile 'org.springframework:spring-tx:4.1.7.RELEASE'
     compile 'org.springframework:spring-jdbc:4.1.7.RELEASE'
+    //缓存
+    compile 'net.sf.ehcache:ehcache:2.8.3'
+    
 
     compile 'com.ai.opt.sdk:opt-sdk:2.2-SNAPSHOT'
     compile 'com.ai.slp.product:product:1.0-SNAPSHOT'
