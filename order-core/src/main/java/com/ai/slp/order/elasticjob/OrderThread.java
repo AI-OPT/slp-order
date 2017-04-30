@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
@@ -29,6 +30,7 @@ public class OrderThread extends Thread {
 
 	private static final Log LOG = LogFactory.getLog(OrderThread.class);
 
+	@Autowired
 	private IOfcBusiSV ofcSV;
 
 	private BlockingQueue<String[]> ordOrderQueue;

@@ -40,5 +40,6 @@ public interface IOfcBusiSV {
 	 * @throws SystemException
 	 */
 	public long parseOrderId(String downstreamOrderId)throws BusinessException, SystemException;
+	
 
 }

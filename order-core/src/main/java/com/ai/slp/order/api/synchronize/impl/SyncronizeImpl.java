@@ -42,8 +42,8 @@ public class SyncronizeImpl implements ISynchronizeSV {
 			 */
 	    	SesDataRequest sesReq=new SesDataRequest();
 	    	sesReq.setTenantId(OrdersConstants.TENANT_ID);
-	 //   	sesReq.setParentOrderId(request.getOrderId());
-	 //   	orderIndexBusiSV.insertSesData(sesReq);
+	    	sesReq.setOrderId(Long.valueOf(request.getOrderId()));
+	    	orderIndexBusiSV.orderSynchDataToSes(sesReq);
 			responseHeader = new ResponseHeader(true, ResultCodeConstants.SUCCESS_CODE, "同步成功");
 		} catch (BusinessException e) {
 			LOG.error("同步订单失败,原因:"+JSON.toJSONString(e));

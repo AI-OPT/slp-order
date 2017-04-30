@@ -29,6 +29,7 @@ public class OrdOdProdThread extends Thread {
 
 	private static final Log LOG = LogFactory.getLog(OrdOdProdThread.class);
 
+	@Autowired
 	private IOfcBusiSV ofcSV;
 	
 	@Autowired
@@ -61,7 +62,8 @@ public class OrdOdProdThread extends Thread {
 					// 租户Id
 					ordOdProd.setTenantId(PropertiesUtil.getStringByKey("ofc.ordOrder.tenantId"));
 					// 订单id
-					ordOdProd.setOrderId(Long.valueOf(queue[1]));
+					long orderId = ofcSV.parseOrderId(queue[1]);
+					ordOdProd.setOrderId(orderId);
 					ordOdProd.setProdDetalId(UUIDUtil.genShortId());
 					// 物流号->商品编码
 					ordOdProd.setProdCode(queue[2]);
@@ -95,10 +97,10 @@ public class OrdOdProdThread extends Thread {
 					/**
 					 * 刷新搜索引擎数据
 					 */
-			    	SesDataRequest sesReq=new SesDataRequest();
-			    	sesReq.setTenantId(OrdersConstants.TENANT_ID);
-			 //   	sesReq.setParentOrderId(ordOdProd.getOrderId());
-			//    	orderIndexBusiSV.insertSesData(sesReq);
+			    	SesDataRequest request=new SesDataRequest();
+			    	request.setTenantId(OrdersConstants.TENANT_ID);
+			    	request.setOrderId(orderId);
+			    	orderIndexBusiSV.orderSynchDataToSes(request);
 					LOG.error("保存订单商品信息结束,时间" + DateUtil.getSysDate());
 				}
 			} catch (Exception e) {

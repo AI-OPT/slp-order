@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -165,7 +166,7 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		criteria.andDownstreamOrderIdEqualTo(downstreamOrderId);
 		List<OrdOrder>  list = ordOrderAtomSV.selectByExample(example);
 		long orderId = 0;
-		if(list.isEmpty()){
+		if(!CollectionUtil.isEmpty(list)){
 			orderId = list.get(0).getOrderId();
 		}
 		return orderId;
