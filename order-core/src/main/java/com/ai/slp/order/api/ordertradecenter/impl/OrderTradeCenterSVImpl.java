@@ -43,6 +43,6 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
 		ResponseHeader responseHeader = new ResponseHeader(true,
 				ExceptCodeConstants.Special.SUCCESS, "成功");
 		response.setResponseHeader(responseHeader);
-		return response;    		
+		return response;
     }
 }
