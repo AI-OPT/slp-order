@@ -6,13 +6,11 @@ public class SesDataRequest extends BaseInfo{
 
 	private static final long serialVersionUID = 1L;
 	//父订单id
-	private Long parentOrderId;
-	
-	public Long getParentOrderId() {
-		return parentOrderId;
+	private long orderId;
+	public long getOrderId() {
+		return orderId;
 	}
-
-	public void setParentOrderId(Long parentOrderId) {
-		this.parentOrderId = parentOrderId;
+	public void setOrderId(long orderId) {
+		this.orderId = orderId;
 	}
 }
