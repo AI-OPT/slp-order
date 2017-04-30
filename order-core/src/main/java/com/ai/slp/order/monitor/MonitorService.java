@@ -3,8 +3,6 @@ package com.ai.slp.order.monitor;
 import java.sql.Timestamp;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.ai.opt.sdk.util.DateUtil;
@@ -18,7 +16,7 @@ import com.ai.slp.order.util.DateCycleUtil;
 import com.alibaba.fastjson.JSON;
 @Service
 public class MonitorService {
-	private static final Logger log = LoggerFactory.getLogger(MonitorService.class);
+	//private static final Logger log = LoggerFactory.getLogger(MonitorService.class);
 	/**
 	 * 下单前缓存预警服务
 	 * 
@@ -82,11 +80,11 @@ public class MonitorService {
 			return response;
 		}
 		
-		log.info("当前用户下订单数量:"+userSize);
+	//	log.info("当前用户下订单数量:"+userSize);
 		//
-		log.info("当前ip下订单数量:"+ipSize);
+	//	log.info("当前ip下订单数量:"+ipSize);
 		//
-		log.info("订单总量下订单数量:"+orderAllSize);
+	//	log.info("订单总量下订单数量:"+orderAllSize);
 		//
 		response.setIfWarning(MonitorCoonstants.WARNING_NO);
 		response.setWarningType("");
@@ -142,16 +140,16 @@ public class MonitorService {
 		
 		//1、删除用户规则下的预警信息
 		long userDelCount = cacheClient.zremrangeByScore(userId, String.valueOf(start),userCycleDate.get("endTime").toString());
-		log.info("用户规则下--开始时间："+String.valueOf(start)+" 和结束时间:"+userCycleDate.get("endTime").toString());
-		log.info("根据规则删除当前用户下的信息条数："+userDelCount);
+	//	log.info("用户规则下--开始时间："+String.valueOf(start)+" 和结束时间:"+userCycleDate.get("endTime").toString());
+	//	log.info("根据规则删除当前用户下的信息条数："+userDelCount);
 		//2、删除ip规则下的预警信息
 		long ipDelCount = cacheClient.zremrangeByScore(ipAddress, String.valueOf(start),ipCycleDate.get("endTime").toString());
-		log.info("Ip规则下--开始时间："+String.valueOf(start)+" 和结束时间:"+ipCycleDate.get("endTime").toString());
-		log.info("根据规则删除当前Ip下的信息条数："+ipDelCount);
+	//	log.info("Ip规则下--开始时间："+String.valueOf(start)+" 和结束时间:"+ipCycleDate.get("endTime").toString());
+	//	log.info("根据规则删除当前Ip下的信息条数："+ipDelCount);
 		//3、删除订单总量规则下的预警信息
 		long allDelCount = cacheClient.zremrangeByScore("order_all", String.valueOf(start),allCycleDate.get("endTime").toString());
-		log.info("订单总量规则下--开始时间："+String.valueOf(start)+" 和结束时间:"+allCycleDate.get("endTime").toString());
-		log.info("根据规则删除订单总量下的信息条数："+allDelCount);
+	//	log.info("订单总量规则下--开始时间："+String.valueOf(start)+" 和结束时间:"+allCycleDate.get("endTime").toString());
+	//	log.info("根据规则删除订单总量下的信息条数："+allDelCount);
 	}
 	
 	
