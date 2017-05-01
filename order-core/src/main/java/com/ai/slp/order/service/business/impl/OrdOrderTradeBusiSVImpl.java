@@ -441,10 +441,10 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      * @ApiDocMethod
      */
     private void writeOrderCreateStateChg(Timestamp sysDate,OrdOrder ordOrder) {
-        String orgState = ordOrder.getState();
+     //   String orgState = ordOrder.getState();
         String newState = OrdersConstants.OrdOrder.State.WAIT_PAY;
         ordOrder.setState(newState);
-        ordOrder.setStateChgTime(sysDate);
+    //  ordOrder.setStateChgTime(sysDate);
         ordOrderAtomSV.insertSelective(ordOrder);
         //异步  写入订单状态变化轨迹表
       /*  OrderStateChgUtil.trailProcess(ordOrder.getOrderId(),

@@ -153,7 +153,7 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
   		IOrderSearch orderSearch = new OrderSearchImpl();
 		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
-				commonConditionsByOrderId(ordOrder.getParentOrderId());
+				commonConditionsBySubOrderId(ordOrder.getOrderId());
 		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
 		List<OrderInfo> ordList = result.getContents();
 		if(CollectionUtil.isEmpty(ordList)) {
