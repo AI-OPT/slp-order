@@ -9,7 +9,6 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
-import com.ai.opt.sdk.util.DateUtil;
 import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.api.orderstate.interfaces.IOrderStateServiceSV;
 import com.ai.slp.order.api.orderstate.param.WaitRebateRequest;
@@ -19,7 +18,6 @@ import com.ai.slp.order.api.orderstate.param.WaitSellReceiveSureResponse;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdLogistics;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
-import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
 import com.ai.slp.order.util.SequenceUtil;
 import com.ai.slp.order.util.ValidateUtils;
@@ -29,8 +27,6 @@ import com.alibaba.dubbo.config.annotation.Service;
 public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
 	private static final Logger LOG = LoggerFactory.getLogger(OrderStateServiceSVImpl.class);
 
-	@Autowired
-	private IOrdOrderAtomSV ordOrderAtomSV;
 	@Autowired
 	private IOrderStateBusiSV orderStateBusiSV;
 	@Override
@@ -46,11 +42,11 @@ public class OrderStateServiceSVImpl implements IOrderStateServiceSV {
 			String expressId = request.getExpressId();
 			String expressOddNumber = request.getExpressOddNumber();
 			
-			OrdOrder ordOrder =ordOrderAtomSV.selectPartInfo(orderId);
+			//OrdOrder ordOrder =ordOrderAtomSV.selectPartInfo(orderId);
 			
-			//OrdOrder ordOrder = ordOrderAtomSV.selectByOrderId(tenantId, orderId);
+			OrdOrder ordOrder=new OrdOrder();
+			ordOrder.setOrderId(orderId);
 			ordOrder.setState(OrdersConstants.OrdOrder.State.WAIT_RECEIPT_CONFIRMATION);
-			ordOrder.setStateChgTime(DateUtil.getSysDate());
 			//
 			OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
 			ordOdLogistics.setLogisticsId(SequenceUtil.genLogisticsId());
