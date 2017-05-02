@@ -151,9 +151,11 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.commonConditions(orderListRequest);
 		//排序
 		List<Sort> sortList = new ArrayList<Sort>();
-		Sort sort = new Sort(SearchFieldConfConstants.ORDER_TIME, SortOrder.DESC);
-		sortList.add(sort);
+//		Sort sort = new Sort(SearchFieldConfConstants.ORDER_TIME, SortOrder.DESC);
+//		sortList.add(sort);
 		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, startSize, maxSize, sortList);
+		
+		
 		List<OrderInfo> ordList = result.getContents();
 		for (OrderInfo orderInfo : ordList) {
 			BehindParentOrdOrderVo vo=new BehindParentOrdOrderVo();
