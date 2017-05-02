@@ -3,8 +3,6 @@ package com.ai.slp.order.elasticjob;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,10 +19,8 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ai.opt.sdk.util.CryptUtils;
 import com.ai.opt.sdk.util.DateUtil;
-import com.ai.opt.sdk.util.StringUtil;
 import com.ai.slp.order.util.PropertiesUtil;
 import com.ai.slp.order.util.SftpUtil;
-import com.ai.slp.order.util.ValidateChkUtil;
 import com.alibaba.fastjson.JSON;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
@@ -80,10 +76,10 @@ public class OrderReadFileThread extends Thread {
 			InputStream chkIs = null;
 			BufferedWriter bw = null;
 			try {
-				ValidateChkUtil util = new ValidateChkUtil();
-				String errCode = util.validateChk(path, localpath + "bak/", fileName, chkName, sftp);
+				//ValidateChkUtil util = new ValidateChkUtil();
+				//String errCode = util.validateChk(path, localpath + "bak/", fileName, chkName, sftp);
 				String localPath = localpath + "rpt/";
-				if (!StringUtil.isBlank(errCode)) {
+				/*if (!StringUtil.isBlank(errCode)) {
 					LOG.error("校验订单信息文件失败,校验码:" + errCode.toString());
 					if (!errCode.toString().equals("09")) {
 						// 移动chk文件
@@ -116,14 +112,13 @@ public class OrderReadFileThread extends Thread {
 						deleteFile(localpath + "rpt/" + errCodeName);
 					continue;
 					// 推到ftp上
-				} else {
+				} else {*/
 					LOG.error("++++++++++++订单信息校验成功" + chkName);
 					is = SftpUtil.download(path, chkName, localpath + "bak/", sftp);
 					SftpUtil.delete(path, chkName, sftp);
 					SftpUtil.uploadIs(path + "sapa/chk", chkName, is, sftp);
 					deleteFile(localpath + "bak/" + chkName);
 					readOrderFile(fileName, sftp);
-				}
 			} catch (Exception e) {
 				LOG.error("订单读取数据失败" + DateUtil.getSysDate() + JSON.toJSONString(e));
 			} finally {
