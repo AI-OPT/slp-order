@@ -91,9 +91,6 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				ordInfo.setFlag(ord.getFlag());
 				ordInfo.setDeliveryflag(ord.getDeliveryFlag());
 				//翻译是否需要物流
-//				SysParam sysParamDf = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER",
-//						"ORD_DELIVERY_FLAG", ord.getDeliveryFlag(), iCacheSV);
-//				ordInfo.setDeliveryflagname(sysParamDf == null ? "" : sysParamDf.getColumnDesc());
 				ordInfo.setOrdertime(ord.getOrderTime());
 				ordInfo.setParentorderstate(ord.getState());
 				ordInfo.setSupplierid(ord.getSupplierId());
@@ -223,7 +220,8 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 	
 	@Override
 	public SesDataResponse insertSesDataByPage(SesDataByPageRequest request) throws BusinessException, SystemException {
-		long orderId=0;
+		SesDataResponse response=new SesDataResponse();
+		final long orderId=0;
 		int startSize = 1;
 		int maxSize = 1;
 		// 最大条数设置
@@ -235,139 +233,36 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			startSize = (pageNo - 1) * size;
 		}
 		maxSize = size;
-		SesDataResponse response=new SesDataResponse();
-		ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
-	 	String tenantId = request.getTenantId();
+	 	final String tenantId = request.getTenantId();
 	 	//性能数据
 	 	int queryCount = ordOrderAtomSV.countForSes();
-	 	int failCount=0;
-	 	List<Long> failOrders=new ArrayList<Long>();
-	 	int shareParentCount=0;
 	 	List<OrdOrder> ordOrderDatas = ordOrderAtomSV.selectSesData(startSize,maxSize);
-		List<OrderInfo> orderList = new ArrayList<OrderInfo>();
-		if(!CollectionUtil.isEmpty(ordOrderDatas)){
-		for (OrdOrder ord: ordOrderDatas) {
-			//父订单
-			if(orderId==ord.getOrderId()) {
-				shareParentCount++;
-			}
-			orderId = ord.getOrderId();
-			OrderInfo ordInfo = new OrderInfo();
-			ordInfo.setPorderid(orderId);
-			ordInfo.setUserid(ord.getUserId());
-			ordInfo.setUsername(ord.getUserName());
-			ordInfo.setUsertel(ord.getUserTel());
-			ordInfo.setFlag(ord.getFlag());
-			ordInfo.setDeliveryflag(ord.getDeliveryFlag());
-			//翻译是否需要物流
-			SysParam sysParamDf = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER",
-					"ORD_DELIVERY_FLAG", ord.getDeliveryFlag(), iCacheSV);
-			ordInfo.setDeliveryflagname(sysParamDf == null ? "" : sysParamDf.getColumnDesc());
-			
-			ordInfo.setOrdertime(ord.getOrderTime());
-			ordInfo.setParentorderstate(ord.getState());
-			ordInfo.setSupplierid(ord.getSupplierId());
-			ordInfo.setIfwarning(ord.getIfWarning());
-			ordInfo.setWarningtype(ord.getWarningType());
-			ordInfo.setChlid(ord.getChlId());
-			ordInfo.setAccountid(ord.getAccountId());
-			ordInfo.setToken(ord.getTokenId());
-			ordInfo.setDownstreamorderid(ord.getDownstreamOrderId());
-			ordInfo.setOrdertype(ord.getOrderType());
-			
-			
-			// 获取手机号
-			OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, orderId);
-			if(ordOdLogistics==null) {
-				failCount++;
-				failOrders.add(orderId);
-				logger.error(">>>>>>>>>>不存在订单运费信息! 父订单id:"+ orderId);
-				continue;
-			}
-			ordInfo.setContacttel(ordOdLogistics.getContactTel());
-			ordInfo.setExpressoddnumber(ordOdLogistics.getExpressOddNumber());
-			ordInfo.setContactcompany(ordOdLogistics.getContactCompany());
-			ordInfo.setContactname(ordOdLogistics.getContactName());
-			ordInfo.setLogisticstype(ordOdLogistics.getLogisticsType());
-			ordInfo.setProvincecode(ordOdLogistics.getProvinceCode() == null ? ""
-					: iCacheSV.getAreaName(ordOdLogistics.getProvinceCode()));
-			ordInfo.setCitycode(ordOdLogistics.getCityCode() == null ? ""
-					: iCacheSV.getAreaName(ordOdLogistics.getCityCode()));
-			ordInfo.setCountycode(ordOdLogistics.getCountyCode() == null ? ""
-					: iCacheSV.getAreaName(ordOdLogistics.getCountyCode()));
-			ordInfo.setPostcode(ordOdLogistics.getPostcode());
-			ordInfo.setAreacode(ordOdLogistics.getAreaCode() == null ? ""
-					: iCacheSV.getAreaName(ordOdLogistics.getAreaCode()));
-			ordInfo.setAddress(ordOdLogistics.getAddress());
-			ordInfo.setExpressid(ordOdLogistics.getExpressId());
-			
-			
-			// 获取积分
-			List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByOrderId(orderId);
-			if(CollectionUtil.isEmpty(orderFeeProdList)) {
-				failCount++;
-				failOrders.add(orderId);
-				logger.error(">>>>>>>>>>不存在订单费用明细信息! 父订单id:"+ orderId);
-				continue;
-			}
-			//存在的情况下
-			long points = 0; 
-			for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) {
-				if (OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
-					points += ordOdFeeProd.getPaidFee();
-					break;
-				}
-			}
-			ordInfo.setPoints(points);
-			// 查询费用信息
-			OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(tenantId, orderId);
-			if (ordOdFeeTotal == null) {
-				failCount++;
-				failOrders.add(orderId);
-				logger.error(">>>>>>>>>>不存在订单费用主表信息! 父订单id:"+ orderId);
-				continue;
-			}
-			
-			//查询发票信息
-			OrdOdInvoice odInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
-			if(odInvoice!=null) {
-				ordInfo.setInvoicetype(odInvoice.getInvoiceType());
-				ordInfo.setInvoicetitle(odInvoice.getInvoiceTitle());
-				ordInfo.setInvoicecontent(odInvoice.getInvoiceContent());
-				ordInfo.setInvoicestatus(odInvoice.getInvoiceStatus());
-				ordInfo.setBuyertaxpayernumber(odInvoice.getBuyerTaxpayerNumber());
-				ordInfo.setBuyerbankname(odInvoice.getBuyerBankName());
-				ordInfo.setBuyerbankaccount(odInvoice.getBuyerBankAccount());
-			}
-			
-			OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(orderId);
-			if(ordBalacneIf!=null) {
-				ordInfo.setBalacneifid(ordBalacneIf.getBalacneIfId());
-				ordInfo.setExternalid(ordBalacneIf.getExternalId());
-			}
-			
-			//存在情况下
-			ordInfo.setDiscountfee(ordOdFeeTotal.getDiscountFee());
-			ordInfo.setAdjustfee(ordOdFeeTotal.getAdjustFee());
-			ordInfo.setPaystyle(ordOdFeeTotal.getPayStyle());
-			// 查询订单其它信息
-			ordInfo = this.queryOrdProdExtends(ordInfo, ord, 
-					iCacheSV, orderId,ordOdFeeTotal);
-			orderList.add(ordInfo);
-		}
-		try{
-			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
-		}catch(Exception e){
-			throw new SystemException("","订单信息加入搜索引擎失败,订单ID:"+orderId);
-		}
-		}
-		response.setFailCount(failCount);
-		response.setQueryCount(queryCount);
-		response.setShareParentCount(shareParentCount);
-		response.setFailOrders(failOrders);
-		return response;
-	}
 	
+	 	List<OrdOrder> tmpList = new ArrayList<OrdOrder>();
+	 	for(int i=0;i<ordOrderDatas.size();i++){
+	 		if(tmpList.size() < 100){
+	 			tmpList.add(ordOrderDatas.get(i));
+	 			continue;
+	 		}
+	 		if(tmpList.size() == 100){
+	 			PushToSesManager.push(orderId, tenantId, tmpList,this); 
+	 			tmpList = null;
+		 		tmpList = new ArrayList<OrdOrder>();
+		 		tmpList.add(ordOrderDatas.get(i));
+	 		}
+	 	}
+	 	//避免主线程停止
+		sleep(1000L);
+		while(true){
+			if(PushToSesManager.isFinished()){
+				break;
+			}
+			sleep(1000L);
+		}
+	 	response.setQueryCount(queryCount);
+	 	return response;
+	}
+
 	
 
 	/***
@@ -492,5 +387,141 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			}
 		}
 		return prodInfos;
+	}
+	
+	public SesDataResponse pushToSes(List<OrdOrder> ordOrderDatas,long orderId,
+			ICacheSV iCacheSV, String tenantId) {
+		SesDataResponse response=new SesDataResponse();
+		List<OrderInfo> orderList = new ArrayList<OrderInfo>();
+		int failCount=0;
+	 	List<Long> failOrders=new ArrayList<Long>();
+	 	int shareParentCount=0;
+		if(!CollectionUtil.isEmpty(ordOrderDatas)){
+		for (OrdOrder ord: ordOrderDatas) {
+			//父订单
+			if(orderId==ord.getOrderId()) {
+				shareParentCount++;
+			}
+			orderId = ord.getOrderId();
+			OrderInfo ordInfo = new OrderInfo();
+			ordInfo.setPorderid(orderId);
+			ordInfo.setUserid(ord.getUserId());
+			ordInfo.setUsername(ord.getUserName());
+			ordInfo.setUsertel(ord.getUserTel());
+			ordInfo.setFlag(ord.getFlag());
+			ordInfo.setDeliveryflag(ord.getDeliveryFlag());
+			//翻译是否需要物流
+			SysParam sysParamDf = InfoTranslateUtil.translateInfo(tenantId, "ORD_ORDER",
+					"ORD_DELIVERY_FLAG", ord.getDeliveryFlag(), iCacheSV);
+			ordInfo.setDeliveryflagname(sysParamDf == null ? "" : sysParamDf.getColumnDesc());
+			
+			ordInfo.setOrdertime(ord.getOrderTime());
+			ordInfo.setParentorderstate(ord.getState());
+			ordInfo.setSupplierid(ord.getSupplierId());
+			ordInfo.setIfwarning(ord.getIfWarning());
+			ordInfo.setWarningtype(ord.getWarningType());
+			ordInfo.setChlid(ord.getChlId());
+			ordInfo.setAccountid(ord.getAccountId());
+			ordInfo.setToken(ord.getTokenId());
+			ordInfo.setDownstreamorderid(ord.getDownstreamOrderId());
+			ordInfo.setOrdertype(ord.getOrderType());
+			
+			// 获取手机号
+			OrdOdLogistics ordOdLogistics = ordOdLogisticsAtomSV.selectByOrd(tenantId, orderId);
+			if(ordOdLogistics==null) {
+				failCount++;
+				failOrders.add(orderId);
+				logger.error(">>>>>>>>>>不存在订单运费信息! 父订单id:"+ orderId);
+				continue;
+			}
+			ordInfo.setContacttel(ordOdLogistics.getContactTel());
+			ordInfo.setExpressoddnumber(ordOdLogistics.getExpressOddNumber());
+			ordInfo.setContactcompany(ordOdLogistics.getContactCompany());
+			ordInfo.setContactname(ordOdLogistics.getContactName());
+			ordInfo.setLogisticstype(ordOdLogistics.getLogisticsType());
+			ordInfo.setProvincecode(ordOdLogistics.getProvinceCode() == null ? ""
+					: iCacheSV.getAreaName(ordOdLogistics.getProvinceCode()));
+			ordInfo.setCitycode(ordOdLogistics.getCityCode() == null ? ""
+					: iCacheSV.getAreaName(ordOdLogistics.getCityCode()));
+			ordInfo.setCountycode(ordOdLogistics.getCountyCode() == null ? ""
+					: iCacheSV.getAreaName(ordOdLogistics.getCountyCode()));
+			ordInfo.setPostcode(ordOdLogistics.getPostcode());
+			ordInfo.setAreacode(ordOdLogistics.getAreaCode() == null ? ""
+					: iCacheSV.getAreaName(ordOdLogistics.getAreaCode()));
+			ordInfo.setAddress(ordOdLogistics.getAddress());
+			ordInfo.setExpressid(ordOdLogistics.getExpressId());
+			
+			// 获取积分
+			List<OrdOdFeeProd> orderFeeProdList = ordOdFeeProdAtomSV.selectByOrderId(orderId);
+			if(CollectionUtil.isEmpty(orderFeeProdList)) {
+				failCount++;
+				failOrders.add(orderId);
+				logger.error(">>>>>>>>>>不存在订单费用明细信息! 父订单id:"+ orderId);
+				continue;
+			}
+			//存在的情况下
+			long points = 0; 
+			for (OrdOdFeeProd ordOdFeeProd : orderFeeProdList) {
+				if (OrdersConstants.OrdOdFeeProd.PayStyle.JF.equals(ordOdFeeProd.getPayStyle())) {
+					points += ordOdFeeProd.getPaidFee();
+					break;
+				}
+			}
+			ordInfo.setPoints(points);
+			// 查询费用信息
+			OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(tenantId, orderId);
+			if (ordOdFeeTotal == null) {
+				failCount++;
+				failOrders.add(orderId);
+				logger.error(">>>>>>>>>>不存在订单费用主表信息! 父订单id:"+ orderId);
+				continue;
+			}
+			
+			//查询发票信息
+			OrdOdInvoice odInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
+			if(odInvoice!=null) {
+				ordInfo.setInvoicetype(odInvoice.getInvoiceType());
+				ordInfo.setInvoicetitle(odInvoice.getInvoiceTitle());
+				ordInfo.setInvoicecontent(odInvoice.getInvoiceContent());
+				ordInfo.setInvoicestatus(odInvoice.getInvoiceStatus());
+				ordInfo.setBuyertaxpayernumber(odInvoice.getBuyerTaxpayerNumber());
+				ordInfo.setBuyerbankname(odInvoice.getBuyerBankName());
+				ordInfo.setBuyerbankaccount(odInvoice.getBuyerBankAccount());
+			}
+			
+			OrdBalacneIf ordBalacneIf = ordBalacneIfAtomSV.selectByOrderId(orderId);
+			if(ordBalacneIf!=null) {
+				ordInfo.setBalacneifid(ordBalacneIf.getBalacneIfId());
+				ordInfo.setExternalid(ordBalacneIf.getExternalId());
+			}
+			
+			//存在情况下
+			ordInfo.setDiscountfee(ordOdFeeTotal.getDiscountFee());
+			ordInfo.setAdjustfee(ordOdFeeTotal.getAdjustFee());
+			ordInfo.setPaystyle(ordOdFeeTotal.getPayStyle());
+			// 查询订单其它信息
+			ordInfo = this.queryOrdProdExtends(ordInfo, ord, 
+					iCacheSV, orderId,ordOdFeeTotal);
+			orderList.add(ordInfo);
+		}
+		try{
+			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
+		}catch(Exception e){
+			throw new SystemException("","订单信息加入搜索引擎失败,订单ID:"+orderId);
+		}
+	}
+	response.setFailCount(failCount);
+	response.setShareParentCount(shareParentCount);
+	response.setFailOrders(failOrders);
+	return response;
+  }
+	
+	
+	private void sleep(long times) {
+		try {
+			Thread.sleep(times);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
