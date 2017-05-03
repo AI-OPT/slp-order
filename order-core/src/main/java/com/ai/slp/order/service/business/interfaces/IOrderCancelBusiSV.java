@@ -11,6 +11,5 @@ import com.ai.slp.order.dao.mapper.bo.OrdOrder;
  * @author zhangxw
  */
 public interface IOrderCancelBusiSV {
-
     public void orderCancel(OrdOrder ordOrder) throws BusinessException, SystemException;
 }
