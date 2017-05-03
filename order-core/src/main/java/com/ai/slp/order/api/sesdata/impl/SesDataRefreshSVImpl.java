@@ -19,6 +19,8 @@ import com.alibaba.dubbo.config.annotation.Service;
 public class SesDataRefreshSVImpl implements ISesDataRefreshSV {
 	@Autowired
 	IOrderIndexBusiSV orderIndexBusiSV;
+	
+	//从数据库刷新数据到es
 	@Override
 	public SesDataResponse refreshSesData(SesDataByPageRequest request) throws BusinessException, SystemException {
 		//参数校验
@@ -31,12 +33,11 @@ public class SesDataRefreshSVImpl implements ISesDataRefreshSV {
 	}
 	
 	
-	
+	//删除es数据
 	@Override
 	public SesDataResponse deleteSesData(BehindQueryOrderListRequest request)
 			throws BusinessException, SystemException {
 		SesDataResponse response = new SesDataResponse();
-		// TODO Auto-generated method stub
 		orderIndexBusiSV.deleteSesData(request);
 		response.setResponseHeader(new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "数据刷新成功"));
 		return response;
