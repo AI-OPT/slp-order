@@ -60,7 +60,6 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
 					parentOrderVo.setContactTel(logistics.getContactTel());
 				}
 				//获取父订单商品
-				
 				List<OrdOdProd>  parentProList = iOrdOdProdAtomSV.selectByOrd(order.getTenantId(), order.getOrderId());
 				for(OrdOdProd prod:parentProList){
 					StasticsProdVo staticProdVo = new StasticsProdVo();

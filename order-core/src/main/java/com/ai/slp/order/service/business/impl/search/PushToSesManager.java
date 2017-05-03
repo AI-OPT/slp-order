@@ -9,10 +9,17 @@ import com.ai.slp.order.aync.AyncExector;
 import com.ai.slp.order.aync.AyncTask;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 
+
+/**
+ * 从数据库推送数据到es(性能备用)
+ * @date 2017年5月3日 
+ * @author caofz
+ */
 public class PushToSesManager {
 	private static ReentrantLock lock = new ReentrantLock();
 	private static int taskNum = 0;
-
+	
+	//线程推送数据
 	public static void push(final long orderId, final String tenantId, final List<OrdOrder> ordOrderDatas,
 			final OrderIndexBusiSVImpl orderIndexBusiSVImpl) {
 		AyncExector.submit(new AyncTask() {
@@ -30,7 +37,7 @@ public class PushToSesManager {
 		});
 		incrTask();
 	}
-
+	
 	private static void incrTask() {
 		try {
 			lock.lock();

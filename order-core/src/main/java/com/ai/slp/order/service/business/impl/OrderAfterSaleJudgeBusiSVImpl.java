@@ -22,7 +22,6 @@ import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleJudgeBusiSV;
-import com.ai.slp.order.util.CommonCheckUtils;
 
 @Service
 @Transactional

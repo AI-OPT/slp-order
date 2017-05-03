@@ -243,7 +243,19 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
     }
     
     
-    
+    /**
+     * 刷新es引擎数据
+     * @param ordOrder
+     * @param pOrder
+     * @param subProd
+     * @param subOrder
+     * @throws BusinessException
+     * @throws SystemException
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
     public void refreshData(OrdOrder ordOrder,OrdOrder pOrder,
     		OrdOdProd subProd,OrdOrder subOrder) 
     		throws BusinessException, SystemException {
@@ -301,6 +313,17 @@ public class OrderRefundBusiSVImpl implements IOrderRefundBusiSV {
 	}
     
     
+    /**
+     * 刷新es引擎数据
+     * @param ordOrder
+     * @param ordOdFeeTotal
+     * @throws BusinessException
+     * @throws SystemException
+     * @author caofz
+     * @ApiDocMethod
+     * @ApiCode 
+     * @RestRelativeURL
+     */
     private void refreshFeeData(OrdOrder ordOrder,OrdOdFeeTotal ordOdFeeTotal) 
     		throws BusinessException, SystemException {
   		IOrderSearch orderSearch = new OrderSearchImpl();

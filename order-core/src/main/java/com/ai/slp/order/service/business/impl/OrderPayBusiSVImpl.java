@@ -123,6 +123,7 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
         	OrderInfo orderInfo = refreshDataBySplitOrder(request,ordOrder,ordersMap,iCacheSV);
 			orderList.add(orderInfo);
         }
+        //刷新数据到es引擎
         ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
     }
 

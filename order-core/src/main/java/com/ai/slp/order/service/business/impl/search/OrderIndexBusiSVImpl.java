@@ -46,7 +46,6 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
-import com.alibaba.fastjson.JSON;
 
 
 @Service
@@ -141,7 +140,7 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 		}
 	
 	/**
-	 * 订单年同步相关数据
+	 * 订单同步相关数据
 	 * @param ordInfo
 	 * @param ord
 	 * @param iCacheSV
@@ -185,7 +184,6 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 		ordInfo.setOrdextendes(prodExtends);
 		return ordInfo;
 	}
-
 
 	
 	/**
@@ -362,7 +360,6 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 
 	private List<ProdInfo>  queryOrdProd(List<ProdInfo> prodInfos,String tenantId, 
 			Long orderId) {
-		// TODO Auto-generated method stub
 		List<OrdOdProd> ordOdProds = ordOdProdAtomSV.selectByOrd(tenantId, orderId);
 		if (!CollectionUtil.isEmpty(ordOdProds)) {
 			for (OrdOdProd ordOdProd : ordOdProds) {
@@ -516,9 +513,6 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 	response.setFailCount(failCount);
 	response.setShareParentCount(shareParentCount);
 	response.setFailOrders(failOrders);
-	logger.info(">>>>>>>>>>订单刷新失败个数:"+failCount);
-	logger.info(">>>>>>>>>>共有订单个数:"+shareParentCount);
-	logger.info(">>>>>>>>>>刷新失败的订单有:"+JSON.toJSONString(failOrders));
 	return response;
   }
 	
@@ -530,10 +524,12 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * 按条件删除es数据
+	 */
 	@Override
 	public void deleteSesData(BehindQueryOrderListRequest request) throws BusinessException, SystemException {
-		// TODO Auto-generated method stub
 		ISearchClient sesClient = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
 		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.commonConditions(request);
 		sesClient.delete(orderSearchCriteria);
