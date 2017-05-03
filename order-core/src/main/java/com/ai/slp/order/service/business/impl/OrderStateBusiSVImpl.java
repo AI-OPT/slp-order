@@ -182,7 +182,7 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
     
     
     /**
-     * 
+     * 刷新elasticSearch数据
      * @param ordOrder
      * @param pOrder
      * @param subProd

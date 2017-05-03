@@ -56,7 +56,9 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 
 	@Autowired
 	private IOrdParamAtomSV ordParamAtomSV;
-
+	
+	
+	//保存订单数据
 	@Override
 	public void insertOrdOrder(OrderOfcVo request) throws BusinessException, SystemException {
 		if (StringUtil.isBlank(request.getOrOrderOfcVo().getTenantId() + request.getOrdOdLogisticsVo().getTenantId()
@@ -113,7 +115,8 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		}
 
 	}
-
+	
+	//保存订单商品信息
 	@Override
 	public void insertOrdOdProdOfc(OrdOdProdVo request) throws BusinessException, SystemException {
 		if (StringUtil.isBlank(request.getTenantId())) {
@@ -142,7 +145,8 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 			}
 		}
 	}
-
+	
+	//解析ofcCode
 	@Override
 	public String parseOfcCode(OfcCodeRequst request) throws BusinessException, SystemException {
 		OrdParamCriteria example = new OrdParamCriteria();
@@ -157,7 +161,8 @@ public class OfcBusiSVImpl implements IOfcBusiSV {
 		}
 		return null;
 	}
-
+	
+	//匹配订单Id
 	@Override
 	public long parseOrderId(String downstreamOrderId) throws BusinessException, SystemException {
 		OrdOrderCriteria example = new OrdOrderCriteria();

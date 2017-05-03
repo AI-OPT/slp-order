@@ -39,7 +39,8 @@ public class OrderFrameCoreSVImpl implements IOrderFrameCoreSV {
         bean.setStateChgTime(timestamp);
         ordOdStateChgAtomSV.insertSelective(bean);
     }
-
+    
+    //订单轨迹记录 异步
 	@Override
 	public void ordOdStateChg(OrderStateChgVo stateChgVo) throws BusinessException, SystemException {
 		// TODO Auto-generated method stub

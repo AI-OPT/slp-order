@@ -66,8 +66,6 @@ import com.alibaba.fastjson.JSONObject;
 @Transactional
 public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 
-   // private static final Logger LOG = LoggerFactory.getLogger(OrdOrderTradeBusiSVImpl.class);
-
     @Autowired
     private IOrdOrderAtomSV ordOrderAtomSV;
     @Autowired
@@ -88,7 +86,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     public OrderTradeCenterResponse apply(OrderTradeCenterRequest request,	
     		OrderMonitorBeforResponse beforSubmitOrder,
     		OrderMonitorRequest monitorRequest) throws BusinessException, SystemException {
-//    	LOG.info("####loadtest####订单提交begin......");
     	OrderTradeCenterResponse response = new OrderTradeCenterResponse();
         List<OrderResInfo> orderResInfos=new ArrayList<OrderResInfo>();
         Timestamp sysDate = DateUtil.getSysDate();
@@ -164,8 +161,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOrder.setChlId(ordBaseInfo.getChlId());
         ordOrder.setState(OrdersConstants.OrdOrder.State.NEW);
         ordOrder.setStateChgTime(sysDate);
-   //   ordOrder.setDisplayFlag(OrdersConstants.OrdOrder.DisplayFlag.USER_NORMAL_VISIABLE);
-  //    ordOrder.setDisplayFlagChgTime(sysDate);
         ordOrder.setDeliveryFlag(ordBaseInfo.getDeliveryFlag());
         ordOrder.setOrderTime(sysDate);
         ordOrder.setOrderDesc(DbUtils.getField(ordBaseInfo.getOrderDesc()));
@@ -247,8 +242,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setSkuId(ordProductInfo.getSkuId());
             ordOdProd.setStandardProdId(storageNumRes.getStandedProdId());
             ordOdProd.setSkuStorageId(JSON.toJSONString(storageNum));
-        //  ordOdProd.setValidTime(sysDate);
-       //   ordOdProd.setInvalidTime(DateUtil.getFutureTime());
             ordOdProd.setSupplierId(ordProductDetailInfo.getSupplierId());
             ordOdProd.setState(OrdersConstants.OrdOdProd.State.SELL);
             ordOdProd.setBuySum(ordProductInfo.getBuySum());

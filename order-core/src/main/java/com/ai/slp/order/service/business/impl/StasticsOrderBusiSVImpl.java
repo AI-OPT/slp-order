@@ -40,7 +40,7 @@ public class StasticsOrderBusiSVImpl implements IStasticsOrderBusiSV {
     @Autowired
 	IOrdOdLogisticsAtomSV iOrdOdLogisticsAtomSV;
 	
-    //获取订单统计信息
+    //获取订单统计信息(该功能现查询elasticSearch,现方法已废弃)
     @Override
 	public PageInfo<StasticParentOrderVo> getStasticOrdPage(StasticsOrderRequest request) {
 		//获取父订单信息

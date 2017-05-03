@@ -192,7 +192,7 @@ public class OrdOrderBusiSVImpl implements IOrdOrderBusiSV {
 	
 
 	/**
-	 * 获取图片信息
+	 * 获取图片信息(添加缓存注解)
 	 * @param skuId
 	 * @return
 	 * @author zhangxw

@@ -38,7 +38,8 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 
 	@Autowired
 	private ISyncronizeAtomSV syncronizeAtomSV;
-
+	
+	//同步订单信息
 	@Override
 	public int orderSynchronize(OrderSynchronizeVo request) throws BusinessException, SystemException {
 		ValidateUtils.validateSynchronize(request);
