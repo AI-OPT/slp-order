@@ -103,7 +103,7 @@ public class OrderCancelSVImpl implements IOrderCancelSV {
         Timestamp sysDate = DateUtil.getSysDate();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(sysDate);
-        calendar.add(Calendar.MINUTE, -30);
+        calendar.add(Calendar.MINUTE, -1);
         List<OrdOrder> list = ordOrderAtomSV.selectNotPayOrdersByTime(new Timestamp(calendar.getTimeInMillis()));
         return list;
     }
