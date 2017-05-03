@@ -20,6 +20,10 @@ import com.alibaba.dubbo.config.annotation.Service;
 public class StasticsOrderSVImpl implements IStasticsOrderSV{
 	@Autowired
 	IStasticsOrderBusiSV iStasticsOrderBusiSV;
+	
+	/**
+	 * 该功能查询elasticSearch,现方法已废弃
+	 */
 	@Override
 	public StasticOrderResponse queryStasticOrdPage(StasticsOrderRequest request)
 			throws BusinessException, SystemException {
