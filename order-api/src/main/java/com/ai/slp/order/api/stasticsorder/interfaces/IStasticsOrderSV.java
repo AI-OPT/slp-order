@@ -15,7 +15,7 @@ import com.ai.slp.order.api.stasticsorder.param.StasticsOrderRequest;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
 public interface IStasticsOrderSV {
 	/**
-	 * 统计查询(已废弃)
+	 * 统计查询(该功能现查询elasticSearch,现方法已废弃)
 	 * @param orderListRequest
 	 * @return
 	 * @throws BusinessException
