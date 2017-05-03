@@ -7,6 +7,11 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.SelectProvider;
 
+/**
+ * 该功能现查询elasticSearch,现方法已废弃
+ * @date 2017年5月3日 
+ * @author caofz
+ */
 public interface StasticOrdOrderAttachMapper {
 	
 	//查询订单统计信息

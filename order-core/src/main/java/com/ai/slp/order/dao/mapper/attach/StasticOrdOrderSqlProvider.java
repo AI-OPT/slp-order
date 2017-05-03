@@ -4,6 +4,11 @@ import java.util.Map;
 
 import com.ai.paas.ipaas.util.StringUtil;
 
+/**
+ * 该功能现查询elasticSearch,现方法已废弃
+ * @date 2017年5月3日 
+ * @author caofz
+ */
 public class StasticOrdOrderSqlProvider {
 	/**
 	 * 订单查询
@@ -15,8 +20,6 @@ public class StasticOrdOrderSqlProvider {
     public String staticQueryOrdOrder(Map<String, Object> param) {
         StringBuffer seqBuffer = new StringBuffer();
         seqBuffer.append("select DISTINCT oo.*"
-      /*  seqBuffer.append("select DISTINCT oo.order_id,oo.supplier_id,oo.state,oo.tenant_id,oo.chl_id,"
-        		+ "oo.delivery_flag,oo.user_name,oo.user_tel"*/
         		+ " from ord_order oo, ord_od_prod prod where"
                 + " oo.tenant_id= '"+ param.get("tenantId") + "'");
         if (param.get("orderId") != null){
