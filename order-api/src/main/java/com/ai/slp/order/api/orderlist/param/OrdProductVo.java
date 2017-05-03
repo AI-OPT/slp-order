@@ -14,7 +14,7 @@ public class OrdProductVo extends BaseInfo{
 	/**
 	 *商品明细id 
 	 */
-	private Long proddetalid;//--
+	private Long proddetalid;
 	
 	
 	/**
@@ -50,37 +50,37 @@ public class OrdProductVo extends BaseInfo{
     /**
      * 总费用
      */
-    private Long totalfee;//--
+    private Long totalfee;
     
     /**
      * 优惠费用 
      */
-    private Long discountfee;//--
+    private Long discountfee;
     
     /**
      * 减免费用
      */
-    private Long operdiscountfee;//--
+    private Long operdiscountfee;
     
     /**
      * 应收费用
      */
-    private Long adjustfee;//--
+    private Long adjustfee;
     
     /**
      * 商品图片
      */
-    private ProductImage productimage;//--
+    private ProductImage productimage;
     
     /**
      * 图片地址
      */
-    private String imageurl;//--
+    private String imageurl;
     
     /**
      * 拓展信息值
      */
-    private String prodextendinfo;//--
+    private String prodextendinfo;
     
     /**
      * 优惠扣减费用
@@ -95,7 +95,7 @@ public class OrdProductVo extends BaseInfo{
     /**
      * 商品是否售后标识
      */
-    private String cusserviceflag; //--
+    private String cusserviceflag; 
     
     /**
      * 商品赠送积分
@@ -105,11 +105,11 @@ public class OrdProductVo extends BaseInfo{
     /**
      * 商品编码
      */
-    private String prodcode;//--
+    private String prodcode;
     /**
      * 库存ID
      */
-    private String skustorageid;//--
+    private String skustorageid;
 	public Long getProddetalid() {
 		return proddetalid;
 	}

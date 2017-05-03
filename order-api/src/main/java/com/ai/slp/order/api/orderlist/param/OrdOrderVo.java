@@ -20,6 +20,9 @@ public class OrdOrderVo extends BaseInfo {
 	 */
 	private String chlid;
 	
+	/**
+	 * 订单来源 展示名称
+	 */
 	private String chlidname;
 
 	/**
