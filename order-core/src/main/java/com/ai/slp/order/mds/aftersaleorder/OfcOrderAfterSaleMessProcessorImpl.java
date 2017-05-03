@@ -11,8 +11,9 @@ import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
 import com.alibaba.fastjson.JSON;
 
 /**
- * OFC售后订单状态消息处理
+ * OFC售后订单状态消息处理(已废弃)
  */
+
 public class OfcOrderAfterSaleMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(OfcOrderAfterSaleMessProcessorImpl.class);
 

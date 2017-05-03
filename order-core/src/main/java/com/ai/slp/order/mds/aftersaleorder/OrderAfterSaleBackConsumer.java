@@ -15,7 +15,7 @@ import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.service.business.interfaces.IOrderAfterSaleBusiSV;
-
+//已废弃
 //@Component
 public class OrderAfterSaleBackConsumer extends AbstractMdsConsumer {
 	private static Logger logger = LoggerFactory.getLogger(OrderAfterSaleBackConsumer.class);
