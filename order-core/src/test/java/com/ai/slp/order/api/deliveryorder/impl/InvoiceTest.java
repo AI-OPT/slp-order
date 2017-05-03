@@ -26,7 +26,7 @@ public class InvoiceTest {
 	@Test
 	public void testQuery() {
 		DeliverGoodsPrintRequest request=new DeliverGoodsPrintRequest();
-		request.setOrderId(0l);
+		request.setOrderId(2000034361638896l);
 		request.setTenantId("changhong");
 		System.out.println(JSON.toJSONString(request));
 		DeliverGoodsPrintResponse response = deliverGoodsPrintSV.query(request);
@@ -39,7 +39,7 @@ public class InvoiceTest {
 		DeliverGoodsPrintInfosRequest request=new DeliverGoodsPrintInfosRequest();
 		List<DeliverGoodsPrintVo> invoicePrintVos=new ArrayList<DeliverGoodsPrintVo>();
 		DeliverGoodsPrintVo invoicePrintVo=new DeliverGoodsPrintVo();
-		request.setOrderId(59612493l);
+		request.setOrderId(2000034332110646l);
 		request.setTenantId("changhong");
 		System.out.println(JSON.toJSONString(request));
 		deliverGoodsPrintSV.print(request);
