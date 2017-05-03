@@ -17,7 +17,7 @@ import com.ai.slp.order.api.sesdata.param.SesDataResponse;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_XML })
 public interface ISesDataRefreshSV {
 	/**
-	 * 
+	 * 从数据库中刷新数据到es(性能备用)
 	 * @param request
 	 * @return
 	 * @throws BusinessException
@@ -32,7 +32,7 @@ public interface ISesDataRefreshSV {
 	SesDataResponse refreshSesData(SesDataByPageRequest request) throws BusinessException, SystemException;
 	
 	/**
-	 * 
+	 * 按条件删除es数据(性能测试备用)
 	 * @param request
 	 * @return
 	 * @throws BusinessException
