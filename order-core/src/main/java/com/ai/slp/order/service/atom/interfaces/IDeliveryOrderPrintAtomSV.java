@@ -26,9 +26,9 @@ public interface IDeliveryOrderPrintAtomSV {
 	int insertSelective(OrdOdDeliverInfo record);
 
 	List<OrdOdDeliverInfo> selectByExample(OrdOdDeliverInfoCriteria example);
-	
+	//查询打印信息
 	List<OrdOdDeliverInfo> selectDeliverByPrintInfo(long orderId,String pringInfo);
-	
+	//查询合并订单下的打印信息
 	List<OrdOdDeliverInfo> selectDeliverByPrintInfoByHor(long orderId,String pringInfo);
 
 	int insert(DeliverInfoProd record);

@@ -5,6 +5,7 @@ import com.ai.slp.order.api.warmorder.param.OrderWarmRequest;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 public interface IOrdWarmAtomSV {
 	
+	//查询预警订单
 	public PageInfo<OrdOrder> selectWarmOrdPage(OrderWarmRequest request);
 	
 	public OrdOrder selectWarmOrde(String tenantId,long orderid);

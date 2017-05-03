@@ -15,9 +15,11 @@ import com.ai.slp.order.dao.mapper.bo.OrdOdProdCriteria;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProdExtend;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.dao.mapper.bo.OrdOrderCriteria;
-
+/**
+ * 订单信息同步
+ */
 public interface ISyncronizeAtomSV {
-
+	
 	int insertSelective(OrdBalacneIf record);
 
 	int insertSelective(OrdOdFeeTotal record);
