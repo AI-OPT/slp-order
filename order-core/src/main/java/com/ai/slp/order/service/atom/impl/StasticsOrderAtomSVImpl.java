@@ -11,6 +11,11 @@ import com.ai.slp.order.dao.mapper.attach.StasticOrdOrderAttachMapper;
 import com.ai.slp.order.dao.mapper.interfaces.OrdOrderMapper;
 import com.ai.slp.order.service.atom.interfaces.IStasticsOrderAtomSV;
 
+/**
+ * 该功能现查询elasticSearch,现方法已废弃
+ * @date 2017年5月3日 
+ * @author caofz
+ */
 @Component
 public class StasticsOrderAtomSVImpl implements IStasticsOrderAtomSV {
 	@Autowired

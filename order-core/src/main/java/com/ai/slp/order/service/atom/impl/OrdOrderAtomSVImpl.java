@@ -35,7 +35,7 @@ public class OrdOrderAtomSVImpl implements IOrdOrderAtomSV {
     public int insertSelective(OrdOrder record) {
         return ordOrderMapper.insertSelective(record);
     }
-
+    
     @Override
     public OrdOrder selectByOrderId(String tenantId, long orderId) {
         OrdOrderCriteria example = new OrdOrderCriteria();
