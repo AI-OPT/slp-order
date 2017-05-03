@@ -7,6 +7,7 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
+import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.sesdata.interfaces.ISesDataRefreshSV;
 import com.ai.slp.order.api.sesdata.param.SesDataByPageRequest;
 import com.ai.slp.order.api.sesdata.param.SesDataResponse;
@@ -25,6 +26,18 @@ public class SesDataRefreshSVImpl implements ISesDataRefreshSV {
 		SesDataResponse response = new SesDataResponse();
 		//刷新数据
 		response = orderIndexBusiSV.insertSesDataByPage(request);
+		response.setResponseHeader(new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "数据刷新成功"));
+		return response;
+	}
+	
+	
+	
+	@Override
+	public SesDataResponse deleteSesData(BehindQueryOrderListRequest request)
+			throws BusinessException, SystemException {
+		SesDataResponse response = new SesDataResponse();
+		// TODO Auto-generated method stub
+		orderIndexBusiSV.deleteSesData(request);
 		response.setResponseHeader(new ResponseHeader(true, ExceptCodeConstants.Special.SUCCESS, "数据刷新成功"));
 		return response;
 	}
