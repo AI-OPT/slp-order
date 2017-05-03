@@ -7,24 +7,14 @@
    <diskStore path="java.io.tmpdir"/>
    <!-- ehcache默认配置方式 -->    
    <defaultCache
-   			<!--允许在内存中存放元素的最大数量 -->
             maxEntriesLocalHeap="10000"
-            <!-- boolean类型，表示是否永恒，默认为false -->
             eternal="false"
-            <!-- 配置当缓存存储的数据达到maxInMemory限制时是否overflow到磁盘上。
-            	如果这个属 性为true，那么要求缓存的数据必须是可序列化的 -->
             overflowToDisk="false"
-            <!-- 缓存创建以后，最后一次访问缓存的日期至失效之时的时间间隔 --> 
             timeToIdleSeconds="2"
-            <!-- 缓存自创建日期起至失效时的间隔时间 -->
             timeToLiveSeconds="2"
-            <!-- 设置DiskStore(磁盘缓存)的缓存区大小 -->
             diskSpoolBufferSizeMB="30"
-            <!-- 允许在磁盘上所能保存的元素的最大数量的 -->
             maxEntriesLocalDisk="10000000"
-            <!-- 设置线程运行间隔时间 -->
             diskExpiryThreadIntervalSeconds="120"
-            <!-- 内存中数据元素的管理策略 -->
             memoryStoreEvictionPolicy="LRU">
         <persistence strategy="localTempSwap"/>
     </defaultCache>
