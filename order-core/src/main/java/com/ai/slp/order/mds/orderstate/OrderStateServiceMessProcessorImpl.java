@@ -11,7 +11,7 @@ import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
 import com.alibaba.fastjson.JSON;
 
 /**
- * 买家退货填写物流消息处理
+ * 买家退货填写物流消息处理(已废弃)
  */
 public class OrderStateServiceMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(OrderStateServiceMessProcessorImpl.class);

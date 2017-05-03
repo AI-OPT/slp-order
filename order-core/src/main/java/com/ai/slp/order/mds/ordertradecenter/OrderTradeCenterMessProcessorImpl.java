@@ -11,7 +11,7 @@ import com.ai.slp.order.api.orderrule.param.OrderMonitorRequest;
 import com.alibaba.fastjson.JSON;
 
 /**
- * 订单下单时预警订单消息处理
+ * 订单下单时预警订单消息处理(已废弃)
  */
 public class OrderTradeCenterMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(OrderTradeCenterMessProcessorImpl.class);

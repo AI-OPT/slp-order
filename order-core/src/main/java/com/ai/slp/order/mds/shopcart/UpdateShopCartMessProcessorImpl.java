@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 更新购物车消息处理
+ * 更新购物车消息处理(已废弃)
  */
 public class UpdateShopCartMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(UpdateShopCartMessProcessorImpl.class);

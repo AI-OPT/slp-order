@@ -11,7 +11,7 @@ import com.ai.slp.order.service.business.interfaces.IOrderPayBusiSV;
 import com.alibaba.fastjson.JSON;
 
 /**
- * 用户消费积分状态消息处理
+ * 用户消费积分状态消息处理(已废弃)
  */
 public class OrderReturnOidMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(OrderReturnOidMessProcessorImpl.class);
