@@ -20,10 +20,11 @@ public class orderCheckTest {
 	@Test
 	public void test() {
 		OrderCheckRequest request=new OrderCheckRequest();
-		request.setOrderId(35913355l);
+		request.setOrderId(2000034380835042l);
 		request.setState("212");
 		request.setTenantId("changhong");
 		request.setOperId("12312");
+		request.setRemark("122121");
 		System.out.println(JSON.toJSONString(request));
 		orderCheckSV.check(request);
 	}

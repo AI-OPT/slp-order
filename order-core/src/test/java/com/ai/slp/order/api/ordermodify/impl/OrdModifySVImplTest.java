@@ -20,7 +20,7 @@ public class OrdModifySVImplTest {
 	@Test
 	public void test() {
 		OrdRequest request=new OrdRequest();
-        request.setOrderId(2000001073759008l);
+        request.setOrderId(2000034411596752l);
 		request.setTenantId("changhong");
 		request.setState("94");
 		System.out.println(JSON.toJSONString(request));

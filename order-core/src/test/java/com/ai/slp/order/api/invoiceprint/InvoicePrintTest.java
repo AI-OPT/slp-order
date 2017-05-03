@@ -29,7 +29,7 @@ public class InvoicePrintTest {
 		request.setTenantId("changhong");
 	//request.setOrderId(null);
 	//	request.setInvoiceTitle("长虹");
-		request.setInvoiceStatus("2");
+	//	request.setInvoiceStatus("2");
 		InvoicePrintResponse response = invoicePrintSV.queryList(request);
 		System.out.println(JSON.toJSONString(response));
 	}
@@ -38,14 +38,14 @@ public class InvoicePrintTest {
 	public void testUpdate() {
 		
 		InvoiceNoticeRequest request=new InvoiceNoticeRequest();
-		request.setInvoiceId("5211251320");
-		request.setCompanyId(-1l);
-		request.setInvoiceNum("06171770");
-		request.setInvoiceStatus("1");
-		request.setInvoiceTotalFee(0.16);
-		request.setOrderId(2000001159582808l);
-		request.setProofItemNum("5335");
-		request.setInvoiceStatus("4");
+		request.setInvoiceId("1212");
+		request.setCompanyId(1300l);
+		request.setInvoiceNum("1313");
+		request.setInvoiceTime("2017-04-17");
+		request.setInvoiceTotalFee(48.5);
+		request.setOrderId(20000343286707821l);
+		request.setProofItemNum("1414");
+		request.setInvoiceStatus("3");
 		System.out.println(JSON.toJSON(request));
 		invoicePrintSV.updateInvoiceStatus(request);
 	}

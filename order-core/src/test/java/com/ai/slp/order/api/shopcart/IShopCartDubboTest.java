@@ -17,9 +17,9 @@ public class IShopCartDubboTest {
     public void addProdTest(){
         IShopCartSV shopCartSV = DubboConsumerFactory.getService(IShopCartSV.class);
         CartProd cartProd = new CartProd();
-        cartProd.setTenantId("SLP");
-        cartProd.setUserId("000000000000000480");
-        cartProd.setSkuId("2");
+        cartProd.setTenantId("changhong");
+        cartProd.setUserId("1122");
+        cartProd.setSkuId("0000000000000287");
         cartProd.setBuyNum(2l);
         CartProdOptRes optRes = shopCartSV.addProd(cartProd);
     }

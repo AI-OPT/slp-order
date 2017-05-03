@@ -17,6 +17,7 @@ import com.ai.paas.ipaas.mds.IMessageSender;
 import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
 import com.ai.slp.order.constants.ShopCartConstants;
+import com.ai.slp.order.manager.CacheClientManager;
 
 /**
  * Created by jackieliu on 16/5/19.
@@ -28,7 +29,7 @@ public class IPassTest {
 
     @Test
     public void cacheTest(){
-        ICacheClient iCacheClient = MCSClientFactory.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
+        ICacheClient iCacheClient = CacheClientManager.getCacheClient(ShopCartConstants.McsParams.SHOP_CART_MCS);
         String cacheKeyTest = "cacheKeyTest";
 //        iCacheClient.set(cacheKeyTest,"cacheValTest");
         iCacheClient.del(cacheKeyTest);

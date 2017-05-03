@@ -27,7 +27,7 @@ public class StasticsOrderSVImplTest {
         query.setPageNo(1);
         //query.setState("14");
        // query.setUserId("123");
-        List<String> list = new ArrayList<String>();
+     //   List<String> list = new ArrayList<String>();
         //list.add("000000000000000945");
        // list.add("123");
        // query.setUserIdList(list);

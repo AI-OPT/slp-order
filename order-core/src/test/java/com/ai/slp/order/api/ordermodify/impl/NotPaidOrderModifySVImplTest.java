@@ -23,8 +23,8 @@ public class NotPaidOrderModifySVImplTest {
 	@Test
 	public void test() {
         OrderModifyRequest request=new OrderModifyRequest();
-        request.setOrderId(2000034325121491l);
-		request.setUpdateAmount(12000l);
+        request.setOrderId(2000034374759095l);
+		request.setUpdateAmount(3000l);
 		request.setTenantId("changhong");
 		request.setOperId("1212");
 		request.setUpdateRemark("测试.....");
@@ -32,9 +32,4 @@ public class NotPaidOrderModifySVImplTest {
 		BaseResponse response = notPaidOrderModifySV.modify(request);
 		System.out.println(response);
 	}
-	
-	  public static String trim(String str) {  
-	        return ((str == null) ? "" : str.trim());  
-	    } 
-
 }

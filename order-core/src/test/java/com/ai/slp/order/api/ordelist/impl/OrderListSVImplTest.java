@@ -28,7 +28,7 @@ public class OrderListSVImplTest {
     @Test
     public void testQueryOrder() {
     	QueryOrderRequest request=new QueryOrderRequest();
-    	request.setOrderId(2000001277189486l);
+    	request.setOrderId(2000034384443504l);
     	request.setTenantId("changhong");
     	QueryOrderResponse response = orderListSV.queryOrder(request);
     	String str = JSON.toJSONString(response);
@@ -40,16 +40,22 @@ public class OrderListSVImplTest {
     	BehindQueryOrderListRequest request = new BehindQueryOrderListRequest();
          request.setTenantId("changhong");
       //  request.setUserId("7048d255c62e4511");
-        List<Object> stateList=new ArrayList<Object>();
+     //   List<Object> stateList=new ArrayList<Object>();
+    List<Object> flagList=new ArrayList<Object>();
+      flagList.add("2");
      //    request.setContactTel("18210680992");
      //  stateList.add("21");
     //  request.setOrderId(2000034314177605l);
      //   request.setProdName("test22");
          request.setPageNo(1);
          request.setPageSize(5);
-         request.setStateList(stateList);
-        // request.setRouteId("0000000000000394");
-        // request.setOrderTimeBegin("2016-07-14 16:15:29");
+      //   request.setStateList(stateList);
+         request.setFlagList(flagList);
+     //    request.setDeliveryFlag("Y");
+         
+     //    request.setProdName("说的发挥3");
+       //  request.setRouteId("0000000000000511");
+    //    request.setOrderTimeBegin("2017-04-29 00:00:00");
         // request.setOrderTimeEnd("2016-08-15 16:16:29");
       //   request.setChlId("9001");
       //   request.setContactTel("");

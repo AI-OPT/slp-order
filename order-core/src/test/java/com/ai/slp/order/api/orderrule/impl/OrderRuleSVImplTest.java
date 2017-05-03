@@ -37,24 +37,24 @@ public class OrderRuleSVImplTest {
 //		110000010000100013：IP监控'
 		//
 		request.setTimeMonitorId(OrdRuleConstants.TIME_MONITOR_ID);
-		request.setTimeMonitorTime(4);
-		request.setTimeMonitorTimeType("D");
-		request.setTimeMonitorOrderSum(8888877);
+		request.setTimeMonitorTime(1);
+		request.setTimeMonitorTimeType("MIN");
+		request.setTimeMonitorOrderSum(1);
 		//
 		request.setBuyEmployeeMonitorId(OrdRuleConstants.BUY_EMPLOYEE_MONITOR_ID);
-		request.setBuyEmployeeMonitorTime(3);
-		request.setBuyEmployeeMonitorTimeType("H");
-		request.setBuyEmployeeMonitorOrderSum(1022028989);
+		request.setBuyEmployeeMonitorTime(1);
+		request.setBuyEmployeeMonitorTimeType("MIN");
+		request.setBuyEmployeeMonitorOrderSum(1);
 		//
 		request.setBuyIpMonitorId(OrdRuleConstants.BUY_IP_MONITOR_ID);
-		request.setBuyIpMonitorTime(3);
-		request.setBuyIpMonitorTimeType("H");
-		request.setBuyIpMonitorOrderSum(1002230);
+		request.setBuyIpMonitorTime(1);
+		request.setBuyIpMonitorTimeType("MIN");
+		request.setBuyIpMonitorOrderSum(1);
 		//
 		request.setMergeOrderSettingId(OrdRuleConstants.MERGE_ORDER_SETTING_ID);
-		request.setMergeOrderSettingTime(3);
+		request.setMergeOrderSettingTime(6);
 		request.setMergeOrderSettingTimeType("D");
-		request.setMergeOrderSettingOrderSum(1022400);
+		request.setMergeOrderSettingOrderSum(333);
 		//
 		log.info("request:"+JSON.toJSONString(request));
 		//

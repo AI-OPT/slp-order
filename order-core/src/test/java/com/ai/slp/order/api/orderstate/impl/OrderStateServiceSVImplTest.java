@@ -25,9 +25,9 @@ public class OrderStateServiceSVImplTest {
 	public void updateWaitSellRecieveSureState(){
 		WaitSellReceiveSureRequest request = new WaitSellReceiveSureRequest();
 		//
-		request.setExpressId("1111");
+		request.setExpressId("yunda");
 		request.setExpressOddNumber("1111");
-		request.setOrderId(2000001039071306l);
+		request.setOrderId(2000034414396270l);
 		request.setTenantId("changhong");
 		log.info("request:"+JSON.toJSONString(request));
 		WaitSellReceiveSureResponse response = this.orderStateServiceSV.updateWaitSellRecieveSureState(request);
@@ -37,7 +37,7 @@ public class OrderStateServiceSVImplTest {
 	public void updateWaitRebateState(){
 		WaitRebateRequest request = new WaitRebateRequest();
 		//
-		request.setOrderId(2000001244455979l);
+		request.setOrderId(2000034390021452l);
 		request.setTenantId("changhong");
 		log.info("request:"+JSON.toJSONString(request));
 		WaitRebateResponse response = this.orderStateServiceSV.updateWaitRebateState(request);

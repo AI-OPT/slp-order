@@ -18,24 +18,14 @@ public class OrderRefundSVImplTest {
 	
 	@Autowired
 	private IOrderRefundSV orderRefundSV;
-
-	@Test
-	public void testFullRefund() {
-		OrderRefundRequest request=new OrderRefundRequest();
-		request.setOperId("1111");
-		request.setOrderId(35913355l);
-		request.setTenantId("changhong");
-		System.out.println(JSON.toJSONString(request));
-		//orderRefundSV.fullRefund(request);
-	}
 	
 	@Test
 	public void testPartRefund() {
 		OrderRefundRequest request=new OrderRefundRequest();
 		request.setOperId("1111");
-		request.setOrderId(2000001064336189l);
+		request.setOrderId(2000034411596752l);
 		request.setTenantId("changhong");
-		request.setUpdateMoney(100L);
+		request.setUpdateMoney(150l);
 		request.setUpdateReason("商品吊牌拆毁");
 		System.out.println(JSON.toJSONString(request));
 		orderRefundSV.partRefund(request);
@@ -45,7 +35,7 @@ public class OrderRefundSVImplTest {
 	public void testRefuseRefund() {
 		OrderRefuseRefundRequest request=new OrderRefuseRefundRequest();
 		request.setOperId("1111");
-		request.setOrderId(2000001243448650l);
+		request.setOrderId(2000034401233849l);
 		request.setTenantId("changhong");
 		request.setRefuseReason("商品损害");
 		System.out.println(JSON.toJSONString(request));

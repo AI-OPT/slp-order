@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ai.opt.base.vo.BaseResponse;
 import com.ai.slp.order.api.orderpay.interfaces.IOrderPaySV;
+import com.ai.slp.order.api.orderpay.param.OrderOidRequest;
 import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.alibaba.fastjson.JSON;
 
@@ -24,10 +25,12 @@ public class OrderPayImplTest {
     public void orderPayTest() {
         OrderPayRequest request = new OrderPayRequest();
         ArrayList<Long> arrayList = new ArrayList<Long>();
-        arrayList.add(2000001251060717l);
+        arrayList.add(2000034412999827l);
+        arrayList.add(2000034413394047l);
+        arrayList.add(2000034413497848l);
         request.setOrderIds(arrayList);
         request.setExternalId("123456");
-        request.setPayFee(0l);
+        request.setPayFee(30000l);
         request.setPayType("21");
         request.setTenantId("changhong");
         System.out.println(JSON.toJSONString(request));
@@ -35,5 +38,15 @@ public class OrderPayImplTest {
 
         BaseResponse pay = iOrderPaySV.pay(request);
         System.out.println(JSON.toJSON(pay));
+    }
+    
+    @Test
+    public void returnOid() {
+    	OrderOidRequest request=new OrderOidRequest();
+    	request.setOid("1313");
+    	request.setOrderId(2000034374195624l);
+    	request.setTenantId("changhong");
+    	BaseResponse response = iOrderPaySV.returnOid(request);
+    	System.out.println(JSON.toJSON(response));
     }
 }

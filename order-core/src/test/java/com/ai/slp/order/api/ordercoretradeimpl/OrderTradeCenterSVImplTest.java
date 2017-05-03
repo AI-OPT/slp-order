@@ -34,12 +34,13 @@ public class OrderTradeCenterSVImplTest {
         OrderTradeCenterRequest request = new OrderTradeCenterRequest();
         OrdBaseInfo ordBaseInfo = new OrdBaseInfo();
         ordBaseInfo.setUserId("112233");
+//        ordBaseInfo.setOrderType("110000");
         ordBaseInfo.setOrderType("110000");
         ordBaseInfo.setUserType("10");
         ordBaseInfo.setUserName("111");
         ordBaseInfo.setUserTel("1221");
         ordBaseInfo.setChlId("9006");
-        ordBaseInfo.setDeliveryFlag("1");
+        ordBaseInfo.setDeliveryFlag("Y");
         ordBaseInfo.setIpAddress("10.1.65.98");
         ordBaseInfo.setAcctId(0l);
         ordBaseInfo.setFlag("1");//业务标识 up平台
@@ -49,26 +50,28 @@ public class OrderTradeCenterSVImplTest {
         
         //商品信息1
         List<OrdProductInfo> ordProductInfoList = new ArrayList<OrdProductInfo>();
-        OrdProductInfo ordProductInfo = new OrdProductInfo();
+           /* OrdProductInfo ordProductInfo = new OrdProductInfo();
         ordProductInfo.setBuySum(1);
-        ordProductInfo.setSkuId("0000000000000286");
+        ordProductInfo.setSkuId("0000000000001153");
         ordProductInfo.setGiveJF(100);
         ordProductInfo.setStandard("件");
-        ordProductInfoList.add(ordProductInfo);
-     /*   
-      OrdProductInfo ordProductInfo1 = new OrdProductInfo();
-        ordProductInfo1.setBuySum(5);
-        ordProductInfo1.setSkuId("0000000000000286");  //两个商品同一销售商 不同仓库
-        ordProductInfo1.setGiveJF(10);
+        ordProductInfoList.add(ordProductInfo);*/
+    
+  /*    OrdProductInfo ordProductInfo1 = new OrdProductInfo();
+        ordProductInfo1.setBuySum(2);
+       ordProductInfo1.setSkuId("31530123");  //两个商品同一销售商 不同仓库
+       ordProductInfo1.setSkuId("0000000000002123");  //两个商品同一销售商 不同仓库
+        ordProductInfo1.setGiveJF(20);
         ordProductInfo1.setStandard("件");
         ordProductInfoList.add(ordProductInfo1);*/
         
-  /*     OrdProductInfo ordProductInfo2 = new OrdProductInfo();
+       OrdProductInfo ordProductInfo2 = new OrdProductInfo();
         ordProductInfo2.setBuySum(2);
        // ordProductInfo2.setSupplierId(-1l);
-        ordProductInfo2.setSkuId("0000000000000194");  //两个商品同一销售商 不同仓库
+        ordProductInfo2.setSkuId("0000000000002124");  //两个商品同一销售商 不同仓库
         ordProductInfo2.setGiveJF(3000);
-        ordProductInfoList.add(ordProductInfo2);*/
+        ordProductInfo2.setStandard("件");
+        ordProductInfoList.add(ordProductInfo2);
         
         //发票信息1
         OrdInvoiceInfo ordInvoiceInfo=new OrdInvoiceInfo();
@@ -85,22 +88,22 @@ public class OrderTradeCenterSVImplTest {
         List<OrdFeeTotalProdInfo> ordFeeTotalProdInfo=new ArrayList<OrdFeeTotalProdInfo>();
         OrdFeeTotalProdInfo ordFeeTotalProdInfo1=new OrdFeeTotalProdInfo();
         ordFeeTotalProdInfo1.setPayStyle("23");
-        ordFeeTotalProdInfo1.setPaidFee(23000);
+        ordFeeTotalProdInfo1.setPaidFee(230);
         ordFeeTotalProdInfo1.setJfAmount(0l);
         OrdFeeTotalProdInfo ordFeeTotalProdInfo2=new OrdFeeTotalProdInfo();
         ordFeeTotalProdInfo2.setPayStyle("5");
-        ordFeeTotalProdInfo2.setPaidFee(5000);
-        ordFeeTotalProdInfo2.setJfAmount(5000);
+        ordFeeTotalProdInfo2.setPaidFee(50);
+        ordFeeTotalProdInfo2.setJfAmount(50);
         OrdFeeTotalProdInfo ordFeeTotalProdInfo3=new OrdFeeTotalProdInfo();
         ordFeeTotalProdInfo3.setPayStyle("8");
-        ordFeeTotalProdInfo3.setPaidFee(1000);
+        ordFeeTotalProdInfo3.setPaidFee(10);
         ordFeeTotalProdInfo.add(ordFeeTotalProdInfo1);
         ordFeeTotalProdInfo.add(ordFeeTotalProdInfo2);
         ordFeeTotalProdInfo.add(ordFeeTotalProdInfo3);
         
-        detailInfo.setFreight(10000);
-        detailInfo.setDiscountFee(500);
-        detailInfo.setSupplierId("2000");
+        detailInfo.setFreight(1000);
+        detailInfo.setDiscountFee(5);
+        detailInfo.setSupplierId("1300");
         detailInfo.setRemark("A买家留言信息信息信息信息信息信息");
         detailInfo.setOrdInvoiceInfo(ordInvoiceInfo);
         detailInfo.setOrdProductInfoList(ordProductInfoList);
@@ -173,7 +176,7 @@ public class OrderTradeCenterSVImplTest {
         ordLogisticsInfo.setContactName("小志918");
         ordLogisticsInfo.setContactTel("918");
         ordLogisticsInfo.setContactEmail("918@163.com");
-        ordLogisticsInfo.setProvinceCode("75");
+        ordLogisticsInfo.setProvinceCode("11");
         ordLogisticsInfo.setCityCode("750");
         ordLogisticsInfo.setCountyCode("100839");
         ordLogisticsInfo.setPostCode("1");
@@ -188,6 +191,8 @@ public class OrderTradeCenterSVImplTest {
         
         request.setTenantId("changhong");
         System.out.println(JSON.toJSON(request));
-        OrderTradeCenterResponse apply = orderTradeCenterSV.apply(request);
+        OrderTradeCenterResponse response = orderTradeCenterSV.apply(request);
+        System.out.println(JSON.toJSON(response));
     }
 }
+
