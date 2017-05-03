@@ -13,10 +13,12 @@ import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
+import com.ai.paas.ipaas.search.ISearchClient;
 import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.platform.common.api.cache.interfaces.ICacheSV;
 import com.ai.platform.common.api.cache.param.SysParam;
+import com.ai.slp.order.api.orderlist.param.BehindQueryOrderListRequest;
 import com.ai.slp.order.api.sesdata.param.SesDataByPageRequest;
 import com.ai.slp.order.api.sesdata.param.SesDataRequest;
 import com.ai.slp.order.api.sesdata.param.SesDataResponse;
@@ -44,6 +46,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
+import com.alibaba.fastjson.JSON;
 
 
 @Service
@@ -513,6 +516,9 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 	response.setFailCount(failCount);
 	response.setShareParentCount(shareParentCount);
 	response.setFailOrders(failOrders);
+	logger.info(">>>>>>>>>>订单刷新失败个数:"+failCount);
+	logger.info(">>>>>>>>>>共有订单个数:"+shareParentCount);
+	logger.info(">>>>>>>>>>刷新失败的订单有:"+JSON.toJSONString(failOrders));
 	return response;
   }
 	
@@ -523,5 +529,13 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void deleteSesData(BehindQueryOrderListRequest request) throws BusinessException, SystemException {
+		// TODO Auto-generated method stub
+		ISearchClient sesClient = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
+		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.commonConditions(request);
+		sesClient.delete(orderSearchCriteria);
 	}
 }
