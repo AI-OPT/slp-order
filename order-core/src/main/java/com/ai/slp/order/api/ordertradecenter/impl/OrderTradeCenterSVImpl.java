@@ -32,13 +32,15 @@ public class OrderTradeCenterSVImpl implements IOrderTradeCenterSV {
             throws BusinessException, SystemException {
     	//参数校验
     	ValidateUtils.validateOrderTradeCenter(request); 
+    	OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
 	 	//订单下单前异常监控
     	OrderMonitorRequest monitorRequest=new OrderMonitorRequest();
-    	OrdBaseInfo ordBaseInfo = request.getOrdBaseInfo();
     	monitorRequest.setUserId(ordBaseInfo.getUserId());
     	monitorRequest.setIpAddress(ordBaseInfo.getIpAddress());
-    	OrderMonitorBeforResponse beforSubmitOrder = orderMonitorSV.beforSubmitOrder(monitorRequest);
-		OrderTradeCenterResponse response = ordOrderTradeBusiSV.apply(request,
+    	OrderMonitorBeforResponse beforSubmitOrder = orderMonitorSV.
+    			beforSubmitOrder(monitorRequest);
+    	//下单操作
+    	OrderTradeCenterResponse response = ordOrderTradeBusiSV.apply(request,
 				beforSubmitOrder,monitorRequest);
 		ResponseHeader responseHeader = new ResponseHeader(true,
 				ExceptCodeConstants.Special.SUCCESS, "成功");
