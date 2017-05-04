@@ -183,7 +183,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private Map<String,Object> createProdInfo(OrderTradeCenterRequest request,OrdProductDetailInfo ordProductDetailInfo,
     		Timestamp sysDate, long orderId) {
-       // LOG.debug("开始处理订单商品明细[" + orderId + "]和订单费用明细资料信息..");
         List<OrdProductResInfo> ordProductResList = new ArrayList<OrdProductResInfo>();
         List<OrdOdProd> ordOdProds = new ArrayList<OrdOdProd>();
         Map<String,Object> mapProduct = new HashMap<String,Object>();
@@ -312,8 +311,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         ordOdFeeTotal.setPaidFee(0);
         ordOdFeeTotal.setPayFee(totalProdFee<0?0:totalProdFee);//加上运费
         ordOdFeeTotal.setUpdateTime(sysDate);
-    //  ordOdFeeTotal.setUpdateChlId("");
-    //  ordOdFeeTotal.setUpdateOperId("");
         ordOdFeeTotal.setTotalJf(totalJf);
         ordOdFeeTotal.setFreight(freight);
         ordOdFeeTotalAtomSV.insertSelective(ordOdFeeTotal);
@@ -393,7 +390,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
      */
     private OrdOdLogistics createOrderLogistics(OrderTradeCenterRequest request, Timestamp sysDate,
             long orderId) {
-    	//LOG.debug("开始处理订单配送[" + orderId + "]信息..");
     	OrdLogisticsInfo ordLogisticsInfo = request.getOrdLogisticsInfo();
     	/* 1.创建配送信息*/
     	OrdOdLogistics logistics=new OrdOdLogistics();
@@ -405,16 +401,16 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
     	logistics.setContactCompany(ordLogisticsInfo.getContactCompany());
     	logistics.setContactName(ordLogisticsInfo.getContactName());
     	logistics.setContactTel(ordLogisticsInfo.getContactTel());
-    	logistics.setContactEmail(ordLogisticsInfo.getContactEmail());
+    	logistics.setContactEmail(DbUtils.getField(ordLogisticsInfo.getContactEmail()));
     	logistics.setProvinceCode(ordLogisticsInfo.getProvinceCode());
     	logistics.setCityCode(ordLogisticsInfo.getCityCode());
     	logistics.setCountyCode(ordLogisticsInfo.getCountyCode());
     	logistics.setPostcode(ordLogisticsInfo.getPostCode());
-    	logistics.setAreaCode(ordLogisticsInfo.getAreaCode());
+    	logistics.setAreaCode(DbUtils.getField(ordLogisticsInfo.getAreaCode()));
     	logistics.setAddress(ordLogisticsInfo.getAddress());
-    	logistics.setExpressSelfId(ordLogisticsInfo.getExpressSelfId());
-    	logistics.setLogisticsTimeId(ordLogisticsInfo.getLogisticsTime());
-    	logistics.setRemark(ordLogisticsInfo.getRemark());
+    	logistics.setExpressSelfId(DbUtils.getField(ordLogisticsInfo.getExpressSelfId()));
+    	logistics.setLogisticsTimeId(DbUtils.getField(ordLogisticsInfo.getLogisticsTime()));
+    	logistics.setRemark(DbUtils.getField(ordLogisticsInfo.getRemark()));
     	ordOdLogisticsAtomSV.insertSelective(logistics);
     	return logistics;
     }
