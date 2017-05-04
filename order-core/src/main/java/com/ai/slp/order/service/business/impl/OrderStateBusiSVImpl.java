@@ -48,13 +48,13 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 	public void updateWaitSellRecieveSureState(OrdOrder ordOrder,
 			OrdOdLogistics ordOdLogistics) {
 		
-		//异步操作数据库数据库
+		//this.ordOrderAtomSV.updateOrderState(ordOrder);
+		//1.异步操作数据库
 		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).
 				send(JSON.toJSONString(ordOrder), 0);
-		//this.ordOrderAtomSV.updateOrderState(ordOrder);
-		//
+		//2.生成售后物流信息
 		this.ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
-		//刷新搜索引擎数据
+		//3.刷新搜索引擎数据
 		this.refreshData(ordOrder, ordOdLogistics);
 	}
 	
