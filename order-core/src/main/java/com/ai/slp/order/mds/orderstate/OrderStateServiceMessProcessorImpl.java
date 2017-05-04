@@ -6,20 +6,20 @@ import org.slf4j.LoggerFactory;
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.vo.MessageAndMetadata;
-import com.ai.slp.order.api.orderstate.param.WaitSellReceiveSureRequest;
-import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
+import com.ai.slp.order.dao.mapper.bo.OrdOrder;
+import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.alibaba.fastjson.JSON;
 
 /**
- * 买家退货填写物流消息处理(已废弃)
+ * 买家退货填写物流消息处理
  */
 public class OrderStateServiceMessProcessorImpl implements IMessageProcessor {
     private static Logger logger = LoggerFactory.getLogger(OrderStateServiceMessProcessorImpl.class);
 
-    private IOrderStateBusiSV orderStateBusiSV;
+    private IOrdOrderAtomSV ordOrderAtomSV;
 
-    public OrderStateServiceMessProcessorImpl(IOrderStateBusiSV orderStateBusiSV){
-        this.orderStateBusiSV = orderStateBusiSV;
+    public OrderStateServiceMessProcessorImpl(IOrdOrderAtomSV ordOrderAtomSV){
+        this.ordOrderAtomSV = ordOrderAtomSV;
     }
 
     @Override
@@ -30,11 +30,11 @@ public class OrderStateServiceMessProcessorImpl implements IMessageProcessor {
         logger.info("--Topic:{}\r\n----key:{}\r\n----content:{}"
                 , message.getTopic(),new String(message.getKey(), "UTF-8"),content);
         //转换对象
-        WaitSellReceiveSureRequest request = JSON.parseObject(content,WaitSellReceiveSureRequest.class);
-        if (request==null)
+        OrdOrder ordOrder = JSON.parseObject(content,OrdOrder.class);
+        if (ordOrder==null)
             return;
         try {
-			//this.orderStateBusiSV.updateWaitSellRecieveSureState(request);
+			this.ordOrderAtomSV.updateOrderState(ordOrder);
         } catch (BusinessException e) {
 			e.printStackTrace();
 			logger.error("消息处理出现异常:"+e.getMessage());

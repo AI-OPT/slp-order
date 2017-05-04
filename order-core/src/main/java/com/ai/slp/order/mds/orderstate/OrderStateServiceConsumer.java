@@ -14,34 +14,33 @@ import com.ai.paas.ipaas.mds.IMessageConsumer;
 import com.ai.paas.ipaas.mds.IMessageProcessor;
 import com.ai.paas.ipaas.mds.IMsgProcessorHandler;
 import com.ai.slp.order.constants.OrdersConstants;
-import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
+import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 
-//已废弃
-//@Component
+@Component
 public class OrderStateServiceConsumer extends AbstractMdsConsumer {
 	private static Logger logger = LoggerFactory.getLogger(OrderStateServiceConsumer.class);
 
 	@Autowired
-	private IOrderStateBusiSV orderStateBusiSV;
+	private IOrdOrderAtomSV ordOrderAtomSV;
 	@Override
 	public void startMdsConsumer() throws Exception {
-		logger.error("开始启动OfcOrderAfterSaleMdsConsumer。。。。。");
+		logger.error("开始启动OrderStateServiceMdsConsumer。。。。。");
 		IMsgProcessorHandler msgProcessorHandler=new IMsgProcessorHandler() {
             @Override
             public IMessageProcessor[] createInstances(int paramInt) {
                 List<IMessageProcessor> processors = new ArrayList<>();
                 IMessageProcessor processor = null;
                 for (int i = 0; i < paramInt; i++) {
-                    processor = new OrderStateServiceMessProcessorImpl(orderStateBusiSV);
+                    processor = new OrderStateServiceMessProcessorImpl(ordOrderAtomSV);
                     processors.add(processor);
                 }
                 return processors.toArray(new IMessageProcessor[processors.size()]);
             }
         };
         IMessageConsumer msgConsumer= MDSClientFactory.getConsumerClient(
-                OrdersConstants.MDSNS.MDS_NS_ORDER_STATE_TOPIC, msgProcessorHandler);
+                OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC, msgProcessorHandler);
         msgConsumer.start();
-        logger.error("成功启动OfcOrderAfterSaleMdsConsumer。。。。。");
+        logger.error("成功启动OrderStateServiceMdsConsumer。。。。。");
 
 	}
 
