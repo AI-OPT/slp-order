@@ -749,7 +749,7 @@ public final class OrdersConstants {
 		public static final String PART_DELIVER_GOODS = "18";
 	}
 	public static final class MDSNS {
-		/** 订单系统的下单预警的消息队列命名空间 */
+		/** 订单系统的买家退换货填写物流的消息队列命名空间 */
 		public static final String MDS_NS_ORDER_TOPIC = "MDS_NS_ORDER_TOPIC";
 		/** 订单系统订单状态轨迹的消息队列命名空间 */
 		public static final String MDS_NS_ORDER_STATE_TOPIC = "MDS_NS_ORDER_STATE_TOPIC";

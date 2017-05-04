@@ -24,4 +24,5 @@ public class SearchFieldConfConstants {
     public static final String ADJUST_FEE = "adjustfee";
     public static final String PAY_STYLE = "paystyle";
     public static final String TOTAL_FEE = "totalfee";
+    public static final String DOWNSTREAM_ORDERID = "downstreamorderid";
 }
