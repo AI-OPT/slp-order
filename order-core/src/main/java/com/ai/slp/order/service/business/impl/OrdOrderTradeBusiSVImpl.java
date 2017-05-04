@@ -110,11 +110,6 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
         	this.insertSesData(ordOrder, feeInfo, logistics,mapProduct,invoiceInfo);
         	/* 8.订单提交成功后监控服务  */
         	orderMonitorSV.afterSubmitOrder(monitorRequest);
-        	
-        	/*异步处理 发送消息
-    		MDSClientManager.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).
-    				send(JSON.toJSONString(monitorRequest), 0);*/
-        	
         	/* 9.封装返回参数*/
         	orderResInfo.setOrderId(orderId);
         	orderResInfo.setOrdProductResList((List<OrdProductResInfo>) mapProduct.get("ordProductResList"));

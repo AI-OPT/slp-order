@@ -23,7 +23,7 @@ import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.opt.sdk.util.CollectionUtil;
 import com.ai.opt.sdk.util.DateUtil;
-import com.ai.paas.ipaas.search.ISearchClient;
+import com.ai.paas.ipaas.search.common.JsonBuilder;
 import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.util.StringUtil;
@@ -33,6 +33,7 @@ import com.ai.slp.order.api.orderpay.param.OrderPayRequest;
 import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.constants.OrdersConstants.OrdOdStateChg;
 import com.ai.slp.order.constants.SearchConstants;
+import com.ai.slp.order.constants.SearchFieldConfConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdBalacneIf;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOdFeeTotal;
@@ -619,35 +620,16 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 		if(updateFlag==0) {
   			throw new BusinessException("用户消费积分返回oid更新失败,订单id:"+order.getOrderId());
   		}
-		//2.刷新搜索数据
-		this.refreshOidData(order);
-	}
-	
-	/**
-	 * 刷新搜索数据-(用户消费积分oid)
-	 * @param order
-	 * @author caofz
-	 * @ApiDocMethod
-	 * @ApiCode 
-	 * @RestRelativeURL
-	 */
-	private void  refreshOidData(OrdOrder order) {
-		IOrderSearch orderSearch = new OrderSearchImpl();
-		List<SearchCriteria> orderSearchCriteria = SearchCriteriaStructure.
-				commonConditionsByOrderId(order.getOrderId());
-		//查询elasticSearch中符合的数据
-		Result<OrderInfo> result = orderSearch.search(orderSearchCriteria, 0, 1, null);
-		List<OrderInfo> ordList = result.getContents();
-		if(CollectionUtil.isEmpty(ordList)) {
-			logger.info("搜索引擎无数据! 父订单id为:"+order.getOrderId());
-			throw new BusinessException("搜索引擎无数据! 父订单id为:"+order.getOrderId());
+		//2.刷新搜索数据中的单个字段
+		try {
+			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).
+					update(String.valueOf(order.getOrderId()), 
+						new JsonBuilder().startObject().field(SearchFieldConfConstants.DOWNSTREAM_ORDERID, 
+								order.getDownstreamOrderId()).endObject());
+		} catch (Exception e) {
+			logger.error("导入数据到搜索引擎失败.......");
+			throw new SystemException("导入数据到搜索引擎失败..."+order.getOrderId());
 		}
-		OrderInfo orderInfo = ordList.get(0);
-		orderInfo.setDownstreamorderid(order.getDownstreamOrderId());
-//		ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
-		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
-		client.bulkInsert(ordList);
-		client.refresh();
 	}
 	
 	/**

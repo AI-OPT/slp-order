@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.base.exception.SystemException;
+import com.ai.opt.sdk.components.mds.MDSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.CollectionUtil;
@@ -32,6 +33,7 @@ import com.ai.slp.order.service.business.impl.search.OrderSearchImpl;
 import com.ai.slp.order.service.business.interfaces.IOrderStateBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
+import com.alibaba.fastjson.JSON;
 @Service
 public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 
@@ -45,8 +47,11 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 	@Transactional
 	public void updateWaitSellRecieveSureState(OrdOrder ordOrder,
 			OrdOdLogistics ordOdLogistics) {
-		//
-		this.ordOrderAtomSV.updateOrderState(ordOrder);
+		
+		//异步操作数据库数据库
+		MDSClientFactory.getSenderClient(OrdersConstants.MDSNS.MDS_NS_ORDER_TOPIC).
+				send(JSON.toJSONString(ordOrder), 0);
+		//this.ordOrderAtomSV.updateOrderState(ordOrder);
 		//
 		this.ordOdLogisticsAtomSV.insertSelective(ordOdLogistics);
 		//刷新搜索引擎数据
@@ -173,7 +178,6 @@ public class OrderStateBusiSVImpl implements IOrderStateBusiSV {
 				ordProdExtend.setAfterexpressoddnumber(afterLogistics.getExpressOddNumber());
 			}
 		}
-		//ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(ordList);
 		ISearchClient client = ESClientManager.getSesClient(SearchConstants.SearchNameSpace);
 		client.bulkInsert(ordList);
 		client.refresh();
