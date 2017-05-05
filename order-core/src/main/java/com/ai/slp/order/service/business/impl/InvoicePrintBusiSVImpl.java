@@ -151,12 +151,12 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			respVo.setPrice(salePrice.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
 			respVo.setQuantity(String.valueOf(ordOdProd.getBuySum()));
 			respVo.setUnit("");
-			BigDecimal discountFee = BigDecimal.valueOf(ordOdProd.getDiscountFee()).divide(new BigDecimal(1000));
+			BigDecimal discountFee = BigDecimal.valueOf(0-ordOdProd.getDiscountFee()).divide(new BigDecimal(1000));
 			respVo.setDiscountAmount(discountFee.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
 			respVo.setRate(OrdersConstants.INVOICE_RATE);
 			
 			//含税金额
-			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(1000));
+			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000));
 			BigDecimal rate = new BigDecimal(1).add(new BigDecimal(OrdersConstants.INVOICE_RATE));
 			//不含税金额
 			BigDecimal notTaxAmount = BigDecimal.valueOf(taxValue.doubleValue() / rate.doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP);//taxValue.divide(rate);
