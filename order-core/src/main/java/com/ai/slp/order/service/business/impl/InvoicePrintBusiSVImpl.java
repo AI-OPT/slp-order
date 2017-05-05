@@ -151,15 +151,34 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			respVo.setPrice(salePrice.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
 			respVo.setQuantity(String.valueOf(ordOdProd.getBuySum()));
 			respVo.setUnit("");
-			respVo.setDiscountAmount("0.00");
+			BigDecimal discountFee = BigDecimal.valueOf(ordOdProd.getDiscountFee()).divide(new BigDecimal(1000));
+			respVo.setDiscountAmount(discountFee.setScale(2,BigDecimal.ROUND_HALF_UP).toString());
 			respVo.setRate(OrdersConstants.INVOICE_RATE);
-			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000));
+			
+			//含税金额
+			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(1000));
+			BigDecimal rate = new BigDecimal(1).add(new BigDecimal(OrdersConstants.INVOICE_RATE));
+			//不含税金额
+			BigDecimal notTaxAmount = BigDecimal.valueOf(taxValue.doubleValue() / rate.doubleValue()).setScale(2, BigDecimal.ROUND_HALF_UP);//taxValue.divide(rate);
+			
+			//税金
+			BigDecimal tax = taxValue.subtract(notTaxAmount);
+			
+			/*
+			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(1000));
+			//不含税金额
+			BigDecimal notTaxAmount = taxValue.divide(new BigDecimal(1).add(new BigDecimal(Double.parseDouble(OrdersConstants.INVOICE_RATE))));
+			
 			BigDecimal b1 =taxValue.multiply(new BigDecimal(Double.parseDouble(OrdersConstants.INVOICE_RATE)));  //税金
-			BigDecimal b2 = BigDecimal.valueOf(ordOdProd.getAdjustFee()).divide(new BigDecimal(1000)); //含税金额
-			String s=b2.subtract(b1).setScale(2,BigDecimal.ROUND_HALF_UP).toString(); 
-			respVo.setTax(b1.setScale(2,BigDecimal.ROUND_HALF_UP).toString());//税金
-			respVo.setAmount(s); //不含税金额
-			respVo.setTaxAmount(b2.setScale(2,BigDecimal.ROUND_HALF_UP).toString()); //含税金额
+			BigDecimal b2 = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(1000)); //含税金额
+			//含税金额
+			String taxAmount=b2.setScale(2,BigDecimal.ROUND_HALF_UP).toString();
+			//税金
+			BigDecimal tax = b2.subtract(notTaxAmount);*/
+			
+			respVo.setTax(tax.setScale(2,BigDecimal.ROUND_HALF_UP).toString());//税金
+			respVo.setAmount(salePrice.setScale(2,BigDecimal.ROUND_HALF_UP).toString()); //含税单价
+			respVo.setTaxAmount(taxValue.setScale(2,BigDecimal.ROUND_HALF_UP).toString()); //含税金额
 			respVo.setRemark(order.getRemark()==null?"":order.getRemark());
 			invoiceList.add(respVo);
 		}
