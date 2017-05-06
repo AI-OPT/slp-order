@@ -2564,6 +2564,146 @@ public class OrdOdProdCriteria {
             addCriterion("PROD_CODE not between", value1, value2, "prodCode");
             return (Criteria) this;
         }
+
+        public Criteria andPicTypeIsNull() {
+            addCriterion("PIC_TYPE is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeIsNotNull() {
+            addCriterion("PIC_TYPE is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeEqualTo(String value) {
+            addCriterion("PIC_TYPE =", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeNotEqualTo(String value) {
+            addCriterion("PIC_TYPE <>", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeGreaterThan(String value) {
+            addCriterion("PIC_TYPE >", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("PIC_TYPE >=", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeLessThan(String value) {
+            addCriterion("PIC_TYPE <", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeLessThanOrEqualTo(String value) {
+            addCriterion("PIC_TYPE <=", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeLike(String value) {
+            addCriterion("PIC_TYPE like", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeNotLike(String value) {
+            addCriterion("PIC_TYPE not like", value, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeIn(List<String> values) {
+            addCriterion("PIC_TYPE in", values, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeNotIn(List<String> values) {
+            addCriterion("PIC_TYPE not in", values, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeBetween(String value1, String value2) {
+            addCriterion("PIC_TYPE between", value1, value2, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicTypeNotBetween(String value1, String value2) {
+            addCriterion("PIC_TYPE not between", value1, value2, "picType");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdIsNull() {
+            addCriterion("VFS_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdIsNotNull() {
+            addCriterion("VFS_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdEqualTo(String value) {
+            addCriterion("VFS_ID =", value, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdNotEqualTo(String value) {
+            addCriterion("VFS_ID <>", value, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdGreaterThan(String value) {
+            addCriterion("VFS_ID >", value, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdGreaterThanOrEqualTo(String value) {
+            addCriterion("VFS_ID >=", value, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdLessThan(String value) {
+            addCriterion("VFS_ID <", value, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdLessThanOrEqualTo(String value) {
+            addCriterion("VFS_ID <=", value, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdLike(String value) {
+            addCriterion("VFS_ID like", value, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdNotLike(String value) {
+            addCriterion("VFS_ID not like", value, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdIn(List<String> values) {
+            addCriterion("VFS_ID in", values, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdNotIn(List<String> values) {
+            addCriterion("VFS_ID not in", values, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdBetween(String value1, String value2) {
+            addCriterion("VFS_ID between", value1, value2, "vfsId");
+            return (Criteria) this;
+        }
+
+        public Criteria andVfsIdNotBetween(String value1, String value2) {
+            addCriterion("VFS_ID not between", value1, value2, "vfsId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

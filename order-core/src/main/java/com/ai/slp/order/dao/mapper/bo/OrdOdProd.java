@@ -77,6 +77,10 @@ public class OrdOdProd {
 
     private String prodCode;
 
+    private String picType;
+
+    private String vfsId;
+
     public long getProdDetalId() {
         return prodDetalId;
     }
@@ -371,5 +375,21 @@ public class OrdOdProd {
 
     public void setProdCode(String prodCode) {
         this.prodCode = prodCode == null ? null : prodCode.trim();
+    }
+
+    public String getPicType() {
+        return picType;
+    }
+
+    public void setPicType(String picType) {
+        this.picType = picType == null ? null : picType.trim();
+    }
+
+    public String getVfsId() {
+        return vfsId;
+    }
+
+    public void setVfsId(String vfsId) {
+        this.vfsId = vfsId == null ? null : vfsId.trim();
     }
 }
