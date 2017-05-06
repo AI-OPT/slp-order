@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ai.opt.base.exception.BusinessException;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
-import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.opt.sdk.util.BeanUtils;
 import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
@@ -26,6 +25,7 @@ import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 import com.ai.slp.order.constants.ErrorCodeConstants;
 import com.ai.slp.order.constants.ShopCartConstants;
+import com.ai.slp.order.constants.prod.SearchProdInfoUtils;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.manager.CacheClientManager;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
@@ -33,9 +33,7 @@ import com.ai.slp.order.service.business.interfaces.IShopCartBusiSV;
 import com.ai.slp.order.util.DateUtils;
 import com.ai.slp.order.util.IPassMcsUtils;
 import com.ai.slp.order.vo.ShopCartCachePointsVo;
-import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
-import com.ai.slp.product.api.product.param.SkuInfoQuery;
 import com.alibaba.fastjson.JSON;
 
 /**
@@ -73,19 +71,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
     @Override
     public CartProdOptRes addCartProd(OrdOdCartProd odCartProd, ShopCartCachePointsVo pointsVo) {
     	CartProdOptRes cartProdOptRes = null;
-     /*   //若商品数量为空或零,删除购物车中商品
-        if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
-            cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
-        }else {
-            OrdOdCartProd cartProd0 = cartProdAtomSV.queryByProdOfCart(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
-            //若没有添加商品,则直接添加
-            if (cartProd0 ==null){
-                cartProdAtomSV.installCartProd(odCartProd);
-            }else {
-                cartProd0.setBuySum(odCartProd.getBuySum());
-                cartProdAtomSV.updateCartProdById(cartProd0);
-            }
-        }*/
         cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
@@ -118,20 +103,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         pointsVo.setProdTotal(pointsVo.getProdTotal()+addNum);//更新商品总数量
         //更新概览
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
-     /*   //若商品数量为空或零,删除购物车中商品
-        if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
-            cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
-        }else {
-            OrdOdCartProd cartProd0 = cartProdAtomSV.queryByProdOfCart(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
-            //若没有添加商品,则直接添加
-            if (cartProd0 ==null){
-                cartProdAtomSV.installCartProd(odCartProd);
-            }else {
-                cartProd0.setBuySum(odCartProd.getBuySum());
-             //   cartProdAtomSV.updateCartProdById(cartProd0);
-                cartProdAtomSV.updateCartProdSum(cartProd0);
-            }
-        }*/
         CartProdOptRes cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;
@@ -173,13 +144,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
             iCacheClient.hdel(cartUserId,skuId);
             iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
             delSuccessNum++;
-
-         /*   prod.setBuySum(0l);//商品数为零,表示删除
-            //若商品数量为空或零,删除购物车中商品
-            if (prod.getBuySum()==null || new Long(0l).equals(prod.getBuySum())){
-                cartProdAtomSV.deleteByProdId(prod.getTenantId(),prod.getUserId(),prod.getSkuId());
-            }*/
-
         }
         CartProdOptRes optRes = new CartProdOptRes();
         ShopCartCachePointsVo cachePointsVo = queryCartPoints(iCacheClient,tenantId,userId);
@@ -292,11 +256,8 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
      * @return
      */
     private ProductSkuInfo querySkuInfo(String tenantId,String skuId){
-        SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
-        skuInfoQuery.setTenantId(tenantId);
-        skuInfoQuery.setSkuId(skuId);
-        IProductServerSV productServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
-        return productServerSV.queryProductSkuById4ShopCart(skuInfoQuery);
+    	ProductSkuInfo productSkuInfo = SearchProdInfoUtils.querySkuInfo(tenantId, skuId);
+        return productSkuInfo;
     }
 
     /**
@@ -410,21 +371,6 @@ public class ShopCartBusiSVImpl implements IShopCartBusiSV {
         
         //更新概览
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(pointsVo));
-        
-        //若商品数量为空或零,删除购物车中商品
-      /*  if (odCartProd.getBuySum()==null || new Long(0l).equals(odCartProd.getBuySum())){
-            cartProdAtomSV.deleteByProdId(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
-        }else {
-            OrdOdCartProd cartProd0 = cartProdAtomSV.queryByProdOfCart(odCartProd.getTenantId(),odCartProd.getUserId(),odCartProd.getSkuId());
-            //若没有添加商品,则直接添加
-            if (cartProd0 ==null){
-                cartProdAtomSV.installCartProd(odCartProd);
-            }else {
-                cartProd0.setBuySum(odCartProd.getBuySum());
-                cartProdAtomSV.updateCartProdById(cartProd0);
-            }
-        }*/
-
         cartProdOptRes = new CartProdOptRes();
         BeanUtils.copyProperties(cartProdOptRes,pointsVo);
         return cartProdOptRes;

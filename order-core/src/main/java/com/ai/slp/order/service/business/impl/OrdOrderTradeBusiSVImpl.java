@@ -46,6 +46,7 @@ import com.ai.slp.order.manager.ESClientManager;
 import com.ai.slp.order.search.bo.OrdProdExtend;
 import com.ai.slp.order.search.bo.OrderInfo;
 import com.ai.slp.order.search.bo.ProdInfo;
+import com.ai.slp.order.search.bo.prod.ImageInfo;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeProdAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdFeeTotalAtomSV;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdInvoiceAtomSV;
@@ -226,6 +227,7 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
                 throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "商品库存为空");
             }
             long prodDetailId = SequenceUtil.createProdDetailId();
+            ImageInfo info=new ImageInfo();//图片信息
             OrdOdProd ordOdProd = new OrdOdProd();
             ordOdProd.setProdDetalId(prodDetailId);
             ordOdProd.setTenantId(request.getTenantId());
@@ -248,6 +250,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
             ordOdProd.setUpdateTime(sysDate);
             ordOdProd.setJf(ordProductInfo.getGiveJF()); //赠送积分
        //   ordOdProd.setProdCode(""); //商品编码
+            info.setImagetype(storageNumRes.getImagetype());
+            info.setVfsid(storageNumRes.getVfsid());
+            mapProduct.put(String.valueOf(prodDetailId), info);
             ordOdProds.add(ordOdProd); //加入list集合中
             /* 2. 封装订单提交商品返回参数 */
             OrdProductResInfo ordProductResInfo = new OrdProductResInfo();
@@ -504,6 +509,9 @@ public class OrdOrderTradeBusiSVImpl implements IOrdOrderTradeBusiSV {
 			prodInfo.setProddetalid(ordOdProd.getProdDetalId());
 			prodInfo.setSkustorageid(ordOdProd.getSkuStorageId());
 			prodInfo.setProdcode(ordOdProd.getProdCode());
+			ImageInfo info = (ImageInfo) mapProduct.get(String.valueOf(ordOdProd.getProdDetalId()));
+			prodInfo.setVfsid(info.getVfsid());
+			prodInfo.setPictype(info.getImagetype());
 			prodInfos.add(prodInfo);
 		}
 		prodExtend.setProdsize(prodInfos.size());
