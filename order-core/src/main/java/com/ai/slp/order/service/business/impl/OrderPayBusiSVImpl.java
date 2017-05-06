@@ -712,6 +712,8 @@ public class OrderPayBusiSVImpl implements IOrderPayBusiSV {
 				prodInfo.setProdcode(ordOdProd.getProdCode());
 				prodInfo.setSkuid(ordOdProd.getSkuId());
 				prodInfo.setProddetalid(ordOdProd.getProdDetalId());
+				prodInfo.setPictype(ordOdProd.getPicType());
+				prodInfo.setVfsid(ordOdProd.getVfsId());
 				prodInfo.setSkustorageid(ordOdProd.getSkuStorageId());
 				prodinfos.add(prodInfo);
 			}

@@ -342,6 +342,8 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
 		afterProdInfo.setSkuid(afterOrdOdProd.getSkuId());
 		afterProdInfo.setProddetalid(afterOrdOdProd.getProdDetalId());
 		afterProdInfo.setSkustorageid(afterOrdOdProd.getSkuStorageId());
+		afterProdInfo.setPictype(afterOrdOdProd.getPicType());
+		afterProdInfo.setVfsid(afterOrdOdProd.getVfsId());
 		
 		//
 		afterProdInfo.setImageurl(afterOrdOdProd.getProdDesc());
