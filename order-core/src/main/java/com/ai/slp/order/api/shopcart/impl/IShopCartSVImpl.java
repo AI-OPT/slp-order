@@ -14,7 +14,6 @@ import com.ai.opt.base.exception.SystemException;
 import com.ai.opt.base.vo.ResponseHeader;
 import com.ai.opt.sdk.components.ccs.CCSClientFactory;
 import com.ai.opt.sdk.constants.ExceptCodeConstants;
-import com.ai.opt.sdk.dubbo.util.DubboConsumerFactory;
 import com.ai.paas.ipaas.ccs.constants.ConfigException;
 import com.ai.paas.ipaas.mcs.interfaces.ICacheClient;
 import com.ai.slp.order.api.shopcart.interfaces.IShopCartSV;
@@ -25,6 +24,7 @@ import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 import com.ai.slp.order.api.shopcart.param.MultiCartProd;
 import com.ai.slp.order.api.shopcart.param.UserInfo;
 import com.ai.slp.order.constants.ShopCartConstants;
+import com.ai.slp.order.constants.prod.SearchProdInfoUtils;
 import com.ai.slp.order.dao.mapper.bo.OrdOdCartProd;
 import com.ai.slp.order.manager.CacheClientManager;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdCartProdAtomSV;
@@ -33,9 +33,7 @@ import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.DateUtils;
 import com.ai.slp.order.util.IPassMcsUtils;
 import com.ai.slp.order.vo.ShopCartCachePointsVo;
-import com.ai.slp.product.api.product.interfaces.IProductServerSV;
 import com.ai.slp.product.api.product.param.ProductSkuInfo;
-import com.ai.slp.product.api.product.param.SkuInfoQuery;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 
@@ -281,12 +279,7 @@ public class IShopCartSVImpl implements IShopCartSV {
      * @RestRelativeURL
      */
     private ProductSkuInfo checkSkuInfoTotal(String tenantId,String skuId,long buyNum){
-        SkuInfoQuery skuInfoQuery = new SkuInfoQuery();
-        skuInfoQuery.setTenantId(tenantId);
-        skuInfoQuery.setSkuId(skuId);
-        IProductServerSV productServerSV = DubboConsumerFactory.getService(IProductServerSV.class);
-        ProductSkuInfo skuInfo = productServerSV.queryProductSkuById4ShopCart(skuInfoQuery);
-        
+    	ProductSkuInfo skuInfo = SearchProdInfoUtils.querySkuInfo(tenantId, skuId);
         if (skuInfo==null || skuInfo.getUsableNum()<=0){
             throw new BusinessException("","商品已售罄或下架");
         }
