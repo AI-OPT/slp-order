@@ -12,6 +12,7 @@ import com.ai.opt.sdk.constants.ExceptCodeConstants;
 import com.ai.slp.order.api.aftersaleorder.interfaces.IOrderAfterSaleSV;
 import com.ai.slp.order.api.aftersaleorder.param.OrderOFCBackRequest;
 import com.ai.slp.order.api.aftersaleorder.param.OrderReturnRequest;
+import com.ai.slp.order.constants.OrdersConstants;
 import com.ai.slp.order.dao.mapper.bo.OrdOdProd;
 import com.ai.slp.order.dao.mapper.bo.OrdOrder;
 import com.ai.slp.order.service.atom.interfaces.IOrdOdProdAtomSV;
@@ -37,9 +38,15 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 		ValidateUtils.validateOrderReturnRequest(request);
 		/* 2. 订单商品数量校验*/
 		OrdOdProd ordOdProd = this.prodNumCheck(request);
+		BaseResponse response =new BaseResponse();
+		if(null==ordOdProd) {
+			ResponseHeader responseHeader = new ResponseHeader(true,
+					ExceptCodeConstants.Special.SUCCESS, "已申请退货");
+			response.setResponseHeader(responseHeader);
+			return response;
+		}
 		//
 		OrdOrder order =this.queryOrderInfo(request);
-		BaseResponse response =new BaseResponse();
 		/* 3.售后处理*/
 		orderAfterSaleBusiSV.back(request,order,ordOdProd);
 		ResponseHeader responseHeader = new ResponseHeader(true,
@@ -55,8 +62,15 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 		/* 2. 订单商品数量校验*/
 		OrdOdProd ordOdProd = this.prodNumCheck(request);
 		//
-		OrdOrder order =this.queryOrderInfo(request);
 		BaseResponse response =new BaseResponse();
+		if(null==ordOdProd) {
+			ResponseHeader responseHeader = new ResponseHeader(true,
+					ExceptCodeConstants.Special.SUCCESS, "已申请换货");
+			response.setResponseHeader(responseHeader);
+			return response;
+		}
+		
+		OrdOrder order =this.queryOrderInfo(request);
 		/* 3.售后处理*/
 		orderAfterSaleBusiSV.exchange(request,order,ordOdProd);
 		ResponseHeader responseHeader = new ResponseHeader(true,
@@ -72,8 +86,15 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 		/* 2. 订单商品数量校验*/
 		OrdOdProd ordOdProd = this.prodNumCheck(request);
 		//
-		OrdOrder order =this.queryOrderInfo(request);
 		BaseResponse response =new BaseResponse();
+		if(null==ordOdProd) {
+			ResponseHeader responseHeader = new ResponseHeader(true,
+					ExceptCodeConstants.Special.SUCCESS, "已申请退费");
+			response.setResponseHeader(responseHeader);
+			return response;
+		}
+		//
+		OrdOrder order =this.queryOrderInfo(request);
 		/* 3.售后处理*/
 		orderAfterSaleBusiSV.refund(request,order,ordOdProd);
         ResponseHeader responseHeader = new ResponseHeader(true,
@@ -121,6 +142,10 @@ public class OrderAfterSaleSVImpl implements IOrderAfterSaleSV {
 		if(ordOdProd==null) {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"订单商品明细不存在[商品明细id:"+request.getProdDetalId()+"]");
+		}
+		//商品已进行售后
+		if(OrdersConstants.OrdOrder.cusServiceFlag.YES.equals(ordOdProd.getCusServiceFlag())) {
+			return null;
 		}
 		long prodSum = request.getProdSum();
 		if(prodSum>ordOdProd.getBuySum()) {
