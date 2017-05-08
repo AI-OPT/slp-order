@@ -9,7 +9,7 @@ public class InvoiceNoticeRequest implements Serializable{
 	/**
 	 * 公司代码(销售方的公司代码)
 	 */
-	private Long companyId;
+	private String companyId;
 	
 	/**
 	 * 凭证号(子订单号)
@@ -46,11 +46,11 @@ public class InvoiceNoticeRequest implements Serializable{
 	 */
 	private String invoiceStatus;
 
-	public Long getCompanyId() {
+	public String getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(Long companyId) {
+	public void setCompanyId(String companyId) {
 		this.companyId = companyId;
 	}
 
