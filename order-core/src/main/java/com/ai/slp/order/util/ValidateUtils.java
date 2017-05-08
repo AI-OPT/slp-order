@@ -735,7 +735,7 @@ public class ValidateUtils {
 		if (condition == null) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "参数对象不能为空");
 		}
-		if(null==condition.getCompanyId()) {
+		if(StringUtil.isBlank(condition.getCompanyId())) {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL, "公司代码(销售方)不能为空");
 		}
 		if(StringUtil.isBlank(condition.getInvoiceStatus())) {
