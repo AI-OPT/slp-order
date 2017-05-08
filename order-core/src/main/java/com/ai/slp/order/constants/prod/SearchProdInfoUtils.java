@@ -12,12 +12,12 @@ import com.ai.paas.ipaas.search.ISearchClient;
 import com.ai.paas.ipaas.search.vo.Result;
 import com.ai.paas.ipaas.search.vo.SearchCriteria;
 import com.ai.paas.ipaas.search.vo.SearchOption;
+import com.ai.slp.order.api.shopcart.param.ProductSkuInfo;
 import com.ai.slp.order.constants.SearchConstants;
 import com.ai.slp.order.manager.ESClientManager;
 import com.ai.slp.order.search.bo.prod.ImageInfo;
 import com.ai.slp.order.search.bo.prod.SKUInfo;
 import com.ai.slp.order.util.prod.IPaasStorageUtils;
-import com.ai.slp.product.api.product.param.ProductSkuInfo;
 
 public class SearchProdInfoUtils {
 	 
@@ -46,11 +46,9 @@ public class SearchProdInfoUtils {
 	        	ImageInfo imageinfo = skuInfo.getImageinfo();
 	        	productSkuInfo.setVfsId(imageinfo.getVfsid());
 	        	productSkuInfo.setPicType(imageinfo.getImagetype());
-	        	
-	        	Long usableNum = queryNowUsableNumOfGroup(tenantId, skuInfo.getStoragegroupid());
-	        	productSkuInfo.setUsableNum(usableNum==null?0:usableNum);
+	        	//设置库存组id
+	        	productSkuInfo.setStorageGroupId(skuInfo.getStoragegroupid());
 	        }
-	       
 	        return productSkuInfo;
 	    }
 	 
@@ -127,5 +125,6 @@ public class SearchProdInfoUtils {
 	        }
 	        return serial;
 	    }
+	    
 
 }

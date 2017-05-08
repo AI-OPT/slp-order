@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import com.ai.opt.base.exception.BusinessException;
@@ -22,6 +23,7 @@ import com.ai.slp.order.api.shopcart.param.CartProdInfo;
 import com.ai.slp.order.api.shopcart.param.CartProdList;
 import com.ai.slp.order.api.shopcart.param.CartProdOptRes;
 import com.ai.slp.order.api.shopcart.param.MultiCartProd;
+import com.ai.slp.order.api.shopcart.param.ProductSkuInfo;
 import com.ai.slp.order.api.shopcart.param.UserInfo;
 import com.ai.slp.order.constants.ShopCartConstants;
 import com.ai.slp.order.constants.prod.SearchProdInfoUtils;
@@ -33,7 +35,6 @@ import com.ai.slp.order.util.CommonCheckUtils;
 import com.ai.slp.order.util.DateUtils;
 import com.ai.slp.order.util.IPassMcsUtils;
 import com.ai.slp.order.vo.ShopCartCachePointsVo;
-import com.ai.slp.product.api.product.param.ProductSkuInfo;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 
@@ -279,7 +280,12 @@ public class IShopCartSVImpl implements IShopCartSV {
      * @RestRelativeURL
      */
     private ProductSkuInfo checkSkuInfoTotal(String tenantId,String skuId,long buyNum){
-    	ProductSkuInfo skuInfo = SearchProdInfoUtils.querySkuInfo(tenantId, skuId);
+    	//查询商品信息
+    	ProductSkuInfo skuInfo = QuerySkuInfoByES(tenantId, skuId);
+    	//查询可使用量
+    	Long usableNum = SearchProdInfoUtils.queryNowUsableNumOfGroup(tenantId, 
+    			skuInfo.getStorageGroupId());
+    	skuInfo.setUsableNum(usableNum==null?0:usableNum);
         if (skuInfo==null || skuInfo.getUsableNum()<=0){
             throw new BusinessException("","商品已售罄或下架");
         }
@@ -333,4 +339,33 @@ public class IShopCartSVImpl implements IShopCartSV {
         cartProdPoints.setProdTotal(prodTotal);
         iCacheClient.hset(cartUserId, ShopCartConstants.McsParams.CART_POINTS,JSON.toJSONString(cartProdPoints));
     }
+    
+    /**
+     * 查询SKU单品信息
+     * @param tenantId
+     * @param skuId
+     * @return
+     */
+    public ProductSkuInfo querySkuInfo(String tenantId,String skuId){
+    	ProductSkuInfo productSkuInfo = QuerySkuInfoByES(tenantId, skuId);
+    	//查询可使用量
+    	Long usableNum = SearchProdInfoUtils.queryNowUsableNumOfGroup(tenantId, productSkuInfo.getSaleAttrs());
+	    productSkuInfo.setUsableNum(usableNum==null?0:usableNum);
+	       
+        return productSkuInfo;
+    }
+    
+    
+    /**
+     * 查询SKU单品信息(不包括可使用量,不变化的数据)
+     * @param tenantId
+     * @param skuId
+     * @return
+     */
+    @Cacheable("orderProdImg")
+	public ProductSkuInfo QuerySkuInfoByES(String tenantId, String skuId) {
+		//获取商品信息
+    	ProductSkuInfo productSkuInfo = SearchProdInfoUtils.querySkuInfo(tenantId, skuId);
+		return productSkuInfo;
+	}
 }
