@@ -80,8 +80,8 @@ public class InvoicePrintSVImpl implements IInvoicePrintSV {
 			throw new BusinessException(ExceptCodeConstants.Special.NO_RESULT, 
 					"商品信息不存在[订单id:"+orderId+"]");
 		}
-		Long companyId = request.getCompanyId();
-		if(!(String.valueOf(companyId).equals(prods.get(0).getSupplierId()))) {
+		String companyId = request.getCompanyId();
+		if(!companyId.equals(prods.get(0).getSupplierId())) {
 			throw new BusinessException("", "公司代码(销售方id)和商品中的销售方id不一致");
 		}
 		double invoiceAmount=0;
