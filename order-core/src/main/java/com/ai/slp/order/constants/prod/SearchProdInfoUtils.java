@@ -44,8 +44,10 @@ public class SearchProdInfoUtils {
 	        	productSkuInfo.setState(skuInfo.getState());
 	        	productSkuInfo.setSalePrice(skuInfo.getPrice());
 	        	ImageInfo imageinfo = skuInfo.getImageinfo();
-	        	productSkuInfo.setVfsId(imageinfo.getVfsid());
-	        	productSkuInfo.setPicType(imageinfo.getImagetype());
+	        	if(imageinfo!=null) {
+	        		productSkuInfo.setVfsId(imageinfo.getVfsid());
+	        		productSkuInfo.setPicType(imageinfo.getImagetype());
+	        	}
 	        	//设置库存组id
 	        	productSkuInfo.setStorageGroupId(skuInfo.getStoragegroupid());
 	        }
