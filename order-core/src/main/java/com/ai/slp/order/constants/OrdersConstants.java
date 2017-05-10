@@ -15,8 +15,10 @@ public final class OrdersConstants {
 	public static final String TENANT_ID = "changhong";
 	/** 定时任务配置信息*/
 	public static final String DTS_SCHEDULE_NAME = "slp-order-dts-sched";
-	/** 发票开具公司代码*/
-	public static final String INVOICE_SUPPLIERID = "UPPT";
+	/** 发票开具公司代码生产环境*/
+	//public static final String INVOICE_SUPPLIERID = "UPPT";
+	/** 发票开具公司代码测试环境*/
+	public static final String INVOICE_SUPPLIERID = "7000";
 	/** 发票开具税率*/
 	public static final String INVOICE_RATE = "0.06";
 	/** 商品销售商id*/
