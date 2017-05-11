@@ -164,18 +164,6 @@ public class InvoicePrintBusiSVImpl implements IInvoicePrintBusiSV{
 			//税金
 			BigDecimal tax = taxValue.subtract(notTaxAmount);
 			
-			/*
-			BigDecimal taxValue = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(1000));
-			//不含税金额
-			BigDecimal notTaxAmount = taxValue.divide(new BigDecimal(1).add(new BigDecimal(Double.parseDouble(OrdersConstants.INVOICE_RATE))));
-			
-			BigDecimal b1 =taxValue.multiply(new BigDecimal(Double.parseDouble(OrdersConstants.INVOICE_RATE)));  //税金
-			BigDecimal b2 = BigDecimal.valueOf(ordOdProd.getTotalFee()).divide(new BigDecimal(1000)); //含税金额
-			//含税金额
-			String taxAmount=b2.setScale(2,BigDecimal.ROUND_HALF_UP).toString();
-			//税金
-			BigDecimal tax = b2.subtract(notTaxAmount);*/
-			
 			respVo.setTax(tax.setScale(2,BigDecimal.ROUND_HALF_UP).toString());//税金
 			respVo.setAmount(salePrice.setScale(2,BigDecimal.ROUND_HALF_UP).toString()); //含税单价
 			respVo.setTaxAmount(taxValue.setScale(2,BigDecimal.ROUND_HALF_UP).toString()); //含税金额
