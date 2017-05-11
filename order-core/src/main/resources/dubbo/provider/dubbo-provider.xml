@@ -25,7 +25,7 @@
 		contextpath="${dubbo.protocol.contextpath}"
 		threads="800"/>
 	<!-- 提供者超时时间设置 -->
-	<dubbo:provider timeout="${dubbo.provider.timeout}"/>
+	<dubbo:provider timeout="${dubbo.provider.timeout}" retries="1"/>
 	<!-- 注解方式 -->
 	<dubbo:annotation package="com.ai.slp.order.api" />
 	<!-- 引入其它xml文件 -->
