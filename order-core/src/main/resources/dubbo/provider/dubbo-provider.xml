@@ -23,10 +23,9 @@
 	<dubbo:protocol name="${dubbo.protocol}" port="${slp.order.dubbo.port}" 
 		server="${dubbo.protocol.server}"
 		contextpath="${dubbo.protocol.contextpath}"
-		threads="500" accepts="500"	
-	/>
+		threads="800"/>
 	<!-- 提供者超时时间设置 -->
-	<dubbo:provider timeout="${dubbo.provider.timeout}" retries="0" threads="300" />
+	<dubbo:provider timeout="${dubbo.provider.timeout}"/>
 	<!-- 注解方式 -->
 	<dubbo:annotation package="com.ai.slp.order.api" />
 	<!-- 引入其它xml文件 -->
