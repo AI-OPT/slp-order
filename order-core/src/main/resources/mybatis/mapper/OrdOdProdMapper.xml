@@ -173,7 +173,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdProd" >
-    insert delayed into ord_od_prod
+    insert into ord_od_prod
     <trim prefix="(" suffix=")" suffixOverrides="," >
       PROD_DETAL_ID,
       <if test="tenantId != null" >

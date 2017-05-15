@@ -99,7 +99,7 @@
       #{jfAmount,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdFeeProd" >
-    insert delayed into ord_od_fee_prod
+    insert into ord_od_fee_prod
     <trim prefix="(" suffix=")" suffixOverrides="," >
       ORDER_ID,
       <if test="payStyle != null" >
