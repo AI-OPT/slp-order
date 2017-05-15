@@ -26,8 +26,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 
 /**
- * 读取订单文件线程
- * Date: 2017年1月6日 <br>
+ * 读取订单文件线程 Date: 2017年1月6日 <br>
  * Copyright (c) 2017 asiainfo.com <br>
  * 
  * @author zhangqiang7
@@ -76,49 +75,12 @@ public class OrderReadFileThread extends Thread {
 			InputStream chkIs = null;
 			BufferedWriter bw = null;
 			try {
-				//ValidateChkUtil util = new ValidateChkUtil();
-				//String errCode = util.validateChk(path, localpath + "bak/", fileName, chkName, sftp);
-				String localPath = localpath + "rpt/";
-				/*if (!StringUtil.isBlank(errCode)) {
-					LOG.error("校验订单信息文件失败,校验码:" + errCode.toString());
-					if (!errCode.toString().equals("09")) {
-						// 移动chk文件
-						chkIs = SftpUtil.download(path, chkName, localPath, sftp);
-						SftpUtil.uploadIs(path + "sapa/err", chkName, chkIs, sftp);
-						SftpUtil.delete(path, chkName, sftp);
-						deleteFile(localpath + "bak/" + chkName);
-					}
-						//上传rpt报告
-						String errCodeName = chkName.substring(0, chkName.lastIndexOf(".")) + ".rpt";
-						File file = new File(localPath);
-						if (!file.exists()) {
-							file.mkdirs();
-						}
-						File rptFile = new File(localPath + errCodeName);
-						if (!rptFile.exists()) {
-							rptFile.createNewFile();
-						}
-						FileWriter fw = new FileWriter(rptFile);
-						bw = new BufferedWriter(fw);
-						bw.write(fileName);
-						bw.write("\n");
-						bw.write(errCode.toString() + "\n");
-						bw.flush();
-						bw.close();
-						fw.close();
-						is = new FileInputStream(rptFile);
-						// 移动rpt文件
-						SftpUtil.uploadIs(path + "sapa/rpt/", errCodeName, is, sftp);
-						deleteFile(localpath + "rpt/" + errCodeName);
-					continue;
-					// 推到ftp上
-				} else {*/
-					LOG.error("++++++++++++订单信息校验成功" + chkName);
-					is = SftpUtil.download(path, chkName, localpath + "bak/", sftp);
-					SftpUtil.delete(path, chkName, sftp);
-					SftpUtil.uploadIs(path + "sapa/chk", chkName, is, sftp);
-					deleteFile(localpath + "bak/" + chkName);
-					readOrderFile(fileName, sftp);
+				LOG.error("++++++++++++订单信息校验成功" + chkName);
+				//is = SftpUtil.download(path, chkName, localpath + "bak/", sftp);
+				//SftpUtil.delete(path, chkName, sftp);
+				//ftpUtil.uploadIs(path + "sapa/chk", chkName, is, sftp);
+				deleteFile(localpath + "bak/" + chkName);
+				readOrderFile(fileName, sftp);
 			} catch (Exception e) {
 				LOG.error("订单读取数据失败" + DateUtil.getSysDate() + JSON.toJSONString(e));
 			} finally {
@@ -139,12 +101,13 @@ public class OrderReadFileThread extends Thread {
 
 	/**
 	 * 读取订单文件
+	 * 
 	 * @param fileName
 	 * @param sftp
 	 * @author zhangqiang7
 	 * @UCUSER
 	 */
-	public void readOrderFile(String fileName, ChannelSftp sftp){
+	public void readOrderFile(String fileName, ChannelSftp sftp) {
 		InputStream ins = null;
 		BufferedReader reader = null;
 		try {
@@ -181,11 +144,11 @@ public class OrderReadFileThread extends Thread {
 				if (ins != null) {
 					ins.close();
 				}
-				//SftpUtil.delete(path, fileName, sftp);
+				// SftpUtil.delete(path, fileName, sftp);
 			}
 
 		} catch (Exception e) {
-			LOG.error("读取订单信息文件失败了+原因:"+JSON.toJSONString(e));
+			LOG.error("读取订单信息文件失败了+原因:" + JSON.toJSONString(e));
 		} finally {
 			deleteFile(localpath + "bak/" + fileName);
 			index = null;
@@ -195,6 +158,7 @@ public class OrderReadFileThread extends Thread {
 
 	/**
 	 * 匹配需要的文件名称
+	 * 
 	 * @param path
 	 * @param sftp
 	 * @return
@@ -207,7 +171,7 @@ public class OrderReadFileThread extends Thread {
 		LOG.error("++++++++++获取ftp订单信息文件列表,文件列表如下" + JSON.toJSONString(fileList));
 		List<String> nameList = new ArrayList<>();
 		for (String string : fileList) {
-			// String date = sdf.format(DateUtil.getSysDate());
+			// String date = sdf .format(DateUtil.getSysDate());
 			String date = format1(DateUtil.getSysDate());
 			if (string.length() >= 20) {
 				if ((date + "_" + "omsa01001").equals(string.substring(2, 20)) && string.endsWith(".dat")) {
@@ -221,6 +185,7 @@ public class OrderReadFileThread extends Thread {
 
 	/**
 	 * 删除ftp文件
+	 * 
 	 * @param sPath
 	 * @author zhangqiang7
 	 * @UCUSER
@@ -237,6 +202,7 @@ public class OrderReadFileThread extends Thread {
 
 	/**
 	 * 安全关闭资源
+	 * 
 	 * @param fis
 	 * @author zhangqiang7
 	 * @UCUSER
@@ -253,6 +219,7 @@ public class OrderReadFileThread extends Thread {
 
 	/**
 	 * 安全关闭资源
+	 * 
 	 * @param fis
 	 * @author zhangqiang7
 	 * @UCUSER
@@ -269,6 +236,7 @@ public class OrderReadFileThread extends Thread {
 
 	/**
 	 * 安全关闭资源
+	 * 
 	 * @param fis
 	 * @author zhangqiang7
 	 * @UCUSER
@@ -285,6 +253,7 @@ public class OrderReadFileThread extends Thread {
 
 	/**
 	 * 格式化
+	 * 
 	 * @param date
 	 * @return
 	 * @author zhangqiang7
@@ -296,6 +265,7 @@ public class OrderReadFileThread extends Thread {
 
 	/**
 	 * 格式化
+	 * 
 	 * @param date
 	 * @return
 	 * @author zhangqiang7
