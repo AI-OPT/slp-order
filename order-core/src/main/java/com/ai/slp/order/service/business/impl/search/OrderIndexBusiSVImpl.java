@@ -46,6 +46,7 @@ import com.ai.slp.order.service.atom.interfaces.IOrdOrderAtomSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.ai.slp.order.service.business.interfaces.search.IOrderSearch;
 import com.ai.slp.order.util.InfoTranslateUtil;
+import com.alibaba.fastjson.JSON;
 
 
 @Service
@@ -75,13 +76,14 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
     @Transactional
 	public void orderSynchDataToSes(SesDataRequest request) throws BusinessException, SystemException {
 			//参数校验
+		List<OrderInfo> orderList = new ArrayList<OrderInfo>();
+		OrderInfo ordInfo = new OrderInfo();
+			try{
 			if(request==null) {
 				throw new BusinessException("参数对象不能为空");
 			}
 			ICacheSV iCacheSV = DubboConsumerFactory.getService(ICacheSV.class);
 		 	long orderId = request.getOrderId();
-		 	List<OrderInfo> orderList = new ArrayList<OrderInfo>();
-		 	OrderInfo ordInfo = new OrderInfo();
 			//订单同步数据
 			OrdOrder ord = ordOrderAtomSV.selectByPrimaryKey(orderId);
 			if(ord!=null) {
@@ -134,6 +136,9 @@ public class OrderIndexBusiSVImpl implements IOrderIndexBusiSV {
 				// 查询订单其它信息
 				ordInfo = this.ordProdExtendsSynch(ordInfo, ord, 
 						iCacheSV, orderId,ordOdFeeTotal);
+			}
+			}catch(Exception e){
+				logger.error("组装订单信息发生异常:"+JSON.toJSONString(e));
 			}
 			orderList.add(ordInfo);
 			ESClientManager.getSesClient(SearchConstants.SearchNameSpace).bulkInsert(orderList);
