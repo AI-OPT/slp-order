@@ -15,6 +15,7 @@ import com.ai.opt.sdk.components.lock.AbstractMutexLock;
 import com.ai.opt.sdk.components.lock.RedisMutexLockFactory;
 import com.ai.opt.sdk.util.DateUtil;
 import com.ai.slp.order.service.business.interfaces.IOfcBusiSV;
+import com.ai.slp.order.service.business.interfaces.search.IOrderIndexBusiSV;
 import com.alibaba.fastjson.JSON;
 
 /**
@@ -33,6 +34,9 @@ public class OrderTaskJob {
 
 	@Autowired
 	IOfcBusiSV ofcSV;
+	
+	@Autowired
+	IOrderIndexBusiSV orderIndexBusiSV;
 
 	public BlockingQueue<String[]> ordOrderQueue;
 
@@ -82,22 +86,22 @@ public class OrderTaskJob {
 	public void run() {
 		LOG.error("订单信息任务开始执行，当前时间戳：" + DateUtil.getSysDate());
 		try {
-			//ordOrderQueue = new LinkedBlockingQueue<String[]>(1000);
+			ordOrderQueue = new LinkedBlockingQueue<String[]>(1000);
 
 			ordOdProdQueue = new LinkedBlockingQueue<String[]>(1000);
 
 			handlePool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 			LOG.error("开始启动读取订单生产者线程");
 			// 生产者
-			//Thread producerThred = new Thread(new OrderReadFileThread(ordOrderQueue));
-			//producerThred.start();
+			Thread producerThred = new Thread(new OrderReadFileThread(ordOrderQueue));
+			producerThred.start();
 			// 消费者
 			Thread[] thread = new Thread[Runtime.getRuntime().availableProcessors() * 2];
-			//for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
-				//thread[i] = new OrderThread(ordOrderQueue, ofcSV);
-				//handlePool.execute(thread[i]);
-			//}
-			//Thread.sleep(2 * 60 * 60 * 1000);
+			for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
+				thread[i] = new OrderThread(ordOrderQueue, ofcSV);
+				handlePool.execute(thread[i]);
+			}
+			Thread.sleep(1 * 60 * 60 * 1000);
 			LOG.error("休眠结束" + DateUtil.getSysDate());
 			LOG.error("开始启动订单商品生产者线程");
 			// 生产者
@@ -106,7 +110,7 @@ public class OrderTaskJob {
 			// 消费者
 			LOG.error("开始插入订单商品信息，当前时间戳：" + DateUtil.getSysDate());
 			for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
-				thread[i] = new OrdOdProdThread(ordOdProdQueue, ofcSV);
+				thread[i] = new OrdOdProdThread(ordOdProdQueue, ofcSV,orderIndexBusiSV);
 				handlePool.execute(thread[i]);
 			}
 			// 未消费完等待

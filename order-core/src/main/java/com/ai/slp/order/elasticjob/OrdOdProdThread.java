@@ -18,8 +18,6 @@ import com.ai.slp.order.util.PropertiesUtil;
 import com.ai.slp.order.vo.OrdOdProdVo;
 import com.alibaba.fastjson.JSON;
 
-import sun.util.logging.resources.logging;
-
 /**
  * 订单商品信息同步
  * Date: 2017年1月6日 <br>
@@ -35,13 +33,14 @@ public class OrdOdProdThread extends Thread {
 	private IOfcBusiSV ofcSV;
 	
 	@Autowired
-	IOrderIndexBusiSV orderIndexBusiSV;
+	private IOrderIndexBusiSV orderIndexBusiSV;
 
 	private BlockingQueue<String[]> ordOdProdQueue;
 
-	public OrdOdProdThread(BlockingQueue<String[]> ordOdProdQueue, IOfcBusiSV ofcSV) {
+	public OrdOdProdThread(BlockingQueue<String[]> ordOdProdQueue, IOfcBusiSV ofcSV,IOrderIndexBusiSV orderIndexBusiSV) {
 		this.ordOdProdQueue = ordOdProdQueue;
 		this.ofcSV = ofcSV;
+		this.orderIndexBusiSV = orderIndexBusiSV;
 	}
 
 	/**
