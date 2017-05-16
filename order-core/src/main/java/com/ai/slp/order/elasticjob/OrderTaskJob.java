@@ -101,7 +101,7 @@ public class OrderTaskJob {
 				thread[i] = new OrderThread(ordOrderQueue, ofcSV);
 				handlePool.execute(thread[i]);
 			}
-			Thread.sleep(1 * 60 * 60 * 1000);
+			Thread.sleep(2 * 60 * 60 * 1000);
 			LOG.error("休眠结束" + DateUtil.getSysDate());
 			LOG.error("开始启动订单商品生产者线程");
 			// 生产者

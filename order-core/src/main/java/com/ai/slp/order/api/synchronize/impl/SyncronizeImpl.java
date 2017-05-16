@@ -36,13 +36,13 @@ public class SyncronizeImpl implements ISynchronizeSV {
 		ResponseHeader responseHeader = null;
 		BaseResponse response = new BaseResponse();
 		try {
-			syncronizeBusiSV.orderSynchronize(request);
+			long orderId = syncronizeBusiSV.orderSynchronize(request);
 			/**
 			 * 刷新搜索引擎数据
 			 */
 	    	SesDataRequest sesReq=new SesDataRequest();
 	    	sesReq.setTenantId(OrdersConstants.TENANT_ID);
-	    	sesReq.setOrderId(Long.valueOf(request.getOrderId()));
+	    	sesReq.setOrderId(orderId);
 	    	orderIndexBusiSV.orderSynchDataToSes(sesReq);
 			responseHeader = new ResponseHeader(true, ResultCodeConstants.SUCCESS_CODE, "同步成功");
 		} catch (BusinessException e) {

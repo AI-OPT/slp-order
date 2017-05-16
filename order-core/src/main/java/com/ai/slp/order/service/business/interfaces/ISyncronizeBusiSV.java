@@ -13,6 +13,6 @@ public interface ISyncronizeBusiSV {
 	 * @throws BusinessException
 	 * @throws SystemException
 	 */
-	public int orderSynchronize(OrderSynchronizeVo request) throws BusinessException, SystemException;
+	public long orderSynchronize(OrderSynchronizeVo request) throws BusinessException, SystemException;
 
 }

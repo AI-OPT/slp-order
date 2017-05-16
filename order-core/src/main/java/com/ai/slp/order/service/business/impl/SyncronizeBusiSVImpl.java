@@ -41,7 +41,7 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 	
 	//同步订单信息
 	@Override
-	public int orderSynchronize(OrderSynchronizeVo request) throws BusinessException, SystemException {
+	public long orderSynchronize(OrderSynchronizeVo request) throws BusinessException, SystemException {
 		ValidateUtils.validateSynchronize(request);
 		OrdOrder ordOrder = new OrdOrder();
 		OrdOdLogistics ordOdLogistics = new OrdOdLogistics();
@@ -184,7 +184,7 @@ public class SyncronizeBusiSVImpl implements ISyncronizeBusiSV {
 			Log.error("同步订单数据失败:syncronize fail:" + DateUtil.getSysDate() + ":原因:" + JSON.toJSONString(e));
 			throw new BusinessException("同步失败");
 		}
-		return 0;
+		return orderId;
 	}
 
 }
