@@ -27,7 +27,6 @@ public class OrderOfcJob implements SimpleJob {
 	public void execute(ShardingContext context) {
 		log.error("执行订单ofc任务");
 		orderTaskJob.run();
-		// ordProdTaskJob.run();
 		log.error("结束执行订单ofc任务..");
 
 	}

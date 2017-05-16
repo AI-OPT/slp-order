@@ -60,40 +60,23 @@ public class OrdProdReadFileThread extends Thread {
 	public void run() {
 		LOG.error("开始获取订单商品ftp文件：" + DateUtil.getSysDate());
 		ChannelSftp sftp = SftpUtil.connect(ip, port, userName, userPwd);
-		LOG.error("+++++++++++++++++连接订单商品ftp服务器成功");
+		if(null==sftp){
+			LOG.error("+++++++++++++++++连接订单商品ftp服务器失败");
+			Thread.interrupted();
+		}
 		List<String> nameList = new ArrayList<>();
 		try {
 			LOG.error("开始获取订单商品信息文件列表");
 			nameList = getFileName(path, sftp);
-			LOG.error("+++++++++++++订单商品文件列表" + JSON.toJSONString(nameList));
 		} catch (SftpException e) {
-			LOG.error("获取订单商品信息报错" + DateUtil.getSysDate() + e.getMessage());
+			LOG.error("获取订单商品信息报错" + DateUtil.getSysDate() + JSON.toJSONString(e));
 		}
 		for (String fileName : nameList) {
-			String chkName = fileName.substring(0, 23) + ".chk";
-			InputStream is = null;
-			InputStream chkIs = null;
-			BufferedWriter bw = null;
 			try {
-				LOG.error("++++++++++++校验成功" + chkName);
-				//is = SftpUtil.download(path, chkName, localpath + "bak/", sftp);
-				//SftpUtil.uploadIs(path + "sapa/chk", chkName, is, sftp);
-				//SftpUtil.delete(path, chkName, sftp);
-				deleteFile(localpath + "bak/" + chkName);
 				readOrdProdFile(fileName, sftp);
 			} catch (Exception e) {
 				LOG.error("读取订单商品数据出错" + DateUtil.getSysDate() + JSON.toJSONString(e));
-			} finally {
-				if (is != null) {
-					safeClose(is);
-				}
-				if (chkIs != null) {
-					safeClose(chkIs);
-				}
-				if (bw != null) {
-					safeClose(bw);
-				}
-			}
+			} 
 		}
 		LOG.error("获取订单商品ftp文件结束：" + DateUtil.getSysDate());
 		SftpUtil.disconnect(sftp);

@@ -60,40 +60,23 @@ public class OrderReadFileThread extends Thread {
 	public void run() {
 		LOG.error("开始获取订单信息ftp文件：" + DateUtil.getSysDate());
 		ChannelSftp sftp = SftpUtil.connect(ip, port, userName, userPwd);
-		LOG.error("+++++++++++++++++连接订单商品ftp服务器成功");
+		if(null==sftp){
+			LOG.error("+++++++++++++++++连接订单商品ftp服务器失败");
+			Thread.interrupted();
+		}
 		List<String> nameList = new ArrayList<>();
 		try {
 			LOG.error("开始获取订单信息文件列表");
 			nameList = getFileName(path, sftp);
-			LOG.error("++++++++++++++++++++订单信息文件列表" + JSON.toJSONString(nameList));
 		} catch (SftpException e1) {
-			LOG.error("获取订单列表失败了" + DateUtil.getSysDate() + e1.getMessage());
+			LOG.error("获取订单列表失败了" + DateUtil.getSysDate() + JSON.toJSONString(e1));
 		}
 		for (String fileName : nameList) {
-			String chkName = fileName.substring(0, 23) + ".chk";
-			InputStream is = null;
-			InputStream chkIs = null;
-			BufferedWriter bw = null;
 			try {
-				LOG.error("++++++++++++订单信息校验成功" + chkName);
-				//is = SftpUtil.download(path, chkName, localpath + "bak/", sftp);
-				//SftpUtil.delete(path, chkName, sftp);
-				//ftpUtil.uploadIs(path + "sapa/chk", chkName, is, sftp);
-				deleteFile(localpath + "bak/" + chkName);
 				readOrderFile(fileName, sftp);
 			} catch (Exception e) {
 				LOG.error("订单读取数据失败" + DateUtil.getSysDate() + JSON.toJSONString(e));
-			} finally {
-				if (is != null) {
-					safeClose(is);
-				}
-				if (chkIs != null) {
-					safeClose(chkIs);
-				}
-				if (bw != null) {
-					safeClose(bw);
-				}
-			}
+			} 
 		}
 		LOG.error("获取订单信息ftp文件结束：" + DateUtil.getSysDate());
 		SftpUtil.disconnect(sftp);
@@ -168,7 +151,6 @@ public class OrderReadFileThread extends Thread {
 	 */
 	public List<String> getFileName(String path, ChannelSftp sftp) throws SftpException {
 		List<String> fileList = SftpUtil.listFiles(path, sftp);
-		LOG.error("++++++++++获取ftp订单信息文件列表,文件列表如下" + JSON.toJSONString(fileList));
 		List<String> nameList = new ArrayList<>();
 		for (String string : fileList) {
 			// String date = sdf .format(DateUtil.getSysDate());

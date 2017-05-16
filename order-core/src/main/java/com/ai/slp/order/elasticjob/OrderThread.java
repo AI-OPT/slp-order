@@ -55,7 +55,7 @@ public class OrderThread extends Thread {
 					LOG.error("结束执行保存订单信息,时间" + DateUtil.getSysDate());
 				}
 			} catch (Exception e) {
-				LOG.error("+++++++++++订单信息报错++++++++++++"+e.getMessage());
+				LOG.error("+++++++++++订单信息报错++++++++++++"+JSON.toJSONString(e));
 			}
 		}
 

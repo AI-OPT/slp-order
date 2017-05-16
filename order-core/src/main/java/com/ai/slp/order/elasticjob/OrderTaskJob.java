@@ -82,23 +82,22 @@ public class OrderTaskJob {
 	public void run() {
 		LOG.error("订单信息任务开始执行，当前时间戳：" + DateUtil.getSysDate());
 		try {
-			ordOrderQueue = new LinkedBlockingQueue<String[]>(1000);
+			//ordOrderQueue = new LinkedBlockingQueue<String[]>(1000);
 
 			ordOdProdQueue = new LinkedBlockingQueue<String[]>(1000);
 
 			handlePool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 			LOG.error("开始启动读取订单生产者线程");
 			// 生产者
-			Thread producerThred = new Thread(new OrderReadFileThread(ordOrderQueue));
-			producerThred.start();
+			//Thread producerThred = new Thread(new OrderReadFileThread(ordOrderQueue));
+			//producerThred.start();
 			// 消费者
-			LOG.error("开始插入订单信息，当前时间戳：" + DateUtil.getSysDate());
 			Thread[] thread = new Thread[Runtime.getRuntime().availableProcessors() * 2];
-			for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
-				thread[i] = new OrderThread(ordOrderQueue, ofcSV);
-				handlePool.execute(thread[i]);
-			}
-			Thread.sleep(2 * 60 * 60 * 1000);
+			//for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; i++) {
+				//thread[i] = new OrderThread(ordOrderQueue, ofcSV);
+				//handlePool.execute(thread[i]);
+			//}
+			//Thread.sleep(2 * 60 * 60 * 1000);
 			LOG.error("休眠结束" + DateUtil.getSysDate());
 			LOG.error("开始启动订单商品生产者线程");
 			// 生产者
