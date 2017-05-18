@@ -243,7 +243,7 @@ public class OrderAfterSaleBusiSVImpl implements IOrderAfterSaleBusiSV {
   		//更新订单数据
   		int updateFlag = ordOrderAtomSV.updateOFCOrder(ordOrder);
   		if(updateFlag==0) {
-  			throw new BusinessException("OFC售后订单更新失败! 售后订单id:"+ordOrder.getExternalOrderId());
+  			throw new BusinessException("OFC售后订单更新失败! 售后订单id:"+ordOrder.getOrderId());
   		}
   	}
   	
