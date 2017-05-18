@@ -94,14 +94,13 @@ public class SearchCriteriaStructure {
 		// 下单结束时间不为空
 		if(StringUtil.isBlank(request.getOrderTimeBegin())  && !StringUtil.isBlank(request.getOrderTimeEnd())){
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZ");
-			String end = sdf.format(request.getOrderTimeEnd());
 			Timestamp sTime = Timestamp.valueOf(OrdersConstants.START_TIME);
 			String start = sdf.format(sTime);
 			SearchCriteria searchCriteria = new SearchCriteria();
 			searchCriteria.setOption(new SearchOption(SearchOption.SearchLogic.must, SearchOption.SearchType.range));
 			searchCriteria.setField(SearchFieldConfConstants.ORDER_TIME);
 			searchCriteria.addFieldValue(start);
-			searchCriteria.addFieldValue(end);
+			searchCriteria.addFieldValue(request.getOrderTimeEnd());
 			searchfieldVos.add(searchCriteria);
 		}
 		// 状态集合不为空
