@@ -694,7 +694,7 @@ public class ValidateUtils {
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"租户id不能为空");
 		}
 		if(null == condition.getOrderId()){
-			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"租户id不能为空");
+			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"订单id不能为空");
 		}
 		if(StringUtil.isBlank(condition.getExpressId())){
 			throw new BusinessException(ExceptCodeConstants.Special.PARAM_IS_NULL,"快递Id不能为空");
