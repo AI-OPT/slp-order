@@ -122,8 +122,8 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
 	        paramsRequest.setPayNo(String.valueOf(order.getAcctId())); //支付帐号
 	        paramsRequest.setBuyerRemark(order.getRemark()); //买家备注
 		}
-		OrdOdLogistics logistics = ordOdLogisticsAtomSV.selectByOrd(order.getTenantId(),
-					order.getOrderId());
+		OrdOdLogistics logistics = ordOdLogisticsAtomSV.selectByOrd(request.getTenantId(),
+				orderId);
 		if(logistics!=null) {
 			paramsRequest.setReceiverContact(logistics.getContactName());
 			paramsRequest.setReceiverPhone(logistics.getContactTel());
@@ -139,7 +139,7 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
         OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
 				order.getOrderId());
         if(ordOdFeeTotal!=null) {
-        	paramsRequest.setPayTime(sysdate.toString());
+        	paramsRequest.setPayTime(sysdate==null?null:sysdate.toString());
         	paramsRequest.setPayType(Long.parseLong(ordOdFeeTotal.getPayStyle())); 
         	paramsRequest.setOrderAmout(ordOdFeeTotal.getTotalFee()/10); //分为单位,订单总金额 ??
         	paramsRequest.setPayAmount(ordOdFeeTotal.getAdjustFee()/10);//支付金额

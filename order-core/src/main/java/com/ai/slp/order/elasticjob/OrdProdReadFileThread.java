@@ -123,16 +123,24 @@ public class OrdProdReadFileThread extends Thread {
 					}
 
 				}
-				reader.close();
+				/*reader.close();
 				if (ins != null) {
 					ins.close();
-				}
+				}*/
 				// SftpUtil.delete(path, fileName, sftp);
 			}
 
 		} catch (Exception e) {
 			LOG.error("订单商品读取失败" + DateUtil.getSysDate() + e.getMessage());
 		} finally {
+			try {
+				reader.close();
+				if (ins != null) {
+					ins.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			deleteFile(localpath + "bak/" + fileName);
 		}
 	}

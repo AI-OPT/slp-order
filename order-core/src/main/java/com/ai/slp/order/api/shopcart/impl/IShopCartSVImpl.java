@@ -282,11 +282,14 @@ public class IShopCartSVImpl implements IShopCartSV {
     private ProductSkuInfo checkSkuInfoTotal(String tenantId,String skuId,long buyNum){
     	//查询商品信息
     	ProductSkuInfo skuInfo = QuerySkuInfoByES(tenantId, skuId);
+    	if (StringUtils.isBlank(skuInfo.getStorageGroupId())){
+            throw new BusinessException("","商品已售罄或下架");
+        }
     	//查询可使用量
     	Long usableNum = SearchProdInfoUtils.queryNowUsableNumOfGroup(tenantId, 
     			skuInfo.getStorageGroupId());
     	skuInfo.setUsableNum(usableNum==null?0:usableNum);
-        if (skuInfo==null || skuInfo.getUsableNum()<=0){
+        if (skuInfo.getUsableNum()<=0){
             throw new BusinessException("","商品已售罄或下架");
         }
         if ( buyNum>skuInfo.getUsableNum()){
