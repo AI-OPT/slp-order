@@ -127,7 +127,7 @@
       #{buyerBankName,jdbcType=VARCHAR}, #{buyerBankAccount,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ai.slp.order.dao.mapper.bo.OrdOdInvoice" >
-    insert into ord_od_invoice
+    insert delayed into ord_od_invoice
     <trim prefix="(" suffix=")" suffixOverrides="," >
       ORDER_ID,
       <if test="tenantId != null" >
