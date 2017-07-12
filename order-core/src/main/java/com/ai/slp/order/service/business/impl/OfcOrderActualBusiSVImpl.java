@@ -136,8 +136,8 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
 			paramsRequest.setReceiverAddress(logistics.getAddress());
 			paramsRequest.setPostCode(logistics.getPostcode());
 		}
-        OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(order.getTenantId(), 
-				order.getOrderId());
+        OrdOdFeeTotal ordOdFeeTotal = ordOdFeeTotalAtomSV.selectByOrderId(request.getTenantId(),
+				orderId);
         if(ordOdFeeTotal!=null) {
         	paramsRequest.setPayTime(sysdate==null?null:sysdate.toString());
         	paramsRequest.setPayType(Long.parseLong(ordOdFeeTotal.getPayStyle())); 
@@ -147,7 +147,7 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
         	paramsRequest.setReceiveAmount(ordOdFeeTotal.getPayFee()/10);
         	paramsRequest.setSellerRemark(ordOdFeeTotal.getOperDiscountDesc()); //TODO 商家备注 减免原因 ?? 
         }
-        OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(order.getOrderId());
+        OrdOdInvoice ordOdInvoice = ordOdInvoiceAtomSV.selectByPrimaryKey(orderId);
     	if (ordOdInvoice != null) {
         	paramsRequest.setNeedInvoice(1); 
         	String invoiceType = ordOdInvoice.getInvoiceType();
@@ -166,7 +166,7 @@ public class OfcOrderActualBusiSVImpl implements IOfcOrderActualBusiSV {
         	//发票类型为空的话,表示无需发票信息
         	paramsRequest.setNeedInvoice(0);
         }
-    	List<OrdOdProd> ordOdProdList=ordOdProdAtomSV.selectByOrd(order.getTenantId(), orderId);
+    	List<OrdOdProd> ordOdProdList=ordOdProdAtomSV.selectByOrd(request.getTenantId(), orderId);
     	List<OrderItemsVo> orderItemsVoList=new ArrayList<OrderItemsVo>();
 		if (!CollectionUtil.isEmpty(ordOdProdList)) {
 			for (OrdOdProd ordOdProd : ordOdProdList) {
